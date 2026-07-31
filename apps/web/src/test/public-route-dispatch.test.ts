@@ -5,7 +5,9 @@ describe("public route dispatch", () => {
   it.each([
     ["", "homepage"],
     ["products", "products"],
-    ["catalogues", "placeholder"],
+    ["catalogues", "catalogues"],
+    ["inquiry", "inquiry-empty"],
+    ["request-quotation", "quotation-blocked"],
     ["products/knives", "family"],
     ["products/scissors", "family"],
     ["products/knives/scalpel-handle-no-3", "product"],

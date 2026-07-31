@@ -1,27 +1,30 @@
 import type { ReactNode } from "react";
 import { RoutePlaceholder } from "@/components/layout/route-placeholder";
+import { CataloguesPage } from "@/features/catalogues";
 import { Homepage } from "@/features/homepage/homepage";
+import { EmptyInquiryPage } from "@/features/inquiry-preview";
 import { ProductsOverview } from "@/features/products/products-overview";
 import { resolveCataloguePath } from "@/features/catalogue-registry";
 import { FamilyListingPage } from "@/features/family-listing/family-listing-page";
 import { ProductDetailPage } from "@/features/product-detail/product-detail-page";
+import { QuotationBlockedPage } from "@/features/quotation-preview";
 
 export type PublicPageKind =
   | "homepage"
   | "products"
+  | "catalogues"
+  | "inquiry-empty"
+  | "quotation-blocked"
   | "family"
   | "product"
   | "placeholder"
   | "not-found";
 
 const NON_CATALOGUE_PLACEHOLDERS = new Set([
-  "catalogues",
   "about",
   "procurement-support",
   "contact",
   "search",
-  "inquiry",
-  "request-quotation",
   "privacy",
   "terms"
 ]);
@@ -29,6 +32,9 @@ const NON_CATALOGUE_PLACEHOLDERS = new Set([
 export function resolvePublicPageKind(key: string): PublicPageKind {
   if (key === "") return "homepage";
   if (key === "products") return "products";
+  if (key === "catalogues") return "catalogues";
+  if (key === "inquiry") return "inquiry-empty";
+  if (key === "request-quotation") return "quotation-blocked";
   if (NON_CATALOGUE_PLACEHOLDERS.has(key)) return "placeholder";
 
   const segments = key.split("/").filter(Boolean);
@@ -57,6 +63,12 @@ export function resolvePublicPage({
       return <Homepage />;
     case "products":
       return <ProductsOverview />;
+    case "catalogues":
+      return <CataloguesPage />;
+    case "inquiry-empty":
+      return <EmptyInquiryPage />;
+    case "quotation-blocked":
+      return <QuotationBlockedPage />;
     case "family":
       return <FamilyListingPage familySlug={segments[1] ?? ""} />;
     case "product":
