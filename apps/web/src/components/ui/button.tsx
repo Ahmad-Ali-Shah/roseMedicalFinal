@@ -15,7 +15,7 @@ export function Button({ variant = "primary", size = "standard", className = "",
 }
 
 export type ButtonLinkProps<T extends string> = PropsWithChildren<{
-  href: Route<T> | URL;
+  href: Route<T>;
   variant?: ButtonVariant;
   size?: ButtonSize;
   className?: string;
