@@ -22,6 +22,7 @@ const product = {
   familyName: "Knives",
   name: "Scalpel Handle No. 3",
   code: "18-0644",
+  optionSummary: ["14.5 cm"],
   description: "Reusable surgical instrument handle presented for quotation review.",
   imageLabel: "Scalpel handle placeholder"
 };
@@ -35,12 +36,14 @@ describe("public catalogue components", () => {
     expect(html).toContain("Instrument families");
   });
 
-  it("renders family and product cards without commerce language", () => {
+  it("renders numbered family and product cards without commerce language", () => {
     const html = renderToStaticMarkup(
       <><FamilyCard family={family} /><ProductPreviewCard product={product} /></>
     );
     expect(html).toContain("/products/knives");
+    expect(html).toContain("01");
     expect(html).toContain("18-0644");
+    expect(html).toContain("14.5 cm");
     expect(html).not.toMatch(/price|stock|rating|buy now/i);
   });
 

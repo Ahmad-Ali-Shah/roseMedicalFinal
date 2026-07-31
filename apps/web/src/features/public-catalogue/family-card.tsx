@@ -1,18 +1,19 @@
 import Link from "next/link";
 import type { ReactElement } from "react";
-import { familyHref, type FamilyCardModel } from "./models";
+import { FAMILY_SLUGS, familyHref, type FamilyCardModel } from "./models";
 import { ProductMediaPlaceholder } from "./product-media-placeholder";
 
 export function FamilyCard({ family }: { family: FamilyCardModel }): ReactElement {
+  const ordinal = String(FAMILY_SLUGS.indexOf(family.slug) + 1).padStart(2, "0");
+
   return (
-    <article className="family-card">
+    <article className="family-card" data-family={family.slug}>
       <Link className="family-card__link" href={familyHref(family.slug)}>
+        <span className="family-card__number">{ordinal}</span>
         <ProductMediaPlaceholder label={family.imageLabel} decorative aspect="landscape" />
         <div className="family-card__body">
-          <p className="public-eyebrow">Instrument family</p>
           <h3 className="family-card__title">{family.name}</h3>
-          {family.description ? <p className="family-card__description">{family.description}</p> : null}
-          <span className="family-card__action" aria-hidden="true">View family</span>
+          <span className="family-card__action" aria-hidden="true">Explore collection <span>→</span></span>
         </div>
       </Link>
     </article>

@@ -20,6 +20,16 @@ export const productFixtures = [
     shortDescription: { en: "Surgical scissors prepared for product and quotation review.", ar: null },
     mainImage: null,
     optionSummary: ["17 cm", "Curved"]
+  },
+  {
+    id: "product_biopsy_punch",
+    slug: "biopsy-punch",
+    code: "23-1204",
+    familySlug: "punches",
+    name: { en: "Biopsy Punch", ar: null },
+    shortDescription: { en: "Punch instrument presented with a clear product reference for inquiry preparation.", ar: null },
+    mainImage: null,
+    optionSummary: ["4 mm", "Standard"]
   }
 ] satisfies components["schemas"]["ProductSummary"][];
 

@@ -4,18 +4,20 @@ import { productHref, type ProductPreviewModel } from "./models";
 import { ProductMediaPlaceholder } from "./product-media-placeholder";
 
 export function ProductPreviewCard({ product }: { product: ProductPreviewModel }): ReactElement {
+  const primaryOption = product.optionSummary[0];
+
   return (
-    <article className="product-preview-card">
+    <article className="product-preview-card" data-family={product.familySlug}>
       <Link className="product-preview-card__link" href={productHref(product)}>
-        <ProductMediaPlaceholder label={product.imageLabel} decorative aspect="portrait" />
+        <ProductMediaPlaceholder label={product.imageLabel} decorative aspect="landscape" />
         <div className="product-preview-card__body">
-          <div className="product-preview-card__meta">
-            <span>{product.familyName}</span>
-            <span className="product-code">{product.code}</span>
-          </div>
+          <p className="product-preview-card__family">{product.familyName}</p>
           <h3 className="product-preview-card__title">{product.name}</h3>
-          {product.description ? <p className="product-preview-card__description">{product.description}</p> : null}
-          <span className="product-preview-card__action" aria-hidden="true">Review product</span>
+          <p className="product-preview-card__meta">
+            <span className="product-code">{product.code}</span>
+            {primaryOption ? <><span aria-hidden="true"> · </span><span>{primaryOption}</span></> : null}
+          </p>
+          <span className="product-preview-card__action" aria-hidden="true">View details <span>→</span></span>
         </div>
       </Link>
     </article>

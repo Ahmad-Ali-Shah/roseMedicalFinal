@@ -44,6 +44,7 @@ export function selectFeaturedProducts(): readonly ProductPreviewModel[] {
       familyName: familyNameBySlug(product.familySlug),
       name: product.name.en,
       code: product.code,
+      optionSummary: product.optionSummary,
       description: product.shortDescription.en || undefined,
       imageLabel: `${product.name.en} placeholder`
     };

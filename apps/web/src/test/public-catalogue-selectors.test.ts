@@ -30,6 +30,7 @@ describe("public catalogue route models", () => {
       familyName: "Knives",
       name: "Scalpel Handle No. 3",
       code: "18-0644",
+      optionSummary: ["14.5 cm"],
       description: "Reusable surgical instrument handle presented for quotation review.",
       imageLabel: "Scalpel handle placeholder"
     };
@@ -46,8 +47,9 @@ describe("public catalogue route models", () => {
   it("maps shared products with family names and codes", () => {
     expect(selectFeaturedProducts()).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ code: "18-0644", familyName: "Knives" }),
-        expect.objectContaining({ code: "04-0402", familyName: "Scissors" })
+        expect.objectContaining({ code: "18-0644", familyName: "Knives", optionSummary: ["14.5 cm", "Standard"] }),
+        expect.objectContaining({ code: "04-0402", familyName: "Scissors", optionSummary: ["17 cm", "Curved"] }),
+        expect.objectContaining({ code: "23-1204", familyName: "Punches", optionSummary: ["4 mm", "Standard"] })
       ])
     );
   });

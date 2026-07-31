@@ -25,6 +25,7 @@ export interface ProductPreviewModel {
   familyName: string;
   name: string;
   code: string;
+  optionSummary: readonly string[];
   description?: string;
   imageLabel: string;
 }
