@@ -5,6 +5,11 @@ import {
   productHref,
   type ProductPreviewModel
 } from "@/features/public-catalogue/models";
+import {
+  familyNameBySlug,
+  selectFamilyCards,
+  selectFeaturedProducts
+} from "@/features/public-catalogue/selectors";
 
 describe("public catalogue route models", () => {
   it("locks the approved family order", () => {
@@ -31,5 +36,25 @@ describe("public catalogue route models", () => {
 
     expect(familyHref("knives")).toBe("/products/knives");
     expect(productHref(product)).toBe("/products/knives/scalpel-handle-no-3");
+  });
+
+  it("maps all five shared families in approved order", () => {
+    expect(selectFamilyCards().map((family) => family.slug)).toEqual(FAMILY_SLUGS);
+    expect(selectFamilyCards()).toHaveLength(5);
+  });
+
+  it("maps shared products with family names and codes", () => {
+    expect(selectFeaturedProducts()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ code: "18-0644", familyName: "Knives" }),
+        expect.objectContaining({ code: "04-0402", familyName: "Scissors" })
+      ])
+    );
+  });
+
+  it("rejects unknown family data at the selector boundary", () => {
+    expect(() => familyNameBySlug("unknown" as never)).toThrow(
+      "Unknown Rosa family slug: unknown"
+    );
   });
 });
