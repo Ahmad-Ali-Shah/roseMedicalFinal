@@ -13,7 +13,7 @@ export function FamilyIndex({
   return (
     <Section tone="paper" data-section="family-index" aria-labelledby="products-family-title">
       <Container size="wide">
-        <SectionHeading level={2} eyebrow={intro.eyebrow} title={intro.title} />
+        <SectionHeading id="products-family-title" level={2} eyebrow={intro.eyebrow} title={intro.title} />
         <ul className="family-grid products-family-grid" aria-label="Instrument families">
           {families.map((family) => <li key={family.id}><FamilyCard family={family} /></li>)}
         </ul>

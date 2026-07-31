@@ -1,6 +1,7 @@
 import type { ReactElement, ReactNode } from "react";
 
 export interface SectionHeadingProps {
+  id?: string;
   level: 2 | 3;
   eyebrow?: string;
   title: string;
@@ -10,6 +11,7 @@ export interface SectionHeadingProps {
 }
 
 export function SectionHeading({
+  id,
   level,
   eyebrow,
   title,
@@ -18,8 +20,8 @@ export function SectionHeading({
   align = "start"
 }: SectionHeadingProps): ReactElement {
   const heading = level === 2
-    ? <h2 className="public-section-heading__title">{title}</h2>
-    : <h3 className="public-section-heading__title">{title}</h3>;
+    ? <h2 className="public-section-heading__title" id={id}>{title}</h2>
+    : <h3 className="public-section-heading__title" id={id}>{title}</h3>;
 
   return (
     <div className={`public-section-heading public-section-heading--${align}`}>

@@ -14,6 +14,7 @@ export function FamilyDiscovery({
     <Section tone="paper" data-section="family-discovery" aria-labelledby="family-discovery-title">
       <Container size="wide">
         <SectionHeading
+          id="family-discovery-title"
           level={2}
           eyebrow={intro.eyebrow}
           title={intro.title}

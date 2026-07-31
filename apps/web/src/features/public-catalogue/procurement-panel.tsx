@@ -36,7 +36,7 @@ export function ProcurementPanel<
         <p className="procurement-panel__copy">{copy}</p>
       </div>
       <div className="procurement-panel__actions">
-        <ButtonLink href={primary.href}>{primary.label}</ButtonLink>
+        <ButtonLink<TPrimary> href={primary.href}>{primary.label}</ButtonLink>
         {secondary ? <Link className="text-link" href={secondary.href}>{secondary.label}</Link> : null}
       </div>
     </div>

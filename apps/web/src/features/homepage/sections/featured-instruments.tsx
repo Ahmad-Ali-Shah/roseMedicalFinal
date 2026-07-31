@@ -14,6 +14,7 @@ export function FeaturedInstruments({
     <Section tone="paper" data-section="featured-instruments" aria-labelledby="featured-instruments-title">
       <Container size="wide">
         <SectionHeading
+          id="featured-instruments-title"
           level={2}
           eyebrow={intro.eyebrow}
           title={intro.title}

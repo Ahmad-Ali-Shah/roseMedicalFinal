@@ -8,6 +8,7 @@ export function ProcurementSupport({ model }: { model: HomeProcurementModel }): 
     <Section tone="paper" data-section="procurement-support" aria-labelledby="procurement-support-title">
       <Container size="wide">
         <SectionHeading
+          id="procurement-support-title"
           level={2}
           eyebrow={model.eyebrow}
           title={model.title}
