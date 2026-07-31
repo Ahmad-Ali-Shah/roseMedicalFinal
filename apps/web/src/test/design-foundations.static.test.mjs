@@ -52,7 +52,8 @@ test('base UI primitives cover controls, surfaces, status and feedback', async (
 test('button links preserve Next typed-route literal inference', async () => {
   const button = await read('components/ui/button.tsx');
   assert.match(button, /ButtonLinkProps<T extends string>/);
-  assert.match(button, /href: Route<T> \| URL/);
+  assert.match(button, /href:\s*Route<T>;/);
+  assert.doesNotMatch(button, /Route<T>\s*\|\s*URL/);
   assert.match(button, /ButtonLink<T extends string>/);
 });
 
