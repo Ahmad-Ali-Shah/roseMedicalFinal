@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:foundation": "node --test src/test/design-foundations.static.test.mjs",
     "test:e2e": "playwright test"
   },
   "dependencies": {

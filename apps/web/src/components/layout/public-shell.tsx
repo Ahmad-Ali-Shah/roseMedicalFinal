@@ -1,35 +1,95 @@
 import Link from "next/link";
+import { ButtonLink } from "@/components/ui/button";
+import { Container } from "./container";
 
-const links = [
+const primaryLinks = [
   ["Products", "/products"],
   ["Catalogues", "/catalogues"],
   ["About", "/about"],
-  ["Contact", "/contact"],
-  ["Search", "/search"],
-  ["Inquiry", "/inquiry"]
+  ["Contact", "/contact"]
 ] as const;
+
+const utilityLinks = [
+  ["Search", "/search"],
+  ["Inquiry (0)", "/inquiry"]
+] as const;
+
+const familyLinks = [
+  ["Knives", "/products/knives"],
+  ["Scissors", "/products/scissors"],
+  ["Punches", "/products/punches"],
+  ["Chisels", "/products/chisels"],
+  ["Cutters", "/products/cutters"]
+] as const;
+
+function NavigationLinks({ includeQuote = false }: { includeQuote?: boolean }) {
+  return (
+    <ul className="nav-list">
+      {primaryLinks.map(([label, href]) => <li key={href}><Link className="nav-link" href={href}>{label}</Link></li>)}
+      {utilityLinks.map(([label, href]) => <li key={href}><Link className="nav-link" href={href}>{label}</Link></li>)}
+      {includeQuote && <li><ButtonLink href="/request-quotation" size="small">Request a quote</ButtonLink></li>}
+    </ul>
+  );
+}
 
 export function PublicShell({ children }: { children: React.ReactNode }) {
   return (
     <>
       <header className="site-header">
-        <div className="shell-row">
-          <Link className="brand" href="/">ROSA</Link>
-          <nav aria-label="Primary navigation">
+        <Container className="site-header__bar" size="wide">
+          <Link className="brand" href="/" aria-label="Rosa homepage">ROSA</Link>
+          <nav className="site-header__nav" aria-label="Primary navigation">
             <ul className="nav-list">
-              {links.map(([label, href]) => <li key={href}><Link href={href}>{label}</Link></li>)}
+              {primaryLinks.map(([label, href]) => <li key={href}><Link className="nav-link" href={href}>{label}</Link></li>)}
             </ul>
           </nav>
-        </div>
+          <div className="cluster site-header__actions">
+            {utilityLinks.map(([label, href]) => <Link className="nav-link" href={href} key={href}>{label}</Link>)}
+            <ButtonLink href="/request-quotation" size="small">Request a quote</ButtonLink>
+          </div>
+          <details className="mobile-navigation">
+            <summary>Menu</summary>
+            <nav className="mobile-navigation__panel" aria-label="Mobile navigation"><NavigationLinks includeQuote /></nav>
+          </details>
+        </Container>
       </header>
       <main className="page-main" id="main-content">{children}</main>
       <footer className="site-footer">
-        <div className="shell-row">
-          <p>ROSA — medical instruments supplier and procurement partner.</p>
-          <nav aria-label="Footer navigation">
-            <ul className="nav-list"><li><Link href="/privacy">Privacy</Link></li><li><Link href="/terms">Terms</Link></li></ul>
+        <Container className="site-footer__grid" size="wide">
+          <div className="site-footer__brand stack">
+            <Link className="brand" href="/">ROSA</Link>
+            <p>Medical instruments supplier and procurement partner.</p>
+            <ButtonLink href="/request-quotation" size="small">Request a quote</ButtonLink>
+          </div>
+          <nav aria-label="Product families">
+            <p className="site-footer__title">Products</p>
+            <ul className="site-footer__links">
+              {familyLinks.map(([label, href]) => <li key={href}><Link href={href}>{label}</Link></li>)}
+              <li><Link href="/catalogues">Catalogues</Link></li>
+            </ul>
           </nav>
-        </div>
+          <nav aria-label="Company navigation">
+            <p className="site-footer__title">Company</p>
+            <ul className="site-footer__links">
+              <li><Link href="/about">About</Link></li>
+              <li><Link href="/procurement-support">Procurement support</Link></li>
+              <li><Link href="/contact">Contact</Link></li>
+            </ul>
+          </nav>
+          <nav aria-label="Footer navigation">
+            <p className="site-footer__title">Support</p>
+            <ul className="site-footer__links">
+              <li><Link href="/inquiry">Inquiry</Link></li>
+              <li><Link href="/search">Search</Link></li>
+              <li><Link href="/privacy">Privacy Policy</Link></li>
+              <li><Link href="/terms">Terms</Link></li>
+            </ul>
+          </nav>
+        </Container>
+        <Container className="site-footer__bottom cluster" size="wide">
+          <span>© ROSA. Replace legal and company details after verification.</span>
+          <span>English first · Arabic-ready structure</span>
+        </Container>
       </footer>
     </>
   );
