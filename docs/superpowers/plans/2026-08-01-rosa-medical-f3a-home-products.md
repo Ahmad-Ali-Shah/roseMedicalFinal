@@ -4,13 +4,13 @@
 
 **Goal:** Implement the approved Rosa Medical homepage and products-overview page as complete static, responsive, Figma-led compositions using typed fixtures, reusable catalogue components, neutral replaceable media, and no live backend dependency.
 
-**Architecture:** The existing catch-all public route remains the route entry point, but `/` and `/products` delegate to feature entry components while every other route continues to use `RoutePlaceholder`. Homepage-only and products-only sections live in separate feature folders. Reusable family, product-preview, section-heading, media-placeholder, and procurement-panel components live in `features/public-catalogue`, consume validated presentation models, and never fetch data directly.
+**Architecture:** The existing public catch-all route remains the route entry point, but `/` and `/products` delegate to isolated feature entry components while all other routes continue to render `RoutePlaceholder`. Homepage-only and products-only sections live in separate feature folders. Reusable family, product-preview, section-heading, media-placeholder, and procurement-panel components live in `features/public-catalogue`, consume validated presentation models, and never fetch data directly.
 
-**Tech Stack:** Next.js 16.2.11 App Router, React 19.2, strict TypeScript 5.9, Tailwind CSS 4 plus existing CSS custom properties, Lora and Inter, pnpm 11.4.0, Vitest 3.2, React server rendering for component tests, Playwright 1.57 for responsive route checks.
+**Tech Stack:** Next.js 16.2.11 App Router, React 19.2, strict TypeScript 5.9, Tailwind CSS 4 plus the existing CSS token system, Lora and Inter, pnpm 11.4.0, Vitest 3.2, React server rendering for component tests, and Playwright 1.57 for desktop, tablet, and mobile route checks.
 
 ## Global Constraints
 
-- Read `README.md` at the start of execution and preserve the frontend/backend lane boundaries.
+- Read `README.md` at the start of execution and preserve frontend/backend ownership boundaries.
 - Branch from `frontend/f3a-home-products-design`; implement on `frontend/f3a-home-products`.
 - The public logo remains **ROSA** only; never append “Medical” to the logo lockup.
 - Public positioning is medical instruments supplier and procurement partner.
@@ -19,16 +19,16 @@
 - Do not show prices, inventory, stock, checkout, payments, discounts, ratings, shipping, or orders.
 - Do not publish unverified manufacturing, factory, certification, ownership, award, export, regulatory, legal, or clinical claims.
 - Do not invent statistics, testimonials, customer logos, experience figures, or geographic reach.
-- Use Rosa red `#E00815`, near-black `#191917`, white, warm off-white, and restrained steel/light greys through existing tokens.
+- Use the existing Rosa tokens: red `#E00815`, near-black `#191917`, white, warm off-white, and restrained steel/light greys.
 - Use Lora for editorial headings and Inter for operational text.
 - Product media remains neutral, replaceable placeholder media until verified client assets are supplied.
 - Avoid generic medical gradients, blue healthcare styling, stock doctors, blobs, glassmorphism, excessive cards, excessive pills, and unnecessary rounded containers.
 - English is implemented first; component structure and logical CSS must remain future RTL-compatible.
 - No live API calls, MSW, inquiry state, search behavior, admin work, or Arabic activation belong in F3A.
 - Preserve all existing routes and the existing public/admin shells.
-- Use typed fixture data and frontend presentation selectors; components must not call `fetch`.
-- Keep one `<main>` and one `<h1>` per upgraded route.
-- Preserve visible keyboard focus, minimum practical 44 px targets, reduced-motion behavior, and zero horizontal overflow.
+- Use typed fixture data from `@rosa/contracts/fixtures`; components must not call `fetch`.
+- Keep exactly one `<main>` and one `<h1>` per upgraded route.
+- Preserve visible keyboard focus, practical 44 px targets, reduced-motion behavior, and zero horizontal overflow.
 - Commit only meaningful, independently reviewable tasks.
 
 ---
@@ -37,28 +37,26 @@
 
 ### Existing files to modify
 
-- `apps/web/src/app/(public)/[[...segments]]/page.tsx` — dispatch `/` and `/products` to feature entry components while retaining placeholders for all other routes.
-- `apps/web/src/app/globals.css` — import the F3A public-page stylesheet after existing foundations.
-- `apps/web/src/styles/components.css` — only adjust shared primitive rules when a reusable component requirement cannot be expressed in the F3A stylesheet.
-- `apps/web/src/test/design-foundations.static.test.mjs` — preserve Layer 1 regression coverage; add no page-specific assertions here.
-- `apps/web/tests/e2e/route-smoke.spec.ts` — retain the 31-route landmark smoke suite.
-- `README.md` on `main` after implementation — record F3A branch, commit, verification evidence, and unchanged Contract 0.1 status.
+- `apps/web/src/app/(public)/[[...segments]]/page.tsx` — dispatch `/` and `/products` to feature entry components while retaining placeholders elsewhere.
+- `apps/web/src/app/globals.css` — import `public-pages.css` after the existing foundation styles.
+- `apps/web/playwright.config.ts` — add a permanent 768 × 1024 tablet project.
+- `README.md` on `main` after implementation — record F3A evidence and unchanged Contract 0.1 status.
 
 ### New shared public-catalogue files
 
-- `apps/web/src/features/public-catalogue/models.ts` — presentation types and validated route-safe slugs.
-- `apps/web/src/features/public-catalogue/selectors.ts` — deterministic selectors over contract fixtures and safe static copy.
-- `apps/web/src/features/public-catalogue/section-heading.tsx` — semantic heading block with optional eyebrow, copy, and action.
-- `apps/web/src/features/public-catalogue/product-media-placeholder.tsx` — stable neutral media surface with accessible decorative/informative modes.
-- `apps/web/src/features/public-catalogue/family-card.tsx` — complete linked family card.
-- `apps/web/src/features/public-catalogue/product-preview-card.tsx` — linked product preview with code and family.
-- `apps/web/src/features/public-catalogue/procurement-panel.tsx` — reusable CTA panel with one primary action and optional secondary link.
-- `apps/web/src/features/public-catalogue/index.ts` — narrow public exports.
+- `apps/web/src/features/public-catalogue/models.ts`
+- `apps/web/src/features/public-catalogue/selectors.ts`
+- `apps/web/src/features/public-catalogue/section-heading.tsx`
+- `apps/web/src/features/public-catalogue/product-media-placeholder.tsx`
+- `apps/web/src/features/public-catalogue/family-card.tsx`
+- `apps/web/src/features/public-catalogue/product-preview-card.tsx`
+- `apps/web/src/features/public-catalogue/procurement-panel.tsx`
+- `apps/web/src/features/public-catalogue/index.ts`
 
 ### New homepage files
 
-- `apps/web/src/features/homepage/homepage.data.ts` — homepage-safe content model assembled from selectors and static approved copy.
-- `apps/web/src/features/homepage/homepage.tsx` — homepage composition and page-level `<main>`.
+- `apps/web/src/features/homepage/homepage.data.ts`
+- `apps/web/src/features/homepage/homepage.tsx`
 - `apps/web/src/features/homepage/sections/home-hero.tsx`
 - `apps/web/src/features/homepage/sections/family-discovery.tsx`
 - `apps/web/src/features/homepage/sections/featured-instruments.tsx`
@@ -68,45 +66,38 @@
 
 ### New products-overview files
 
-- `apps/web/src/features/products/products.data.ts` — products-page-safe content model.
-- `apps/web/src/features/products/products-overview.tsx` — products page composition and page-level `<main>`.
+- `apps/web/src/features/products/products.data.ts`
+- `apps/web/src/features/products/products-overview.tsx`
 - `apps/web/src/features/products/sections/products-hero.tsx`
 - `apps/web/src/features/products/sections/family-index.tsx`
 - `apps/web/src/features/products/sections/discovery-toolbar-shell.tsx`
 - `apps/web/src/features/products/sections/product-preview-grid.tsx`
 - `apps/web/src/features/products/sections/products-procurement-cta.tsx`
 
-### New styling and tests
+### New routing, styling, tests, and completion files
 
-- `apps/web/src/styles/public-pages.css` — all F3A page, section, card, placeholder, and responsive rules.
-- `apps/web/src/test/public-catalogue-selectors.test.ts` — selector order, safe paths, and missing-data behavior.
-- `apps/web/src/test/public-catalogue-components.test.tsx` — server-rendered semantic component tests.
-- `apps/web/src/test/public-page-composition.test.tsx` — homepage/products hierarchy and prohibited-content tests.
-- `apps/web/src/test/public-route-dispatch.test.ts` — route-dispatch behavior without browser execution.
-- `apps/web/tests/e2e/f3a-public-pages.spec.ts` — desktop/mobile route, landmark, overflow, focus, and screenshot assertions.
+- `apps/web/src/features/public-routing/resolve-public-page.tsx`
+- `apps/web/src/styles/public-pages.css`
+- `apps/web/src/test/public-catalogue-selectors.test.ts`
+- `apps/web/src/test/public-catalogue-components.test.tsx`
+- `apps/web/src/test/public-page-composition.test.tsx`
+- `apps/web/src/test/public-page-styles.static.test.mjs`
+- `apps/web/src/test/public-route-dispatch.test.ts`
+- `apps/web/tests/e2e/f3a-public-pages.spec.ts`
+- `docs/superpowers/completions/2026-08-01-rosa-medical-f3a-home-products.md`
 
 ---
 
-### Task 1: Establish the isolated execution branch and lock the route-safe presentation interfaces
+### Task 1: Create the implementation branch and route-safe presentation models
 
 **Files:**
 - Create: `apps/web/src/features/public-catalogue/models.ts`
 - Create: `apps/web/src/test/public-catalogue-selectors.test.ts`
 
 **Interfaces:**
-- Consumes: `familyFixtures` from `@rosa/contracts`, `productFixtures` from `@rosa/contracts`, generated localized fixture fields.
-- Produces:
-  - `FAMILY_SLUGS`
-  - `FamilySlug`
-  - `FamilyCardModel`
-  - `ProductPreviewModel`
-  - `SectionActionModel`
-  - `familyHref(slug: FamilySlug)`
-  - `productHref(product: Pick<ProductPreviewModel, "familySlug" | "slug">)`
+- Produces `FAMILY_SLUGS`, `FamilySlug`, `FamilyCardModel`, `ProductPreviewModel`, `familyHref`, and `productHref`.
 
-- [ ] **Step 1: Create the isolated implementation branch**
-
-Run:
+- [ ] **Step 1: Create the isolated branch**
 
 ```bash
 git fetch origin
@@ -115,9 +106,9 @@ git pull --ff-only
 git switch -c frontend/f3a-home-products
 ```
 
-Expected: the new branch starts from the commit containing the approved F3A spec and this plan.
+Expected: branch starts from the approved F3A spec and corrected plan.
 
-- [ ] **Step 2: Write the failing selector/model test**
+- [ ] **Step 2: Write the failing route-model test**
 
 Create `apps/web/src/test/public-catalogue-selectors.test.ts`:
 
@@ -159,19 +150,17 @@ describe("public catalogue route models", () => {
 });
 ```
 
-- [ ] **Step 3: Run the focused test to verify red state**
-
-Run:
+- [ ] **Step 3: Verify the test is red**
 
 ```bash
 pnpm --filter @rosa/web test -- public-catalogue-selectors.test.ts
 ```
 
-Expected: FAIL because `@/features/public-catalogue/models` does not exist.
+Expected: FAIL because `models.ts` does not exist.
 
-- [ ] **Step 4: Implement the route-safe presentation models**
+- [ ] **Step 4: Implement the models and route helpers**
 
-Create `apps/web/src/features/public-catalogue/models.ts`:
+Create `models.ts`:
 
 ```ts
 import type { Route } from "next";
@@ -185,11 +174,6 @@ export const FAMILY_SLUGS = [
 ] as const;
 
 export type FamilySlug = (typeof FAMILY_SLUGS)[number];
-
-export interface SectionActionModel<TPath extends string = string> {
-  label: string;
-  href: Route<TPath>;
-}
 
 export interface FamilyCardModel {
   id: string;
@@ -214,49 +198,43 @@ export function familyHref(slug: FamilySlug) {
   return `/products/${slug}` as const;
 }
 
-export function productHref(product: Pick<ProductPreviewModel, "familySlug" | "slug">) {
-  return `/products/${product.familySlug}/${product.slug}` as Route;
+export function productHref<TSlug extends string>(
+  product: Pick<ProductPreviewModel, "familySlug"> & { slug: TSlug }
+): Route<`/products/${FamilySlug}/${TSlug}`> {
+  return `/products/${product.familySlug}/${product.slug}` as Route<
+    `/products/${FamilySlug}/${TSlug}`
+  >;
 }
 ```
 
-The single `Route` assertion is permitted only at this validated route-construction boundary. Components must consume these helpers instead of constructing arbitrary strings.
+The only typed-route assertion lives at this validated route-construction boundary.
 
-- [ ] **Step 5: Run the focused test to verify green state**
-
-Run:
+- [ ] **Step 5: Verify green state and commit**
 
 ```bash
 pnpm --filter @rosa/web test -- public-catalogue-selectors.test.ts
-```
-
-Expected: PASS with 2 tests.
-
-- [ ] **Step 6: Commit the route-safe model boundary**
-
-```bash
 git add apps/web/src/features/public-catalogue/models.ts apps/web/src/test/public-catalogue-selectors.test.ts
 git commit -m "feat: define public catalogue presentation models"
 ```
 
+Expected: 2 tests PASS.
+
 ---
 
-### Task 2: Build deterministic selectors from the shared fixtures
+### Task 2: Build deterministic selectors from shared fixtures
 
 **Files:**
 - Create: `apps/web/src/features/public-catalogue/selectors.ts`
-- Modify: `apps/web/src/test/public-catalogue-selectors.test.ts`
 - Create: `apps/web/src/features/public-catalogue/index.ts`
+- Modify: `apps/web/src/test/public-catalogue-selectors.test.ts`
 
 **Interfaces:**
-- Consumes: `familyFixtures`, `productFixtures`, `FAMILY_SLUGS`, `FamilyCardModel`, `ProductPreviewModel`.
-- Produces:
-  - `selectFamilyCards(): readonly FamilyCardModel[]`
-  - `selectFeaturedProducts(): readonly ProductPreviewModel[]`
-  - `familyNameBySlug(slug: FamilySlug): string`
+- Consumes `familyFixtures` and `productFixtures` from `@rosa/contracts/fixtures`.
+- Produces `selectFamilyCards`, `selectFeaturedProducts`, and `familyNameBySlug`.
 
-- [ ] **Step 1: Extend the failing test with fixture-order and validation cases**
+- [ ] **Step 1: Add failing selector cases**
 
-Append to `public-catalogue-selectors.test.ts`:
+Append to the test:
 
 ```ts
 import {
@@ -265,7 +243,7 @@ import {
   selectFeaturedProducts
 } from "@/features/public-catalogue/selectors";
 
-it("maps all five shared families in the approved order", () => {
+it("maps all five shared families in approved order", () => {
   expect(selectFamilyCards().map((family) => family.slug)).toEqual(FAMILY_SLUGS);
   expect(selectFamilyCards()).toHaveLength(5);
 });
@@ -273,43 +251,33 @@ it("maps all five shared families in the approved order", () => {
 it("maps shared products with family names and codes", () => {
   expect(selectFeaturedProducts()).toEqual(
     expect.arrayContaining([
-      expect.objectContaining({
-        code: "18-0644",
-        familyName: "Knives",
-        familySlug: "knives"
-      }),
-      expect.objectContaining({
-        code: "04-0402",
-        familyName: "Scissors",
-        familySlug: "scissors"
-      })
+      expect.objectContaining({ code: "18-0644", familyName: "Knives" }),
+      expect.objectContaining({ code: "04-0402", familyName: "Scissors" })
     ])
   );
 });
 
-it("rejects an unknown family slug at the selector boundary", () => {
+it("rejects unknown family data at the selector boundary", () => {
   expect(() => familyNameBySlug("unknown" as never)).toThrow(
     "Unknown Rosa family slug: unknown"
   );
 });
 ```
 
-- [ ] **Step 2: Run the focused test to verify red state**
-
-Run:
+- [ ] **Step 2: Verify red state**
 
 ```bash
 pnpm --filter @rosa/web test -- public-catalogue-selectors.test.ts
 ```
 
-Expected: FAIL because the selector module does not exist.
+Expected: FAIL because `selectors.ts` does not exist.
 
 - [ ] **Step 3: Implement deterministic selectors**
 
-Create `apps/web/src/features/public-catalogue/selectors.ts`:
+Create `selectors.ts`:
 
 ```ts
-import { familyFixtures, productFixtures } from "@rosa/contracts";
+import { familyFixtures, productFixtures } from "@rosa/contracts/fixtures";
 import {
   FAMILY_SLUGS,
   type FamilyCardModel,
@@ -318,7 +286,7 @@ import {
 } from "./models";
 
 function isFamilySlug(value: string): value is FamilySlug {
-  return FAMILY_SLUGS.includes(value as FamilySlug);
+  return FAMILY_SLUGS.some((slug) => slug === value);
 }
 
 export function familyNameBySlug(slug: FamilySlug): string {
@@ -331,7 +299,6 @@ export function selectFamilyCards(): readonly FamilyCardModel[] {
   return FAMILY_SLUGS.map((slug) => {
     const fixture = familyFixtures.find((family) => family.slug === slug);
     if (!fixture) throw new Error(`Missing Rosa family fixture: ${slug}`);
-
     return {
       id: fixture.id,
       slug,
@@ -347,7 +314,6 @@ export function selectFeaturedProducts(): readonly ProductPreviewModel[] {
     if (!isFamilySlug(product.familySlug)) {
       throw new Error(`Unknown Rosa family slug: ${product.familySlug}`);
     }
-
     return {
       id: product.id,
       slug: product.slug,
@@ -362,38 +328,27 @@ export function selectFeaturedProducts(): readonly ProductPreviewModel[] {
 }
 ```
 
-- [ ] **Step 4: Add narrow public exports**
-
-Create `apps/web/src/features/public-catalogue/index.ts`:
+Create `index.ts`:
 
 ```ts
 export * from "./models";
 export * from "./selectors";
 ```
 
-Do not export page-specific content models from this barrel.
-
-- [ ] **Step 5: Run selector tests and typecheck**
-
-Run:
+- [ ] **Step 4: Verify and commit**
 
 ```bash
 pnpm --filter @rosa/web test -- public-catalogue-selectors.test.ts
 pnpm --filter @rosa/web typecheck
-```
-
-Expected: selector tests PASS; typecheck PASS. If typecheck exposes the pre-existing typed-route wrapper defect, correct that defect in its existing dedicated file before continuing and record the fix in this task’s commit.
-
-- [ ] **Step 6: Commit fixture selectors**
-
-```bash
 git add apps/web/src/features/public-catalogue apps/web/src/test/public-catalogue-selectors.test.ts
 git commit -m "feat: add deterministic public catalogue selectors"
 ```
 
+Expected: selector tests and typecheck PASS.
+
 ---
 
-### Task 3: Implement and test the reusable catalogue components
+### Task 3: Implement reusable catalogue components
 
 **Files:**
 - Create: `apps/web/src/features/public-catalogue/section-heading.tsx`
@@ -405,17 +360,11 @@ git commit -m "feat: add deterministic public catalogue selectors"
 - Create: `apps/web/src/test/public-catalogue-components.test.tsx`
 
 **Interfaces:**
-- Consumes: Layer 1 `ButtonLink`, `Stack`, presentation models, route helpers.
-- Produces:
-  - `SectionHeading`
-  - `ProductMediaPlaceholder`
-  - `FamilyCard`
-  - `ProductPreviewCard`
-  - `ProcurementPanel`
+- Produces `SectionHeading`, `ProductMediaPlaceholder`, `FamilyCard`, `ProductPreviewCard`, and `ProcurementPanel`.
 
 - [ ] **Step 1: Write failing server-rendered semantic tests**
 
-Create `apps/web/src/test/public-catalogue-components.test.tsx`:
+Create `public-catalogue-components.test.tsx`:
 
 ```tsx
 import { renderToStaticMarkup } from "react-dom/server";
@@ -447,7 +396,7 @@ const product = {
 };
 
 describe("public catalogue components", () => {
-  it("renders semantic section headings with caller-controlled level", () => {
+  it("renders caller-controlled semantic headings", () => {
     const html = renderToStaticMarkup(
       <SectionHeading level={2} title="Instrument families" copy="Browse by family." />
     );
@@ -473,91 +422,64 @@ describe("public catalogue components", () => {
 });
 ```
 
-- [ ] **Step 2: Run the focused test to verify red state**
-
-Run:
+- [ ] **Step 2: Verify red state**
 
 ```bash
 pnpm --filter @rosa/web test -- public-catalogue-components.test.tsx
 ```
 
-Expected: FAIL because the components are not exported.
+Expected: FAIL because the components are missing.
 
-- [ ] **Step 3: Implement `SectionHeading`**
+- [ ] **Step 3: Implement the component signatures**
 
-Create `section-heading.tsx` with an explicit heading-level union:
+Use `ReactElement` rather than the global `JSX.Element` type:
 
 ```tsx
-import type { ReactNode } from "react";
-import { Stack } from "@/components/layout";
+import type { ReactElement, ReactNode } from "react";
 
-interface SectionHeadingProps {
+export function SectionHeading(props: {
   level: 2 | 3;
   eyebrow?: string;
   title: string;
   copy?: string;
   action?: ReactNode;
   align?: "start" | "center";
-}
+}): ReactElement;
 
-export function SectionHeading({
-  level,
-  eyebrow,
-  title,
-  copy,
-  action,
-  align = "start"
-}: SectionHeadingProps) {
-  const Heading = level === 2 ? "h2" : "h3";
-  return (
-    <div className={`public-section-heading public-section-heading--${align}`}>
-      <Stack gap="var(--space-3)">
-        {eyebrow ? <p className="public-eyebrow">{eyebrow}</p> : null}
-        <Heading>{title}</Heading>
-        {copy ? <p className="public-section-heading__copy">{copy}</p> : null}
-        {action ? <div className="public-section-heading__action">{action}</div> : null}
-      </Stack>
-    </div>
-  );
-}
-```
-
-- [ ] **Step 4: Implement media and linked cards**
-
-Implement the components with these public signatures:
-
-```tsx
 export function ProductMediaPlaceholder(props: {
   label: string;
   decorative?: boolean;
   aspect?: "landscape" | "portrait" | "square";
-}): JSX.Element;
+}): ReactElement;
 
-export function FamilyCard(props: { family: FamilyCardModel }): JSX.Element;
+export function FamilyCard(props: { family: FamilyCardModel }): ReactElement;
 
 export function ProductPreviewCard(props: {
   product: ProductPreviewModel;
-}): JSX.Element;
+}): ReactElement;
 ```
 
-Required markup rules:
+Implementation rules:
 
-- Family and product collections are list items supplied by the parent section; the card itself is an `<article>` with one `<Link>` target.
+- `SectionHeading` selects `h2` or `h3` from the `level` prop.
+- Family and product cards render one linked `<article>` with no nested interaction.
 - `FamilyCard` uses `familyHref(family.slug)`.
 - `ProductPreviewCard` uses `productHref(product)`.
-- Product code renders in `<span className="product-code">` and remains selectable.
-- The cards contain no nested buttons or links.
-- Optional descriptions are omitted cleanly.
-- Media placeholder uses `role="img" aria-label={label}` when informative and `aria-hidden="true"` when decorative.
+- Product code renders in `<span className="product-code">`.
+- Optional descriptions disappear cleanly.
+- Informative media uses `role="img" aria-label={label}`.
+- Decorative media uses `aria-hidden="true"` and no role.
 
-- [ ] **Step 5: Implement `ProcurementPanel`**
-
-Use this signature:
+- [ ] **Step 4: Implement `ProcurementPanel`**
 
 ```tsx
 import type { Route } from "next";
+import type { ReactElement } from "react";
 
-interface ProcurementPanelProps<TPrimary extends string, TSecondary extends string = string> {
+export interface ProcurementPanelProps<
+  TPrimary extends string,
+  TSecondary extends string = TPrimary
+> {
   eyebrow?: string;
   title: string;
   copy: string;
@@ -565,43 +487,31 @@ interface ProcurementPanelProps<TPrimary extends string, TSecondary extends stri
   secondary?: { label: string; href: Route<TSecondary> };
   tone?: "paper" | "dark";
 }
+
+export function ProcurementPanel<
+  TPrimary extends string,
+  TSecondary extends string = TPrimary
+>(props: ProcurementPanelProps<TPrimary, TSecondary>): ReactElement;
 ```
 
-Render exactly one primary `ButtonLink`. Render the secondary action as a subordinate text link, not a second primary button.
+Render exactly one primary `ButtonLink`; render the secondary action as a subordinate `Link`.
 
-- [ ] **Step 6: Export the components and run focused tests**
+- [ ] **Step 5: Export, verify, and commit**
 
-Update `index.ts`:
-
-```ts
-export * from "./family-card";
-export * from "./models";
-export * from "./procurement-panel";
-export * from "./product-media-placeholder";
-export * from "./product-preview-card";
-export * from "./section-heading";
-export * from "./selectors";
-```
-
-Run:
+Update `index.ts` to export every shared component, then run:
 
 ```bash
 pnpm --filter @rosa/web test -- public-catalogue-components.test.tsx
 pnpm --filter @rosa/web typecheck
-```
-
-Expected: component tests PASS; typecheck PASS.
-
-- [ ] **Step 7: Commit reusable catalogue components**
-
-```bash
 git add apps/web/src/features/public-catalogue apps/web/src/test/public-catalogue-components.test.tsx
 git commit -m "feat: add reusable public catalogue components"
 ```
 
+Expected: component tests and typecheck PASS.
+
 ---
 
-### Task 4: Add the F3A page-level styling system and responsive primitives
+### Task 4: Add the F3A page styling system
 
 **Files:**
 - Create: `apps/web/src/styles/public-pages.css`
@@ -609,12 +519,12 @@ git commit -m "feat: add reusable public catalogue components"
 - Create: `apps/web/src/test/public-page-styles.static.test.mjs`
 
 **Interfaces:**
-- Consumes: existing Layer 1 tokens, `.container`, `.section`, `.stack`, `.layout-grid`, `.button`, focus and reduced-motion rules.
-- Produces: classes used by all F3A sections and shared catalogue components.
+- Consumes existing tokens from `tokens.css` and existing layout/UI classes.
+- Produces all F3A page, section, card, media, CTA, and responsive classes.
 
-- [ ] **Step 1: Write failing static style invariants**
+- [ ] **Step 1: Write failing style invariants**
 
-Create `apps/web/src/test/public-page-styles.static.test.mjs`:
+Create `public-page-styles.static.test.mjs`:
 
 ```js
 import test from "node:test";
@@ -624,7 +534,7 @@ import { readFile } from "node:fs/promises";
 const root = new URL("../", import.meta.url);
 const read = (path) => readFile(new URL(path, root), "utf8");
 
-test("F3A stylesheet defines public page, family, product and CTA systems", async () => {
+test("F3A stylesheet defines required systems", async () => {
   const css = await read("styles/public-pages.css");
   for (const selector of [
     ".public-hero",
@@ -649,116 +559,98 @@ test("global CSS imports F3A styles after foundations", async () => {
 });
 ```
 
-- [ ] **Step 2: Run the static test to verify red state**
-
-Run:
+- [ ] **Step 2: Verify red state**
 
 ```bash
 node --test apps/web/src/test/public-page-styles.static.test.mjs
 ```
 
-Expected: FAIL because `public-pages.css` is missing and not imported.
+Expected: FAIL because `public-pages.css` is missing.
 
-- [ ] **Step 3: Create the stylesheet skeleton using existing tokens**
+- [ ] **Step 3: Create token-correct CSS foundations**
 
-Create `public-pages.css` with explicit systems for:
+Use only existing token names:
 
 ```css
 .public-page { min-width: 0; }
 .public-hero { position: relative; overflow: clip; }
-.public-hero__grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(20rem, .95fr); }
-.public-eyebrow { font: var(--text-label); letter-spacing: .08em; text-transform: uppercase; }
-.public-section-heading__copy { max-width: 42rem; color: var(--color-text-muted); }
+.public-hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(20rem, .95fr);
+  gap: var(--space-7);
+  align-items: center;
+}
+.public-eyebrow {
+  color: var(--color-steel);
+  font-family: var(--font-interface);
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.public-section-heading__copy {
+  max-width: 42rem;
+  color: var(--color-steel);
+}
 .family-card,
-.product-preview-card { min-width: 0; border: 1px solid var(--color-border); background: var(--color-paper); }
-.product-media-placeholder { display: grid; place-items: center; overflow: hidden; background: var(--color-mist); }
-.procurement-panel { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; }
+.product-preview-card {
+  min-width: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-surface);
+  background: var(--color-paper);
+}
+.product-media-placeholder {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: var(--color-mist);
+}
+.procurement-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-6);
+  align-items: end;
+}
 .products-discovery-shell { border-block: 1px solid var(--color-border); }
 ```
 
-Use only token-backed spacing, colors, type, and radii. Where a missing token is genuinely required, add one reusable token to `tokens.css` rather than hardcoding the same value repeatedly.
+Add explicit `:focus-within` styles at least as visible as hover. Do not add heavy shadows.
 
-- [ ] **Step 4: Add robust responsive behavior**
+- [ ] **Step 4: Add responsive rules**
 
-At `max-width: 900px`:
+At `max-width: 900px`, collapse fragile editorial splits and use stable two-column family/product grids. At `max-width: 640px`, use one content column and stack CTA actions. Add reduced-motion overrides for all card/media transforms.
 
-- Collapse hero/editorial splits to one column.
-- Change five-family editorial layouts into stable two-column grids.
-- Keep CTA text and actions in one readable flow.
+- [ ] **Step 5: Import, verify, and commit**
 
-At `max-width: 640px`:
-
-- Use a single-column hero and editorial splits.
-- Use one family/product column unless tested minimum width permits two.
-- Stack CTA actions.
-- Reduce nonessential media height without changing aspect-ratio contracts.
-
-Add:
-
-```css
-@media (prefers-reduced-motion: reduce) {
-  .family-card,
-  .product-preview-card,
-  .product-media-placeholder__marker {
-    transition: none;
-    transform: none;
-  }
-}
-```
-
-Every interactive card must use `:focus-within` styling at least as visible as hover. Do not use hover-only disclosure.
-
-- [ ] **Step 5: Import the stylesheet last**
-
-Append to `apps/web/src/app/globals.css` after the existing foundation imports:
+Append after existing imports in `globals.css`:
 
 ```css
 @import "../styles/public-pages.css";
 ```
-
-- [ ] **Step 6: Run style and foundation regression tests**
 
 Run:
 
 ```bash
 node --test apps/web/src/test/public-page-styles.static.test.mjs
 pnpm --filter @rosa/web test:foundation
-```
-
-Expected: all style invariants PASS; all existing foundation tests PASS.
-
-- [ ] **Step 7: Commit the F3A styling foundation**
-
-```bash
 git add apps/web/src/styles/public-pages.css apps/web/src/app/globals.css apps/web/src/test/public-page-styles.static.test.mjs
 git commit -m "feat: add responsive public page styling system"
 ```
 
+Expected: style invariants and Layer 1 foundation tests PASS.
+
 ---
 
-### Task 5: Compose the complete static homepage
+### Task 5: Compose the static homepage
 
 **Files:**
-- Create: `apps/web/src/features/homepage/homepage.data.ts`
-- Create: `apps/web/src/features/homepage/homepage.tsx`
-- Create: `apps/web/src/features/homepage/sections/home-hero.tsx`
-- Create: `apps/web/src/features/homepage/sections/family-discovery.tsx`
-- Create: `apps/web/src/features/homepage/sections/featured-instruments.tsx`
-- Create: `apps/web/src/features/homepage/sections/procurement-support.tsx`
-- Create: `apps/web/src/features/homepage/sections/catalogue-access.tsx`
-- Create: `apps/web/src/features/homepage/sections/quotation-cta.tsx`
+- Create all files under `apps/web/src/features/homepage/` listed in the file map.
 - Create: `apps/web/src/test/public-page-composition.test.tsx`
 
 **Interfaces:**
-- Consumes: `selectFamilyCards`, `selectFeaturedProducts`, shared public-catalogue components, Layer 1 layout primitives.
-- Produces:
-  - `HOME_PAGE_MODEL`
-  - `Homepage`
-  - six isolated homepage sections.
+- Produces `HOME_PAGE_MODEL`, `Homepage`, and six focused sections.
 
-- [ ] **Step 1: Write failing homepage hierarchy and prohibited-content tests**
-
-Create `public-page-composition.test.tsx`:
+- [ ] **Step 1: Write failing homepage composition tests**
 
 ```tsx
 import { renderToStaticMarkup } from "react-dom/server";
@@ -766,7 +658,7 @@ import { describe, expect, it } from "vitest";
 import { Homepage } from "@/features/homepage/homepage";
 
 describe("Rosa homepage composition", () => {
-  it("renders one main, one h1 and all six approved homepage sections", () => {
+  it("renders one main, one h1 and all approved sections", () => {
     const html = renderToStaticMarkup(<Homepage />);
     expect((html.match(/<main/g) || [])).toHaveLength(1);
     expect((html.match(/<h1/g) || [])).toHaveLength(1);
@@ -780,7 +672,7 @@ describe("Rosa homepage composition", () => {
     ]) expect(html).toContain(`data-section="${marker}"`);
   });
 
-  it("shows all five families and no prohibited commerce or trust claims", () => {
+  it("shows five families without prohibited claims or commerce", () => {
     const html = renderToStaticMarkup(<Homepage />);
     for (const family of ["Knives", "Scissors", "Punches", "Chisels", "Cutters"]) {
       expect(html).toContain(family);
@@ -790,19 +682,15 @@ describe("Rosa homepage composition", () => {
 });
 ```
 
-- [ ] **Step 2: Run the focused test to verify red state**
-
-Run:
+Run and expect red:
 
 ```bash
 pnpm --filter @rosa/web test -- public-page-composition.test.tsx
 ```
 
-Expected: FAIL because `Homepage` does not exist.
+- [ ] **Step 2: Define safe homepage data**
 
-- [ ] **Step 3: Define the safe homepage content model**
-
-Create `homepage.data.ts` with exact safe copy and deterministic data:
+Create `homepage.data.ts`:
 
 ```ts
 import { selectFamilyCards, selectFeaturedProducts } from "@/features/public-catalogue";
@@ -838,11 +726,9 @@ export const HOME_PAGE_MODEL = {
 } as const;
 ```
 
-Do not add unsupported claims while adjusting line length to match Figma.
+Copy may be tightened for Figma line length, but its meaning and claim safety must remain unchanged.
 
-- [ ] **Step 4: Implement each homepage section as a focused component**
-
-Required composition:
+- [ ] **Step 3: Implement the six sections and page entry**
 
 ```tsx
 export function Homepage() {
@@ -859,54 +745,38 @@ export function Homepage() {
 }
 ```
 
-Section rules:
+Rules:
 
-- `HomeHero`: `Section tone="warm"`, `Container size="wide"`, one `<h1>`, two actions, product-led placeholder composition.
-- `FamilyDiscovery`: semantic `<ul>` containing five `<li>` family cards; no carousel.
-- `FeaturedInstruments`: semantic product list; limit to fixture count; explicitly label as representative instruments rather than full catalogue.
-- `ProcurementSupport`: editorial split with text and a restrained three-step textual sequence, not icon cards.
-- `CatalogueAccess`: one catalogue navigation action; no fake PDF metadata.
-- `QuotationCta`: dark or high-contrast section only if it matches the Figma hierarchy; one primary and one subordinate action.
+- Hero uses one `<h1>`, two actions, and a restrained product-led placeholder composition.
+- Family discovery uses a semantic `<ul>` with all five families; no carousel.
+- Featured instruments explicitly says the products are representative references, not the full catalogue.
+- Procurement support uses an editorial split and textual process, not generic icon cards.
+- Catalogue access links to `/catalogues` without fake PDF metadata.
+- Final CTA uses one primary action and one subordinate contact link.
 
-- [ ] **Step 5: Run homepage tests and inspect static HTML**
-
-Run:
+- [ ] **Step 4: Verify and commit**
 
 ```bash
 pnpm --filter @rosa/web test -- public-page-composition.test.tsx
 pnpm --filter @rosa/web typecheck
-```
-
-Expected: homepage tests PASS; typecheck PASS.
-
-- [ ] **Step 6: Commit the homepage composition**
-
-```bash
 git add apps/web/src/features/homepage apps/web/src/test/public-page-composition.test.tsx
 git commit -m "feat: compose Rosa public homepage"
 ```
 
+Expected: homepage tests and typecheck PASS.
+
 ---
 
-### Task 6: Compose the complete static products overview
+### Task 6: Compose the static products overview
 
 **Files:**
-- Create: `apps/web/src/features/products/products.data.ts`
-- Create: `apps/web/src/features/products/products-overview.tsx`
-- Create: `apps/web/src/features/products/sections/products-hero.tsx`
-- Create: `apps/web/src/features/products/sections/family-index.tsx`
-- Create: `apps/web/src/features/products/sections/discovery-toolbar-shell.tsx`
-- Create: `apps/web/src/features/products/sections/product-preview-grid.tsx`
-- Create: `apps/web/src/features/products/sections/products-procurement-cta.tsx`
+- Create all files under `apps/web/src/features/products/` listed in the file map.
 - Modify: `apps/web/src/test/public-page-composition.test.tsx`
 
 **Interfaces:**
-- Consumes: selectors, shared catalogue components, layout primitives.
-- Produces: `PRODUCTS_PAGE_MODEL`, `ProductsOverview`, five isolated products sections.
+- Produces `PRODUCTS_PAGE_MODEL`, `ProductsOverview`, and five focused sections.
 
-- [ ] **Step 1: Extend the composition test with products-page red cases**
-
-Append:
+- [ ] **Step 1: Add failing products-page tests**
 
 ```tsx
 import { ProductsOverview } from "@/features/products/products-overview";
@@ -925,7 +795,7 @@ describe("Rosa products overview composition", () => {
     ]) expect(html).toContain(`data-section="${marker}"`);
   });
 
-  it("does not present the static discovery shell as a working form", () => {
+  it("uses search navigation rather than a deceptive static form", () => {
     const html = renderToStaticMarkup(<ProductsOverview />);
     expect(html).not.toContain("<form");
     expect(html).toContain("/search");
@@ -933,17 +803,13 @@ describe("Rosa products overview composition", () => {
 });
 ```
 
-- [ ] **Step 2: Run the focused test to verify red state**
-
-Run:
+Run and expect only products cases to fail:
 
 ```bash
 pnpm --filter @rosa/web test -- public-page-composition.test.tsx
 ```
 
-Expected: homepage cases PASS and products cases FAIL because `ProductsOverview` is missing.
-
-- [ ] **Step 3: Define safe products-page content**
+- [ ] **Step 2: Define safe products-page data**
 
 Create `products.data.ts`:
 
@@ -974,9 +840,7 @@ export const PRODUCTS_PAGE_MODEL = {
 } as const;
 ```
 
-- [ ] **Step 4: Implement the products sections**
-
-Required composition:
+- [ ] **Step 3: Implement the five products sections and entry**
 
 ```tsx
 export function ProductsOverview() {
@@ -994,33 +858,26 @@ export function ProductsOverview() {
 
 Rules:
 
-- Products hero is visually smaller than homepage hero.
-- Family index displays all five families with deterministic order.
-- Discovery shell is not a fake form. It is a clearly labelled static navigation panel linking to `/search`.
-- Representative products are labelled as examples and cannot imply the complete catalogue contains only two products.
-- Final CTA copy differs from homepage quotation CTA.
+- Products hero is smaller than the homepage hero.
+- All five families remain visible in deterministic order.
+- Discovery shell is a navigation panel to `/search`, never a fake form.
+- Product previews are labelled as representative references.
+- Final CTA copy differs from the homepage CTA.
 
-- [ ] **Step 5: Run products tests and typecheck**
-
-Run:
+- [ ] **Step 4: Verify and commit**
 
 ```bash
 pnpm --filter @rosa/web test -- public-page-composition.test.tsx
 pnpm --filter @rosa/web typecheck
-```
-
-Expected: all public page composition tests PASS; typecheck PASS.
-
-- [ ] **Step 6: Commit products overview**
-
-```bash
 git add apps/web/src/features/products apps/web/src/test/public-page-composition.test.tsx
 git commit -m "feat: compose products overview page"
 ```
 
+Expected: all composition tests and typecheck PASS.
+
 ---
 
-### Task 7: Integrate feature pages into the existing catch-all route without breaking other routes
+### Task 7: Route the upgraded pages and preserve all other routes
 
 **Files:**
 - Create: `apps/web/src/features/public-routing/resolve-public-page.tsx`
@@ -1028,12 +885,9 @@ git commit -m "feat: compose products overview page"
 - Create: `apps/web/src/test/public-route-dispatch.test.ts`
 
 **Interfaces:**
-- Consumes: `Homepage`, `ProductsOverview`, existing `RoutePlaceholder`.
-- Produces: `resolvePublicPage(key: string, path: string): ReactNode`.
+- Produces `resolvePublicPageKind` and `resolvePublicPage`.
 
-- [ ] **Step 1: Write the failing route-dispatch test**
-
-Create `public-route-dispatch.test.ts`:
+- [ ] **Step 1: Write the failing dispatch test**
 
 ```ts
 import { describe, expect, it } from "vitest";
@@ -1051,19 +905,13 @@ describe("public route dispatch", () => {
 });
 ```
 
-- [ ] **Step 2: Run the focused test to verify red state**
-
-Run:
+Run and expect red:
 
 ```bash
 pnpm --filter @rosa/web test -- public-route-dispatch.test.ts
 ```
 
-Expected: FAIL because the resolver does not exist.
-
-- [ ] **Step 3: Implement explicit route-kind resolution**
-
-Create `resolve-public-page.tsx`:
+- [ ] **Step 2: Implement explicit page resolution**
 
 ```tsx
 import type { ReactNode } from "react";
@@ -1085,78 +933,61 @@ export function resolvePublicPage(args: {
   title: string;
 }): ReactNode {
   switch (resolvePublicPageKind(args.key)) {
-    case "homepage":
-      return <Homepage />;
-    case "products":
-      return <ProductsOverview />;
+    case "homepage": return <Homepage />;
+    case "products": return <ProductsOverview />;
     default:
       return <RoutePlaceholder eyebrow="Public route" title={args.title} path={args.path} />;
   }
 }
 ```
 
-- [ ] **Step 4: Reduce the route file to parameter parsing and delegation**
+- [ ] **Step 3: Reduce the catch-all page to parsing and delegation**
 
-Modify `page.tsx`:
+Keep the existing `routeTitles` map. Replace direct placeholder rendering with:
 
 ```tsx
-import { resolvePublicPage } from "@/features/public-routing/resolve-public-page";
-
-const routeTitles: Record<string, string> = {
-  "": "Homepage",
-  products: "Products overview",
-  catalogues: "Technical catalogues",
-  about: "About Rosa",
-  "procurement-support": "Procurement support",
-  contact: "Contact Rosa",
-  search: "Search the catalogue",
-  inquiry: "Instrument inquiry",
-  "request-quotation": "Request a quotation",
-  privacy: "Privacy Policy",
-  terms: "Terms"
-};
-
-export default async function Page({ params }: { params: Promise<{ segments?: string[] }> }) {
-  const { segments = [] } = await params;
-  const key = segments.join("/");
-  const path = `/${key}`;
-  const title = routeTitles[key] ?? (segments.at(-1)?.replaceAll("-", " ") || "Homepage");
-  return resolvePublicPage({ key, path, title });
-}
+const key = segments.join("/");
+const path = `/${key}`;
+const title = routeTitles[key] ?? (segments.at(-1)?.replaceAll("-", " ") || "Homepage");
+return resolvePublicPage({ key, path, title });
 ```
 
-- [ ] **Step 5: Run dispatch, route inventory, typecheck and build**
-
-Run:
+- [ ] **Step 4: Verify build safety and commit**
 
 ```bash
 pnpm --filter @rosa/web test -- public-route-dispatch.test.ts route-inventory.test.ts
 pnpm --filter @rosa/web typecheck
 pnpm --filter @rosa/web build
-```
-
-Expected: dispatch and inventory tests PASS; typecheck PASS; production build PASS.
-
-- [ ] **Step 6: Commit route integration**
-
-```bash
 git add apps/web/src/app apps/web/src/features/public-routing apps/web/src/test/public-route-dispatch.test.ts
 git commit -m "feat: route homepage and products compositions"
 ```
 
+Expected: dispatch and route inventory tests, typecheck, and production build PASS.
+
 ---
 
-### Task 8: Add responsive browser verification for the two upgraded routes
+### Task 8: Add deterministic desktop, tablet, and mobile browser verification
 
 **Files:**
+- Modify: `apps/web/playwright.config.ts`
 - Create: `apps/web/tests/e2e/f3a-public-pages.spec.ts`
-- Modify: `apps/web/playwright.config.ts` only if a tablet project is added.
+- Create: Playwright snapshots after layout stabilizes.
 
 **Interfaces:**
-- Consumes: running Next dev server, homepage and products routes.
-- Produces: browser-level evidence for landmarks, overflow, keyboard focus, mobile hierarchy, and screenshots.
+- Produces browser evidence for semantics, overflow, focus, family links, search-shell honesty, and visual snapshots.
 
-- [ ] **Step 1: Write the browser checks**
+- [ ] **Step 1: Add the tablet project permanently**
+
+Add between desktop and mobile:
+
+```ts
+{
+  name: "tablet",
+  use: { viewport: { width: 768, height: 1024 } }
+}
+```
+
+- [ ] **Step 2: Write browser checks**
 
 Create `f3a-public-pages.spec.ts`:
 
@@ -1169,7 +1000,6 @@ for (const route of ["/", "/products"] as const) {
     await expect(page.locator("main")).toHaveCount(1);
     await expect(page.locator("h1")).toHaveCount(1);
     await expect(page.locator("body")).not.toContainText(/price|in stock|rating|checkout/i);
-
     const overflow = await page.evaluate(() =>
       document.documentElement.scrollWidth > document.documentElement.clientWidth
     );
@@ -1179,8 +1009,7 @@ for (const route of ["/", "/products"] as const) {
   test(`${route} exposes visible keyboard focus`, async ({ page }) => {
     await page.goto(route);
     await page.keyboard.press("Tab");
-    const active = page.locator(":focus");
-    await expect(active).toBeVisible();
+    await expect(page.locator(":focus")).toBeVisible();
   });
 }
 
@@ -1191,84 +1020,56 @@ test("homepage exposes all five family links", async ({ page }) => {
   }
 });
 
-test("products discovery shell links to search without pretending to be a form", async ({ page }) => {
+test("products discovery shell links to search without a fake form", async ({ page }) => {
   await page.goto("/products");
   await expect(page.locator("form")).toHaveCount(0);
   await expect(page.locator('a[href="/search"]')).toBeVisible();
 });
 ```
 
-- [ ] **Step 2: Install Playwright Chromium when it is not present**
-
-Run once per machine:
+- [ ] **Step 3: Install Chromium once when missing**
 
 ```bash
 pnpm --filter @rosa/web exec playwright install chromium
 ```
 
-Expected: Chromium is available under the Playwright cache. Do not use `--with-deps` unless the browser later reports a missing Linux system library.
+Do not use `--with-deps` unless Chromium reports a missing Linux system library.
 
-- [ ] **Step 3: Run the F3A browser suite at desktop and mobile**
-
-Run:
+- [ ] **Step 4: Run all three projects**
 
 ```bash
 pnpm --filter @rosa/web test:e2e -- f3a-public-pages.spec.ts
 ```
 
-Expected: all F3A browser checks PASS in the existing desktop and mobile projects.
+Expected: desktop, tablet, and mobile checks PASS.
 
-- [ ] **Step 4: Add explicit tablet evidence**
+- [ ] **Step 5: Add full-page screenshot assertions**
 
-Run the same suite with a one-off viewport before changing project configuration:
-
-```bash
-pnpm --filter @rosa/web exec playwright test f3a-public-pages.spec.ts --project=desktop --headed
-```
-
-During the visual review, set the browser viewport to 768 px using Playwright inspector or add a temporary local project. If repeatable tablet defects are found, permanently add:
-
-```ts
-{ name: "tablet", use: { viewport: { width: 768, height: 1024 } } }
-```
-
-Only commit the tablet project when it provides lasting regression value; do not add configuration solely for one screenshot.
-
-- [ ] **Step 5: Capture comparison screenshots**
-
-Add screenshot assertions after layout stabilizes:
+After layout stabilizes, add one screenshot per route:
 
 ```ts
 await expect(page).toHaveScreenshot("homepage.png", { fullPage: true });
 await expect(page).toHaveScreenshot("products-overview.png", { fullPage: true });
 ```
 
-Store snapshots under Playwright’s generated snapshot directory. Review differences against the approved Figma desktop and mobile frames before accepting them.
+Because Playwright stores snapshots per project, this creates independent desktop, tablet, and mobile baselines.
 
-- [ ] **Step 6: Commit browser verification**
+- [ ] **Step 6: Commit browser evidence**
 
 ```bash
-git add apps/web/tests/e2e/f3a-public-pages.spec.ts apps/web/tests/e2e/f3a-public-pages.spec.ts-snapshots apps/web/playwright.config.ts
+git add apps/web/playwright.config.ts apps/web/tests/e2e/f3a-public-pages.spec.ts apps/web/tests/e2e/f3a-public-pages.spec.ts-snapshots
 git commit -m "test: verify F3A public pages across breakpoints"
 ```
 
-If no Playwright config or snapshot files changed, omit them from `git add`.
-
 ---
 
-### Task 9: Perform the consolidated F3A quality gate and document completion
+### Task 9: Run the consolidated F3A gate and document completion
 
 **Files:**
-- Modify: `README.md` on `main` after implementation branch verification.
 - Create: `docs/superpowers/completions/2026-08-01-rosa-medical-f3a-home-products.md`
+- Modify: `README.md` on `main` after branch verification.
 
-**Interfaces:**
-- Consumes: all preceding tasks.
-- Produces: one verified F3A milestone commit, completion record, and an explicit handoff into F3B.
-
-- [ ] **Step 1: Run the full local quality gate once**
-
-Run from repository root:
+- [ ] **Step 1: Run the complete local gate once**
 
 ```bash
 pnpm install --frozen-lockfile
@@ -1290,116 +1091,73 @@ Expected:
 - Typecheck passes for contracts and web.
 - Unit/static suites pass.
 - Next production build passes.
-- Route smoke and F3A Playwright suites pass at desktop/mobile.
+- Route smoke and F3A Playwright suites pass in desktop, tablet, and mobile projects.
 
-If Playwright remains intentionally postponed by Ahmad, record it as **not run**, not passed. Do not claim browser verification without evidence.
+If Ahmad postpones Playwright, record it as **not run**, never passed.
 
-- [ ] **Step 2: Perform a manual Figma fidelity review**
+- [ ] **Step 2: Perform Figma fidelity review at 1440, 768, and 390 px**
 
-Review `/` and `/products` at 1440, 768, and 390 px against the approved Figma frames. Record the result for each category:
+Record evidence for section order, typography hierarchy, container alignment, vertical rhythm, grids, CTA hierarchy, header/footer continuity, placeholder stability, overflow, focus order, and claim safety. Hierarchy, business-meaning, interaction-clarity, or responsive-usability mismatches are blocking.
 
-- Section order
-- Headline hierarchy
-- Container width and alignment
-- Vertical rhythm
-- Family and product grid behavior
-- CTA hierarchy
-- Header/footer continuity
-- Placeholder-media stability
-- No horizontal overflow
-- Focus and keyboard order
-- No unsupported claims or commerce language
-
-Any mismatch that changes hierarchy, business meaning, interaction clarity, or responsive usability is blocking. Minor one-pixel anti-aliasing differences are not blocking.
-
-- [ ] **Step 3: Create the completion record**
-
-Create `docs/superpowers/completions/2026-08-01-rosa-medical-f3a-home-products.md` with:
+- [ ] **Step 3: Create the completion record with actual evidence**
 
 ```md
 # Rosa Medical F3A Completion
 
 - Branch: `frontend/f3a-home-products`
-- Final commit: `<actual final commit SHA>`
+- Final commit: actual SHA
 - Routes completed: `/`, `/products`
-- Reusable components: `<actual component list>`
-- Tests run: `<exact commands and results>`
-- Tests not run: `<exact omitted commands and reason, or None>`
-- Figma review: `<desktop/tablet/mobile evidence>`
+- Reusable components: actual component list
+- Tests run: exact commands and results
+- Tests not run: exact omissions and reason, or None
+- Figma review: desktop, tablet, and mobile evidence
 - Known limitations: neutral product media; remaining routes intentionally retain structural placeholders
 - Contract changes: None
 - Next milestone: F3B Family Listing and Product Detail
 ```
 
-Replace every angle-bracket field with actual evidence before committing. The completion file must contain no placeholders.
+The committed file must contain actual values and no template markers.
 
-- [ ] **Step 4: Update the shared README coordination channel**
+- [ ] **Step 4: Update README coordination without touching the backend-owned section**
 
-On `main`, update the frontend lane and append a dated message containing:
+Record branch, commit, routes completed, reusable components, exact verification, omitted checks, unchanged contract, and F3B as next work.
 
-- Branch and final commit
-- Homepage/products completion
-- Reusable components added
-- Exact verification results
-- Contract unchanged
-- Remaining blocker or omitted tests
-- Next phase F3B
-
-Do not alter the backend AI’s owned section.
-
-- [ ] **Step 5: Commit the completion record**
-
-On the implementation branch:
+- [ ] **Step 5: Commit and compare branch scope**
 
 ```bash
 git add docs/superpowers/completions/2026-08-01-rosa-medical-f3a-home-products.md
 git commit -m "docs: record F3A public page completion"
-```
-
-Commit the README coordination update separately on `main` with:
-
-```bash
-git commit -m "docs: record F3A frontend progress"
-```
-
-- [ ] **Step 6: Compare the implementation branch against its design base**
-
-Run:
-
-```bash
 git diff --check frontend/f3a-home-products-design...frontend/f3a-home-products
 git diff --stat frontend/f3a-home-products-design...frontend/f3a-home-products
 git log --oneline frontend/f3a-home-products-design..frontend/f3a-home-products
 ```
 
-Expected: no whitespace errors; changes are limited to F3A frontend files, tests, and completion documentation; commits correspond to the task boundaries above.
+Expected: no whitespace errors; scope is limited to F3A frontend files, tests, and completion documentation.
 
 ---
 
 ## F3A Acceptance Criteria
 
-F3A is complete only when all applicable conditions are true:
+F3A is complete only when:
 
 - `/` is a complete static Figma-led homepage.
 - `/products` is a complete static Figma-led products overview.
-- All other routes still resolve through their prior structural placeholders.
-- The five approved families appear in the fixed sequence.
-- Representative products use shared typed fixtures and display product codes.
+- All other routes still resolve through existing structural placeholders.
+- Five approved families appear in fixed order.
+- Representative products use shared typed fixtures and show product codes.
 - No commerce UI or unsupported trust/manufacturing claims appear.
 - Shared cards and panels are reusable by F3B.
 - No component fetches data directly.
 - Desktop 1440, tablet 768, and mobile 390 layouts have no horizontal overflow.
 - Each upgraded page has exactly one `<main>` and one `<h1>`.
-- Keyboard focus is visible and follows the visual order.
+- Keyboard focus is visible and follows visual order.
 - Neutral media placeholders preserve stable aspect ratios.
 - Lint, typecheck, unit/static tests, and production build pass.
-- Playwright evidence is either passed or explicitly recorded as postponed; it is never silently assumed.
+- Playwright evidence is passed or explicitly recorded as postponed.
 - Contract 0.1 remains unchanged.
 - Completion documentation names F3B as the next milestone.
 
-## Deferred Work After F3A
-
-The following remains explicitly scheduled and must not be forgotten:
+## Deferred Sequence After F3A
 
 1. F3B — Family Listing and Product Detail
 2. F3C — Inquiry Basket, Request Quotation, and Catalogues
