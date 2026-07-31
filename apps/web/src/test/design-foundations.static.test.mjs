@@ -49,6 +49,13 @@ test('base UI primitives cover controls, surfaces, status and feedback', async (
   assert.match(files.alert, /export function Alert/);
 });
 
+test('button links preserve Next typed-route literal inference', async () => {
+  const button = await read('components/ui/button.tsx');
+  assert.match(button, /ButtonLinkProps<T extends string>/);
+  assert.match(button, /href: Route<T> \| URL/);
+  assert.match(button, /ButtonLink<T extends string>/);
+});
+
 test('wide and reading containers select their own maximum width', async () => {
   const css = await read('styles/layout.css');
   assert.match(css, /\.container \{ --container-size: var\(--container-standard\)/);

@@ -14,13 +14,13 @@ export function Button({ variant = "primary", size = "standard", className = "",
   return <button className={`button button--${variant} button--${size} ${className}`.trim()} type={type} {...props} />;
 }
 
-export interface ButtonLinkProps extends PropsWithChildren {
-  href: Route;
+export type ButtonLinkProps<T extends string> = PropsWithChildren<{
+  href: Route<T> | URL;
   variant?: ButtonVariant;
   size?: ButtonSize;
   className?: string;
-}
+}>;
 
-export function ButtonLink({ href, variant = "primary", size = "standard", className = "", children }: ButtonLinkProps) {
+export function ButtonLink<T extends string>({ href, variant = "primary", size = "standard", className = "", children }: ButtonLinkProps<T>) {
   return <Link className={`button button--${variant} button--${size} ${className}`.trim()} href={href}>{children}</Link>;
 }
