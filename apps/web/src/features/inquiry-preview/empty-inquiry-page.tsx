@@ -12,8 +12,8 @@ export function EmptyInquiryPage(): ReactElement {
             <p className="empty-inquiry-page__eyebrow">Empty inquiry</p>
             <h1>Your inquiry list is empty.</h1>
             <p>
-              Browse an instrument family and select the products you want Rosa
-              to review for quotation once inquiry behavior is activated.
+              Browse an instrument family and review the products you want Rosa
+              to consider for quotation.
             </p>
             <div className="empty-inquiry-page__actions">
               <ButtonLink href="/products">Browse products</ButtonLink>
