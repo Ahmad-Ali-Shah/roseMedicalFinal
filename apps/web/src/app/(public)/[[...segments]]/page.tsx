@@ -1,4 +1,8 @@
-import { resolvePublicPage } from "@/features/public-routing/resolve-public-page";
+import { notFound } from "next/navigation";
+import {
+  resolvePublicPage,
+  resolvePublicPageKind
+} from "@/features/public-routing/resolve-public-page";
 
 const routeTitles: Record<string, string> = {
   "": "Homepage",
@@ -20,5 +24,8 @@ export default async function Page({ params }: { params: Promise<{ segments?: st
   const path = `/${key}`;
   const title = routeTitles[key] ?? (segments.at(-1)?.replaceAll("-", " ") || "Homepage");
 
-  return resolvePublicPage({ key, path, title });
+  if (resolvePublicPageKind(key) === "not-found") notFound();
+  const page = resolvePublicPage({ key, path, title });
+  if (!page) notFound();
+  return page;
 }

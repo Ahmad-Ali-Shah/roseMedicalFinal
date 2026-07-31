@@ -6,7 +6,12 @@ describe("public route dispatch", () => {
     ["", "homepage"],
     ["products", "products"],
     ["catalogues", "placeholder"],
-    ["products/knives", "placeholder"]
+    ["products/knives", "family"],
+    ["products/scissors", "family"],
+    ["products/knives/scalpel-handle-no-3", "product"],
+    ["products/scissors/scalpel-handle-no-3", "not-found"],
+    ["products/unknown", "not-found"],
+    ["products/knives/scalpel-handle-no-3/extra", "not-found"]
   ] as const)("maps %s to %s", (key, expected) => {
     expect(resolvePublicPageKind(key)).toBe(expected);
   });
