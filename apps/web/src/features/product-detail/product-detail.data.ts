@@ -16,20 +16,21 @@ export function createProductDetailData(
       : ""
   }`;
 
-  const specifications = [
+  const specifications: ProductSpecificationRow[] = [
     ["Product code", product.code],
-    ["Instrument family", family.name],
-    product.sizes.length
-      ? ["Available size", product.sizes.join(", ")]
-      : null,
-    product.variants.length
-      ? ["Listed options", product.variants.join(", ")]
-      : null,
-    product.directions.length
-      ? ["Direction / shape", product.directions.join(", ")]
-      : null,
-    ["Catalogue reference", catalogueReference]
-  ].filter((row): row is ProductSpecificationRow => Boolean(row));
+    ["Instrument family", family.name]
+  ];
+
+  if (product.sizes.length) {
+    specifications.push(["Available size", product.sizes.join(", ")]);
+  }
+  if (product.variants.length) {
+    specifications.push(["Listed options", product.variants.join(", ")]);
+  }
+  if (product.directions.length) {
+    specifications.push(["Direction / shape", product.directions.join(", ")]);
+  }
+  specifications.push(["Catalogue reference", catalogueReference]);
 
   return {
     family,
