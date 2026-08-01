@@ -17,16 +17,17 @@ describe("F3E-B product selectors", () => {
 
   it("preserves source identity and uses real route helpers", () => {
     const source = CATALOGUE_PRODUCTS[0];
-    const row = getAdminProductRows()[0];
-    expect(row).toMatchObject({
+    const row = getAdminProductRows().at(0);
+    expect(row).toBeDefined();
+    expect(row!).toMatchObject({
       id: source.id,
       name: source.name,
       code: source.code,
       familySlug: source.familySlug,
       mediaLabel: source.mediaLabel
     });
-    expect(row.publicHref).toBe(`/products/${source.familySlug}/${source.slug}`);
-    expect(row.adminHref).toBe(`/admin/products/${source.familySlug}/${source.slug}`);
+    expect(row!.publicHref).toBe(`/products/${source.familySlug}/${source.slug}`);
+    expect(row!.adminHref).toBe(`/admin/products/${source.familySlug}/${source.slug}`);
   });
 
   it("resolves every known editor and rejects mismatched families", () => {
@@ -41,11 +42,17 @@ describe("F3E-B product selectors", () => {
     const source = CATALOGUE_PRODUCTS[0];
     expect(getDocumentedOptionSummary(source).length).toBeGreaterThan(0);
     expect(getDocumentedOptionSummary({
-      ...source,
+      id: source.id,
+      familySlug: source.familySlug,
+      slug: source.slug,
+      name: source.name,
+      code: source.code,
+      description: source.description,
       sizes: [],
       variants: [],
       directions: [],
-      primaryOption: undefined
+      catalogueReference: source.catalogueReference,
+      mediaLabel: source.mediaLabel
     })).toEqual(["Not documented in source"]);
   });
 
