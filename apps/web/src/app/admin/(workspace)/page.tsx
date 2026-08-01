@@ -1,2 +1,5 @@
-import { RoutePlaceholder } from "@/components/layout/route-placeholder";
-export default function Page() { return <RoutePlaceholder eyebrow="Admin route" title="Admin overview" path="/admin" />; }
+import { AdminDashboardPage } from "@/features/admin-dashboard";
+
+export default function Page() {
+  return <AdminDashboardPage />;
+}

@@ -1,23 +1,13 @@
-import { RoutePlaceholder } from "@/components/layout/route-placeholder";
-
-const adminTitles: Record<string, string> = {
-  products: "Manage products",
-  families: "Manage families",
-  catalogues: "Manage catalogues",
-  media: "Media library",
-  inquiries: "Quotation inquiries",
-  messages: "General messages",
-  content: "Website content",
-  "contact-details": "Contact details",
-  publishing: "Publishing centre",
-  revisions: "Revision history",
-  settings: "Admin settings"
-};
+import { notFound } from "next/navigation";
+import { getAdminNavigationItem } from "@/features/admin-navigation";
+import { AdminDeferredRoutePage } from "@/features/admin-routing";
 
 export default async function Page({ params }: { params: Promise<{ segments: string[] }> }) {
   const { segments } = await params;
-  const key = segments[0] ?? "overview";
-  const path = `/admin/${segments.join("/")}`;
-  const title = adminTitles[key] ?? key.replaceAll("-", " ");
-  return <RoutePlaceholder eyebrow="Admin route" title={title} path={path} />;
+  const pathname = `/admin/${segments.join("/")}`;
+  const item = getAdminNavigationItem(pathname);
+
+  if (!item || item.key === "dashboard") notFound();
+
+  return <AdminDeferredRoutePage routeKey={item.key} />;
 }
