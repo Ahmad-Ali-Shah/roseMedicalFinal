@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import { AdminInquiriesPage } from "@/features/admin-inquiries";
-import { AdminMessagesPage } from "@/features/admin-messages";
+import { AdminInquiriesPage } from "@/features/admin-inquiries/admin-inquiries-page";
+import { AdminMessagesPage } from "@/features/admin-messages/admin-messages-page";
 import type { AdminOperationsRouteResult } from "./admin-operations-route-model";
 
 export function AdminOperationsRouteView({
