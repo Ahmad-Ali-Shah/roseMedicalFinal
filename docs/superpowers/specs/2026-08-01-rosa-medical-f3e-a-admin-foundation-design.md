@@ -28,7 +28,7 @@ F3E-A is a design and composition preview only. It must never be presented as a 
 - Admin workspace shell
 - Grouped admin navigation
 - Dashboard overview
-- Shared admin headings, sections, statuses, alerts, tables, records, forms and state previews
+- Shared admin headings, sections, statuses, alerts, tables, records, field groups and state previews
 - Responsive desktop, tablet and mobile admin foundations
 - Admin `noindex` metadata
 
@@ -48,7 +48,7 @@ The shell must link to these routes, but their full management compositions belo
 - `/admin/revisions`
 - `/admin/settings`
 
-Deferred routes keep deliberate admin placeholders. They must not expose forms or controls that imply working CRUD, publishing or operational behavior.
+Deferred routes keep deliberate admin placeholders. They must not expose fields or controls that imply working CRUD, publishing or operational behavior.
 
 ## 3. Interaction boundary
 
@@ -82,6 +82,8 @@ F3E-A uses the approved static, interaction-honest approach.
 
 Every inactive control must be either disabled or clearly rendered as a noninteractive preview. No control may look enabled while doing nothing.
 
+The normal Login and Recovery compositions must not use a native HTML `<form>`. They use labelled field groups so Enter cannot trigger a browser-native submission. Future interactive milestones may replace those groups with real forms when submission behavior exists.
+
 ## 4. Owner-access routes
 
 ## 4.1 `/admin/login`
@@ -92,16 +94,17 @@ The page contains:
 2. `OWNER ACCESS` eyebrow
 3. One `h1`: `Sign in to the Rosa workspace.`
 4. Short explanation that access is restricted to the single verified owner account
-5. Read-only, labelled email field
-6. Read-only, labelled password field
-7. Real link to `/admin/recovery`
-8. Disabled `Sign in` button
-9. Visible notice: authentication is not connected in this static preview
-10. Security note that production access requires server-enforced authentication
+5. One labelled owner-access field group
+6. Read-only, labelled email field
+7. Read-only, labelled password field
+8. Real link to `/admin/recovery`
+9. Disabled `Sign in` button
+10. Visible notice: authentication is not connected in this static preview
+11. Security note that production access requires server-enforced authentication
 
 The page must not include:
 
-- Registration
+- Account-creation links or copy
 - Invite-user flow
 - Social login
 - Multiple roles
@@ -121,13 +124,14 @@ The page contains:
 2. `OWNER RECOVERY` eyebrow
 3. One `h1`: `Recover owner access.`
 4. Explanation that recovery is restricted to the verified owner email configured by the backend
-5. Read-only, labelled email field
-6. Disabled `Send recovery link` button
-7. Real link back to `/admin/login`
-8. Visible notice that no email is sent from this static preview
-9. Security guidance that the page must not reveal whether an entered address belongs to the owner
+5. One labelled owner-recovery field group
+6. Read-only, labelled email field
+7. Disabled `Send recovery link` button
+8. Real link back to `/admin/login`
+9. Visible notice that no email is sent from this static preview
+10. Security guidance that the page must not reveal whether an entered address belongs to the owner
 
-The public route must not show:
+The normal route must not show:
 
 - A real owner email
 - A partially masked owner email
@@ -135,7 +139,7 @@ The public route must not show:
 - A countdown
 - A token
 - An expired-link state
-- A reset-password form
+- A reset-password field group
 
 ### Isolated recovery previews
 
@@ -374,7 +378,7 @@ Requirements:
 
 The shared API must not force every future admin collection into the same columns.
 
-### 7.6 Forms
+### 7.6 Field and editor previews
 
 - `AdminFormSection`
 - `AdminFieldPreview`
@@ -384,6 +388,7 @@ The shared API must not force every future admin collection into the same column
 
 Requirements:
 
+- The F3E-A primitives render labelled field groups, not submitting forms
 - Every field has a visible label
 - Preview values are read-only
 - Select previews are disabled
@@ -524,7 +529,7 @@ Target widths:
 - Sidebar and workspace columns
 - Multi-column dashboard where content permits
 - Semantic tables
-- Form field pairs
+- Field pairs
 
 ### Tablet
 
@@ -541,7 +546,7 @@ Target widths:
 - Navigation groups in document flow
 - Long labels use `overflow-wrap: anywhere`
 - No fixed-height content panels
-- Footer or end-of-content remains reachable
+- End-of-content remains reachable
 
 ### Motion and focus
 
@@ -565,7 +570,7 @@ Normal F3E-A routes must never imply:
 - Content was published
 - Inquiry or message numbers are live
 
-Required public-facing admin warnings:
+Required user-visible admin warnings:
 
 - Static preview
 - Authentication not connected
@@ -578,7 +583,8 @@ These warnings may be concise but cannot be hidden in developer-only comments.
 
 - Exactly one `<main>` per route
 - Exactly one `<h1>` per route
-- Labelled form controls
+- Labelled owner-access and editor field groups
+- Labelled input controls
 - Disabled state exposed natively
 - Semantic navigation landmarks
 - `aria-current="page"` for active admin navigation
@@ -597,9 +603,9 @@ These warnings may be concise but cannot be hidden in developer-only comments.
 Tests must prove:
 
 - Login and Recovery each render one `<main>` and one `<h1>`
-- Login and Recovery contain no registration route
+- Login and Recovery contain no native `<form>`
+- Login and Recovery contain no account-creation link or copy such as `Create account`, `Sign up` or `Invite user`
 - Owner email values remain empty or generic
-- Login and Recovery forms cannot submit
 - Sign-in, recovery and sign-out buttons are disabled
 - Dashboard family count equals the family registry length
 - Dashboard product count equals the product registry length
@@ -616,7 +622,8 @@ Tests must prove:
 
 Static tests reject:
 
-- Registration copy or route
+- Account-creation hrefs such as `/admin/register`, `/register` or `/signup`
+- User-visible account-creation copy such as `Create account`, `Sign up` or `Invite user`
 - Hard-coded owner email addresses
 - Default passwords
 - Fake sessions
@@ -627,7 +634,9 @@ Static tests reject:
 - Saved, deleted or published claims on normal routes
 - Numeric inquiry or message metrics
 - Ecommerce terminology
-- Internal phase names in user-visible copy
+- Internal phase names in user-visible application copy
+
+The policy test does not reject internal specifications or security documentation merely for discussing the absence of registration.
 
 ### 15.3 Browser coverage
 
@@ -645,8 +654,8 @@ Browser checks confirm:
 - No horizontal overflow
 - Visible end of content
 - Disabled controls remain disabled
-- No registration link
-- No functional submit
+- No native form on Login or Recovery
+- No account-creation link
 - Mobile navigation is fully visible without a dead toggle
 - Admin routes contain `noindex` metadata
 
@@ -686,7 +695,7 @@ The following is explicitly outside F3E-A:
 - Protected-route redirects
 - Session expiry
 - Working logout
-- Password reset form
+- Password reset fields
 - Search and filtering
 - Pagination
 - CRUD
@@ -711,13 +720,14 @@ F3E-A is source-complete when:
 
 1. Login, Recovery and Dashboard have deliberate static compositions.
 2. Owner-access and workspace layouts each own exactly one main landmark.
-3. The admin shell exposes every approved route without dead navigation toggles.
-4. Dashboard catalogue facts derive from existing source registries.
-5. Operational metrics remain unresolved instead of fabricated.
-6. Shared admin primitives exist for later management screens.
-7. Preview-only states remain unmounted on normal routes.
-8. No authentication, persistence, mutation or publishing behavior is introduced.
-9. Admin metadata is `noindex` and the UI states that this is not security.
-10. Desktop, tablet and mobile rules prevent page-level overflow.
-11. No backend or OpenAPI file changes.
-12. Completion documentation distinguishes source review from runtime verification.
+3. Login and Recovery use labelled field groups rather than submitting forms.
+4. The admin shell exposes every approved route without dead navigation toggles.
+5. Dashboard catalogue facts derive from existing source registries.
+6. Operational metrics remain unresolved instead of fabricated.
+7. Shared admin primitives exist for later management screens.
+8. Preview-only states remain unmounted on normal routes.
+9. No authentication, persistence, mutation or publishing behavior is introduced.
+10. Admin metadata is `noindex` and the UI states that this is not security.
+11. Desktop, tablet and mobile rules prevent page-level overflow.
+12. No backend or OpenAPI file changes.
+13. Completion documentation distinguishes source review from runtime verification.
