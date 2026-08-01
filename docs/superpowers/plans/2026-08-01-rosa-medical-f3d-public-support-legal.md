@@ -84,6 +84,7 @@
 - `apps/web/src/features/contact-preview/contact-information-panel.tsx`
 - `apps/web/src/features/contact-preview/contact-field-preview.tsx`
 - `apps/web/src/features/contact-preview/contact-form-preview.tsx`
+- `apps/web/src/features/contact-preview/contact-focus-preview.tsx`
 - `apps/web/src/features/contact-preview/contact-validation-preview.tsx`
 - `apps/web/src/features/contact-preview/contact-loading-preview.tsx`
 - `apps/web/src/features/contact-preview/contact-failure-preview.tsx`
@@ -99,6 +100,7 @@
 - `apps/web/src/features/search-preview/search-result-preview.tsx`
 - `apps/web/src/features/search-preview/search-typing-preview.tsx`
 - `apps/web/src/features/search-preview/search-results-preview.tsx`
+- `apps/web/src/features/search-preview/search-mobile-results-preview.tsx`
 - `apps/web/src/features/search-preview/search-loading-preview.tsx`
 - `apps/web/src/features/search-preview/search-no-results-preview.tsx`
 - `apps/web/src/features/search-preview/search-error-preview.tsx`
@@ -166,12 +168,12 @@ const items = [
 ] as const;
 
 describe("F3D public editorial primitives", () => {
-  it("renders numbered items as a semantic list", () => {
+  it("renders numbered items as a semantic list with an explicit kind", () => {
     const html = renderToStaticMarkup(
-      <NumberedEditorialList items={items} ariaLabel="Example steps" />
+      <NumberedEditorialList items={items} ariaLabel="Example steps" kind="example" />
     );
-    expect(html).toContain('<ol');
-    expect((html.match(/data-editorial-item=/g) ?? [])).toHaveLength(2);
+    expect(html).toContain("<ol");
+    expect((html.match(/data-editorial-kind="example"/g) ?? [])).toHaveLength(2);
     expect(html).toContain("First description.");
   });
 
@@ -206,16 +208,22 @@ export interface NumberedEditorialItem {
 export function NumberedEditorialList({
   items,
   ariaLabel,
+  kind,
   className = ""
 }: {
   items: readonly NumberedEditorialItem[];
   ariaLabel: string;
+  kind: string;
   className?: string;
 }): ReactElement {
   return (
     <ol className={`numbered-editorial-list ${className}`.trim()} aria-label={ariaLabel}>
       {items.map((item) => (
-        <li key={`${item.sequence}-${item.title}`} data-editorial-item={item.sequence}>
+        <li
+          key={`${item.sequence}-${item.title}`}
+          data-editorial-item={item.sequence}
+          data-editorial-kind={kind}
+        >
           <span className="numbered-editorial-list__sequence">{item.sequence}</span>
           <div>
             <h3>{item.title}</h3>
@@ -251,7 +259,7 @@ export function FamilyIndex(): ReactElement {
 }
 ```
 
-Export both components from `index.ts`.
+Export both components and `NumberedEditorialItem` from `index.ts`.
 
 - [ ] **Step 6: Verify and commit**
 
@@ -278,14 +286,14 @@ git commit -m "feat: add F3D editorial primitives"
 
 ```tsx
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { expect, it } from "vitest";
 import { AboutPage } from "@/features/about";
 
 it("renders the approved About structure without unsupported claims", () => {
   const html = renderToStaticMarkup(<AboutPage />);
 
   expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
-  expect((html.match(/data-buyer-expectation=/g) ?? [])).toHaveLength(5);
+  expect((html.match(/data-editorial-kind="buyer-expectation"/g) ?? [])).toHaveLength(5);
   expect((html.match(/data-supported-buyer=/g) ?? [])).toHaveLength(4);
   expect((html.match(/data-family-index-row=/g) ?? [])).toHaveLength(5);
   expect(html).toContain('href="/procurement-support"');
@@ -307,31 +315,11 @@ pnpm --filter @rosa/web test -- about-page.test.tsx
 import type { NumberedEditorialItem } from "@/features/public-editorial";
 
 export const BUYER_EXPECTATIONS = [
-  {
-    sequence: "01",
-    title: "Clear product codes",
-    description: "Identify instruments without relying on vague descriptions."
-  },
-  {
-    sequence: "02",
-    title: "Organised families",
-    description: "Browse Knives, Scissors, Punches, Chisels and Cutters."
-  },
-  {
-    sequence: "03",
-    title: "Catalogue access",
-    description: "Use technical catalogues alongside the website catalogue."
-  },
-  {
-    sequence: "04",
-    title: "Structured requests",
-    description: "Prepare products, quantities, variants and notes in one inquiry."
-  },
-  {
-    sequence: "05",
-    title: "Responsive communication",
-    description: "Send complete requirements through a clear business process."
-  }
+  { sequence: "01", title: "Clear product codes", description: "Identify instruments without relying on vague descriptions." },
+  { sequence: "02", title: "Organised families", description: "Browse Knives, Scissors, Punches, Chisels and Cutters." },
+  { sequence: "03", title: "Catalogue access", description: "Use technical catalogues alongside the website catalogue." },
+  { sequence: "04", title: "Structured requests", description: "Prepare products, quantities, variants and notes in one inquiry." },
+  { sequence: "05", title: "Responsive communication", description: "Send complete requirements through a clear business process." }
 ] as const satisfies readonly NumberedEditorialItem[];
 
 export const SUPPORTED_BUYERS = [
@@ -342,36 +330,40 @@ export const SUPPORTED_BUYERS = [
 ] as const;
 ```
 
-- [ ] **Step 4: Implement About sections**
+- [ ] **Step 4: Implement the About sections**
 
-`BuyerExpectations` wraps the shared numbered list and adds `data-buyer-expectation` to each rendered item through a focused local list if the shared component cannot expose the attribute cleanly. `SupportedBuyers` renders an ordered list of four audience tiles with `data-supported-buyer`.
-
-`AboutPage` must use this structure:
+`BuyerExpectations` must render:
 
 ```tsx
-<>
-  <Section tone="paper" spacing="compact" className="about-hero">
-    <Container size="wide">
-      <nav className="public-breadcrumbs" aria-label="Breadcrumb">...</nav>
-      <div className="about-hero__layout">
-        <div>
-          <p className="page-eyebrow">About Rosa</p>
-          <h1>A clearer way to source medical instruments.</h1>
-          <p>Rosa supports professional buyers with organised product information, catalogue access and structured quotation requests.</p>
-        </div>
-        <ProductMediaPlaceholder label="Replaceable Rosa editorial image" decorative aspect="portrait" />
-      </div>
-    </Container>
-  </Section>
-  <BuyerExpectations />
-  <SupportedBuyers />
-  <Section tone="paper"><Container size="wide"><h2>Browse the catalogue by family.</h2><FamilyIndex /></Container></Section>
-  <Section tone="dark" className="about-procurement-preview">...</Section>
-  <Section tone="paper" className="about-final-cta">...</Section>
-</>
+<NumberedEditorialList
+  items={BUYER_EXPECTATIONS}
+  ariaLabel="What buyers can expect"
+  kind="buyer-expectation"
+  className="buyer-expectations"
+/>
 ```
 
-Use real actions:
+`SupportedBuyers` renders one ordered list of four rows with `data-supported-buyer={buyer.sequence}`.
+
+`AboutPage` renders, in order:
+
+1. Breadcrumb and two-column editorial hero
+2. Neutral portrait media
+3. Five buyer expectations
+4. Four supported buyer groups
+5. Five-family index
+6. Dark Procurement Support preview
+7. Final inquiry CTA
+
+Use this restrained hero copy:
+
+```tsx
+<p className="page-eyebrow">About Rosa</p>
+<h1>A clearer way to source medical instruments.</h1>
+<p>Rosa supports professional buyers with organised product information, catalogue access and structured quotation requests.</p>
+```
+
+Use real actions only:
 
 ```tsx
 <ButtonLink href="/procurement-support">View Procurement Support</ButtonLink>
@@ -398,7 +390,7 @@ git commit -m "feat: build F3D About page"
 
 **Interfaces:**
 - Consumes: `NumberedEditorialList`, `Container`, `Section`, `ButtonLink`, `ProductMediaPlaceholder`.
-- Produces: process, requirement and checklist records plus `ProcurementSupportPage`.
+- Produces: `PROCUREMENT_STEPS`, `REQUIREMENT_TYPES`, `INFORMATION_CHECKLIST`, section components and `ProcurementSupportPage`.
 
 - [ ] **Step 1: Write the failing page test**
 
@@ -411,8 +403,8 @@ it("renders six steps, four requirement types and six checklist items", () => {
   const html = renderToStaticMarkup(<ProcurementSupportPage />);
 
   expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
-  expect((html.match(/data-procurement-step=/g) ?? [])).toHaveLength(6);
-  expect((html.match(/data-requirement-type=/g) ?? [])).toHaveLength(4);
+  expect((html.match(/data-editorial-kind="procurement-step"/g) ?? [])).toHaveLength(6);
+  expect((html.match(/data-editorial-kind="requirement-type"/g) ?? [])).toHaveLength(4);
   expect((html.match(/data-information-item=/g) ?? [])).toHaveLength(6);
   expect(html).toContain('href="/products"');
   expect(html).toContain('href="/inquiry"');
@@ -431,21 +423,23 @@ pnpm --filter @rosa/web test -- procurement-support-page.test.tsx
 - [ ] **Step 3: Define the exact process records**
 
 ```ts
+import type { NumberedEditorialItem } from "@/features/public-editorial";
+
 export const PROCUREMENT_STEPS = [
   { sequence: "01", title: "Browse by family", description: "Start with Knives, Scissors, Punches, Chisels or Cutters." },
   { sequence: "02", title: "Review codes and options", description: "Check product codes, sizes, shapes and listed variants." },
-  { sequence: "03", title: "Add products to inquiry", description: "Collect the products and quantities required when inquiry selection is available." },
+  { sequence: "03", title: "Add products to inquiry", description: "A product inquiry is intended to collect the instruments and quantities required." },
   { sequence: "04", title: "Add useful notes", description: "Include line notes or general packing, finish and destination details." },
-  { sequence: "05", title: "Submit contact details", description: "Provide the business information needed for follow-up when submission is available." },
+  { sequence: "05", title: "Submit contact details", description: "A complete request includes the business information needed for follow-up." },
   { sequence: "06", title: "Receive confirmation", description: "A completed submission can provide a record for Rosa follow-up." }
-] as const;
+] as const satisfies readonly NumberedEditorialItem[];
 
 export const REQUIREMENT_TYPES = [
   { sequence: "01", title: "Product-specific inquiry", description: "One identified instrument with exact code and options." },
   { sequence: "02", title: "Multiple-product list", description: "Several products, quantities and line-level notes." },
   { sequence: "03", title: "Catalogue-led inquiry", description: "A request prepared while reviewing technical catalogues." },
   { sequence: "04", title: "Unlisted product request", description: "A general requirement described when the exact product is not listed." }
-] as const;
+] as const satisfies readonly NumberedEditorialItem[];
 
 export const INFORMATION_CHECKLIST = [
   "Product codes",
@@ -457,17 +451,18 @@ export const INFORMATION_CHECKLIST = [
 ] as const;
 ```
 
-- [ ] **Step 4: Implement the page composition**
+- [ ] **Step 4: Implement the section components and page**
 
-Render:
+`ProcurementProcess` and `RequirementTypes` call `NumberedEditorialList` with `kind="procurement-step"` and `kind="requirement-type"`. `InformationChecklist` renders an ordered list with `data-information-item` on each row.
 
-1. Breadcrumb and hero
-2. Neutral procurement media
-3. Six-step grid
-4. Four requirement types
-5. Dark information checklist panel
-6. Support-route panel
-7. Final quotation CTA
+`ProcurementSupportPage` renders:
+
+1. Breadcrumb, hero and neutral procurement media
+2. Six-step process
+3. Four requirement types
+4. Dark six-item information checklist
+5. Support-route panel
+6. Final quotation CTA
 
 Use these exact route actions:
 
@@ -515,7 +510,7 @@ import {
 } from "@/features/contact-preview";
 
 describe("F3D contact normal state", () => {
-  it("keeps unconfirmed contact values explicit and non-actionable", () => {
+  it("keeps unconfirmed contact values explicit", () => {
     expect(CONTACT_INFORMATION.map((row) => row.value)).toEqual([
       "Rosa Medical",
       "Awaiting client confirmation",
@@ -629,7 +624,7 @@ The form has seven labelled fields and no `action` or `onSubmit`:
 </form>
 ```
 
-`ContactPage` renders the breadcrumb, introduction, `/inquiry` action, contact-information panel, static form, neutral location visual and final product-quotation redirect.
+`ContactPage` renders breadcrumb, general-message introduction, `/inquiry` action, contact-information panel, static form, a neutral location visual labelled `Location awaiting confirmation`, and a product-quotation redirect panel.
 
 - [ ] **Step 6: Verify and commit**
 
@@ -645,6 +640,7 @@ git commit -m "feat: build truthful F3D contact page"
 ### Task 5: Add isolated Contact focus, validation, loading, failure and success previews
 
 **Files:**
+- Create: `apps/web/src/features/contact-preview/contact-focus-preview.tsx`
 - Create: `apps/web/src/features/contact-preview/contact-validation-preview.tsx`
 - Create: `apps/web/src/features/contact-preview/contact-loading-preview.tsx`
 - Create: `apps/web/src/features/contact-preview/contact-failure-preview.tsx`
@@ -654,17 +650,24 @@ git commit -m "feat: build truthful F3D contact page"
 
 **Interfaces:**
 - Consumes: `ContactFieldPreview`, `Button`, `ButtonLink`.
-- Produces: `ContactValidationPreview`, `ContactLoadingPreview`, `ContactFailurePreview`, `ContactSuccessResult` and `ContactSuccessPreview`.
+- Produces: `ContactFocusPreview`, `ContactValidationPreview`, `ContactLoadingPreview`, `ContactFailurePreview`, `ContactSuccessResult` and `ContactSuccessPreview`.
 
 - [ ] **Step 1: Add failing preview assertions**
 
 ```tsx
 import {
   ContactFailurePreview,
+  ContactFocusPreview,
   ContactLoadingPreview,
   ContactSuccessPreview,
   ContactValidationPreview
 } from "@/features/contact-preview";
+
+it("renders a visible isolated focus example", () => {
+  const html = renderToStaticMarkup(<ContactFocusPreview />);
+  expect(html).toContain("contact-preview-field--focused");
+  expect(html).toContain("data-preview-only");
+});
 
 it("connects contact validation errors to invalid fields", () => {
   const html = renderToStaticMarkup(<ContactValidationPreview />);
@@ -694,29 +697,29 @@ it("does not invent a sent message or reference in the default success preview",
 pnpm --filter @rosa/web test -- contact-preview.test.tsx
 ```
 
-- [ ] **Step 3: Implement the isolated previews**
-
-Validation preview:
+- [ ] **Step 3: Implement focus and validation previews**
 
 ```tsx
-<section data-preview-only="true" aria-labelledby="contact-validation-title">
-  <h2 id="contact-validation-title">Validation examples</h2>
-  <ContactFieldPreview
-    id="contact-invalid-email"
-    label="Email"
-    placeholder="Business email"
-    value="name@company"
-    error="Enter a valid email address"
-  />
-  <ContactFieldPreview
-    id="contact-invalid-telephone"
-    label="Telephone"
-    placeholder="Country code and number"
-    value="Number required"
-    error="Enter a valid telephone number"
-  />
-</section>
+export function ContactFocusPreview(): ReactElement {
+  return (
+    <section data-preview-only="true" aria-labelledby="contact-focus-title">
+      <h2 id="contact-focus-title">Focus example</h2>
+      <ContactFieldPreview
+        id="contact-focused-email"
+        label="Email"
+        placeholder="Business email"
+        focused
+      />
+    </section>
+  );
+}
 ```
+
+Validation preview renders two `ContactFieldPreview` components with IDs `contact-invalid-email` and `contact-invalid-telephone`, values `name@company` and `Number required`, and exact errors `Enter a valid email address` and `Enter a valid telephone number`.
+
+- [ ] **Step 4: Implement loading, failure and success previews**
+
+Loading and failure previews use `data-preview-only="true"`, disabled actions and copy that explicitly describes a preview rather than a real request attempt.
 
 Success preview:
 
@@ -740,9 +743,7 @@ export function ContactSuccessPreview({ result }: { result?: ContactSuccessResul
 }
 ```
 
-Loading and failure previews must use `data-preview-only="true"`, disabled actions and copy that explicitly describes a preview rather than a real request attempt.
-
-- [ ] **Step 4: Verify and commit**
+- [ ] **Step 5: Verify and commit**
 
 ```bash
 pnpm --filter @rosa/web test -- contact-preview.test.tsx
@@ -831,7 +832,9 @@ export const SEARCH_PREVIEW_RESULTS = [
 
 - [ ] **Step 4: Implement family shortcuts and the default page**
 
-`SearchFamilyShortcuts` maps all `CATALOGUE_FAMILIES` to real links. `SearchDefaultPage` renders one `h1`, a labelled read-only input and the five shortcuts:
+`SearchFamilyShortcuts` maps all `CATALOGUE_FAMILIES` to `Link` components using `familyHref` and `data-search-family-shortcut={family.slug}`.
+
+`SearchDefaultPage` renders:
 
 ```tsx
 <Section tone="paper" className="search-default-page">
@@ -861,7 +864,7 @@ git commit -m "feat: build F3D default search page"
 
 ---
 
-### Task 7: Add isolated Search typing, results, loading, no-results and error previews
+### Task 7: Add isolated Search typing, desktop/mobile results, loading, no-results and error previews
 
 **Files:**
 - Create all remaining files under `apps/web/src/features/search-preview/` listed in the file map.
@@ -870,7 +873,7 @@ git commit -m "feat: build F3D default search page"
 
 **Interfaces:**
 - Consumes: `SEARCH_PREVIEW_QUERY`, `SEARCH_PREVIEW_RESULTS`, `productHref`, `ProductMediaPlaceholder`, `Button` and `ButtonLink`.
-- Produces: `SearchResultPreview`, `SearchTypingPreview`, `SearchResultsPreview`, `SearchLoadingPreview`, `SearchNoResultsPreview` and `SearchErrorPreview`.
+- Produces: `SearchResultPreview`, `SearchTypingPreview`, `SearchResultsPreview`, `SearchMobileResultsPreview`, `SearchLoadingPreview`, `SearchNoResultsPreview` and `SearchErrorPreview`.
 
 - [ ] **Step 1: Add failing isolated-state tests**
 
@@ -878,19 +881,23 @@ git commit -m "feat: build F3D default search page"
 import {
   SearchErrorPreview,
   SearchLoadingPreview,
+  SearchMobileResultsPreview,
   SearchNoResultsPreview,
   SearchResultsPreview,
   SearchTypingPreview
 } from "@/features/search-preview";
 
-it("renders two source-backed search results with real product links", () => {
-  const html = renderToStaticMarkup(<SearchResultsPreview />);
-  expect((html.match(/data-search-result=/g) ?? [])).toHaveLength(2);
-  expect(html).toContain('href="/products/knives/scalpel-handle-no-3"');
-  expect(html).toContain('href="/products/knives/bard-parker-handle"');
-  expect(html).toContain("18-0644");
-  expect(html).toContain("18-0650");
-  expect(html).toContain("disabled");
+it("renders source-backed desktop and mobile search results", () => {
+  const desktop = renderToStaticMarkup(<SearchResultsPreview />);
+  const mobile = renderToStaticMarkup(<SearchMobileResultsPreview />);
+  expect((desktop.match(/data-search-result=/g) ?? [])).toHaveLength(2);
+  expect((mobile.match(/data-search-result=/g) ?? [])).toHaveLength(2);
+  expect(desktop).toContain('href="/products/knives/scalpel-handle-no-3"');
+  expect(desktop).toContain('href="/products/knives/bard-parker-handle"');
+  expect(desktop).toContain("18-0644");
+  expect(desktop).toContain("18-0650");
+  expect(desktop).toContain("disabled");
+  expect(mobile).toContain("data-mobile-search-preview");
 });
 
 it("marks every non-default state as preview-only", () => {
@@ -939,12 +946,13 @@ export function SearchResultPreview({ product }: { product: CatalogueProductReco
 }
 ```
 
-- [ ] **Step 4: Implement the five preview compositions**
+- [ ] **Step 4: Implement the six preview compositions**
 
-Each preview uses `data-preview-only="true"` and a distinct wrapper class.
+Each preview uses `data-preview-only="true"`.
 
-- `SearchTypingPreview` shows the query and compact result identities without claiming a live update.
-- `SearchResultsPreview` maps `SEARCH_PREVIEW_RESULTS` through `SearchResultPreview` and shows the derived count.
+- `SearchTypingPreview` shows `SEARCH_PREVIEW_QUERY` and compact source-backed identities without claiming live updates.
+- `SearchResultsPreview` maps `SEARCH_PREVIEW_RESULTS` through `SearchResultPreview` and shows a derived count.
+- `SearchMobileResultsPreview` wraps the same two records in `<section data-mobile-search-preview="true">` and uses the mobile class structure from Figma node `25:150`.
 - `SearchLoadingPreview` renders three `aria-hidden="true"` skeleton rows and visible text `Search loading preview`.
 - `SearchNoResultsPreview` uses demonstration phrase `thoracic clamp`, a disabled Clear Search button and a real `/products` link.
 - `SearchErrorPreview` states `Search could not be completed in this preview`, with a disabled Try Again button.
@@ -990,7 +998,7 @@ describe("F3D legal templates", () => {
   it.each([
     [PRIVACY_DOCUMENT, 9],
     [TERMS_DOCUMENT, 11]
-  ] as const)("renders %s as a visible legal template", (document, count) => {
+  ] as const)("renders a legal template with %i sections", (document, count) => {
     const html = renderToStaticMarkup(<LegalPage document={document} />);
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
     expect((html.match(/data-legal-section=/g) ?? [])).toHaveLength(count);
@@ -1070,9 +1078,9 @@ export const TERMS_DOCUMENT: LegalDocumentRecord = {
 };
 ```
 
-- [ ] **Step 4: Implement navigation and section rendering**
+- [ ] **Step 4: Implement navigation, sections and page rendering**
 
-`LegalSectionNavigation` renders an ordered list of `href={`#${section.id}`}` links. `LegalSection` renders:
+`LegalSectionNavigation` renders an ordered list of links using `href={`#${section.id}`}`. `LegalSection` renders:
 
 ```tsx
 <section id={section.id} data-legal-section={section.id} tabIndex={-1}>
@@ -1082,7 +1090,7 @@ export const TERMS_DOCUMENT: LegalDocumentRecord = {
 </section>
 ```
 
-`LegalPage` renders breadcrumb, `LEGAL TEMPLATE` eyebrow, one `h1`, warning copy, `Last updated: awaiting client and legal approval`, contents navigation, numbered sections and a final warning panel stating that the document is not launch-ready legal advice.
+`LegalPage` renders breadcrumb, `LEGAL TEMPLATE` eyebrow, one `h1`, visible warning copy, `Last updated: awaiting client and legal approval`, section navigation, numbered sections and a final panel stating that the document is not launch-ready legal advice.
 
 - [ ] **Step 5: Verify and commit**
 
@@ -1109,7 +1117,7 @@ git commit -m "feat: build F3D legal templates"
 - Consumes: `AboutPage`, `ProcurementSupportPage`, `ContactPage`, `SearchDefaultPage`, `LegalPage`, `PRIVACY_DOCUMENT`, `TERMS_DOCUMENT`.
 - Produces: six explicit `PublicPageKind` variants and responsive F3D compositions.
 
-- [ ] **Step 1: Extend the route-dispatch test first**
+- [ ] **Step 1: Extend route and composition tests first**
 
 ```ts
 it.each([
@@ -1123,8 +1131,6 @@ it.each([
   expect(resolvePublicPageKind(key)).toBe(expected);
 });
 ```
-
-Add a composition test:
 
 ```tsx
 it.each([
@@ -1150,41 +1156,20 @@ it.each([
 pnpm --filter @rosa/web test -- public-route-dispatch.test.ts f3d-page-composition.test.tsx
 ```
 
-- [ ] **Step 3: Implement explicit route kinds**
+- [ ] **Step 3: Implement explicit route kinds and compositions**
 
-Add imports and these kinds:
-
-```ts
-export type PublicPageKind =
-  | "homepage"
-  | "products"
-  | "catalogues"
-  | "inquiry-empty"
-  | "quotation-blocked"
-  | "about"
-  | "procurement-support"
-  | "contact-static"
-  | "search-default"
-  | "privacy-template"
-  | "terms-template"
-  | "family"
-  | "product"
-  | "placeholder"
-  | "not-found";
-```
-
-Resolve before generic path handling:
+Add these variants to `PublicPageKind`:
 
 ```ts
-if (key === "about") return "about";
-if (key === "procurement-support") return "procurement-support";
-if (key === "contact") return "contact-static";
-if (key === "search") return "search-default";
-if (key === "privacy") return "privacy-template";
-if (key === "terms") return "terms-template";
+| "about"
+| "procurement-support"
+| "contact-static"
+| "search-default"
+| "privacy-template"
+| "terms-template"
 ```
 
-Mount:
+Resolve the six exact keys before generic segment handling and mount:
 
 ```tsx
 case "about": return <AboutPage />;
@@ -1195,7 +1180,7 @@ case "privacy-template": return <LegalPage document={PRIVACY_DOCUMENT} />;
 case "terms-template": return <LegalPage document={TERMS_DOCUMENT} />;
 ```
 
-Remove the six paths from `NON_CATALOGUE_PLACEHOLDERS`; keep the set for any remaining intentionally scaffolded routes only.
+Delete the current `NON_CATALOGUE_PLACEHOLDERS` set and its lookup because all six entries receive explicit route kinds. Preserve the existing generic fallback for unknown non-product paths and strict not-found behavior for invalid product paths.
 
 - [ ] **Step 4: Write the stylesheet static test**
 
@@ -1230,6 +1215,7 @@ The stylesheet must include:
 - contact status/form split at desktop and one flow below 900 px
 - full-width read-only contact fields below 520 px
 - five search shortcuts in a safe responsive grid
+- a distinct compact mobile-results preview class
 - legal contents/content split at desktop and stacked layout below 900 px
 - legal headings with `overflow-wrap: anywhere`
 - no fixed content widths larger than their container
@@ -1284,7 +1270,7 @@ git commit -m "feat: wire and style F3D public routes"
 
 ---
 
-### Task 10: Add policy checks, browser coverage, completion evidence and coordination update
+### Task 10: Add policy checks, exact browser coverage, completion evidence and coordination update
 
 **Files:**
 - Create: `apps/web/src/test/f3d-policy.static.test.mjs`
@@ -1294,7 +1280,7 @@ git commit -m "feat: wire and style F3D public routes"
 
 **Interfaces:**
 - Consumes: all six public routes and all normal-state source files.
-- Produces: policy regression coverage, viewport coverage, exact completion record and AI-to-AI status update.
+- Produces: policy regression coverage, 1440/768/390 viewport coverage, exact completion record and AI-to-AI status update.
 
 - [ ] **Step 1: Add the static policy test**
 
@@ -1344,7 +1330,7 @@ test("F3D public copy avoids fake business, legal and internal-phase claims", ()
 });
 ```
 
-- [ ] **Step 2: Add browser tests for all six routes**
+- [ ] **Step 2: Add exact browser tests for all routes and viewports**
 
 ```ts
 import { expect, test } from "@playwright/test";
@@ -1358,24 +1344,34 @@ const routes = [
   "/terms"
 ] as const;
 
-for (const route of routes) {
-  test(`${route} keeps F3D landmarks and viewport safety`, async ({ page }) => {
-    const response = await page.goto(route);
-    expect(response?.ok()).toBe(true);
-    await expect(page.locator("main")).toHaveCount(1);
-    await expect(page.locator("h1")).toHaveCount(1);
+const viewports = [
+  { name: "desktop", width: 1440, height: 1000 },
+  { name: "tablet", width: 768, height: 1024 },
+  { name: "mobile", width: 390, height: 844 }
+] as const;
 
-    const overflow = await page.evaluate(
-      () => document.documentElement.scrollWidth - window.innerWidth
-    );
-    expect(overflow).toBeLessThanOrEqual(0);
+for (const viewport of viewports) {
+  for (const route of routes) {
+    test(`${route} is safe at ${viewport.name}`, async ({ page }) => {
+      await page.setViewportSize({ width: viewport.width, height: viewport.height });
+      const response = await page.goto(route);
+      expect(response?.ok()).toBe(true);
+      await expect(page.locator("main")).toHaveCount(1);
+      await expect(page.locator("h1")).toHaveCount(1);
 
-    await page.locator("footer").scrollIntoViewIfNeeded();
-    await expect(page.locator("footer")).toBeVisible();
-  });
+      const overflow = await page.evaluate(
+        () => document.documentElement.scrollWidth - window.innerWidth
+      );
+      expect(overflow).toBeLessThanOrEqual(0);
+
+      await page.locator("footer").scrollIntoViewIfNeeded();
+      await expect(page.locator("footer")).toBeVisible();
+    });
+  }
 }
 
 test("contact stays read-only and search stays in discovery state", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/contact");
   await expect(page.getByRole("button", { name: "Send Message" })).toBeDisabled();
   await expect(page.locator('a[href^="mailto:"]')).toHaveCount(0);
@@ -1386,8 +1382,6 @@ test("contact stays read-only and search stays in discovery state", async ({ pag
   await expect(page.locator("[data-search-result]")).toHaveCount(0);
 });
 ```
-
-Run this spec at the configured desktop project and explicitly add 768 × 1024 and 390 × 844 viewport projects or parameterized contexts if they are not already present.
 
 - [ ] **Step 3: Run focused source checks**
 
@@ -1431,8 +1425,8 @@ Confirm:
 - only F3D frontend components, routing, styles, tests and completion documentation changed
 - no file under `services/api/**` changed
 - no file under `packages/contracts/openapi/**` changed
-- normal `/contact` does not mount validation/loading/failure/success previews
-- normal `/search` does not mount typing/results/loading/no-results/error previews
+- normal `/contact` does not mount focus/validation/loading/failure/success previews
+- normal `/search` does not mount typing/results/mobile-results/loading/no-results/error previews
 - legal documents remain visibly unapproved templates
 
 - [ ] **Step 6: Write the completion record and commit**
@@ -1478,7 +1472,7 @@ git commit -m "docs: coordinate F3D frontend status"
 - [ ] Contact focus, validation, loading, failure and success states exist only as isolated previews.
 - [ ] Default Contact success preview makes no delivery or reference claim.
 - [ ] `/search` shows only default discovery and five real family shortcuts.
-- [ ] Search typing, results, loading, no-results and error states exist only as isolated previews.
+- [ ] Search typing, desktop results, mobile results, loading, no-results and error states exist only as isolated previews.
 - [ ] Search preview results resolve from the F3B registry and use real product links.
 - [ ] Search Add to inquiry controls remain disabled.
 - [ ] `/privacy` renders exactly nine template sections.
