@@ -52,7 +52,7 @@ describe("F3E-C normal operations pages", () => {
     expect(html).not.toContain("<form");
     expect(html).not.toContain("<table");
     expect(html).not.toMatch(/0 inquiries|0 new|4 inquiries|20 latest submissions|No new inquiries today|Last synced/i);
-    expect((html.match(/readonly/g) ?? [])).toHaveLength(1);
+    expect((html.match(/<input[^>]*readonly/g) ?? [])).toHaveLength(1);
     expect((html.match(/<select[^>]*disabled/g) ?? [])).toHaveLength(2);
     expect((html.match(/<button[^>]*disabled/g) ?? [])).toHaveLength(2);
   });
@@ -68,7 +68,7 @@ describe("F3E-C normal operations pages", () => {
     expect(html).not.toContain("<form");
     expect(html).not.toContain("<table");
     expect(html).not.toMatch(/0 messages|All caught up|Inbox empty|Last synced/i);
-    expect((html.match(/readonly/g) ?? [])).toHaveLength(1);
+    expect((html.match(/<input[^>]*readonly/g) ?? [])).toHaveLength(1);
     expect((html.match(/<select[^>]*disabled/g) ?? [])).toHaveLength(1);
     expect((html.match(/<button[^>]*disabled/g) ?? [])).toHaveLength(2);
   });
