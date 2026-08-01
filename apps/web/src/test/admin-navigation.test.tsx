@@ -71,6 +71,7 @@ describe("F3E-A admin navigation", () => {
     const html = renderToStaticMarkup(<AdminShell><h1>Dashboard</h1></AdminShell>);
     expect((html.match(/<main/g) ?? [])).toHaveLength(1);
     expect(html).toContain("Owner session not connected");
+    expect(html).toContain("noindex metadata is not access control");
     expect(html).toContain("Production access requires server-enforced owner authentication");
     expect(html).toContain("disabled");
   });

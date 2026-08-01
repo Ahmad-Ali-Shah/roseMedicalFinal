@@ -9,7 +9,7 @@ export function AdminRecoveryPage() {
       eyebrow="Owner recovery"
       title="Recover owner access."
       description="Recovery is restricted to the verified owner email configured by the backend."
-      footer={<p>Production recovery must not reveal whether an entered address belongs to the owner.</p>}
+      footer={<p>Search-engine noindex metadata is not access control. Production recovery requires server-enforced owner authentication.</p>}
     >
       <fieldset className="admin-auth-fields">
         <legend className="visually-hidden">Owner recovery field preview</legend>

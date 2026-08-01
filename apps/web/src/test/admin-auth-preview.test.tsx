@@ -20,6 +20,7 @@ describe("F3E-A owner-access normal routes", () => {
     expect(html).not.toContain("<form");
     expect(html).toContain("readonly");
     expect(html).toContain("disabled");
+    expect(html).toContain("noindex metadata is not access control");
   });
 
   it("contains no account creation or fake owner identity", () => {

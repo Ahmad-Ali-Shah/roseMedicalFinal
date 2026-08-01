@@ -9,7 +9,7 @@ export function AdminLoginPage() {
       eyebrow="Owner access"
       title="Sign in to the Rosa workspace."
       description="Access is restricted to the single verified owner account."
-      footer={<p>Production access requires server-enforced owner authentication.</p>}
+      footer={<p>Search-engine noindex metadata is not access control. Production access requires server-enforced owner authentication.</p>}
     >
       <fieldset className="admin-auth-fields">
         <legend className="visually-hidden">Owner sign-in field preview</legend>

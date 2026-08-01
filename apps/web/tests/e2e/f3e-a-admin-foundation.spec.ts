@@ -20,6 +20,7 @@ for (const viewport of viewports) {
       );
       expect(overflow).toBeLessThanOrEqual(0);
       await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/i);
+      await expect(page.getByText(/noindex metadata is not access control/i).first()).toBeVisible();
       const finalContent = page.locator("main > *").last();
       await finalContent.scrollIntoViewIfNeeded();
       await expect(finalContent).toBeVisible();
