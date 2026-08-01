@@ -6,6 +6,11 @@ import {
   isAdminManagementRoot,
   resolveAdminManagementRoute
 } from "@/features/admin-management-routing";
+import {
+  AdminOperationsRouteView,
+  isAdminOperationsRoot,
+  resolveAdminOperationsRoute
+} from "@/features/admin-operations-routing";
 
 export default async function Page({
   params
@@ -19,8 +24,16 @@ export default async function Page({
     return <AdminManagementRouteView result={management} />;
   }
 
+  const operations = resolveAdminOperationsRoute(segments);
+
+  if (operations.kind !== "not-found") {
+    return <AdminOperationsRouteView result={operations} />;
+  }
+
   const root = segments[0] ?? "";
-  if (isAdminManagementRoot(root)) notFound();
+  if (isAdminManagementRoot(root) || isAdminOperationsRoot(root)) {
+    notFound();
+  }
 
   const pathname = `/admin/${segments.join("/")}`;
   const item = getAdminNavigationItem(pathname);
