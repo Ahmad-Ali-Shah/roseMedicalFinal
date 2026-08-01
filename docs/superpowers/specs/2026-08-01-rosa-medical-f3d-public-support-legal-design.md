@@ -331,9 +331,9 @@ Render the default discovery state based on node `25:61`:
 - read-only search field
 - close action omitted because this is a page, not an active overlay
 - five family shortcuts using real family links
-- clear explanation that interactive catalogue search is activated in F4
+- visible user-facing status: `Catalogue search is not currently available. Browse by family to continue.`
 
-The normal `/search` route must not mount product results, loading rows, no-results copy, error copy or a result count.
+The normal `/search` route must not mention internal phase names. It must not mount product results, loading rows, no-results copy, error copy or a result count.
 
 ### Isolated search previews
 
@@ -607,7 +607,7 @@ The existing shared header remains in use. F3D route pages must not duplicate a 
 
 - All six routes resolve to explicit F3D kinds rather than placeholders.
 - Normal `/search` renders default discovery only.
-- Normal `/search` contains no result count, product result or error state.
+- Normal `/search` contains no result count, product result, error state or internal phase label.
 - Search preview results use real product-detail links and disabled inquiry controls.
 - Normal `/contact` contains no active submit handler.
 - Contact status rows contain no `mailto:`, `tel:` or WhatsApp link before confirmation.
