@@ -8,12 +8,19 @@ describe("public route dispatch", () => {
     ["catalogues", "catalogues"],
     ["inquiry", "inquiry-empty"],
     ["request-quotation", "quotation-blocked"],
+    ["about", "about"],
+    ["procurement-support", "procurement-support"],
+    ["contact", "contact-static"],
+    ["search", "search-default"],
+    ["privacy", "privacy-template"],
+    ["terms", "terms-template"],
     ["products/knives", "family"],
     ["products/scissors", "family"],
     ["products/knives/scalpel-handle-no-3", "product"],
     ["products/scissors/scalpel-handle-no-3", "not-found"],
     ["products/unknown", "not-found"],
-    ["products/knives/scalpel-handle-no-3/extra", "not-found"]
+    ["products/knives/scalpel-handle-no-3/extra", "not-found"],
+    ["unplanned-page", "placeholder"]
   ] as const)("maps %s to %s", (key, expected) => {
     expect(resolvePublicPageKind(key)).toBe(expected);
   });
