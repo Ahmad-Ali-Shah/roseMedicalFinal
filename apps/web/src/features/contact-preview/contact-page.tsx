@@ -8,7 +8,7 @@ import { ContactInformationPanel } from "./contact-information-panel";
 
 export function ContactPage(): ReactElement {
   return (
-    <>
+    <div className="contact-page">
       <Section tone="paper" spacing="compact" className="contact-hero">
         <Container size="wide">
           <nav className="public-breadcrumbs" aria-label="Breadcrumb">
@@ -69,6 +69,6 @@ export function ContactPage(): ReactElement {
           </div>
         </Container>
       </Section>
-    </>
+    </div>
   );
 }
