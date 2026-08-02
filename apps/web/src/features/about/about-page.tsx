@@ -3,11 +3,14 @@ import type { ReactElement } from "react";
 import { Container, Section } from "@/components/layout";
 import { ButtonLink } from "@/components/ui";
 import { ProductMediaPlaceholder } from "@/features/public-catalogue";
+import { PUBLIC_CONTENT_VALUES } from "@/features/public-content-registry";
 import { FamilyIndex } from "@/features/public-editorial";
 import { BuyerExpectations } from "./buyer-expectations";
 import { SupportedBuyers } from "./supported-buyers";
 
 export function AboutPage(): ReactElement {
+  const introduction = PUBLIC_CONTENT_VALUES.aboutIntroduction;
+
   return (
     <>
       <Section tone="paper" spacing="compact" className="f3d-hero about-hero">
@@ -19,12 +22,9 @@ export function AboutPage(): ReactElement {
           </nav>
           <div className="f3d-hero__layout">
             <div className="f3d-hero__copy">
-              <p className="page-eyebrow">About Rosa</p>
-              <h1>A clearer way to source medical instruments.</h1>
-              <p>
-                Rosa supports professional buyers with organised product information,
-                catalogue access and structured quotation requests.
-              </p>
+              <p className="page-eyebrow">{introduction.eyebrow}</p>
+              <h1>{introduction.title}</h1>
+              <p>{introduction.copy}</p>
             </div>
             <ProductMediaPlaceholder
               label="Replaceable Rosa editorial image"

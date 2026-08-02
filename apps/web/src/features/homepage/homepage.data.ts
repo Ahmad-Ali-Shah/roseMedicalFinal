@@ -1,12 +1,11 @@
 import { selectFamilyCards, selectFeaturedProducts } from "@/features/public-catalogue";
+import { PUBLIC_CONTENT_VALUES } from "@/features/public-content-registry";
 
 const families = selectFamilyCards();
 
 export const HOME_PAGE_MODEL = {
   hero: {
-    eyebrow: "Medical instruments supplier",
-    title: "Precision instruments. Procurement made clear.",
-    copy: "A composed catalogue and quotation experience for hospitals, distributors and procurement teams.",
+    ...PUBLIC_CONTENT_VALUES.homeHero,
     primary: { label: "Explore Products", href: "/products" as const },
     secondary: { label: "Request a Quote", href: "/request-quotation" as const }
   },
@@ -17,9 +16,7 @@ export const HOME_PAGE_MODEL = {
   },
   families,
   procurement: {
-    eyebrow: "Procurement support",
-    title: "A clearer route from catalogue to quotation.",
-    copy: "Rosa Medical helps buyers identify, organise and submit instrument requirements without unnecessary complexity.",
+    ...PUBLIC_CONTENT_VALUES.homeSupport,
     detailEyebrow: "Structured product information",
     detailTitle: "Built for practical buying decisions.",
     detailCopy: "Search by instrument family, review product codes and variants, collect quantities, and submit one organised request for quotation.",

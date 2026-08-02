@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ButtonLink } from "@/components/ui/button";
+import { PUBLIC_CONTENT_VALUES } from "@/features/public-content-registry";
 import { Container } from "./container";
 
 const primaryLinks = [
@@ -58,7 +59,7 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
         <Container className="site-footer__grid" size="wide">
           <div className="site-footer__brand stack">
             <Link className="brand" href="/">ROSA</Link>
-            <p>Medical instruments supplier and procurement partner.</p>
+            <p>{PUBLIC_CONTENT_VALUES.footerDescription.copy}</p>
             <ButtonLink href="/request-quotation" size="small">Request a quote</ButtonLink>
           </div>
           <nav aria-label="Product families">

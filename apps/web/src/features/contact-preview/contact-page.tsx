@@ -3,10 +3,13 @@ import type { ReactElement } from "react";
 import { Container, Section } from "@/components/layout";
 import { ButtonLink } from "@/components/ui";
 import { ProductMediaPlaceholder } from "@/features/public-catalogue";
+import { PUBLIC_CONTENT_VALUES } from "@/features/public-content-registry";
 import { ContactFormPreview } from "./contact-form-preview";
 import { ContactInformationPanel } from "./contact-information-panel";
 
 export function ContactPage(): ReactElement {
+  const introduction = PUBLIC_CONTENT_VALUES.contactIntroduction;
+
   return (
     <div className="contact-page">
       <Section tone="paper" spacing="compact" className="contact-hero">
@@ -17,13 +20,9 @@ export function ContactPage(): ReactElement {
             <span aria-current="page">Contact</span>
           </nav>
           <div className="contact-hero__copy">
-            <p className="page-eyebrow">Contact Rosa</p>
-            <h1>Send a general business message.</h1>
-            <p>
-              Use this page for company, catalogue or support questions. Product
-              quotation requests belong in the inquiry flow so product details remain
-              attached.
-            </p>
+            <p className="page-eyebrow">{introduction.eyebrow}</p>
+            <h1>{introduction.title}</h1>
+            <p>{introduction.copy}</p>
             <ButtonLink href="/inquiry" variant="secondary">
               Open Product Inquiry
             </ButtonLink>

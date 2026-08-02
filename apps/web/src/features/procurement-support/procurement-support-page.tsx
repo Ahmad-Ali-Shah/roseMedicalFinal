@@ -3,11 +3,14 @@ import type { ReactElement } from "react";
 import { Container, Section } from "@/components/layout";
 import { ButtonLink } from "@/components/ui";
 import { ProductMediaPlaceholder } from "@/features/public-catalogue";
+import { PUBLIC_CONTENT_VALUES } from "@/features/public-content-registry";
 import { InformationChecklist } from "./information-checklist";
 import { ProcurementProcess } from "./procurement-process";
 import { RequirementTypes } from "./requirement-types";
 
 export function ProcurementSupportPage(): ReactElement {
+  const introduction = PUBLIC_CONTENT_VALUES.procurementIntroduction;
+
   return (
     <>
       <Section tone="paper" spacing="compact" className="f3d-hero procurement-support-hero">
@@ -19,12 +22,9 @@ export function ProcurementSupportPage(): ReactElement {
           </nav>
           <div className="f3d-hero__layout">
             <div className="f3d-hero__copy">
-              <p className="page-eyebrow">Procurement Support</p>
-              <h1>Prepare a clearer instrument request.</h1>
-              <p>
-                Use product codes, size and variant information, quantities and notes
-                to organise one request for quotation.
-              </p>
+              <p className="page-eyebrow">{introduction.eyebrow}</p>
+              <h1>{introduction.title}</h1>
+              <p>{introduction.copy}</p>
             </div>
             <ProductMediaPlaceholder
               label="Replaceable procurement support image"
