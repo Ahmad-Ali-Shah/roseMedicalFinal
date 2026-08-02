@@ -1,9 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 
-export default function LoginPage() {
+function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
@@ -48,12 +49,25 @@ export default function LoginPage() {
             {loading ? "Loading..." : isSignUp ? "Sign Up" : "Sign In"}
           </button>
         </form>
-        <div style={{ marginTop: "1.5rem", textAlign: "center" }}>
+        <div style={{ marginTop: "1.5rem", textAlign: "center", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
           <button onClick={() => setIsSignUp(!isSignUp)} style={{ background: "none", border: "none", color: "#888", fontSize: "0.875rem", textDecoration: "underline", cursor: "pointer" }}>
             {isSignUp ? "Already have an account? Sign In" : "Dont have an account? Sign Up"}
           </button>
+          {!isSignUp && (
+            <Link href="/forgot-password" style={{ color: "#888", fontSize: "0.875rem", textDecoration: "underline" }}>
+              Forgot Password?
+            </Link>
+          )}
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div style={{ color: "white", textAlign: "center", padding: "4rem" }}>Loading...</div>}>
+      <LoginForm />
+    </Suspense>
   );
 }
