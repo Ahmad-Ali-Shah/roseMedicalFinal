@@ -7,7 +7,7 @@
 
 ## Purpose
 
-Join the existing frontend and backend implementations without redesigning either side, adding new product behavior, or expanding the current feature scope.
+Join the existing frontend and backend implementations without redesigning either side, adding new product behavior, correcting unrelated implementation problems, or expanding the current feature scope.
 
 The integration must preserve the documented Rosa Medical intent:
 
@@ -33,7 +33,7 @@ For each backend capability:
 3. Preserve the frontend composition, route structure, visual system, terminology, and user flow.
 4. Connect the existing backend behavior with the smallest practical edit.
 5. Do not replace entire frontend components where a local data or action connection is sufficient.
-6. Defer backend capabilities that have no corresponding approved frontend.
+6. Defer backend capabilities that have no corresponding frontend or cannot be mapped safely without inventing behavior.
 
 ## Scope Included Now
 
@@ -50,8 +50,9 @@ For each backend capability:
 - Connect the existing admin login screen to the existing backend login action.
 - Connect the existing recovery screen to the existing backend recovery action where compatible.
 - Connect logout behavior to the existing backend logout action.
-- Protect the existing admin workspace with the existing authentication infrastructure.
-- Preserve the single-owner intent and do not expose public registration or customer authentication.
+- Protect the existing admin workspace only with authorization behavior already present in the backend implementation.
+- Preserve the documented single-owner intent and do not expose public registration or customer authentication.
+- Do not invent a new owner-role system, owner allowlist, or authorization mechanism during this pass. If the existing backend cannot enforce the documented owner-only boundary through behavior already present in its code or configuration, that authorization portion remains explicitly deferred rather than being silently claimed as complete.
 
 ### Public catalogue reads
 
@@ -103,6 +104,7 @@ The following backend work will not be exposed or integrated in this pass becaus
 - New publishing persistence.
 - New revision storage or rollback implementation.
 - New database schema or migration behavior beyond what already exists and is required by a matching frontend capability.
+- New owner-role or authorization behavior not already present in the backend.
 - New product, contact, certification, manufacturing, or business data.
 
 Deferred files may remain absent from the integration branch. They will not be represented by placeholder UI or newly invented interfaces.
@@ -123,6 +125,8 @@ When a backend file is compatible and has no frontend equivalent:
 
 - Transfer it without broad refactoring.
 - Change only imports, types, route placement, field mapping, or return shape needed to connect it to an existing frontend.
+- Do not correct unrelated security, validation, architecture, or data-model problems during this integration pass.
+- If an existing problem prevents safe connection without changing the feature’s behavior, defer that capability and document the reason.
 
 ### Data-model differences
 
@@ -155,7 +159,7 @@ The implementation plan must build an explicit mapping before changing runtime c
 | Admin login | Existing Supabase login action | Connect existing form without replacing page |
 | Admin recovery | Existing recovery action | Connect only compatible reset behavior |
 | Admin logout | Existing logout action | Connect existing workspace action |
-| Protected admin routes | Existing server session utilities | Apply to existing admin workspace layout |
+| Protected admin routes | Existing server session utilities | Apply only the protection already implemented; document any owner-only gap |
 | Family listing | Existing category/family query | Adapt output to existing family model where safe |
 | Product listing/detail | Existing product queries | Adapt only compatible procurement fields |
 | Product inquiry | Existing quote/inquiry persistence | Connect without checkout, totals, orders, or appointments |
@@ -213,7 +217,7 @@ The final review must also search the integrated branch for accidental exposure 
 - Appointment workflow.
 - Stock, direct sale, shipping, discounts, or ratings.
 
-A check is reported as passed only when it was actually executed successfully. Environment-blocked checks must be reported separately.
+A check is reported as passed only when it was actually executed successfully. Environment-blocked checks and capabilities deferred because existing backend behavior is incompatible must be reported separately.
 
 ## Completion Criteria
 
@@ -225,6 +229,6 @@ The integration is complete only when:
 - No backend-only feature has been surfaced through newly created frontend work.
 - Product inquiries and general messages remain separate.
 - No ecommerce, appointment, or public-account behavior appears in the integrated product.
-- Existing compatible admin authentication and data-management flows function through the approved frontend.
+- Existing compatible authentication and data-management mechanics function through the approved frontend, with any owner-only authorization gap documented rather than hidden.
 - The final diff contains only integration, compatibility, documentation, and required dependency changes.
 - Verification results and deferred backend capabilities are documented accurately.
