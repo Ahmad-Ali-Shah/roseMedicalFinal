@@ -12,26 +12,53 @@ function checkSpam(text) {
   return false;
 }
 
+// Cosine Similarity Functions
+function getTokens(text) { return text.toLowerCase().match(/\b\w+\b/g) || []; }
+function vectorize(tokens) {
+  const freq = {};
+  tokens.forEach(t => freq[t] = (freq[t] || 0) + 1);
+  return freq;
+}
+function cosineSim(vecA, vecB) {
+  let dot = 0, magA = 0, magB = 0;
+  for (let key in vecA) { if (vecB[key]) dot += vecA[key] * vecB[key]; magA += vecA[key] ** 2; }
+  for (let key in vecB) magB += vecB[key] ** 2;
+  return (magA && magB) ? dot / (Math.sqrt(magA) * Math.sqrt(magB)) : 0;
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
     const supabase = await createClient();
 
-    // Honeypot
     if (body.company_name) return NextResponse.json({ success: true });
 
-    // Phone validation
     let p = (body.phone || "").split(" ").join("").split("-").join("");
     if (p.indexOf("+") !== 0) p = "+" + p;
     if (p.length < 8) return NextResponse.json({ error: "Invalid phone." }, { status: 400 });
 
-    // Required fields
     if (body.name === "" || body.email === "" || body.message === "") {
       return NextResponse.json({ error: "Missing fields." }, { status: 400 });
     }
 
     let isSpam = checkSpam(body.message || "");
 
+    // Cosine Similarity Check
+    if (!isSpam) {
+      const newVec = vectorize(getTokens(body.message));
+      const { data: oldMessages } = await supabase.from("seen_messages").select("message").limit(50);
+      if (oldMessages && oldMessages.length > 0) {
+        for (const old of oldMessages) {
+          const oldVec = vectorize(getTokens(old.message));
+          if (cosineSim(newVec, oldVec) > 0.75) {
+            isSpam = true;
+            break;
+          }
+        }
+      }
+    }
+
+    // AI Web Crawler & URL Caching
     if (!isSpam) {
       const msg = body.message || "";
       let url = null;
@@ -64,20 +91,9 @@ export async function POST(req: Request) {
 
     const { data } = await supabase.auth.getUser();
     const userId = data.user ? data.user.id : null;
-    
-    // Insert with the new fields included
     const { error } = await supabase.from("contact_messages").insert({
-      user_id: userId,
-      name: body.name,
-      email: body.email,
-      phone: p,
-      message: body.message,
-      is_spam: isSpam,
-      company: body.company || null,
-      country: body.country || null,
-      subject: body.subject || null
+      user_id: userId, name: body.name, email: body.email, phone: p, message: body.message, is_spam: isSpam
     });
-
     if (error) return NextResponse.json({ error: "DB error" }, { status: 500 });
     return NextResponse.json({ success: true });
   } catch (err) {

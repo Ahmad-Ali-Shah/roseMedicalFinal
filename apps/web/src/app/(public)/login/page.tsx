@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -10,6 +10,8 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get("redirect") || "/checkout";
   const supabase = createClient();
 
   const handleAuth = async (e: React.FormEvent) => {
@@ -19,11 +21,11 @@ export default function LoginPage() {
     if (isSignUp) {
       const { error } = await supabase.auth.signUp({ email, password });
       if (error) setError(error.message);
-      else alert("Check your email for a confirmation link!");
+      else alert("Check your email for a confirmation link to finish signing up!");
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) setError(error.message);
-      else { router.push("/checkout"); router.refresh(); }
+      else { router.push(redirectUrl); router.refresh(); }
     }
     setLoading(false);
   };
