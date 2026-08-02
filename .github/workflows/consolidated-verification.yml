@@ -17,7 +17,7 @@ jobs:
   core:
     name: Core verification
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -36,46 +36,142 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
-      - name: Run consolidated core gate
-        shell: bash
-        run: |
-          set +e
-          failed=0
+      - name: Generate contracts
+        id: contracts
+        continue-on-error: true
+        run: pnpm contracts:generate
 
-          run_check() {
-            name="$1"
-            shift
-            echo "::group::$name"
-            "$@"
-            status=$?
-            echo "RESULT $name: $status"
-            echo "::endgroup::"
-            if [ "$status" -ne 0 ]; then
+      - name: Check generated contract drift
+        id: drift
+        continue-on-error: true
+        run: git diff --exit-code
+
+      - name: Lint
+        id: lint
+        continue-on-error: true
+        run: pnpm lint
+
+      - name: Typecheck
+        id: typecheck
+        continue-on-error: true
+        run: pnpm typecheck
+
+      - name: Unit tests
+        id: unit
+        continue-on-error: true
+        run: pnpm test
+
+      - name: Production build
+        id: build
+        continue-on-error: true
+        run: pnpm build
+
+      - name: Foundation static test
+        id: foundation
+        continue-on-error: true
+        run: pnpm --filter @rosa/web test:foundation
+
+      - name: Public-page styles test
+        id: public_styles
+        continue-on-error: true
+        run: node --test apps/web/src/test/public-page-styles.static.test.mjs
+
+      - name: F3B styles test
+        id: f3b_styles
+        continue-on-error: true
+        run: node --test apps/web/src/test/f3b-styles.static.test.mjs
+
+      - name: F3C styles test
+        id: f3c_styles
+        continue-on-error: true
+        run: node --test apps/web/src/test/f3c-styles.static.test.mjs
+
+      - name: F3D styles test
+        id: f3d_styles
+        continue-on-error: true
+        run: node --test apps/web/src/test/f3d-styles.static.test.mjs
+
+      - name: F3D policy test
+        id: f3d_policy
+        continue-on-error: true
+        run: node --test apps/web/src/test/f3d-policy.static.test.mjs
+
+      - name: F3E-A styles test
+        id: f3ea_styles
+        continue-on-error: true
+        run: node --test apps/web/src/test/f3e-a-admin-styles.static.test.mjs
+
+      - name: F3E-A policy test
+        id: f3ea_policy
+        continue-on-error: true
+        run: node --test apps/web/src/test/f3e-a-admin-policy.static.test.mjs
+
+      - name: F3E-B styles test
+        id: f3eb_styles
+        continue-on-error: true
+        run: node --test apps/web/src/test/f3e-b-admin-styles.static.test.mjs
+
+      - name: F3E-B policy test
+        id: f3eb_policy
+        continue-on-error: true
+        run: node --test apps/web/src/test/f3e-b-admin-policy.static.test.mjs
+
+      - name: F3E-C styles test
+        id: f3ec_styles
+        continue-on-error: true
+        run: node --test apps/web/src/test/f3e-c-operations-styles.static.test.mjs
+
+      - name: F3E-C policy test
+        id: f3ec_policy
+        continue-on-error: true
+        run: node --test apps/web/src/test/f3e-c-operations-policy.static.test.mjs
+
+      - name: F3E-D styles test
+        id: f3ed_styles
+        continue-on-error: true
+        run: node --test apps/web/src/test/f3e-d-governance-styles.static.test.mjs
+
+      - name: F3E-D policy test
+        id: f3ed_policy
+        continue-on-error: true
+        run: node --test apps/web/src/test/f3e-d-governance-policy.static.test.mjs
+
+      - name: Enforce core result
+        if: always()
+        env:
+          CONTRACTS: ${{ steps.contracts.outcome }}
+          DRIFT: ${{ steps.drift.outcome }}
+          LINT: ${{ steps.lint.outcome }}
+          TYPECHECK: ${{ steps.typecheck.outcome }}
+          UNIT: ${{ steps.unit.outcome }}
+          BUILD: ${{ steps.build.outcome }}
+          FOUNDATION: ${{ steps.foundation.outcome }}
+          PUBLIC_STYLES: ${{ steps.public_styles.outcome }}
+          F3B_STYLES: ${{ steps.f3b_styles.outcome }}
+          F3C_STYLES: ${{ steps.f3c_styles.outcome }}
+          F3D_STYLES: ${{ steps.f3d_styles.outcome }}
+          F3D_POLICY: ${{ steps.f3d_policy.outcome }}
+          F3EA_STYLES: ${{ steps.f3ea_styles.outcome }}
+          F3EA_POLICY: ${{ steps.f3ea_policy.outcome }}
+          F3EB_STYLES: ${{ steps.f3eb_styles.outcome }}
+          F3EB_POLICY: ${{ steps.f3eb_policy.outcome }}
+          F3EC_STYLES: ${{ steps.f3ec_styles.outcome }}
+          F3EC_POLICY: ${{ steps.f3ec_policy.outcome }}
+          F3ED_STYLES: ${{ steps.f3ed_styles.outcome }}
+          F3ED_POLICY: ${{ steps.f3ed_policy.outcome }}
+        run: |
+          failed=0
+          for result in \
+            "$CONTRACTS" "$DRIFT" "$LINT" "$TYPECHECK" "$UNIT" "$BUILD" \
+            "$FOUNDATION" "$PUBLIC_STYLES" "$F3B_STYLES" "$F3C_STYLES" \
+            "$F3D_STYLES" "$F3D_POLICY" "$F3EA_STYLES" "$F3EA_POLICY" \
+            "$F3EB_STYLES" "$F3EB_POLICY" "$F3EC_STYLES" "$F3EC_POLICY" \
+            "$F3ED_STYLES" "$F3ED_POLICY"
+          do
+            if [ "$result" != "success" ]; then
               failed=1
             fi
-          }
-
-          run_check "contracts:generate" pnpm contracts:generate
-          run_check "generated contract drift" git diff --exit-code
-          run_check "lint" pnpm lint
-          run_check "typecheck" pnpm typecheck
-          run_check "unit tests" pnpm test
-          run_check "production build" pnpm build
-          run_check "foundation static test" pnpm --filter @rosa/web test:foundation
-          run_check "public page styles" node --test apps/web/src/test/public-page-styles.static.test.mjs
-          run_check "F3B styles" node --test apps/web/src/test/f3b-styles.static.test.mjs
-          run_check "F3C styles" node --test apps/web/src/test/f3c-styles.static.test.mjs
-          run_check "F3D styles" node --test apps/web/src/test/f3d-styles.static.test.mjs
-          run_check "F3D policy" node --test apps/web/src/test/f3d-policy.static.test.mjs
-          run_check "F3E-A styles" node --test apps/web/src/test/f3e-a-admin-styles.static.test.mjs
-          run_check "F3E-A policy" node --test apps/web/src/test/f3e-a-admin-policy.static.test.mjs
-          run_check "F3E-B styles" node --test apps/web/src/test/f3e-b-admin-styles.static.test.mjs
-          run_check "F3E-B policy" node --test apps/web/src/test/f3e-b-admin-policy.static.test.mjs
-          run_check "F3E-C styles" node --test apps/web/src/test/f3e-c-operations-styles.static.test.mjs
-          run_check "F3E-C policy" node --test apps/web/src/test/f3e-c-operations-policy.static.test.mjs
-          run_check "F3E-D styles" node --test apps/web/src/test/f3e-d-governance-styles.static.test.mjs
-          run_check "F3E-D policy" node --test apps/web/src/test/f3e-d-governance-policy.static.test.mjs
-
+          done
           exit "$failed"
 
   browser:
