@@ -6,11 +6,7 @@ for (const route of ["/", "/products"] as const) {
     await expect(page.locator("main")).toHaveCount(1);
     await expect(page.locator("h1")).toHaveCount(1);
     await expect(page.locator("body")).not.toContainText(/price|in stock|rating|checkout/i);
-
-    const overflow = await page.evaluate(() =>
-      document.documentElement.scrollWidth > document.documentElement.clientWidth
-    );
-    expect(overflow).toBe(false);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)).toBe(false);
   });
 
   test(`${route} exposes visible keyboard focus`, async ({ page }) => {
@@ -23,13 +19,13 @@ for (const route of ["/", "/products"] as const) {
 test("homepage exposes all five family links", async ({ page }) => {
   await page.goto("/");
   for (const slug of ["knives", "scissors", "punches", "chisels", "cutters"]) {
-    await expect(page.locator(`a[href="/products/${slug}"]`)).toBeVisible();
+    await expect(page.locator(`main a[href="/products/${slug}"]`).first()).toBeVisible();
   }
 });
 
 test("products discovery shell links to search without a fake form", async ({ page }) => {
   await page.goto("/products");
   await expect(page.locator("form")).toHaveCount(0);
-  await expect(page.locator('a[href="/search"]')).toBeVisible();
-  await expect(page.locator('a[href="/inquiry"]')).toBeVisible();
+  await expect(page.getByRole("link", { name: "Search by product name or code" })).toBeVisible();
+  await expect(page.locator('main a[href="/inquiry"]').first()).toBeVisible();
 });
