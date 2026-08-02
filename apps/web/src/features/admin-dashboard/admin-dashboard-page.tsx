@@ -1,4 +1,5 @@
 import { ButtonLink } from "@/components/ui";
+import { createClient } from "@/lib/supabase/server";
 import {
   AdminPageHeader,
   AdminSection
@@ -9,8 +10,24 @@ import { AdminLaunchReadiness } from "./admin-launch-readiness";
 import { AdminOperationalData } from "./admin-operational-data";
 import { AdminWorkspaceStatus } from "./admin-workspace-status";
 
-export function AdminDashboardPage() {
+export async function AdminDashboardPage() {
   const model = getAdminDashboardModel();
+  const supabase = await createClient();
+
+  const { count: messageCount } = await supabase
+    .from("contact_messages")
+    .select("*", { count: "exact", head: true })
+    .eq("is_spam", false);
+    
+  const { count: inquiryCount } = await supabase
+    .from("quote_requests")
+    .select("*", { count: "exact", head: true });
+
+  const operationalMetrics = [
+    { key: "inquiries", label: "Quotation inquiries", value: inquiryCount || 0 },
+    { key: "messages", label: "General messages", value: messageCount || 0 }
+  ];
+
   return (
     <div className="admin-dashboard" data-admin-dashboard>
       <AdminPageHeader
@@ -21,7 +38,7 @@ export function AdminDashboardPage() {
 
       <AdminWorkspaceStatus />
       <AdminCatalogueOverview metrics={model.catalogueMetrics} />
-      <AdminOperationalData metrics={model.operationalMetrics} />
+      <AdminOperationalData metrics={operationalMetrics} />
       <AdminLaunchReadiness items={model.readinessItems} />
 
       <AdminSection

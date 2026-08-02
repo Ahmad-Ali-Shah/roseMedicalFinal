@@ -9,12 +9,24 @@ import {
   AdminToolbar,
   type AdminDataTableColumn
 } from "@/features/admin-primitives";
-import {
-  getAdminCatalogueRows,
-  type AdminCatalogueRow
-} from "./admin-catalogue-model";
+import { createClient } from "@/lib/supabase/server";
+import type { Category } from "@/lib/supabase/types";
 
-const columns: readonly AdminDataTableColumn<AdminCatalogueRow>[] = [
+interface LiveCatalogueRow {
+  familySlug: string;
+  sequence: string;
+  familyName: string;
+  name: string;
+  description: string;
+  coverLabel: string;
+  sourceStatus: string;
+  availability: "Public PDF path registered" | "Awaiting publication";
+  publicCataloguesHref: string;
+  publicFamilyHref: string;
+  adminHref: string;
+}
+
+const columns: readonly AdminDataTableColumn<LiveCatalogueRow>[] = [
   {
     key: "document",
     header: "Document",
@@ -55,20 +67,44 @@ const columns: readonly AdminDataTableColumn<AdminCatalogueRow>[] = [
   }
 ];
 
-export function AdminCataloguesPage() {
-  const rows = getAdminCatalogueRows();
+export async function AdminCataloguesPage() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("categories")
+    .select("*")
+    .is("deleted_at", null)
+    .order("sort_order", { ascending: true });
+
+  const categories = (data || []) as Category[];
+
+  const rows: LiveCatalogueRow[] = categories.map((cat, index) => {
+    const seq = String(index + 1).padStart(2, "0");
+    return {
+      familySlug: cat.slug,
+      sequence: seq,
+      familyName: cat.name_en,
+      name: `${cat.name_en} technical catalogue`,
+      description: `Catalogue for ${cat.name_en} instruments.`,
+      coverLabel: "Technical family catalogue",
+      sourceStatus: "Live DB Record",
+      availability: "Awaiting publication",
+      publicCataloguesHref: "/catalogues",
+      publicFamilyHref: `/products?category=${cat.slug}`,
+      adminHref: "/admin/catalogues"
+    };
+  });
 
   return (
     <div className="admin-catalogues-page">
       <AdminPageHeader
         eyebrow="Catalogues"
         title="Maintain technical document records."
-        description="These five records describe source catalogue requirements. No file-management workflow is connected."
+        description="These records are derived from the live Supabase database."
         actions={<Button disabled>Upload catalogue</Button>}
       />
 
-      <AdminAlert tone="warning" title="Static catalogue records">
-        PDF availability is derived only from a registered public path. No upload, processing, replacement or publication history is represented.
+      <AdminAlert tone="info" title="Live Database Connection">
+        Showing {rows.length} live catalogue records from Supabase.
       </AdminAlert>
 
       <AdminToolbar label="Catalogue collection controls">
@@ -80,10 +116,10 @@ export function AdminCataloguesPage() {
         />
       </AdminToolbar>
 
-      <p className="admin-collection-count">{rows.length} source catalogue records</p>
+      <p className="admin-collection-count">{rows.length} live catalogue records</p>
 
       <AdminDataTable
-        caption="Source-backed catalogue records"
+        caption="Live catalogue records"
         captionVisibility="screen-reader"
         rows={rows}
         columns={columns}

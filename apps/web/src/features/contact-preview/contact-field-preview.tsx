@@ -1,23 +1,33 @@
-import type { ReactElement } from "react";
+import type { ReactElement, ChangeEvent } from "react";
 
 export interface ContactFieldPreviewProps {
   id: string;
+  name?: string;
   label: string;
   placeholder: string;
-  value?: string;
+  defaultValue?: string;
   error?: string;
   multiline?: boolean;
   focused?: boolean;
+  required?: boolean;
+  type?: string;
+  readOnly?: boolean;
+  onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
 
 export function ContactFieldPreview({
   id,
+  name,
   label,
   placeholder,
-  value = "",
+  defaultValue = "",
   error,
   multiline = false,
-  focused = false
+  focused = false,
+  required = false,
+  type = "text",
+  readOnly = false,
+  onChange
 }: ContactFieldPreviewProps): ReactElement {
   const errorId = error ? `${id}-error` : undefined;
   const className = [
@@ -32,22 +42,26 @@ export function ContactFieldPreview({
       {multiline ? (
         <textarea
           id={id}
-          name={id}
-          value={value}
+          name={name}
+          defaultValue={defaultValue}
           placeholder={placeholder}
-          readOnly
+          readOnly={readOnly}
           rows={6}
+          required={required}
+          onChange={onChange}
           aria-invalid={error ? true : undefined}
           aria-describedby={errorId}
         />
       ) : (
         <input
           id={id}
-          name={id}
-          value={value}
+          name={name}
+          defaultValue={defaultValue}
           placeholder={placeholder}
-          readOnly
-          type="text"
+          readOnly={readOnly}
+          type={type}
+          required={required}
+          onChange={onChange}
           aria-invalid={error ? true : undefined}
           aria-describedby={errorId}
         />

@@ -13,9 +13,23 @@ import {
 } from "@/features/admin-primitives";
 import { ProductMediaPlaceholder } from "@/features/public-catalogue";
 import { getAdminFamilyRows } from "@/features/admin-families";
-import { getAdminProductRows, type AdminProductRow } from "./admin-product-model";
+import { createClient } from "@/lib/supabase/server";
+import type { Product, Category } from "@/lib/supabase/types";
 
-const columns: readonly AdminDataTableColumn<AdminProductRow>[] = [
+interface LiveProductRow {
+  id: string;
+  name: string;
+  code: string;
+  familyName: string;
+  familyHref: string;
+  optionSummary: string[];
+  catalogueReference: string;
+  mediaLabel: string;
+  publicHref: string;
+  adminHref: string;
+}
+
+const columns: readonly AdminDataTableColumn<LiveProductRow>[] = [
   {
     key: "product",
     header: "Product",
@@ -60,7 +74,7 @@ const columns: readonly AdminDataTableColumn<AdminProductRow>[] = [
   {
     key: "record",
     header: "Record",
-    render: () => <AdminStatusBadge tone="neutral">Source record</AdminStatusBadge>
+    render: () => <AdminStatusBadge tone="neutral">Live DB Record</AdminStatusBadge>
   },
   {
     key: "actions",
@@ -78,21 +92,44 @@ const columns: readonly AdminDataTableColumn<AdminProductRow>[] = [
   }
 ];
 
-export function AdminProductsListPage() {
-  const rows = getAdminProductRows();
+export async function AdminProductsListPage() {
+  const supabase = await createClient();
+  const [productsRes, categoriesRes] = await Promise.all([
+    supabase.from("products").select("*").order("created_at", { ascending: false }),
+    supabase.from("categories").select("*").eq("deleted_at", null)
+  ]);
+  
+  const products = (productsRes.data || []) as Product[];
+  const categories = (categoriesRes.data || []) as Category[];
   const families = getAdminFamilyRows();
+
+  const rows: LiveProductRow[] = products.map((p) => {
+    const cat = categories.find((c) => c.id === p.category_id);
+    return {
+      id: p.id,
+      name: p.name_en,
+      code: p.item_code || "N/A",
+      familyName: cat?.name_en || "Uncategorized",
+      familyHref: cat ? `/products?category=${cat.slug}` : "/products",
+      optionSummary: [p.stock_status, p.sell_mode].filter(Boolean),
+      catalogueReference: cat?.name_en || "N/A",
+      mediaLabel: "Image required",
+      publicHref: `/products?category=${cat?.slug || ""}`,
+      adminHref: `/admin/products`
+    };
+  });
 
   return (
     <div className="admin-products-page">
       <AdminPageHeader
         eyebrow="Products"
         title="Manage the instrument catalogue."
-        description="This composition reflects the current source registry. It is not connected to a live content-management system."
+        description="This composition reflects live backend records from Supabase."
         actions={<Button disabled>Add product</Button>}
       />
 
-      <AdminAlert tone="warning" title="Static source registry">
-        Search, filtering, pagination, creation and record changes are unavailable in this static composition.
+      <AdminAlert tone="info" title="Live Database Connection">
+        Showing {rows.length} live products from Supabase.
       </AdminAlert>
 
       <AdminToolbar label="Product collection controls">
@@ -104,10 +141,10 @@ export function AdminProductsListPage() {
         />
       </AdminToolbar>
 
-      <p className="admin-collection-count">{rows.length} source products</p>
+      <p className="admin-collection-count">{rows.length} live products</p>
 
       <AdminDataTable
-        caption="Source-backed product records"
+        caption="Live product records"
         captionVisibility="screen-reader"
         rows={rows}
         columns={columns}
@@ -119,7 +156,7 @@ export function AdminProductsListPage() {
       <AdminSection
         title="Instrument families"
         eyebrow="Family summary"
-        description="Counts are derived from the current product registry."
+        description="Counts are derived from the live database."
       >
         <div className="admin-family-grid admin-family-grid--summary">
           {families.map((family) => (

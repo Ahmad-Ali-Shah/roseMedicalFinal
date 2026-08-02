@@ -13,6 +13,7 @@ export interface AdminDashboardMetric {
 export interface AdminOperationalMetric {
   key: "inquiries" | "messages";
   label: string;
+  value?: number;
 }
 
 export interface AdminDashboardModel {

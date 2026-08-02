@@ -33,13 +33,9 @@ export function ProductProcurementSummary({
         <StaticOptionField label="Size" value={sizeValue} />
         <StaticOptionField label="Variant" value={variantValue} />
         <StaticQuantityField value={1} />
-        <button
-          className="button button--primary button--standard product-add-preview"
-          disabled
-          aria-describedby={controlsNoteId}
-        >
+        <Link href="/checkout" className="button button--primary button--standard product-add-preview" aria-describedby={controlsNoteId}>
           Add to inquiry
-        </button>
+        </Link>
       </div>
 
       <p className="product-controls-note" id={controlsNoteId}>
@@ -48,7 +44,7 @@ export function ProductProcurementSummary({
       <Link className="product-catalogue-reference" href="/catalogues">
         Catalogue reference: {catalogueReference} <span aria-hidden="true">→</span>
       </Link>
-      <p className="product-quotation-note">No public price · Quotation required</p>
+      <p className="product-quotation-note">No public price ¹ Quotation required</p>
     </section>
   );
 }

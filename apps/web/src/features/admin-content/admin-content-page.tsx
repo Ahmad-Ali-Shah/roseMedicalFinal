@@ -16,6 +16,8 @@ import {
   getAdminContentBlocks,
   getAdminHomepageComposition
 } from "./admin-content-model";
+import { createClient } from "@/lib/supabase/server";
+import type { SiteSetting } from "@/lib/supabase/types";
 
 const PROTECTED_LAYOUT_ITEMS = [
   "Page creation",
@@ -35,7 +37,14 @@ const PROTECTED_LAYOUT_ITEMS = [
 
 const safeId = (value: string) => value.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
 
-export function AdminContentPage() {
+export async function AdminContentPage() {
+  const supabase = await createClient();
+  const { data: settingsData } = await supabase.from("site_settings").select("*");
+  const settings = (settingsData || []) as SiteSetting[];
+  
+  // Helper to get setting value by key
+  const getSetting = (key: string) => settings.find(s => s.key === key)?.value_en || "";
+
   const blocks = getAdminContentBlocks();
   const composition = getAdminHomepageComposition();
 
@@ -44,12 +53,12 @@ export function AdminContentPage() {
       <AdminPageHeader
         eyebrow="Website Content"
         title="Edit approved content, not the design."
-        description="This source-backed inventory shows current public copy. It is not a live content-management system."
+        description="This composition reflects live content from the Supabase database."
         actions={<Button disabled>Save draft</Button>}
       />
 
-      <AdminAlert tone="warning" title="Static content source">
-        Public and admin compositions read the same frontend values. No draft, review, preview-build or publishing state is connected.
+      <AdminAlert tone="info" title="Live Database Connection">
+        Content values are pulled dynamically from the site_settings table in Supabase.
       </AdminAlert>
 
       <AdminToolbar label="Website content controls">
@@ -61,7 +70,7 @@ export function AdminContentPage() {
       <AdminSection
         eyebrow="Source-backed records"
         title="Approved textual blocks"
-        description="English values are current frontend output. Arabic values have not been supplied."
+        description="English values are live from the database. Arabic values have not been supplied."
       >
         <div className="admin-content-blocks">
           {blocks.map((block) => (
@@ -78,10 +87,14 @@ export function AdminContentPage() {
               <div className="admin-content-block__fields">
                 {block.fields.map((field) => {
                   const id = `${safeId(block.blockKey)}-${safeId(field.fieldKey)}`;
+                  
+                  // Try to get live value from Supabase using the fieldKey
+                  const liveValue = getSetting(field.fieldKey) || field.englishValue;
+                  
                   const common = {
                     id,
                     label: `${field.label} — English`,
-                    value: field.englishValue,
+                    value: liveValue,
                     hint: field.characterGuidance
                   };
                   return (
@@ -94,7 +107,7 @@ export function AdminContentPage() {
                       <AdminFieldPreview
                         id={`${id}-ar`}
                         label={`${field.label} — Arabic`}
-                        value="Not supplied"
+                        value={getSetting(`${field.fieldKey}_ar`) || "Not supplied"}
                         direction="rtl"
                       />
                     </div>
