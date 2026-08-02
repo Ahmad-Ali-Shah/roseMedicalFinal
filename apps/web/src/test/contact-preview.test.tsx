@@ -28,7 +28,7 @@ describe("F3D contact normal state", () => {
 
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
     expect(html).toContain("General contact form preview");
-    expect(html).toContain("readonly");
+    expect(html).toContain('readOnly=""');
     expect(html).toContain("disabled");
     expect(html).not.toMatch(/mailto:|tel:|wa\.me|contact@placeholder|\+966 XX/i);
     expect(html).not.toContain("MESSAGE SENT");
@@ -39,27 +39,19 @@ describe("F3D contact normal state", () => {
 describe("F3D contact isolated previews", () => {
   it("renders a visible isolated focus example", () => {
     const html = renderToStaticMarkup(<ContactFocusPreview />);
-
     expect(html).toContain("contact-preview-field--focused");
     expect(html).toContain("data-preview-only");
   });
 
   it("connects validation errors to invalid fields", () => {
     const html = renderToStaticMarkup(<ContactValidationPreview />);
-
     expect((html.match(/aria-invalid="true"/g) ?? [])).toHaveLength(2);
     expect(html).toContain('aria-describedby="contact-invalid-email-error"');
     expect(html).toContain('id="contact-invalid-email-error"');
   });
 
   it("keeps loading and failure previews noninteractive", () => {
-    const html = renderToStaticMarkup(
-      <>
-        <ContactLoadingPreview />
-        <ContactFailurePreview />
-      </>
-    );
-
+    const html = renderToStaticMarkup(<><ContactLoadingPreview /><ContactFailurePreview /></>);
     expect(html).toContain("Sending preview");
     expect(html).toContain("disabled");
     expect(html).not.toContain("onSubmit");
@@ -67,7 +59,6 @@ describe("F3D contact isolated previews", () => {
 
   it("does not invent a sent message or reference in the default success preview", () => {
     const html = renderToStaticMarkup(<ContactSuccessPreview />);
-
     expect(html).not.toContain("CONTACT-PLACEHOLDER");
     expect(html).not.toContain("Your general message has been sent");
     expect(html).toContain("Confirmation details appear after a successful submission");

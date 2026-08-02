@@ -23,17 +23,20 @@ const DESCRIPTION_BY_FAMILY: Record<FamilySlug, string> = {
   cutters: "Cutting instruments organised by pattern, size and direction."
 };
 
-export const CATALOGUE_DOCUMENTS = CATALOGUE_FAMILIES.map((family) => ({
-  familySlug: family.slug,
-  sequence: family.sequence,
-  name: family.name,
-  description: DESCRIPTION_BY_FAMILY[family.slug],
-  coverLabel: `${family.name} technical catalogue`,
-  sourceStatus: "Technical family catalogue" as const,
-  familyHref: familyHref(family.slug)
-})) satisfies readonly CatalogueDocument[];
+export const CATALOGUE_DOCUMENTS: readonly CatalogueDocument[] =
+  CATALOGUE_FAMILIES.map((family) => ({
+    familySlug: family.slug,
+    sequence: family.sequence,
+    name: family.name,
+    description: DESCRIPTION_BY_FAMILY[family.slug],
+    coverLabel: `${family.name} technical catalogue`,
+    sourceStatus: "Technical family catalogue",
+    familyHref: familyHref(family.slug)
+  }));
 
-export function getCatalogueDocument(familySlug: string) {
+export function getCatalogueDocument(
+  familySlug: string
+): CatalogueDocument | undefined {
   return CATALOGUE_DOCUMENTS.find(
     (document) => document.familySlug === familySlug
   );

@@ -91,13 +91,13 @@ describe("F3E-C exact operations routing", () => {
   });
 
   it.each([
-    [],
-    ["inquiries", "EXAMPLE-INQUIRY"],
-    ["messages", "EXAMPLE-MESSAGE"],
-    ["inquiries", "EXAMPLE-INQUIRY", "notes"],
-    ["messages", "EXAMPLE-MESSAGE", "reply"],
-    ["unknown"]
-  ])("rejects unsupported shape %j", (segments) => {
+    { segments: [] },
+    { segments: ["inquiries", "EXAMPLE-INQUIRY"] },
+    { segments: ["messages", "EXAMPLE-MESSAGE"] },
+    { segments: ["inquiries", "EXAMPLE-INQUIRY", "notes"] },
+    { segments: ["messages", "EXAMPLE-MESSAGE", "reply"] },
+    { segments: ["unknown"] }
+  ] as const)("rejects unsupported shape $segments", ({ segments }) => {
     expect(resolveAdminOperationsRoute(segments)).toEqual({ kind: "not-found" });
   });
 });

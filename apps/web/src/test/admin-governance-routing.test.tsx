@@ -8,24 +8,24 @@ import {
 
 describe("F3E-D governance routing", () => {
   it.each([
-    ["content"],
-    ["contact-details"],
-    ["publishing"],
-    ["revisions"],
-    ["settings"]
-  ])("resolves exact route %j", (segments) => {
-    expect(resolveAdminGovernanceRoute(segments).kind).toBe(segments[0]);
+    { segments: ["content"], expected: "content" },
+    { segments: ["contact-details"], expected: "contact-details" },
+    { segments: ["publishing"], expected: "publishing" },
+    { segments: ["revisions"], expected: "revisions" },
+    { segments: ["settings"], expected: "settings" }
+  ] as const)("resolves exact route $segments", ({ segments, expected }) => {
+    expect(resolveAdminGovernanceRoute(segments).kind).toBe(expected);
   });
 
   it.each([
-    [],
-    ["content", "example"],
-    ["contact-details", "example"],
-    ["publishing", "example"],
-    ["revisions", "example"],
-    ["settings", "example"],
-    ["unknown"]
-  ])("rejects unsupported shape %j", (segments) => {
+    { segments: [] },
+    { segments: ["content", "example"] },
+    { segments: ["contact-details", "example"] },
+    { segments: ["publishing", "example"] },
+    { segments: ["revisions", "example"] },
+    { segments: ["settings", "example"] },
+    { segments: ["unknown"] }
+  ] as const)("rejects unsupported shape $segments", ({ segments }) => {
     expect(resolveAdminGovernanceRoute(segments).kind).toBe("not-found");
   });
 

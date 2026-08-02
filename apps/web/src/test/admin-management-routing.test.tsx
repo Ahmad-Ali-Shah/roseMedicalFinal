@@ -24,15 +24,15 @@ describe("F3E-B management routing", () => {
   });
 
   it.each([
-    [],
-    ["products", "knives"],
-    ["products", "knives", "scalpel-handle-no-3", "extra"],
-    ["families", "knives", "extra"],
-    ["catalogues", "knives", "extra"],
-    ["media", "extra"],
-    ["products", "scissors", "scalpel-handle-no-3"],
-    ["unknown"]
-  ])("returns not-found for unsupported shape %j", (segments) => {
+    { segments: [] },
+    { segments: ["products", "knives"] },
+    { segments: ["products", "knives", "scalpel-handle-no-3", "extra"] },
+    { segments: ["families", "knives", "extra"] },
+    { segments: ["catalogues", "knives", "extra"] },
+    { segments: ["media", "extra"] },
+    { segments: ["products", "scissors", "scalpel-handle-no-3"] },
+    { segments: ["unknown"] }
+  ] as const)("returns not-found for unsupported shape $segments", ({ segments }) => {
     expect(resolveAdminManagementRoute(segments).kind).toBe("not-found");
   });
 

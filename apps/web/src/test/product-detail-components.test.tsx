@@ -18,6 +18,6 @@ describe("F3B product control previews", () => {
   it("keeps added feedback as a reusable preview state", () => {
     const html = renderToStaticMarkup(<AddedFeedbackPreview />);
     expect(html).toContain("Added-feedback preview");
-    expect(html).toContain("interaction phase");
+    expect(html).toContain("when inquiry behavior is implemented");
   });
 });

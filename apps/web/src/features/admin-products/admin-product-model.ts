@@ -1,4 +1,3 @@
-import type { Route } from "next";
 import {
   CATALOGUE_FAMILIES,
   CATALOGUE_PRODUCTS,
@@ -21,9 +20,9 @@ export interface AdminProductRow {
   optionSummary: readonly string[];
   catalogueReference: string;
   mediaLabel: string;
-  publicHref: Route<string>;
-  familyHref: Route<string>;
-  adminHref: Route<string>;
+  publicHref: ReturnType<typeof productHref>;
+  familyHref: ReturnType<typeof familyHref>;
+  adminHref: ReturnType<typeof adminProductHref>;
 }
 
 export interface AdminProductCompletenessItem {
@@ -43,9 +42,9 @@ export interface AdminProductCompletenessItem {
 export interface AdminProductEditorModel {
   family: CatalogueFamilyRecord;
   product: CatalogueProductRecord;
-  publicHref: Route<string>;
-  publicFamilyHref: Route<string>;
-  adminCatalogueHref: Route<string>;
+  publicHref: ReturnType<typeof productHref>;
+  publicFamilyHref: ReturnType<typeof familyHref>;
+  adminCatalogueHref: ReturnType<typeof adminCatalogueHref>;
   optionGroups: readonly {
     key: "sizes" | "variants" | "directions" | "primary";
     label: string;
@@ -112,7 +111,7 @@ function completenessFor(
 }
 
 export function getAdminProductRows(): readonly AdminProductRow[] {
-  return CATALOGUE_PRODUCTS.map((product) => {
+  return CATALOGUE_PRODUCTS.map((product): AdminProductRow => {
     const family = familyBySlug.get(product.familySlug);
     if (!family) {
       throw new Error(`Unknown catalogue family: ${product.familySlug}`);

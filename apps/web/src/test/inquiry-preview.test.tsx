@@ -17,25 +17,20 @@ describe("F3C inquiry previews", () => {
   });
 
   it("derives totals from line quantities", () => {
-    expect(getInquiryPreviewTotals()).toEqual({
-      uniqueProducts: 3,
-      totalQuantity: 8
-    });
+    expect(getInquiryPreviewTotals()).toEqual({ uniqueProducts: 3, totalQuantity: 8 });
   });
 
   it("renders read-only populated controls without active mutation", () => {
     const html = renderToStaticMarkup(<PopulatedInquiryPreview />);
-
     expect((html.match(/data-inquiry-line=/g) ?? [])).toHaveLength(3);
     expect(html).toContain("disabled");
-    expect(html).toContain("readonly");
+    expect(html).toContain('readOnly=""');
     expect(html).toContain("data-preview-only");
     expect(html).not.toContain("onSubmit");
   });
 
   it("renders the truthful empty public composition", () => {
     const html = renderToStaticMarkup(<EmptyInquiryPage />);
-
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
     expect(html).toContain("Your inquiry list is empty.");
     expect(html).toContain('href="/products"');
