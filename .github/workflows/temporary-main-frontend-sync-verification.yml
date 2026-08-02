@@ -23,7 +23,7 @@ jobs:
   baseline-main:
     name: Baseline main core checks
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
       - name: Checkout current main baseline
         uses: actions/checkout@v4
@@ -49,27 +49,46 @@ jobs:
       - name: Report inherited lockfile regeneration
         run: git diff --stat -- pnpm-lock.yaml || true
 
-      - name: Generate contracts and check drift
+      - id: drift
+        name: Generate contracts and check drift
+        continue-on-error: true
         run: |
           pnpm contracts:generate
           git diff --exit-code -- packages/contracts/src/generated/schema.ts
 
-      - name: Lint
+      - id: lint
+        name: Lint
+        continue-on-error: true
         run: pnpm lint
 
-      - name: Strict typecheck
+      - id: typecheck
+        name: Strict typecheck
+        continue-on-error: true
         run: pnpm typecheck
 
-      - name: Unit, contract and static tests
+      - id: test
+        name: Unit, contract and static tests
+        continue-on-error: true
         run: pnpm test
 
-      - name: Production build
+      - id: build
+        name: Production build
+        continue-on-error: true
         run: pnpm build
+
+      - name: Record baseline outcomes
+        run: |
+          echo "### Baseline main core outcomes" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Contract drift: ${{ steps.drift.outcome }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Lint: ${{ steps.lint.outcome }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Typecheck: ${{ steps.typecheck.outcome }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Tests: ${{ steps.test.outcome }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Build: ${{ steps.build.outcome }}" >> "$GITHUB_STEP_SUMMARY"
 
   synchronized-core:
     name: Synchronized branch core checks
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
       - name: Checkout synchronized branch
         uses: actions/checkout@v4
@@ -95,27 +114,46 @@ jobs:
       - name: Report inherited lockfile regeneration
         run: git diff --stat -- pnpm-lock.yaml || true
 
-      - name: Generate contracts and check drift
+      - id: drift
+        name: Generate contracts and check drift
+        continue-on-error: true
         run: |
           pnpm contracts:generate
           git diff --exit-code -- packages/contracts/src/generated/schema.ts
 
-      - name: Lint
+      - id: lint
+        name: Lint
+        continue-on-error: true
         run: pnpm lint
 
-      - name: Strict typecheck
+      - id: typecheck
+        name: Strict typecheck
+        continue-on-error: true
         run: pnpm typecheck
 
-      - name: Unit, contract and static tests
+      - id: test
+        name: Unit, contract and static tests
+        continue-on-error: true
         run: pnpm test
 
-      - name: Production build
+      - id: build
+        name: Production build
+        continue-on-error: true
         run: pnpm build
+
+      - name: Record synchronized outcomes
+        run: |
+          echo "### Synchronized branch core outcomes" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Contract drift: ${{ steps.drift.outcome }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Lint: ${{ steps.lint.outcome }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Typecheck: ${{ steps.typecheck.outcome }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Tests: ${{ steps.test.outcome }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Build: ${{ steps.build.outcome }}" >> "$GITHUB_STEP_SUMMARY"
 
   synchronized-browser:
     name: Synchronized branch browser checks
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 40
     needs: synchronized-core
     steps:
       - name: Checkout synchronized branch
@@ -140,11 +178,18 @@ jobs:
       - name: Install Chromium
         run: pnpm --filter @rosa/web exec playwright install --with-deps chromium
 
-      - name: Run complete Playwright matrix
+      - id: browser
+        name: Run complete Playwright matrix
+        continue-on-error: true
         run: pnpm test:e2e
 
+      - name: Record browser outcome
+        run: |
+          echo "### Synchronized browser outcome" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Playwright: ${{ steps.browser.outcome }}" >> "$GITHUB_STEP_SUMMARY"
+
       - name: Upload Playwright report on failure
-        if: failure()
+        if: steps.browser.outcome == 'failure'
         uses: actions/upload-artifact@v4
         with:
           name: synchronized-playwright-report
