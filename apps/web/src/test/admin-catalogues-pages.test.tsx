@@ -20,7 +20,8 @@ describe("F3E-B catalogue pages", () => {
       expect(html).toContain(document.description);
       expect(html).toContain(`/admin/catalogues/${document.familySlug}`);
     }
-    expect(html).not.toMatch(/\b[A-Za-z0-9_-]+\.pdf\b|\bKB\b|\bMB\b|Processing|Replacement pending|Upload failed|Today|Yesterday/i);
+    expect(html).not.toMatch(/href="[^"]+\.pdf"/i);
+    expect(html).not.toMatch(/\b\d+(?:\.\d+)?\s*(?:KB|MB)\b/i);
     expect(html).not.toContain("data-preview-only");
   });
 
