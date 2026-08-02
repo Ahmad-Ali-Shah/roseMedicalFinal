@@ -17,3 +17,6 @@ local-data/
 .worktrees/
 .open-next/
 .next/
+.open-next/
+.next/
+.wrangler/
