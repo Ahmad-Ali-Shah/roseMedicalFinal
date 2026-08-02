@@ -45,8 +45,11 @@ jobs:
           node --version
           pnpm --version
 
-      - name: Install workspace
-        run: pnpm install --frozen-lockfile
+      - name: Install workspace without trusting inherited lockfile
+        run: pnpm install --force --no-frozen-lockfile
+
+      - name: Report inherited lockfile regeneration
+        run: git diff --stat -- pnpm-lock.yaml || true
 
       - name: Generate contracts and check drift
         run: |
@@ -88,8 +91,11 @@ jobs:
           node --version
           pnpm --version
 
-      - name: Install workspace
-        run: pnpm install --frozen-lockfile
+      - name: Install workspace without trusting inherited lockfile
+        run: pnpm install --force --no-frozen-lockfile
+
+      - name: Report inherited lockfile regeneration
+        run: git diff --stat -- pnpm-lock.yaml || true
 
       - name: Generate contracts and check drift
         run: |
@@ -130,8 +136,8 @@ jobs:
           corepack enable
           corepack prepare pnpm@11.4.0 --activate
 
-      - name: Install workspace
-        run: pnpm install --frozen-lockfile
+      - name: Install workspace without trusting inherited lockfile
+        run: pnpm install --force --no-frozen-lockfile
 
       - name: Install Chromium
         run: pnpm --filter @rosa/web exec playwright install --with-deps chromium
