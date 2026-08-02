@@ -18,6 +18,7 @@ concurrency:
 
 env:
   CI: "true"
+  PNPM_CONFIG_DANGEROUSLY_ALLOW_ALL_BUILDS: "true"
   NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:54321' }}
   NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'temporary-verification-anon-key' }}
 
