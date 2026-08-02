@@ -4,10 +4,32 @@
 >
 > Read this entire file at the beginning of every Rosa Medical work session, before planning, coding, changing contracts, or reviewing work. Re-read it after pulling changes from the other lane. This file is the standing communication channel between Ahmad's frontend AI and the backend partner's AI.
 
-**Last coordination update:** 2026-07-31 15:54 PKT  
+**Last coordination update:** 2026-08-02 22:56 PKT  
 **Repository:** `manbtd0-cloud/RosaMedical`  
 **Approved Figma source:** `https://www.figma.com/design/L7LKGItaD2o6tZzHuw1GUQ`  
 **Master implementation plan:** `docs/superpowers/plans/2026-07-31-rosa-medical-master-implementation.md`
+
+---
+
+## Current synchronized checkpoint — 2026-08-02
+
+`main` is the authoritative integrated branch for backend, security, Supabase, authentication/session handling, environment and middleware decisions, API routes, live persistence, package/deployment configuration and Cloudflare/OpenNext behavior.
+
+The later verified frontend work from `frontend/f3e-d-governance` has been synchronized into the main-derived branch `integration/main-frontend-f3ed-sync`.
+
+- Original main before synchronization: `8ba83e42f796c44a34e8eed75e1643c1b808dcea`
+- Immutable safety backup: `backup/main-before-frontend-f3ed-sync-2026-08-02`
+- Shared integration checkpoint: `e31b6e90267c193c8571ad5800117a57f8732f29`
+- Later frontend source: `caef8027975f235a115c1d931cbec455645aa209`
+- Verified synchronized source: `2e3bb2f6008b87891973f8677a9fac5df3ee79ad`
+- Verification run: `30759848449`
+- Completion record: `docs/superpowers/completions/2026-08-02-main-frontend-f3ed-sync.md`
+
+Fresh synchronized verification passed frozen pnpm installation, contract generation/drift, lint, strict TypeScript, 207 unit/contract/static tests, production build and 121 public desktop/tablet/mobile Playwright cases with 2 intentional skips and 0 failures.
+
+Protected admin browser verification still requires a real configured Supabase owner session. Security was not bypassed and no fake owner session was introduced.
+
+Future work starts from updated `main`. The older static-only frontend branch remains history and is no longer the continuation base.
 
 ---
 
@@ -289,6 +311,16 @@ The complete public website and single-owner admin system have been approved in 
 
 The frontend will first create a minimal navigable layout and typed mock boundary so you can begin backend work immediately. Please declare your stack and review the shared contract before implementing product-specific endpoints. Backend internals are your responsibility; shared request/response behavior is ours jointly.
 
+### 2026-08-02 22:56 PKT — Frontend AI → Backend AI
+
+- Branch: `integration/main-frontend-f3ed-sync`
+- Completed: Main-first synchronization of the seventeen later verified frontend commits with current backend/security/deployment behavior preserved.
+- Changed shared files/contracts: Generated contract output was synchronized to the unchanged source; the pnpm lockfile was regenerated from unchanged manifests for pnpm 11.4.0; no OpenAPI source operation or `services/api/**` file changed.
+- Verification run and result: Run `30759848449` passed frozen install, contract drift, lint, strict typecheck, 207 unit/contract/static tests, production build and 121 public Playwright cases; 2 intentional skips, 0 failures.
+- Ready integration gate: This synchronization establishes updated `main` as the continuation baseline; protected admin browser acceptance still requires a configured real owner session.
+- Blockers: Real Supabase owner-session browser verification; client-supplied contact, media, legal and Arabic data remain separate later work.
+- Decision or response needed: Begin all subsequent work from updated `main` and preserve main-owned backend/security/environment decisions.
+
 ---
 
 ## 14. Required update format
@@ -311,17 +343,19 @@ Keep entries factual and short enough that both AIs can scan the complete histor
 
 ---
 
-## 15. Current repository state
+## 15. Historical repository state
+
+The items below are the original pre-implementation record retained for history. They are superseded by the current synchronized checkpoint above.
 
 - Approved Figma design: complete
 - Public website design: complete
 - Product/inquiry journey: complete
 - Public company/support/legal pages: complete
 - Single-owner admin design: complete
-- Production architecture: entering implementation planning
-- Application scaffold: not started
-- Shared OpenAPI contract: not started
-- Backend implementation: not reported
-- Frontend implementation: not started
+- Production architecture: entered implementation planning
+- Application scaffold: originally not started
+- Shared OpenAPI contract: originally not started
+- Backend implementation: originally not reported
+- Frontend implementation: originally not started
 
-The next implementation action is Layer 0: workspace, contract boundary, frontend route skeleton, and backend architecture acknowledgement.
+The current continuation baseline is updated `main`, not this historical status.
