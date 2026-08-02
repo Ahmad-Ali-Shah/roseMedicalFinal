@@ -1,13 +1,20 @@
-import type { Route } from "next";
 import { CATALOGUE_FAMILIES, CATALOGUE_PRODUCTS } from "@/features/catalogue-registry";
 import { CATALOGUE_DOCUMENTS } from "@/features/catalogues";
 import { ADMIN_READINESS_ITEMS, type AdminReadinessItem } from "@/features/admin-governance-source/admin-readiness-model";
+
+export type AdminDashboardHref =
+  | "/admin/families"
+  | "/admin/products"
+  | "/admin/catalogues"
+  | "/admin/inquiries"
+  | "/admin/content"
+  | "/admin/publishing";
 
 export interface AdminDashboardMetric {
   key: "families" | "products" | "catalogues";
   label: string;
   value: number;
-  href: Route<string>;
+  href: AdminDashboardHref;
 }
 
 export interface AdminOperationalMetric {
@@ -19,7 +26,7 @@ export interface AdminDashboardModel {
   catalogueMetrics: readonly AdminDashboardMetric[];
   operationalMetrics: readonly AdminOperationalMetric[];
   readinessItems: readonly AdminReadinessItem[];
-  quickRoutes: readonly { label: string; href: Route<string> }[];
+  quickRoutes: readonly { label: string; href: AdminDashboardHref }[];
 }
 
 export function getAdminDashboardModel(): AdminDashboardModel {

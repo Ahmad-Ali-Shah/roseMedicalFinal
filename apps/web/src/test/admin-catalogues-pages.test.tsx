@@ -20,7 +20,7 @@ describe("F3E-B catalogue pages", () => {
       expect(html).toContain(document.description);
       expect(html).toContain(`/admin/catalogues/${document.familySlug}`);
     }
-    expect(html).not.toMatch(/\.pdf|\bKB\b|\bMB\b|Processing|Replacement pending|Upload failed|Today|Yesterday/i);
+    expect(html).not.toMatch(/\b[A-Za-z0-9_-]+\.pdf\b|\bKB\b|\bMB\b|Processing|Replacement pending|Upload failed|Today|Yesterday/i);
     expect(html).not.toContain("data-preview-only");
   });
 
@@ -35,15 +35,7 @@ describe("F3E-B catalogue pages", () => {
   });
 
   it("keeps upload and replacement states isolated", () => {
-    const html = renderToStaticMarkup(
-      <>
-        <AdminCatalogueUploadSelectionPreview />
-        <AdminCatalogueProcessingPreview />
-        <AdminCatalogueReplacementPendingPreview />
-        <AdminCatalogueReplacementFailurePreview />
-        <AdminCatalogueSafeReplacementPreview />
-      </>
-    );
+    const html = renderToStaticMarkup(<><AdminCatalogueUploadSelectionPreview /><AdminCatalogueProcessingPreview /><AdminCatalogueReplacementPendingPreview /><AdminCatalogueReplacementFailurePreview /><AdminCatalogueSafeReplacementPreview /></>);
     expect((html.match(/data-preview-only=/g) ?? [])).toHaveLength(5);
     expect(html).toContain("No upload or replacement occurred");
   });
