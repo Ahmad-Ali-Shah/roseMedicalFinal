@@ -22,6 +22,7 @@
     "zod": "^4.0.0"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "latest",
     "@playwright/test": "^1.57.0",
     "@tailwindcss/postcss": "^4.1.0",
     "@types/node": "^24.0.0",
@@ -32,6 +33,6 @@
     "tailwindcss": "^4.1.0",
     "typescript": "^5.9.0",
     "vitest": "^3.2.0",
-    "@opennextjs/cloudflare": "latest"
+    "wrangler": "^4.118.0"
   }
 }
