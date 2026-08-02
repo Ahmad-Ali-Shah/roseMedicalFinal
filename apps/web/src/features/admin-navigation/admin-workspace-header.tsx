@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { logout } from "@/app/admin/(workspace)/logout-action";
 import { Button } from "@/components/ui";
 import { getAdminNavigationItem } from "./admin-navigation-model";
 
@@ -14,8 +15,12 @@ export function AdminWorkspaceHeader() {
         <strong>{currentItem?.label ?? "Owner Workspace"}</strong>
       </div>
       <div className="admin-workspace-header__session">
-        <span>Owner session not connected</span>
-        <Button size="small" variant="secondary" disabled>Sign out</Button>
+        <span>Owner session active</span>
+        <form action={logout}>
+          <Button type="submit" size="small" variant="secondary">
+            Sign out
+          </Button>
+        </form>
       </div>
     </header>
   );
