@@ -1,5 +1,3 @@
-import type { Route } from "next";
-
 export type AdminNavigationKey =
   | "dashboard"
   | "products"
@@ -14,11 +12,25 @@ export type AdminNavigationKey =
   | "revisions"
   | "settings";
 
+export type AdminNavigationHref =
+  | "/admin"
+  | "/admin/products"
+  | "/admin/families"
+  | "/admin/catalogues"
+  | "/admin/media"
+  | "/admin/inquiries"
+  | "/admin/messages"
+  | "/admin/content"
+  | "/admin/contact-details"
+  | "/admin/publishing"
+  | "/admin/revisions"
+  | "/admin/settings";
+
 export interface AdminNavigationItem {
   key: AdminNavigationKey;
   label: string;
   shortLabel: string;
-  href: Route<string>;
+  href: AdminNavigationHref;
 }
 
 export interface AdminNavigationGroup {
