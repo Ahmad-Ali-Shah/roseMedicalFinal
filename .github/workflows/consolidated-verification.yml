@@ -136,7 +136,8 @@ jobs:
         continue-on-error: true
         run: node --test apps/web/src/test/f3e-d-governance-policy.static.test.mjs
 
-      - name: Enforce core result
+      - name: Write core result matrix
+        id: result_matrix
         if: always()
         env:
           CONTRACTS: ${{ steps.contracts.outcome }}
@@ -160,19 +161,46 @@ jobs:
           F3ED_STYLES: ${{ steps.f3ed_styles.outcome }}
           F3ED_POLICY: ${{ steps.f3ed_policy.outcome }}
         run: |
-          failed=0
-          for result in \
-            "$CONTRACTS" "$DRIFT" "$LINT" "$TYPECHECK" "$UNIT" "$BUILD" \
-            "$FOUNDATION" "$PUBLIC_STYLES" "$F3B_STYLES" "$F3C_STYLES" \
-            "$F3D_STYLES" "$F3D_POLICY" "$F3EA_STYLES" "$F3EA_POLICY" \
-            "$F3EB_STYLES" "$F3EB_POLICY" "$F3EC_STYLES" "$F3EC_POLICY" \
-            "$F3ED_STYLES" "$F3ED_POLICY"
-          do
-            if [ "$result" != "success" ]; then
-              failed=1
-            fi
-          done
-          exit "$failed"
+          mkdir -p verification-results
+          cat > verification-results/core-results.txt <<EOF
+          contracts=$CONTRACTS
+          generated_drift=$DRIFT
+          lint=$LINT
+          typecheck=$TYPECHECK
+          unit=$UNIT
+          build=$BUILD
+          foundation=$FOUNDATION
+          public_styles=$PUBLIC_STYLES
+          f3b_styles=$F3B_STYLES
+          f3c_styles=$F3C_STYLES
+          f3d_styles=$F3D_STYLES
+          f3d_policy=$F3D_POLICY
+          f3ea_styles=$F3EA_STYLES
+          f3ea_policy=$F3EA_POLICY
+          f3eb_styles=$F3EB_STYLES
+          f3eb_policy=$F3EB_POLICY
+          f3ec_styles=$F3EC_STYLES
+          f3ec_policy=$F3EC_POLICY
+          f3ed_styles=$F3ED_STYLES
+          f3ed_policy=$F3ED_POLICY
+          EOF
+          cat verification-results/core-results.txt
+
+      - name: Upload core result matrix
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: core-verification-results
+          path: verification-results/core-results.txt
+          if-no-files-found: error
+          retention-days: 3
+
+      - name: Enforce core result
+        if: always()
+        run: |
+          if grep -Ev '^[a-z0-9_]+=success$' verification-results/core-results.txt; then
+            exit 1
+          fi
 
   browser:
     name: Playwright verification
