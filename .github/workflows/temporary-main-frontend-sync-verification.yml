@@ -1,0 +1,149 @@
+name: Temporary Main Frontend Sync Verification
+
+on:
+  push:
+    branches:
+      - integration/main-frontend-f3ed-sync
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: temporary-main-frontend-sync-verification
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:54321' }}
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'temporary-verification-anon-key' }}
+
+jobs:
+  baseline-main:
+    name: Baseline main core checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout current main baseline
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Activate pnpm 11.4.0
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.4.0 --activate
+          node --version
+          pnpm --version
+
+      - name: Install workspace
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate contracts and check drift
+        run: |
+          pnpm contracts:generate
+          git diff --exit-code -- packages/contracts/src/generated/schema.ts
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Strict typecheck
+        run: pnpm typecheck
+
+      - name: Unit, contract and static tests
+        run: pnpm test
+
+      - name: Production build
+        run: pnpm build
+
+  synchronized-core:
+    name: Synchronized branch core checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout synchronized branch
+        uses: actions/checkout@v4
+        with:
+          ref: integration/main-frontend-f3ed-sync
+          fetch-depth: 0
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Activate pnpm 11.4.0
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.4.0 --activate
+          node --version
+          pnpm --version
+
+      - name: Install workspace
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate contracts and check drift
+        run: |
+          pnpm contracts:generate
+          git diff --exit-code -- packages/contracts/src/generated/schema.ts
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Strict typecheck
+        run: pnpm typecheck
+
+      - name: Unit, contract and static tests
+        run: pnpm test
+
+      - name: Production build
+        run: pnpm build
+
+  synchronized-browser:
+    name: Synchronized branch browser checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    needs: synchronized-core
+    steps:
+      - name: Checkout synchronized branch
+        uses: actions/checkout@v4
+        with:
+          ref: integration/main-frontend-f3ed-sync
+          fetch-depth: 0
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Activate pnpm 11.4.0
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.4.0 --activate
+
+      - name: Install workspace
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Chromium
+        run: pnpm --filter @rosa/web exec playwright install --with-deps chromium
+
+      - name: Run complete Playwright matrix
+        run: pnpm test:e2e
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: synchronized-playwright-report
+          path: apps/web/playwright-report
+          if-no-files-found: ignore
+          retention-days: 3
