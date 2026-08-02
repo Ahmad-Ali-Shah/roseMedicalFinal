@@ -11,7 +11,7 @@ for (const family of families) {
     await expect(page.locator("[data-product-card]")).toHaveCount(4);
     await expect(page.locator("form")).toHaveCount(0);
     await expect(page.getByRole("link", { name: new RegExp(`Browse ${family} catalogue`, "i") })).toBeVisible();
-    await expect(page.locator('main a[href="/contact"]').first()).toBeVisible();
+    await expect(page.getByRole("link", { name: "Request support", exact: true })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)).toBe(false);
   });
 }
