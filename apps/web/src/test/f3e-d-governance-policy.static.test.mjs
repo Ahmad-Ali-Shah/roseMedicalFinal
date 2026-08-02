@@ -37,10 +37,11 @@ const prohibited = [
   /type=["']file["']/i,
   /onSubmit=|fetch\(|localStorage|sessionStorage|document\.cookie/i,
   /data-preview-only/i,
-  /preview-states|preview-fixtures/i
+  /preview-states|preview-fixtures/i,
+  /from ["']@\/features\/admin-primitives["']/
 ];
 
-test("F3E-D normal source contains no fabricated state or live behavior", () => {
+test("F3E-D normal source contains no fabricated state, preview barrel or live behavior", () => {
   for (const pattern of prohibited) assert.doesNotMatch(normalContent, pattern);
   assert.match(normalContent, /No publishing queue is connected/);
   assert.match(normalContent, /No revision history is available/);
