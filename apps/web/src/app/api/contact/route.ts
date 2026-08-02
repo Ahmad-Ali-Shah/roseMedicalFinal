@@ -1,49 +1,59 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
 const spamKeywords = ["viagra", "v1agra", "cialis", "c1alis", "casino", "crypto", "bitcoin", "pharma", "lottery", "xxx", "loan"];
 
-function checkSpam(text) {
+interface ContactRequestBody {
+  company_name?: string;
+  name?: string;
+  company?: string;
+  email?: string;
+  phone?: string;
+  country?: string;
+  subject?: string;
+  message?: string;
+}
+
+function checkSpam(text: string) {
   const lower = text.toLowerCase();
   const clean = lower.replace(/[^a-z0-9]/g, "");
-  for (const kw of spamKeywords) {
-    if (lower.includes(kw) || clean.includes(kw)) return true;
+  for (const keyword of spamKeywords) {
+    if (lower.includes(keyword) || clean.includes(keyword)) return true;
   }
   return false;
 }
 
 // Cosine Similarity Functions
-function getTokens(text) { return text.toLowerCase().match(/\b\w+\b/g) || []; }
-function vectorize(tokens) {
-  const freq = {};
+function getTokens(text: string): string[] { return text.toLowerCase().match(/\b\w+\b/g) || []; }
+function vectorize(tokens: string[]): Record<string, number> {
+  const freq: Record<string, number> = {};
   tokens.forEach(t => freq[t] = (freq[t] || 0) + 1);
   return freq;
 }
-function cosineSim(vecA, vecB) {
+function cosineSim(vecA: Record<string, number>, vecB: Record<string, number>): number {
   let dot = 0, magA = 0, magB = 0;
-  for (let key in vecA) { if (vecB[key]) dot += vecA[key] * vecB[key]; magA += vecA[key] ** 2; }
-  for (let key in vecB) magB += vecB[key] ** 2;
+  for (const key in vecA) { if (vecB[key]) dot += vecA[key] * vecB[key]; magA += vecA[key] ** 2; }
+  for (const key in vecB) magB += vecB[key] ** 2;
   return (magA && magB) ? dot / (Math.sqrt(magA) * Math.sqrt(magB)) : 0;
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    const body = await req.json() as ContactRequestBody;
     const supabase = await createClient();
 
     if (body.company_name) return NextResponse.json({ success: true });
 
-    let p = (body.phone || "").split(" ").join("").split("-").join("");
-    if (p.indexOf("+") !== 0) p = "+" + p;
-    if (p.length < 8) return NextResponse.json({ error: "Invalid phone." }, { status: 400 });
+    let phone = (body.phone || "").split(" ").join("").split("-").join("");
+    if (phone.indexOf("+") !== 0) phone = "+" + phone;
+    if (phone.length < 8) return NextResponse.json({ error: "Invalid phone." }, { status: 400 });
 
-    if (body.name === "" || body.email === "" || body.message === "") {
+    if (!body.name || !body.email || !body.message) {
       return NextResponse.json({ error: "Missing fields." }, { status: 400 });
     }
 
-    let isSpam = checkSpam(body.message || "");
+    let isSpam = checkSpam(body.message);
 
-    // Cosine Similarity Check
     if (!isSpam) {
       const newVec = vectorize(getTokens(body.message));
       const { data: oldMessages } = await supabase.from("seen_messages").select("message").limit(50);
@@ -58,14 +68,14 @@ export async function POST(req: Request) {
       }
     }
 
-    // AI Web Crawler & URL Caching
     if (!isSpam) {
-      const msg = body.message || "";
-      let url = null;
-      if (msg.indexOf("http") !== -1) {
-        const words = msg.split(" ");
-        for (const word of words) {
-          if (word.indexOf("http") === 0) { url = word; break; }
+      let url: string | null = null;
+      if (body.message.indexOf("http") !== -1) {
+        for (const word of body.message.split(" ")) {
+          if (word.indexOf("http") === 0) {
+            url = word;
+            break;
+          }
         }
       }
       if (url) {
@@ -75,28 +85,39 @@ export async function POST(req: Request) {
           isSpam = cached.is_spam;
         } else {
           try {
-            const res = await fetch(url, { signal: AbortSignal.timeout(3000) });
-            if (res.ok) {
-              const html = await res.text();
+            const response = await fetch(url, { signal: AbortSignal.timeout(3000) });
+            if (response.ok) {
+              const html = await response.text();
               let text = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, " ");
               text = text.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, " ");
               text = text.replace(/<[^>]+>/g, " ");
               if (checkSpam(text)) isSpam = true;
             }
-          } catch (e) {}
-          await supabase.from("crawled_urls").upsert({ url: url, is_spam: isSpam, crawled_at: new Date().toISOString() });
+          } catch {
+            // The existing contact flow continues when an external URL cannot be inspected.
+          }
+          await supabase.from("crawled_urls").upsert({ url, is_spam: isSpam, crawled_at: new Date().toISOString() });
         }
       }
     }
 
     const { data } = await supabase.auth.getUser();
     const userId = data.user ? data.user.id : null;
+
     const { error } = await supabase.from("contact_messages").insert({
-      user_id: userId, name: body.name, email: body.email, phone: p, message: body.message, is_spam: isSpam
+      user_id: userId,
+      name: body.name,
+      email: body.email,
+      phone,
+      message: body.message,
+      is_spam: isSpam,
+      company: body.company || null,
+      country: body.country || null,
+      subject: body.subject || null
     });
     if (error) return NextResponse.json({ error: "DB error" }, { status: 500 });
     return NextResponse.json({ success: true });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

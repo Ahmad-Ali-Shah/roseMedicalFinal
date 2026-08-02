@@ -1,5 +1,3 @@
-import type { Route } from "next";
-
 export type AdminNavigationKey =
   | "dashboard"
   | "products"
@@ -14,11 +12,25 @@ export type AdminNavigationKey =
   | "revisions"
   | "settings";
 
+export type AdminNavigationHref =
+  | "/admin"
+  | "/admin/products"
+  | "/admin/families"
+  | "/admin/catalogues"
+  | "/admin/media"
+  | "/admin/inquiries"
+  | "/admin/messages"
+  | "/admin/content"
+  | "/admin/contact-details"
+  | "/admin/publishing"
+  | "/admin/revisions"
+  | "/admin/settings";
+
 export interface AdminNavigationItem {
   key: AdminNavigationKey;
   label: string;
   shortLabel: string;
-  href: Route<string>;
+  href: AdminNavigationHref;
 }
 
 export interface AdminNavigationGroup {
@@ -27,7 +39,7 @@ export interface AdminNavigationGroup {
   items: readonly AdminNavigationItem[];
 }
 
-export const ADMIN_NAVIGATION_GROUPS = [
+export const ADMIN_NAVIGATION_GROUPS: readonly AdminNavigationGroup[] = [
   {
     key: "overview",
     label: "Overview",
@@ -76,11 +88,10 @@ export const ADMIN_NAVIGATION_GROUPS = [
       { key: "settings", label: "Settings", shortLabel: "Settings", href: "/admin/settings" }
     ]
   }
-] as const satisfies readonly AdminNavigationGroup[];
+];
 
-export const ADMIN_NAVIGATION_ITEMS = ADMIN_NAVIGATION_GROUPS.flatMap(
-  (group) => group.items
-);
+export const ADMIN_NAVIGATION_ITEMS: readonly AdminNavigationItem[] =
+  ADMIN_NAVIGATION_GROUPS.flatMap((group) => group.items);
 
 export function getAdminNavigationItem(pathname: string): AdminNavigationItem | undefined {
   return ADMIN_NAVIGATION_ITEMS.find((item) =>

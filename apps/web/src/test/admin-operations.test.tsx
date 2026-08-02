@@ -41,36 +41,30 @@ import {
 } from "@/features/admin-operations-routing";
 
 describe("F3E-C normal operations pages", () => {
-  it("renders a truthful empty Inquiries composition", () => {
+  it("renders the connected Inquiry queue controls without fabricated records", () => {
     const html = renderToStaticMarkup(<AdminInquiriesPage />);
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
     expect((html.match(/<main/g) ?? [])).toHaveLength(0);
     expect(html).toContain("Product requirements awaiting connection.");
-    expect(html).toContain("No live quotation inquiries are available.");
-    expect(html).toContain("No live inquiry source is connected");
+    expect(html).toContain("Search by name or email...");
+    expect(html).toContain("All Statuses");
+    expect(html).toContain("Filter");
     expect(html).not.toContain("data-preview-only");
-    expect(html).not.toContain("<form");
+    expect((html.match(/<form/g) ?? [])).toHaveLength(1);
     expect(html).not.toContain("<table");
-    expect(html).not.toMatch(/0 inquiries|0 new|4 inquiries|20 latest submissions|No new inquiries today|Last synced/i);
-    expect((html.match(/<input[^>]*readonly/g) ?? [])).toHaveLength(1);
-    expect((html.match(/<select[^>]*disabled/g) ?? [])).toHaveLength(2);
-    expect((html.match(/<button[^>]*disabled/g) ?? [])).toHaveLength(2);
+    expect(html).not.toMatch(/EXAMPLE-INQUIRY|buyer@example.invalid|Last synced/i);
   });
 
-  it("renders a truthful empty Messages composition", () => {
+  it("renders the connected Message queue boundary without fabricated records", () => {
     const html = renderToStaticMarkup(<AdminMessagesPage />);
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
     expect((html.match(/<main/g) ?? [])).toHaveLength(0);
     expect(html).toContain("Contact messages remain separate.");
-    expect(html).toContain("No live general messages are available.");
-    expect(html).toContain("No live message source is connected");
+    expect(html).toContain("Keep general communication separate from structured product requirements.");
     expect(html).not.toContain("data-preview-only");
     expect(html).not.toContain("<form");
     expect(html).not.toContain("<table");
-    expect(html).not.toMatch(/0 messages|All caught up|Inbox empty|Last synced/i);
-    expect((html.match(/<input[^>]*readonly/g) ?? [])).toHaveLength(1);
-    expect((html.match(/<select[^>]*disabled/g) ?? [])).toHaveLength(1);
-    expect((html.match(/<button[^>]*disabled/g) ?? [])).toHaveLength(2);
+    expect(html).not.toMatch(/EXAMPLE-MESSAGE|sender@example.invalid|Last synced/i);
   });
 
   it("keeps the two status vocabularies exact and deterministic", () => {
@@ -91,13 +85,13 @@ describe("F3E-C exact operations routing", () => {
   });
 
   it.each([
-    [],
-    ["inquiries", "EXAMPLE-INQUIRY"],
-    ["messages", "EXAMPLE-MESSAGE"],
-    ["inquiries", "EXAMPLE-INQUIRY", "notes"],
-    ["messages", "EXAMPLE-MESSAGE", "reply"],
-    ["unknown"]
-  ])("rejects unsupported shape %j", (segments) => {
+    { segments: [] },
+    { segments: ["inquiries", "EXAMPLE-INQUIRY"] },
+    { segments: ["messages", "EXAMPLE-MESSAGE"] },
+    { segments: ["inquiries", "EXAMPLE-INQUIRY", "notes"] },
+    { segments: ["messages", "EXAMPLE-MESSAGE", "reply"] },
+    { segments: ["unknown"] }
+  ] as const)("rejects unsupported shape $segments", ({ segments }) => {
     expect(resolveAdminOperationsRoute(segments)).toEqual({ kind: "not-found" });
   });
 });

@@ -1,4 +1,3 @@
-import type { Route } from "next";
 import {
   CATALOGUE_FAMILIES,
   CATALOGUE_PRODUCTS,
@@ -20,21 +19,21 @@ export interface AdminFamilyRow {
   introduction: string;
   catalogueLabel: string;
   productCount: number;
-  publicHref: Route<string>;
-  adminHref: Route<string>;
+  publicHref: ReturnType<typeof familyHref>;
+  adminHref: ReturnType<typeof adminFamilyHref>;
 }
 
 export interface AdminFamilyEditorModel {
   family: CatalogueFamilyRecord;
   products: readonly CatalogueProductRecord[];
   productCount: number;
-  publicHref: Route<string>;
-  adminCatalogueHref: Route<string>;
+  publicHref: ReturnType<typeof familyHref>;
+  adminCatalogueHref: ReturnType<typeof adminCatalogueHref>;
   pdfAvailability: "Public PDF path registered" | "Awaiting publication";
 }
 
 export function getAdminFamilyRows(): readonly AdminFamilyRow[] {
-  return CATALOGUE_FAMILIES.map((family) => ({
+  return CATALOGUE_FAMILIES.map((family): AdminFamilyRow => ({
     slug: family.slug,
     sequence: family.sequence,
     name: family.name,

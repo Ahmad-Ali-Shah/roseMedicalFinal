@@ -1,14 +1,19 @@
 import Link from "next/link";
 import type { Route } from "next";
 
-export interface AdminStatProps {
+export interface AdminStatProps<T extends string> {
   label: string;
   value: string | number;
-  href?: Route<string>;
+  href?: Route<T>;
   note?: string;
 }
 
-export function AdminStat({ label, value, href, note }: AdminStatProps) {
+export function AdminStat<T extends string>({
+  label,
+  value,
+  href,
+  note
+}: AdminStatProps<T>) {
   const content = (
     <>
       <span className="admin-stat__label">{label}</span>

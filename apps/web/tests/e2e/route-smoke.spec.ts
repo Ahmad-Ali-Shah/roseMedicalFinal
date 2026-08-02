@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { routeSmokeCases } from "../../src/test/routes";
+import { routeSmokeCases, strictNotFoundCases } from "../../src/test/routes";
 
 for (const route of routeSmokeCases) {
   test(`${route} exposes one main landmark`, async ({ page }) => {
@@ -7,5 +7,11 @@ for (const route of routeSmokeCases) {
     expect(response?.ok()).toBe(true);
     await expect(page.locator("main")).toHaveCount(1);
     await expect(page.locator("h1")).toBeVisible();
+  });
+}
+
+for (const route of strictNotFoundCases) {
+  test(`${route} fails closed`, async ({ page }) => {
+    expect((await page.goto(route))?.status()).toBe(404);
   });
 }

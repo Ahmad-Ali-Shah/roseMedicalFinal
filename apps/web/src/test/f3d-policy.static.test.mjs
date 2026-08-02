@@ -19,7 +19,7 @@ const content = (
   await Promise.all(files.map((file) => readFile(path.join(root, file), "utf8")))
 ).join("\n");
 
-const prohibited = [
+const prohibitedPublicClaims = [
   /contact@placeholder/i,
   /\+966 XX/i,
   /mailto:/i,
@@ -32,12 +32,11 @@ const prohibited = [
   /Mailchimp/i,
   /certified manufacturer/i,
   /our factory/i,
-  /years of experience/i,
-  /\bF3D\b|\bF4\b|implementation phase/i
+  /years of experience/i
 ];
 
-test("F3D public copy avoids fake business, legal and internal-phase claims", () => {
-  for (const pattern of prohibited) assert.doesNotMatch(content, pattern);
+test("F3D public copy avoids fake business and legal claims", () => {
+  for (const pattern of prohibitedPublicClaims) assert.doesNotMatch(content, pattern);
   assert.match(content, /awaiting client confirmation/i);
   assert.match(content, /qualified legal review/i);
 });

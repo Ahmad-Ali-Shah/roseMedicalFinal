@@ -15,3 +15,5 @@ test-results/
 uploads/
 local-data/
 .worktrees/
+.open-next/
+.next/

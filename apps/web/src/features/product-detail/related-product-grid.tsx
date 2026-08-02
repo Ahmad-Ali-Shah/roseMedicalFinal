@@ -3,7 +3,24 @@ import type {
   CatalogueFamilyRecord,
   CatalogueProductRecord
 } from "@/features/catalogue-registry";
-import { ProductPreviewCard } from "@/features/public-catalogue";
+import { ProductPreviewCard, type ProductPreviewModel } from "@/features/public-catalogue";
+
+function toProductPreview(
+  family: CatalogueFamilyRecord,
+  product: CatalogueProductRecord
+): ProductPreviewModel {
+  return {
+    id: product.id,
+    slug: product.slug,
+    familySlug: product.familySlug,
+    familyName: family.name,
+    name: product.name,
+    code: product.code,
+    optionSummary: product.primaryOption ? [product.primaryOption] : [],
+    ...(product.description ? { description: product.description } : {}),
+    imageLabel: product.mediaLabel
+  };
+}
 
 export function RelatedProductGrid({
   family,
@@ -19,19 +36,7 @@ export function RelatedProductGrid({
       <ul className="related-product-grid">
         {products.map((product) => (
           <li key={product.id}>
-            <ProductPreviewCard
-              product={{
-                id: product.id,
-                slug: product.slug,
-                familySlug: product.familySlug,
-                familyName: family.name,
-                name: product.name,
-                code: product.code,
-                optionSummary: product.primaryOption ? [product.primaryOption] : [],
-                description: product.description,
-                imageLabel: product.mediaLabel
-              }}
-            />
+            <ProductPreviewCard product={toProductPreview(family, product)} />
           </li>
         ))}
       </ul>

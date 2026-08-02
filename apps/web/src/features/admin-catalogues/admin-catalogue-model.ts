@@ -1,4 +1,3 @@
-import type { Route } from "next";
 import {
   CATALOGUE_FAMILIES,
   type CatalogueFamilyRecord
@@ -24,17 +23,17 @@ export interface AdminCatalogueRow {
   coverLabel: string;
   sourceStatus: CatalogueDocument["sourceStatus"];
   availability: AdminCatalogueAvailability;
-  publicCataloguesHref: Route<string>;
-  publicFamilyHref: Route<string>;
-  adminHref: Route<string>;
+  publicCataloguesHref: "/catalogues";
+  publicFamilyHref: ReturnType<typeof familyHref>;
+  adminHref: ReturnType<typeof adminCatalogueHref>;
 }
 
 export interface AdminCatalogueEditorModel {
   family: CatalogueFamilyRecord;
   document: CatalogueDocument;
   availability: AdminCatalogueAvailability;
-  publicCataloguesHref: Route<string>;
-  publicFamilyHref: Route<string>;
+  publicCataloguesHref: "/catalogues";
+  publicFamilyHref: ReturnType<typeof familyHref>;
 }
 
 const familyBySlug = new Map(
@@ -50,7 +49,7 @@ function availabilityFor(
 }
 
 export function getAdminCatalogueRows(): readonly AdminCatalogueRow[] {
-  return CATALOGUE_DOCUMENTS.map((document) => {
+  return CATALOGUE_DOCUMENTS.map((document): AdminCatalogueRow => {
     const family = familyBySlug.get(document.familySlug);
     if (!family) {
       throw new Error(`Unknown catalogue family: ${document.familySlug}`);
@@ -65,7 +64,7 @@ export function getAdminCatalogueRows(): readonly AdminCatalogueRow[] {
       coverLabel: document.coverLabel,
       sourceStatus: document.sourceStatus,
       availability: availabilityFor(document),
-      publicCataloguesHref: "/catalogues" as Route<string>,
+      publicCataloguesHref: "/catalogues",
       publicFamilyHref: familyHref(document.familySlug),
       adminHref: adminCatalogueHref(document.familySlug)
     };
@@ -83,7 +82,7 @@ export function getAdminCatalogueEditor(
     family,
     document,
     availability: availabilityFor(document),
-    publicCataloguesHref: "/catalogues" as Route<string>,
+    publicCataloguesHref: "/catalogues",
     publicFamilyHref: familyHref(document.familySlug)
   };
 }

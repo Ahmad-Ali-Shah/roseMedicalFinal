@@ -1,3 +1,4 @@
+import type { Route } from "next";
 import { Button, ButtonLink } from "@/components/ui";
 import {
   AdminAlert,
@@ -21,9 +22,9 @@ interface LiveCatalogueRow {
   coverLabel: string;
   sourceStatus: string;
   availability: "Public PDF path registered" | "Awaiting publication";
-  publicCataloguesHref: string;
-  publicFamilyHref: string;
-  adminHref: string;
+  publicCataloguesHref: Route<string>;
+  publicFamilyHref: Route<string>;
+  adminHref: Route<string>;
 }
 
 const columns: readonly AdminDataTableColumn<LiveCatalogueRow>[] = [
@@ -79,6 +80,10 @@ export async function AdminCataloguesPage() {
 
   const rows: LiveCatalogueRow[] = categories.map((cat, index) => {
     const seq = String(index + 1).padStart(2, "0");
+    const publicCataloguesHref = "/catalogues" as Route<string>;
+    const publicFamilyHref = `/products?category=${cat.slug}` as Route<string>;
+    const adminHref = "/admin/catalogues" as Route<string>;
+
     return {
       familySlug: cat.slug,
       sequence: seq,
@@ -88,9 +93,9 @@ export async function AdminCataloguesPage() {
       coverLabel: "Technical family catalogue",
       sourceStatus: "Live DB Record",
       availability: "Awaiting publication",
-      publicCataloguesHref: "/catalogues",
-      publicFamilyHref: `/products?category=${cat.slug}`,
-      adminHref: "/admin/catalogues"
+      publicCataloguesHref,
+      publicFamilyHref,
+      adminHref
     };
   });
 

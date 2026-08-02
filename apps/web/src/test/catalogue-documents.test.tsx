@@ -41,8 +41,12 @@ describe("F3C catalogue documents", () => {
   });
 
   it("renders a real family link and a native disabled PDF control", () => {
+    const document = CATALOGUE_DOCUMENTS[0];
+    expect(document).toBeDefined();
+    if (!document) throw new Error("Expected the first catalogue document");
+
     const html = renderToStaticMarkup(
-      <CatalogueCard document={CATALOGUE_DOCUMENTS[0]} featured />
+      <CatalogueCard document={document} featured />
     );
 
     expect(html).toContain('href="/products/knives"');
