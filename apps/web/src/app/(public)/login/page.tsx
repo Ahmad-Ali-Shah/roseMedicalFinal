@@ -20,7 +20,7 @@ export default function LoginPage() {
     if (isSignUp) {
       const { error } = await supabase.auth.signUp({ email, password });
       if (error) setError(error.message);
-      else alert("Check your email for a confirmation link to finish signing up!");
+      else alert("Check your email for a confirmation link!");
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) setError(error.message);
