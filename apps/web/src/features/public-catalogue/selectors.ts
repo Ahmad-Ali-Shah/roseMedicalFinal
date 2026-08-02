@@ -17,25 +17,27 @@ export function familyNameBySlug(slug: FamilySlug): string {
 }
 
 export function selectFamilyCards(): readonly FamilyCardModel[] {
-  return FAMILY_SLUGS.map((slug) => {
+  return FAMILY_SLUGS.map((slug): FamilyCardModel => {
     const fixture = familyFixtures.find((family) => family.slug === slug);
     if (!fixture) throw new Error(`Missing Rosa family fixture: ${slug}`);
+    const description = fixture.introduction.en;
 
     return {
       id: fixture.id,
       slug,
       name: fixture.name.en,
-      description: fixture.introduction.en || undefined,
+      ...(description ? { description } : {}),
       imageLabel: `${fixture.name.en} instrument placeholder`
     };
   });
 }
 
 export function selectFeaturedProducts(): readonly ProductPreviewModel[] {
-  return productFixtures.map((product) => {
+  return productFixtures.map((product): ProductPreviewModel => {
     if (!isFamilySlug(product.familySlug)) {
       throw new Error(`Unknown Rosa family slug: ${product.familySlug}`);
     }
+    const description = product.shortDescription.en;
 
     return {
       id: product.id,
@@ -45,7 +47,7 @@ export function selectFeaturedProducts(): readonly ProductPreviewModel[] {
       name: product.name.en,
       code: product.code,
       optionSummary: product.optionSummary,
-      description: product.shortDescription.en || undefined,
+      ...(description ? { description } : {}),
       imageLabel: `${product.name.en} placeholder`
     };
   });

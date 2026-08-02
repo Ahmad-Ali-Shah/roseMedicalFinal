@@ -4,9 +4,9 @@ import test from "node:test";
 
 const css = await readFile(new URL("../styles/f3d-pages.css", import.meta.url), "utf8");
 
-test("F3D styles include desktop, tablet, mobile and reduced-motion rules", () => {
-  assert.match(css, /\.about-hero/);
-  assert.match(css, /\.procurement-support-hero/);
+test("F3D styles include shared heroes, public domains and responsive safeguards", () => {
+  assert.match(css, /\.f3d-hero/);
+  assert.match(css, /\.f3d-hero__layout/);
   assert.match(css, /\.contact-page/);
   assert.match(css, /\.search-default-page/);
   assert.match(css, /\.legal-page/);
