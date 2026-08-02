@@ -10,17 +10,24 @@ import {
 } from "@/features/admin-auth-preview";
 
 describe("F3E-A owner-access normal routes", () => {
-  it.each([
-    [<AdminLoginPage key="login" />, "Sign in to the Rosa workspace."],
-    [<AdminRecoveryPage key="recovery" />, "Recover owner access."]
-  ])("renders one heading without a native form", (page, heading) => {
-    const html = renderToStaticMarkup(page);
-    expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
-    expect(html).toContain(heading);
-    expect(html).not.toContain("<form");
-    expect(html).toContain("readonly");
-    expect(html).toContain("disabled");
-    expect(html).toContain("noindex metadata is not access control");
+  it("connects login while leaving recovery explicitly static", () => {
+    const login = renderToStaticMarkup(<AdminLoginPage />);
+    const recovery = renderToStaticMarkup(<AdminRecoveryPage />);
+
+    expect((login.match(/<h1/g) ?? [])).toHaveLength(1);
+    expect(login).toContain("Sign in to the Rosa workspace.");
+    expect(login).toContain("<form");
+    expect(login).toContain('name="email"');
+    expect(login).toContain('name="password"');
+    expect(login).not.toContain("readonly");
+    expect(login).not.toContain("Authentication not connected");
+
+    expect((recovery.match(/<h1/g) ?? [])).toHaveLength(1);
+    expect(recovery).toContain("Recover owner access.");
+    expect(recovery).not.toContain("<form");
+    expect(recovery).toContain("readonly");
+    expect(recovery).toContain("disabled");
+    expect(recovery).toContain("Recovery not connected");
   });
 
   it("contains no account creation or fake owner identity", () => {
