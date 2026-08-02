@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - integration/main-frontend-f3ed-sync
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
