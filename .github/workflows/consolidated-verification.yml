@@ -1,0 +1,119 @@
+name: Consolidated Frontend Verification
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: consolidated-frontend-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  core:
+    name: Core verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.4.0
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run consolidated core gate
+        shell: bash
+        run: |
+          set +e
+          failed=0
+
+          run_check() {
+            name="$1"
+            shift
+            echo "::group::$name"
+            "$@"
+            status=$?
+            echo "RESULT $name: $status"
+            echo "::endgroup::"
+            if [ "$status" -ne 0 ]; then
+              failed=1
+            fi
+          }
+
+          run_check "contracts:generate" pnpm contracts:generate
+          run_check "generated contract drift" git diff --exit-code
+          run_check "lint" pnpm lint
+          run_check "typecheck" pnpm typecheck
+          run_check "unit tests" pnpm test
+          run_check "production build" pnpm build
+          run_check "foundation static test" pnpm --filter @rosa/web test:foundation
+          run_check "public page styles" node --test apps/web/src/test/public-page-styles.static.test.mjs
+          run_check "F3B styles" node --test apps/web/src/test/f3b-styles.static.test.mjs
+          run_check "F3C styles" node --test apps/web/src/test/f3c-styles.static.test.mjs
+          run_check "F3D styles" node --test apps/web/src/test/f3d-styles.static.test.mjs
+          run_check "F3D policy" node --test apps/web/src/test/f3d-policy.static.test.mjs
+          run_check "F3E-A styles" node --test apps/web/src/test/f3e-a-admin-styles.static.test.mjs
+          run_check "F3E-A policy" node --test apps/web/src/test/f3e-a-admin-policy.static.test.mjs
+          run_check "F3E-B styles" node --test apps/web/src/test/f3e-b-admin-styles.static.test.mjs
+          run_check "F3E-B policy" node --test apps/web/src/test/f3e-b-admin-policy.static.test.mjs
+          run_check "F3E-C styles" node --test apps/web/src/test/f3e-c-operations-styles.static.test.mjs
+          run_check "F3E-C policy" node --test apps/web/src/test/f3e-c-operations-policy.static.test.mjs
+          run_check "F3E-D styles" node --test apps/web/src/test/f3e-d-governance-styles.static.test.mjs
+          run_check "F3E-D policy" node --test apps/web/src/test/f3e-d-governance-policy.static.test.mjs
+
+          exit "$failed"
+
+  browser:
+    name: Playwright verification
+    needs: core
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.4.0
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Chromium
+        run: pnpm --filter @rosa/web exec playwright install --with-deps chromium
+
+      - name: Run Playwright
+        run: pnpm test:e2e
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: apps/web/playwright-report
+          if-no-files-found: ignore
+          retention-days: 3
