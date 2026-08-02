@@ -21,9 +21,6 @@ export function AdminShell({ children }: { children: ReactNode }) {
       </aside>
       <div className="admin-workspace">
         <AdminWorkspaceHeader />
-        <div className="admin-workspace__warning" role="status">
-          Static preview. Search-engine noindex metadata is not access control. Production access requires server-enforced owner authentication.
-        </div>
         <main className="admin-content" id="main-content">{children}</main>
       </div>
     </div>
