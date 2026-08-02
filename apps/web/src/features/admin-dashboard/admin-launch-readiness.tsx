@@ -1,8 +1,6 @@
-import {
-  AdminSection,
-  AdminStatusBadge
-} from "@/features/admin-primitives";
-import type { AdminReadinessItem } from "./admin-dashboard-model";
+import { AdminSection } from "@/features/admin-primitives/admin-section";
+import { AdminStatusBadge } from "@/features/admin-primitives/admin-status";
+import type { AdminReadinessItem } from "@/features/admin-governance-source/admin-readiness-model";
 
 export function AdminLaunchReadiness({ items }: { items: readonly AdminReadinessItem[] }) {
   return (
