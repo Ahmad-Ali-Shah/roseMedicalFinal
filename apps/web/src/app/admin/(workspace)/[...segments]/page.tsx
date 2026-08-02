@@ -1,6 +1,9 @@
 import { notFound } from "next/navigation";
-import { getAdminNavigationItem } from "@/features/admin-navigation";
-import { AdminDeferredRoutePage } from "@/features/admin-routing";
+import {
+  AdminGovernanceRouteView,
+  isAdminGovernanceRoot,
+  resolveAdminGovernanceRoute
+} from "@/features/admin-governance-routing";
 import {
   AdminManagementRouteView,
   isAdminManagementRoot,
@@ -30,14 +33,20 @@ export default async function Page({
     return <AdminOperationsRouteView result={operations} />;
   }
 
+  const governance = resolveAdminGovernanceRoute(segments);
+
+  if (governance.kind !== "not-found") {
+    return <AdminGovernanceRouteView result={governance} />;
+  }
+
   const root = segments[0] ?? "";
-  if (isAdminManagementRoot(root) || isAdminOperationsRoot(root)) {
+  if (
+    isAdminManagementRoot(root) ||
+    isAdminOperationsRoot(root) ||
+    isAdminGovernanceRoot(root)
+  ) {
     notFound();
   }
 
-  const pathname = `/admin/${segments.join("/")}`;
-  const item = getAdminNavigationItem(pathname);
-  if (!item || item.key === "dashboard") notFound();
-
-  return <AdminDeferredRoutePage routeKey={item.key} />;
+  notFound();
 }
