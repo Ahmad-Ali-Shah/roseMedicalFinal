@@ -33,6 +33,9 @@ jobs:
         with:
           node-version: 24
 
+      - name: Prepare verification output
+        run: mkdir -p verification-results
+
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
@@ -44,7 +47,10 @@ jobs:
       - name: Check generated contract drift
         id: drift
         continue-on-error: true
-        run: git diff --exit-code
+        shell: bash
+        run: |
+          set -o pipefail
+          git diff --exit-code 2>&1 | tee verification-results/generated-drift.log
 
       - name: Lint
         id: lint
@@ -54,22 +60,34 @@ jobs:
       - name: Typecheck
         id: typecheck
         continue-on-error: true
-        run: pnpm typecheck
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm typecheck 2>&1 | tee verification-results/typecheck.log
 
       - name: Unit tests
         id: unit
         continue-on-error: true
-        run: pnpm test
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm test 2>&1 | tee verification-results/unit.log
 
       - name: Production build
         id: build
         continue-on-error: true
-        run: pnpm build
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm build 2>&1 | tee verification-results/build.log
 
       - name: Foundation static test
         id: foundation
         continue-on-error: true
-        run: pnpm --filter @rosa/web test:foundation
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm --filter @rosa/web test:foundation 2>&1 | tee verification-results/foundation.log
 
       - name: Public-page styles test
         id: public_styles
@@ -89,12 +107,18 @@ jobs:
       - name: F3D styles test
         id: f3d_styles
         continue-on-error: true
-        run: node --test apps/web/src/test/f3d-styles.static.test.mjs
+        shell: bash
+        run: |
+          set -o pipefail
+          node --test apps/web/src/test/f3d-styles.static.test.mjs 2>&1 | tee verification-results/f3d-styles.log
 
       - name: F3D policy test
         id: f3d_policy
         continue-on-error: true
-        run: node --test apps/web/src/test/f3d-policy.static.test.mjs
+        shell: bash
+        run: |
+          set -o pipefail
+          node --test apps/web/src/test/f3d-policy.static.test.mjs 2>&1 | tee verification-results/f3d-policy.log
 
       - name: F3E-A styles test
         id: f3ea_styles
@@ -137,7 +161,6 @@ jobs:
         run: node --test apps/web/src/test/f3e-d-governance-policy.static.test.mjs
 
       - name: Write core result matrix
-        id: result_matrix
         if: always()
         env:
           CONTRACTS: ${{ steps.contracts.outcome }}
@@ -161,7 +184,6 @@ jobs:
           F3ED_STYLES: ${{ steps.f3ed_styles.outcome }}
           F3ED_POLICY: ${{ steps.f3ed_policy.outcome }}
         run: |
-          mkdir -p verification-results
           cat > verification-results/core-results.txt <<EOF
           contracts=$CONTRACTS
           generated_drift=$DRIFT
@@ -186,12 +208,12 @@ jobs:
           EOF
           cat verification-results/core-results.txt
 
-      - name: Upload core result matrix
+      - name: Upload core verification evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: core-verification-results
-          path: verification-results/core-results.txt
+          name: core-verification-evidence
+          path: verification-results
           if-no-files-found: error
           retention-days: 3
 
