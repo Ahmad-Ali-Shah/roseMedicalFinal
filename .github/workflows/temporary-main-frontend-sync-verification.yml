@@ -1,9 +1,9 @@
 name: Temporary Main Frontend Sync Verification
 
 on:
-  push:
+  pull_request:
     branches:
-      - integration/main-frontend-f3ed-sync
+      - main
   workflow_dispatch:
 
 permissions:
