@@ -30,11 +30,14 @@ test('public shell contains the approved navigation and procurement actions', as
   assert.match(shell, /Request a quote/);
 });
 
-test('admin shell preserves the complete single-owner workspace navigation', async () => {
+test('admin shell and navigation preserve the complete single-owner workspace', async () => {
   const shell = await read('components/layout/admin-shell.tsx');
-  for (const label of ['Overview', 'Products', 'Families', 'Catalogues', 'Media', 'Inquiries', 'Messages', 'Website Content', 'Contact Details', 'Publishing', 'Revisions', 'Settings']) assert.match(shell, new RegExp(label));
-  assert.match(shell, /Single owner workspace/);
-  assert.match(shell, /Preview public site/);
+  const navigation = await read('features/admin-navigation/admin-navigation-model.ts');
+  const source = `${shell}\n${navigation}`;
+  for (const label of ['Overview', 'Products', 'Families', 'Catalogues', 'Media', 'Inquiries', 'Messages', 'Website Content', 'Contact Details', 'Publishing', 'Revisions', 'Settings']) assert.match(source, new RegExp(label));
+  assert.match(shell, /Owner workspace/);
+  assert.match(shell, /View public website/);
+  assert.match(shell, /<AdminNavigation \/>/);
 });
 
 test('base UI primitives cover controls, surfaces, status and feedback', async () => {

@@ -27,7 +27,7 @@ export interface AdminNavigationGroup {
   items: readonly AdminNavigationItem[];
 }
 
-export const ADMIN_NAVIGATION_GROUPS = [
+export const ADMIN_NAVIGATION_GROUPS: readonly AdminNavigationGroup[] = [
   {
     key: "overview",
     label: "Overview",
@@ -76,11 +76,10 @@ export const ADMIN_NAVIGATION_GROUPS = [
       { key: "settings", label: "Settings", shortLabel: "Settings", href: "/admin/settings" }
     ]
   }
-] as const satisfies readonly AdminNavigationGroup[];
+];
 
-export const ADMIN_NAVIGATION_ITEMS = ADMIN_NAVIGATION_GROUPS.flatMap(
-  (group) => group.items
-);
+export const ADMIN_NAVIGATION_ITEMS: readonly AdminNavigationItem[] =
+  ADMIN_NAVIGATION_GROUPS.flatMap((group) => group.items);
 
 export function getAdminNavigationItem(pathname: string): AdminNavigationItem | undefined {
   return ADMIN_NAVIGATION_ITEMS.find((item) =>

@@ -38,12 +38,15 @@ function createPreviewLine({
   quantity: number;
 }): InquiryPreviewLine {
   const product = requireProduct(familySlug, productSlug);
+  const size = product.sizes[0];
+  const variant = product.variants[0] ?? product.directions[0];
+
   return {
     id: `inquiry_${product.id}`,
     product,
     quantity,
-    size: product.sizes[0],
-    variant: product.variants[0] ?? product.directions[0]
+    ...(size ? { size } : {}),
+    ...(variant ? { variant } : {})
   };
 }
 
