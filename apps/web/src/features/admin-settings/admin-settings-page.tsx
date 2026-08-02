@@ -1,14 +1,9 @@
 import { Button, ButtonLink } from "@/components/ui";
-import {
-  AdminAlert,
-  AdminPageHeader,
-  AdminSection,
-  AdminStatusBadge
-} from "@/features/admin-primitives";
-import {
-  ADMIN_SETTINGS_GROUPS,
-  PROTECTED_SYSTEM_SETTINGS
-} from "./admin-settings-model";
+import { AdminAlert } from "@/features/admin-primitives/admin-feedback";
+import { AdminPageHeader } from "@/features/admin-primitives/admin-page-header";
+import { AdminSection } from "@/features/admin-primitives/admin-section";
+import { AdminStatusBadge } from "@/features/admin-primitives/admin-status";
+import { ADMIN_SETTINGS_GROUPS, PROTECTED_SYSTEM_SETTINGS } from "./admin-settings-model";
 
 export function AdminSettingsPage() {
   return (
@@ -53,25 +48,16 @@ export function AdminSettingsPage() {
                 <Button size="small" variant="secondary" disabled>Sign out</Button>
               </div>
             ) : null}
-            {group.key === "preview" ? (
-              <ButtonLink href="/" variant="secondary" size="small">View current public site</ButtonLink>
-            ) : null}
+            {group.key === "preview" ? <ButtonLink href="/" variant="secondary" size="small">View current public site</ButtonLink> : null}
           </AdminSection>
         ))}
       </div>
 
-      <AdminSection
-        eyebrow="Protected system"
-        title="These settings remain outside ordinary administration."
-      >
-        <ul className="admin-protected-list">
-          {PROTECTED_SYSTEM_SETTINGS.map((item) => <li key={item}>{item}</li>)}
-        </ul>
+      <AdminSection eyebrow="Protected system" title="These settings remain outside ordinary administration.">
+        <ul className="admin-protected-list">{PROTECTED_SYSTEM_SETTINGS.map((item) => <li key={item}>{item}</li>)}</ul>
       </AdminSection>
 
-      <div className="admin-management-actions">
-        <Button disabled>Save settings</Button>
-      </div>
+      <div className="admin-management-actions"><Button disabled>Save settings</Button></div>
     </div>
   );
 }

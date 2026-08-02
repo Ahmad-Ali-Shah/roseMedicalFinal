@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui";
+import { AdminAlert } from "@/features/admin-primitives/admin-feedback";
 import {
-  AdminAlert,
   AdminFieldPreview,
-  AdminLocaleFieldPair,
-  AdminPageHeader,
-  AdminSection,
-  AdminStatusBadge
-} from "@/features/admin-primitives";
+  AdminLocaleFieldPair
+} from "@/features/admin-primitives/admin-fields";
+import { AdminPageHeader } from "@/features/admin-primitives/admin-page-header";
+import { AdminSection } from "@/features/admin-primitives/admin-section";
+import { AdminStatusBadge } from "@/features/admin-primitives/admin-status";
 import { getAdminContactDetailsModel } from "./admin-contact-details-model";
 
 function findValue(label: string): string {

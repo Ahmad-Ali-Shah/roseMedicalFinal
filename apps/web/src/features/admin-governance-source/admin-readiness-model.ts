@@ -1,4 +1,4 @@
-import type { AdminStatusTone } from "@/features/admin-primitives";
+import type { AdminStatusTone } from "@/features/admin-primitives/admin-status";
 
 export type AdminReadinessKey = "contact" | "pdfs" | "media" | "legal" | "arabic";
 
@@ -17,34 +17,9 @@ export interface AdminReadinessItem {
 }
 
 export const ADMIN_READINESS_ITEMS = [
-  {
-    key: "contact",
-    label: "Contact information",
-    status: "Awaiting confirmation",
-    tone: "warning"
-  },
-  {
-    key: "pdfs",
-    label: "Catalogue PDF paths",
-    status: "Awaiting publication",
-    tone: "warning"
-  },
-  {
-    key: "media",
-    label: "Product media",
-    status: "Awaiting replacement",
-    tone: "warning"
-  },
-  {
-    key: "legal",
-    label: "Privacy and Terms",
-    status: "Awaiting legal approval",
-    tone: "warning"
-  },
-  {
-    key: "arabic",
-    label: "Arabic content",
-    status: "Deferred",
-    tone: "neutral"
-  }
+  { key: "contact", label: "Contact information", status: "Awaiting confirmation", tone: "warning" },
+  { key: "pdfs", label: "Catalogue PDF paths", status: "Awaiting publication", tone: "warning" },
+  { key: "media", label: "Product media", status: "Awaiting replacement", tone: "warning" },
+  { key: "legal", label: "Privacy and Terms", status: "Awaiting legal approval", tone: "warning" },
+  { key: "arabic", label: "Arabic content", status: "Deferred", tone: "neutral" }
 ] as const satisfies readonly AdminReadinessItem[];

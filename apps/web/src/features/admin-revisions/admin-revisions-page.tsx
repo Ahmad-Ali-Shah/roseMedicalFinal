@@ -1,15 +1,12 @@
 import { Button } from "@/components/ui";
 import {
   AdminFilterPreview,
-  AdminPageHeader,
   AdminSearchPreview,
-  AdminSection,
   AdminToolbar
-} from "@/features/admin-primitives";
-import {
-  REVISION_POLICY_ITEMS,
-  REVISION_SCHEMA_FIELDS
-} from "./admin-revision-policy";
+} from "@/features/admin-primitives/admin-controls";
+import { AdminPageHeader } from "@/features/admin-primitives/admin-page-header";
+import { AdminSection } from "@/features/admin-primitives/admin-section";
+import { REVISION_POLICY_ITEMS, REVISION_SCHEMA_FIELDS } from "./admin-revision-policy";
 
 export function AdminRevisionsPage() {
   return (
@@ -32,16 +29,10 @@ export function AdminRevisionsPage() {
         <p>No revision record currently exists in frontend source or a connected backend.</p>
       </section>
 
-      <AdminSection
-        eyebrow="Append-only policy"
-        title="Rollback creates history instead of erasing it."
-      >
+      <AdminSection eyebrow="Append-only policy" title="Rollback creates history instead of erasing it.">
         <ol className="admin-revision-policy-list">
           {REVISION_POLICY_ITEMS.map((item, index) => (
-            <li key={item}>
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              <p>{item}</p>
-            </li>
+            <li key={item}><span>{String(index + 1).padStart(2, "0")}</span><p>{item}</p></li>
           ))}
         </ol>
       </AdminSection>
@@ -52,12 +43,7 @@ export function AdminRevisionsPage() {
         description="These labels describe a future schema. No values or activity are represented."
       >
         <dl className="admin-revision-schema">
-          {REVISION_SCHEMA_FIELDS.map((field) => (
-            <div key={field}>
-              <dt>{field}</dt>
-              <dd>Not available</dd>
-            </div>
-          ))}
+          {REVISION_SCHEMA_FIELDS.map((field) => <div key={field}><dt>{field}</dt><dd>Not available</dd></div>)}
         </dl>
       </AdminSection>
 

@@ -1,14 +1,16 @@
 import { Button, ButtonLink } from "@/components/ui";
+import { AdminPageHeader } from "@/features/admin-primitives/admin-page-header";
+import { AdminAlert } from "@/features/admin-primitives/admin-feedback";
 import {
-  AdminAlert,
-  AdminFieldPreview,
   AdminFilterPreview,
-  AdminPageHeader,
   AdminSearchPreview,
-  AdminSection,
-  AdminTextareaPreview,
   AdminToolbar
-} from "@/features/admin-primitives";
+} from "@/features/admin-primitives/admin-controls";
+import { AdminSection } from "@/features/admin-primitives/admin-section";
+import {
+  AdminFieldPreview,
+  AdminTextareaPreview
+} from "@/features/admin-primitives/admin-fields";
 import { familyHref, productHref } from "@/features/public-catalogue";
 import {
   getAdminContentBlocks,
@@ -122,7 +124,7 @@ export function AdminContentPage() {
             <ol className="admin-composition-list">
               {composition.families.map((family) => (
                 <li key={family.slug}>
-                  <span>{String(family.sequence).padStart(2, "0")}</span>
+                  <span>{family.sequence}</span>
                   <ButtonLink href={familyHref(family.slug)} variant="quiet" size="small">{family.name}</ButtonLink>
                 </li>
               ))}

@@ -1,10 +1,8 @@
 import { Button, ButtonLink } from "@/components/ui";
-import {
-  AdminAlert,
-  AdminPageHeader,
-  AdminSection,
-  AdminStatusBadge
-} from "@/features/admin-primitives";
+import { AdminAlert } from "@/features/admin-primitives/admin-feedback";
+import { AdminPageHeader } from "@/features/admin-primitives/admin-page-header";
+import { AdminSection } from "@/features/admin-primitives/admin-section";
+import { AdminStatusBadge } from "@/features/admin-primitives/admin-status";
 import { getAdminPublishingModel } from "./admin-publishing-model";
 
 export function AdminPublishingPage() {
@@ -34,10 +32,7 @@ export function AdminPublishingPage() {
           {model.workflow.map((step) => (
             <li key={step.sequence}>
               <span>{step.sequence}</span>
-              <div>
-                <h3>{step.label}</h3>
-                <p>{step.description}</p>
-              </div>
+              <div><h3>{step.label}</h3><p>{step.description}</p></div>
             </li>
           ))}
         </ol>
@@ -50,30 +45,21 @@ export function AdminPublishingPage() {
       >
         <ul className="admin-readiness-grid">
           {model.blockers.map((item) => (
-            <li key={item.key}>
-              <h3>{item.label}</h3>
-              <AdminStatusBadge tone={item.tone}>{item.status}</AdminStatusBadge>
-            </li>
+            <li key={item.key}><h3>{item.label}</h3><AdminStatusBadge tone={item.tone}>{item.status}</AdminStatusBadge></li>
           ))}
         </ul>
       </AdminSection>
 
       <AdminSection eyebrow="Public content" title="Future publishable domains">
-        <ul className="admin-governance-domain-list">
-          {model.domains.map((domain) => <li key={domain}>{domain}</li>)}
-        </ul>
+        <ul className="admin-governance-domain-list">{model.domains.map((domain) => <li key={domain}>{domain}</li>)}</ul>
       </AdminSection>
 
       <AdminSection eyebrow="Outside publishing" title="Operational and system data remain separate.">
-        <ul className="admin-protected-list">
-          {model.excludedSystems.map((system) => <li key={system}>{system}</li>)}
-        </ul>
+        <ul className="admin-protected-list">{model.excludedSystems.map((system) => <li key={system}>{system}</li>)}</ul>
       </AdminSection>
 
       <AdminAlert tone="warning" title="Sensitive changes require additional review">
-        <ul className="admin-sensitive-review-list">
-          {model.sensitiveRules.map((rule) => <li key={rule}>{rule}</li>)}
-        </ul>
+        <ul className="admin-sensitive-review-list">{model.sensitiveRules.map((rule) => <li key={rule}>{rule}</li>)}</ul>
       </AdminAlert>
 
       <div className="admin-management-actions">
