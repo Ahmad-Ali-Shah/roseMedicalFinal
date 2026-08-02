@@ -7,6 +7,10 @@ vi.mock("next/navigation", () => ({
   usePathname: () => pathname
 }));
 
+vi.mock("@/app/admin/(workspace)/logout-action", () => ({
+  logout: vi.fn()
+}));
+
 import { AdminShell } from "@/components/layout/admin-shell";
 import {
   ADMIN_NAVIGATION_GROUPS,
@@ -67,13 +71,14 @@ describe("F3E-A admin navigation", () => {
     expect(html).not.toMatch(/hamburger|menu toggle/i);
   });
 
-  it("owns the sole workspace main and exposes truthful session status", () => {
+  it("owns the sole workspace main and exposes connected session controls", () => {
     const html = renderToStaticMarkup(<AdminShell><h1>Dashboard</h1></AdminShell>);
     expect((html.match(/<main/g) ?? [])).toHaveLength(1);
-    expect(html).toContain("Owner session not connected");
-    expect(html).toContain("noindex metadata is not access control");
-    expect(html).toContain("Production access requires server-enforced owner authentication");
-    expect(html).toContain("disabled");
+    expect(html).toContain("Owner session active");
+    expect(html).toContain("Sign out");
+    expect(html).toContain("<form");
+    expect(html).not.toContain("Owner session not connected");
+    expect(html).not.toContain("Static preview");
   });
 
   it("marks only the current navigation link", () => {
