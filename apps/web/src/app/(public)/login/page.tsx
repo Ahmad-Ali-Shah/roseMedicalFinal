@@ -16,19 +16,14 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError("");
-
     if (isSignUp) {
       const { error } = await supabase.auth.signUp({ email, password });
       if (error) setError(error.message);
       else alert("Check your email for a confirmation link!");
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) {
-        setError(error.message);
-      } else {
-        router.push("/checkout");
-        router.refresh();
-      }
+      if (error) setError(error.message);
+      else { router.push("/checkout"); router.refresh(); }
     }
     setLoading(false);
   };
@@ -53,7 +48,7 @@ export default function LoginPage() {
         </form>
         <div style={{ marginTop: "1.5rem", textAlign: "center" }}>
           <button onClick={() => setIsSignUp(!isSignUp)} style={{ background: "none", border: "none", color: "#888", fontSize: "0.875rem", textDecoration: "underline", cursor: "pointer" }}>
-            {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
+            {isSignUp ? "Already have an account? Sign In" : "Dont have an account? Sign Up"}
           </button>
         </div>
       </div>
