@@ -1,9 +1,26 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
+import { login } from "@/app/admin/(auth)/login/action";
 import { Button } from "@/components/ui";
-import { AdminAlert, AdminFieldPreview } from "@/features/admin-primitives";
+import { AdminAlert } from "@/features/admin-primitives";
 import { AdminOwnerAccessFrame } from "./admin-owner-access-frame";
 
 export function AdminLoginPage() {
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(formData: FormData) {
+    setError(null);
+    setLoading(true);
+    const result = await login(formData);
+    if (result && "error" in result && result.error) {
+      setError(result.error);
+      setLoading(false);
+    }
+  }
+
   return (
     <AdminOwnerAccessFrame
       eyebrow="Owner access"
@@ -11,18 +28,39 @@ export function AdminLoginPage() {
       description="Access is restricted to the single verified owner account."
       footer={<p>Search-engine noindex metadata is not access control. Production access requires server-enforced owner authentication.</p>}
     >
-      <fieldset className="admin-auth-fields">
-        <legend className="visually-hidden">Owner sign-in field preview</legend>
-        <AdminFieldPreview id="owner-email" label="Owner email" type="email" value="" />
-        <AdminFieldPreview id="owner-password" label="Password" type="password" value="" />
-      </fieldset>
-      <div className="admin-auth-card__actions">
-        <Button disabled>Sign in</Button>
-        <Link href="/admin/recovery">Recover owner access</Link>
-      </div>
-      <AdminAlert tone="warning" title="Authentication not connected">
-        This is a static composition preview. Credentials are not checked and no session is created.
-      </AdminAlert>
+      <form action={handleSubmit} className="admin-auth-fields">
+        <div className="admin-field-preview">
+          <label htmlFor="owner-email">Owner email</label>
+          <input
+            id="owner-email"
+            name="email"
+            type="email"
+            required
+            autoComplete="username"
+          />
+        </div>
+        <div className="admin-field-preview">
+          <label htmlFor="owner-password">Password</label>
+          <input
+            id="owner-password"
+            name="password"
+            type="password"
+            required
+            autoComplete="current-password"
+          />
+        </div>
+        {error ? (
+          <AdminAlert tone="danger" title="Sign-in failed">
+            {error}
+          </AdminAlert>
+        ) : null}
+        <div className="admin-auth-card__actions">
+          <Button type="submit" disabled={loading}>
+            {loading ? "Signing in…" : "Sign in"}
+          </Button>
+          <Link href="/admin/recovery">Recover owner access</Link>
+        </div>
+      </form>
     </AdminOwnerAccessFrame>
   );
 }
