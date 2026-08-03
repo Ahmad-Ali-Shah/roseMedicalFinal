@@ -42,11 +42,12 @@ describe("F7 motion restraint and performance", () => {
     const frame = source("src/features/motion/media-frame.tsx");
     const styles = source("src/styles/f7-premium-polish.css");
 
-    expect(frame).toContain("media-frame--${aspect}");
-    expect(frame).toContain('data-media-state={src ? "ready" : "placeholder"}');
-    expect(frame).toContain("data-media-slot={mediaSlot}");
-    expect(styles).toContain(".media-frame--portrait");
-    expect(styles).toContain(".media-frame--landscape");
+    expect(frame).toContain("data-media-aspect={aspect}");
+    expect(frame).toContain('const state = src ? "ready" : "placeholder"');
+    expect(frame).toContain("data-media-state={state}");
+    expect(frame).toContain('{...(mediaSlot ? { "data-media-slot": mediaSlot } : {})}');
+    expect(styles).toContain('.media-frame[data-media-aspect="portrait"]');
+    expect(styles).toContain('.media-frame[data-media-aspect="landscape"]');
     expect(styles).toContain("aspect-ratio:");
   });
 
