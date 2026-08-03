@@ -3,6 +3,7 @@ import type {
   CatalogueFamilyRecord,
   CatalogueProductRecord
 } from "@/features/catalogue-registry";
+import { Stagger, StaggerItem } from "@/features/motion";
 import { ProductPreviewCard, type ProductPreviewModel } from "@/features/public-catalogue";
 
 function toProductPreview(
@@ -33,13 +34,13 @@ export function RelatedProductGrid({
     <section className="related-products" aria-labelledby="related-products-title">
       <p className="public-eyebrow">Related products</p>
       <h2 id="related-products-title">More from {family.name}.</h2>
-      <ul className="related-product-grid">
+      <Stagger as="ul" className="related-product-grid" interval={0.06}>
         {products.map((product) => (
-          <li key={product.id}>
+          <StaggerItem as="li" key={product.id}>
             <ProductPreviewCard product={toProductPreview(family, product)} />
-          </li>
+          </StaggerItem>
         ))}
-      </ul>
+      </Stagger>
     </section>
   );
 }
