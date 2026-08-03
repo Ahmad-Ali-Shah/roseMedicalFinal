@@ -1,5 +1,9 @@
 import { expect, test } from "@playwright/test";
-import { routeSmokeCases, strictNotFoundCases } from "../../src/test/routes";
+import {
+  protectedAdminSmokeCases,
+  routeSmokeCases,
+  strictNotFoundCases
+} from "../../src/test/routes";
 
 for (const route of routeSmokeCases) {
   test(`${route} exposes one main landmark`, async ({ page }) => {
@@ -7,6 +11,24 @@ for (const route of routeSmokeCases) {
     expect(response?.ok()).toBe(true);
     await expect(page.locator("main")).toHaveCount(1);
     await expect(page.locator("h1")).toBeVisible();
+  });
+}
+
+for (const route of protectedAdminSmokeCases) {
+  test(`${route} remains a safe no-index admin surface`, async ({ page }) => {
+    const response = await page.goto(route);
+
+    expect(response?.ok()).toBe(true);
+    await expect(page.locator("main")).toHaveCount(1);
+    await expect(page.locator("h1")).toHaveCount(1);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+      "content",
+      /noindex/i
+    );
+    await expect(page.locator("form")).toHaveCount(0);
+    await expect(
+      page.getByRole("button", { name: /save|delete|publish|create/i })
+    ).toHaveCount(0);
   });
 }
 
