@@ -42,6 +42,29 @@ jobs:
             apps/web/scripts/prepare_cutters_batch1.py \
             apps/web/scripts/prepare_knives_batch1.py \
             apps/web/scripts/requirements-catalogue-media.txt \
+            apps/web/src/features/catalogue-media \
+            apps/web/src/features/catalogue-registry/products/scissors-batch-01.ts \
+            apps/web/src/features/catalogue-registry/products/chisels-batch-01.ts \
+            apps/web/src/features/catalogue-registry/products/cutters-batch-01.ts \
+            apps/web/src/features/catalogue-registry/products/knives-batch-01.ts \
+            apps/web/src/test/scissors-batch-01-inventory.test.ts \
+            apps/web/src/test/scissors-batch-01-media.test.ts \
+            apps/web/src/test/scissors-image-preview.test.ts \
+            apps/web/src/test/chisels-batch-01-approval.test.ts \
+            apps/web/src/test/chisels-batch-01-inventory.test.ts \
+            apps/web/src/test/chisels-batch-01-media.test.ts \
+            apps/web/src/test/chisels-image-preview.test.ts \
+            apps/web/src/test/cutters-batch-01-approval.test.ts \
+            apps/web/src/test/cutters-batch-01-inventory.test.ts \
+            apps/web/src/test/cutters-batch-01-media.test.ts \
+            apps/web/src/test/cutters-image-preview.test.ts \
+            apps/web/src/test/knives-batch-01-inventory.test.ts \
+            apps/web/src/test/knives-batch-01-media.test.ts \
+            apps/web/src/test/knives-image-preview.test.ts \
+            apps/web/tests/e2e/scissors-image-batch-01.spec.ts \
+            apps/web/tests/e2e/chisels-image-batch-01.spec.ts \
+            apps/web/tests/e2e/cutters-image-batch-01.spec.ts \
+            apps/web/tests/e2e/knives-image-batch-01.spec.ts \
             docs/review/catalogue-media \
             docs/review/scissors-image-batch-01.md \
             docs/superpowers/completions/2026-08-02-scissors-batch-01-production-media.md \
@@ -57,10 +80,14 @@ jobs:
           git add \
             apps/web/public/media/catalogue-preview \
             apps/web/scripts \
+            apps/web/src/features/catalogue-media \
+            apps/web/src/features/catalogue-registry/products \
+            apps/web/src/test \
+            apps/web/tests/e2e \
             docs/review \
             docs/superpowers/completions \
             docs/superpowers/specs
-          git commit -m "feat: import approved catalogue media sources"
+          git commit -m "feat: import approved catalogue media runtime"
           git push origin HEAD:${{ github.event.pull_request.head.ref }}
       - uses: actions/setup-node@v4
         with:
