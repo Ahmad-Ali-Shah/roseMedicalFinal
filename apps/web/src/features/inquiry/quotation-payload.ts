@@ -23,6 +23,7 @@ function text(value: unknown, maxLength: number): string {
 
 function normalizePhone(value: unknown): string | null {
   let phone = text(value, 30).replace(/[^\d+]/g, "");
+  if (!/^\+?\d+$/.test(phone)) return null;
   if (!phone.startsWith("+")) phone = `+${phone}`;
   const digits = phone.slice(1);
   if (digits.length < 8 || digits.length > 15 || /^(\d)\1+$/.test(digits)) return null;
