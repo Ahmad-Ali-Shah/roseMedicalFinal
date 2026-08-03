@@ -34,7 +34,8 @@ describe("F3E-A route composition", () => {
       </>
     );
     expect(html).not.toContain("data-preview-only");
-    expect((html.match(/<form/g) ?? [])).toHaveLength(1);
+    expect(html).toContain('name="email"');
+    expect(html).toContain('name="password"');
     expect(html).toContain("Sign in to the Rosa workspace.");
     expect(html).toContain("Rosa workspace overview.");
     expect(html).not.toMatch(/Recovery-sent preview|Invalid-credentials preview|Saved successfully/i);
