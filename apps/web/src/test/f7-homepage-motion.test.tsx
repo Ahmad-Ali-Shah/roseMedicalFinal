@@ -21,8 +21,8 @@ describe("F7 homepage cinematic polish", () => {
       expect(html).toContain(`data-section=\"${section}\"`);
     }
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
-    expect(html).toContain("Explore instruments");
-    expect(html).toContain("Request a quote");
+    expect(html).toContain("Explore Products");
+    expect(html).toContain("Request a Quote");
   });
 
   it("uses one editorial hero choreography and a stable cinematic media slot", () => {
