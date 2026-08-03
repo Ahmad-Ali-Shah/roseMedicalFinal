@@ -10,6 +10,7 @@ export interface ProductMediaPlaceholderProps {
   fallbackSrc?: string | undefined;
   spriteIndex?: number | undefined;
   sizes?: string;
+  loading?: "eager" | "lazy";
 }
 
 export function ProductMediaPlaceholder({
@@ -20,7 +21,8 @@ export function ProductMediaPlaceholder({
   src,
   fallbackSrc,
   spriteIndex,
-  sizes = "(max-width: 768px) 100vw, 33vw"
+  sizes = "(max-width: 768px) 100vw, 33vw",
+  loading = "lazy"
 }: ProductMediaPlaceholderProps): ReactElement {
   const hasSprite = Boolean(src) && typeof spriteIndex === "number";
   const column = hasSprite ? spriteIndex % 3 : 0;
@@ -54,6 +56,7 @@ export function ProductMediaPlaceholder({
             alt={decorative ? "" : label}
             fill
             sizes={sizes}
+            priority={loading === "eager"}
             style={{ objectFit: "contain", objectPosition: "center" }}
           />
         </picture>
