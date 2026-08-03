@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
+import { isConfiguredOwner } from "@/lib/supabase/owner-identity";
 import { createClient } from "@/lib/supabase/server";
-
-const temporaryOwnerEmail = "ahmadaliofficial1155@gmail.com";
 
 export async function requireApiUser() {
   const supabase = await createClient();
@@ -24,15 +23,12 @@ export async function requireApiOwner() {
   const auth = await requireApiUser();
   if (!auth.ok) return auth;
 
-  const ownerUserId = process.env.ROSA_OWNER_USER_ID?.trim();
-  const ownerEmail = (process.env.ROSA_OWNER_EMAIL || temporaryOwnerEmail)
-    .trim()
-    .toLowerCase();
+  const isOwner = isConfiguredOwner(auth.user, {
+    ownerUserId: process.env.ROSA_OWNER_USER_ID,
+    ownerEmail: process.env.ROSA_OWNER_EMAIL
+  });
 
-  const matchesOwnerId = Boolean(ownerUserId && ownerUserId === auth.user.id);
-  const matchesOwnerEmail = auth.user.email?.trim().toLowerCase() === ownerEmail;
-
-  if (!matchesOwnerId && !matchesOwnerEmail) {
+  if (!isOwner) {
     return {
       ok: false as const,
       response: NextResponse.json({ error: "Owner access required" }, { status: 403 })
