@@ -1,36 +1,62 @@
-import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-
-interface CheckoutRequestBody {
-  name?: string;
-  email?: string;
-  phone?: string;
-  message?: string;
-}
+import {
+  createQuotationHash,
+  formatQuotationMessage,
+  normalizeQuotationPayload
+} from "@/features/inquiry/quotation-payload";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json() as CheckoutRequestBody;
-    const supabase = await createClient();
-    const { data } = await supabase.auth.getUser();
-    if (data.user === null) return NextResponse.json({ error: "Auth required" }, { status: 401 });
+    const result = normalizeQuotationPayload(await req.json());
+    if (!result.ok) {
+      return NextResponse.json({ error: result.error }, { status: 400 });
+    }
 
-    let p = (body.phone || "").split(" ").join("").split("-").join("");
-    if (p.indexOf("+") !== 0) p = "+" + p;
-    if (p.length < 8) return NextResponse.json({ error: "Invalid phone." }, { status: 400 });
-    const digitsOnly = p.substring(1);
-    if (/^(\d)\1+$/.test(digitsOnly)) return NextResponse.json({ error: "Fake phone number detected." }, { status: 400 });
+    const payload = result.value;
+    const cartHash = createQuotationHash(payload);
+    const supabase = createAdminClient();
 
-    const message = body.message || "";
-    const cartHash = crypto.createHash("sha256").update(message).digest("hex");
-    const { data: existing } = await supabase.from("quote_requests").select("id").eq("user_id", data.user.id).eq("cart_hash", cartHash).maybeSingle();
-    if (existing) return NextResponse.json({ error: "You have already placed this exact order." }, { status: 400 });
+    const { data: existing, error: lookupError } = await supabase
+      .from("quote_requests")
+      .select("id")
+      .eq("cart_hash", cartHash)
+      .maybeSingle();
 
-    const { error } = await supabase.from("quote_requests").insert({ user_id: data.user.id, name: body.name, email: body.email, phone: p, message, cart_hash: cartHash });
-    if (error) return NextResponse.json({ error: "DB error" }, { status: 500 });
-    return NextResponse.json({ success: true });
-  } catch {
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    if (lookupError) {
+      console.error("Quotation duplicate lookup failed:", lookupError);
+      return NextResponse.json({ error: "Unable to submit quotation request." }, { status: 500 });
+    }
+
+    if (existing) {
+      return NextResponse.json(
+        { error: "This exact quotation request has already been submitted." },
+        { status: 409 }
+      );
+    }
+
+    const { data, error } = await supabase
+      .from("quote_requests")
+      .insert({
+        user_id: null,
+        name: payload.name,
+        email: payload.email,
+        phone: payload.phone,
+        message: formatQuotationMessage(payload),
+        cart_hash: cartHash,
+        status: "New"
+      })
+      .select("id")
+      .single();
+
+    if (error) {
+      console.error("Quotation insert failed:", error);
+      return NextResponse.json({ error: "Unable to submit quotation request." }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true, id: data.id }, { status: 201 });
+  } catch (error) {
+    console.error("Quotation route failed:", error);
+    return NextResponse.json({ error: "Unable to submit quotation request." }, { status: 500 });
   }
 }
