@@ -2,8 +2,9 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 
-const root = path.resolve("apps/web/src");
+const root = fileURLToPath(new URL("../", import.meta.url));
 const normalFiles = [
   "features/public-content-registry/public-content-values.ts",
   "features/public-content-registry/public-content-registry.ts",
