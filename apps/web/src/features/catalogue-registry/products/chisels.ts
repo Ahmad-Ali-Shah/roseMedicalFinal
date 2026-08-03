@@ -69,7 +69,7 @@ export const CHISELS_BATCH_01_PRODUCTS = CHISELS_BATCH_01_CONFIGURATIONS.map(
   }
 ) as readonly CatalogueProductRecord[];
 
-const ESTABLISHED_CHISEL_PRODUCTS = [
+const ESTABLISHED_CHISEL_PRODUCTS: readonly CatalogueProductRecord[] = [
   {
     id: "product_codman",
     familySlug: "chisels",
@@ -130,9 +130,9 @@ const ESTABLISHED_CHISEL_PRODUCTS = [
     catalogueReference: { family: "Chisels", page: "10" },
     mediaLabel: "Farabeuf placeholder"
   }
-] as const satisfies readonly CatalogueProductRecord[];
+];
 
-export const CHISEL_PRODUCTS = [
+export const CHISEL_PRODUCTS: readonly CatalogueProductRecord[] = [
   ...CHISELS_BATCH_01_PRODUCTS,
   ...ESTABLISHED_CHISEL_PRODUCTS
-] as const satisfies readonly CatalogueProductRecord[];
+];
