@@ -1,12 +1,7 @@
 "use client";
 
 import type { AriaRole, PropsWithChildren, ReactElement } from "react";
-import {
-  motion,
-  useReducedMotion,
-  type Transition,
-  type Variants
-} from "motion/react";
+import { motion, type Transition, type Variants } from "motion/react";
 import {
   MOTION_DISTANCE,
   MOTION_DURATION,
@@ -57,7 +52,7 @@ function revealVariants(direction: MotionDirection): Variants {
     },
     visible: {
       opacity: 1,
-      filter: "blur(0px)",
+      filter: "none",
       x: 0,
       y: 0
     }
@@ -79,13 +74,12 @@ export function Reveal({
   delay = 0,
   once = true
 }: RevealProps): ReactElement {
-  const shouldReduceMotion = useReducedMotion() === true;
   const transition: Transition = {
     duration: MOTION_DURATION.section,
     delay,
     ease: MOTION_EASING.standard
   };
-  const semanticProps = {
+  const shared = {
     ...(className ? { className } : {}),
     ...(id ? { id } : {}),
     ...(role ? { role } : {}),
@@ -95,26 +89,13 @@ export function Reveal({
     ...(ariaDescribedby ? { "aria-describedby": ariaDescribedby } : {}),
     ...(ariaHidden === undefined ? {} : { "aria-hidden": ariaHidden }),
     "data-motion": "reveal",
-    "data-motion-direction": direction
+    "data-motion-direction": direction,
+    initial: "hidden",
+    whileInView: "visible",
+    viewport: { once, amount: 0.18, margin: "0px 0px -8% 0px" },
+    variants: revealVariants(direction),
+    transition
   } as const;
-  const shared = shouldReduceMotion
-    ? {
-        ...semanticProps,
-        initial: false,
-        style: {
-          opacity: 1,
-          filter: "none",
-          transform: "none"
-        }
-      } as const
-    : {
-        ...semanticProps,
-        initial: "hidden",
-        whileInView: "visible",
-        viewport: { once, amount: 0.18, margin: "0px 0px -8% 0px" },
-        variants: revealVariants(direction),
-        transition
-      } as const;
 
   switch (as) {
     case "section":
