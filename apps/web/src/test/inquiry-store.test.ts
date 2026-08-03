@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   addInquiryItem,
   clearInquiry,
@@ -7,6 +7,22 @@ import {
   updateInquiryItem,
   type InquiryItem
 } from "@/features/inquiry/inquiry-store";
+
+const values = new Map<string, string>();
+const memoryStorage: Storage = {
+  get length() {
+    return values.size;
+  },
+  clear: () => values.clear(),
+  getItem: (key) => values.get(key) ?? null,
+  key: (index) => [...values.keys()][index] ?? null,
+  removeItem: (key) => {
+    values.delete(key);
+  },
+  setItem: (key, value) => {
+    values.set(key, String(value));
+  }
+};
 
 const item: InquiryItem = {
   id: "product_scalpel_handle_3",
@@ -21,7 +37,15 @@ const item: InquiryItem = {
 };
 
 describe("inquiry store", () => {
-  beforeEach(() => localStorage.clear());
+  beforeEach(() => {
+    values.clear();
+    vi.stubGlobal("window", {
+      localStorage: memoryStorage,
+      dispatchEvent: vi.fn()
+    });
+  });
+
+  afterEach(() => vi.unstubAllGlobals());
 
   it("adds an immutable product snapshot", () => {
     expect(addInquiryItem(item)).toEqual([item]);
@@ -51,7 +75,7 @@ describe("inquiry store", () => {
   });
 
   it("recovers safely from invalid stored JSON", () => {
-    localStorage.setItem("rosa-medical-inquiry-v1", "not-json");
+    memoryStorage.setItem("rosa-medical-inquiry-v1", "not-json");
     expect(readInquiry()).toEqual([]);
   });
 });
