@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Lora } from "next/font/google";
+import { MotionProvider } from "@/features/motion";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
@@ -14,8 +15,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" className={`${inter.variable} ${lora.variable}`}>
       <body>
-        <a className="skip-link" href="#main-content">Skip to content</a>
-        {children}
+        <MotionProvider>
+          <a className="skip-link" href="#main-content">Skip to content</a>
+          {children}
+        </MotionProvider>
       </body>
     </html>
   );
