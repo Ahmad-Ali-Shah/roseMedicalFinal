@@ -6,7 +6,7 @@ import { resolveCataloguePath } from "@/features/catalogue-registry";
 import { ContactPage } from "@/features/contact-preview";
 import { FamilyListingPage } from "@/features/family-listing/family-listing-page";
 import { Homepage } from "@/features/homepage/homepage";
-import { InquiryPage } from "@/features/inquiry";
+import { InquiryPage, QuotationPage } from "@/features/inquiry";
 import {
   LegalPage,
   PRIVACY_DOCUMENT,
@@ -15,7 +15,6 @@ import {
 import { ProductDetailPage } from "@/features/product-detail/product-detail-page";
 import { ProductsOverview } from "@/features/products/products-overview";
 import { ProcurementSupportPage } from "@/features/procurement-support";
-import { QuotationBlockedPage } from "@/features/quotation-preview";
 import { SearchDefaultPage } from "@/features/search-preview";
 
 export type PublicPageKind =
@@ -79,7 +78,7 @@ export function resolvePublicPage({
     case "inquiry-empty":
       return <InquiryPage />;
     case "quotation-blocked":
-      return <QuotationBlockedPage />;
+      return <QuotationPage />;
     case "about":
       return <AboutPage />;
     case "procurement-support":
