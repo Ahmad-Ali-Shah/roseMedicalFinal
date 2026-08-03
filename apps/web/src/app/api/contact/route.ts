@@ -23,18 +23,30 @@ function checkSpam(text: string) {
   return false;
 }
 
-// Cosine Similarity Functions
-function getTokens(text: string): string[] { return text.toLowerCase().match(/\b\w+\b/g) || []; }
-function vectorize(tokens: string[]): Record<string, number> {
-  const freq: Record<string, number> = {};
-  tokens.forEach(t => freq[t] = (freq[t] || 0) + 1);
-  return freq;
+function getTokens(text: string): string[] {
+  return text.toLowerCase().match(/\b\w+\b/g) || [];
 }
+
+function vectorize(tokens: string[]): Record<string, number> {
+  const frequency: Record<string, number> = {};
+  tokens.forEach((token) => {
+    frequency[token] = (frequency[token] || 0) + 1;
+  });
+  return frequency;
+}
+
 function cosineSim(vecA: Record<string, number>, vecB: Record<string, number>): number {
-  let dot = 0, magA = 0, magB = 0;
-  for (const key in vecA) { if (vecB[key]) dot += vecA[key] * vecB[key]; magA += vecA[key] ** 2; }
+  let dot = 0;
+  let magA = 0;
+  let magB = 0;
+
+  for (const key in vecA) {
+    if (vecB[key]) dot += vecA[key] * vecB[key];
+    magA += vecA[key] ** 2;
+  }
   for (const key in vecB) magB += vecB[key] ** 2;
-  return (magA && magB) ? dot / (Math.sqrt(magA) * Math.sqrt(magB)) : 0;
+
+  return magA && magB ? dot / (Math.sqrt(magA) * Math.sqrt(magB)) : 0;
 }
 
 export async function POST(req: NextRequest) {
@@ -45,8 +57,10 @@ export async function POST(req: NextRequest) {
     if (body.company_name) return NextResponse.json({ success: true });
 
     let phone = (body.phone || "").split(" ").join("").split("-").join("");
-    if (phone.indexOf("+") !== 0) phone = "+" + phone;
-    if (phone.length < 8) return NextResponse.json({ error: "Invalid phone." }, { status: 400 });
+    if (!phone.startsWith("+")) phone = `+${phone}`;
+    if (phone.length < 8) {
+      return NextResponse.json({ error: "Invalid phone." }, { status: 400 });
+    }
 
     if (!body.name || !body.email || !body.message) {
       return NextResponse.json({ error: "Missing fields." }, { status: 400 });
@@ -55,12 +69,15 @@ export async function POST(req: NextRequest) {
     let isSpam = checkSpam(body.message);
 
     if (!isSpam) {
-      const newVec = vectorize(getTokens(body.message));
-      const { data: oldMessages } = await supabase.from("seen_messages").select("message").limit(50);
-      if (oldMessages && oldMessages.length > 0) {
+      const newVector = vectorize(getTokens(body.message));
+      const { data: oldMessages } = await supabase
+        .from("seen_messages")
+        .select("message")
+        .limit(50);
+
+      if (oldMessages) {
         for (const old of oldMessages) {
-          const oldVec = vectorize(getTokens(old.message));
-          if (cosineSim(newVec, oldVec) > 0.75) {
+          if (cosineSim(newVector, vectorize(getTokens(old.message))) > 0.75) {
             isSpam = true;
             break;
           }
@@ -68,41 +85,8 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    if (!isSpam) {
-      let url: string | null = null;
-      if (body.message.indexOf("http") !== -1) {
-        for (const word of body.message.split(" ")) {
-          if (word.indexOf("http") === 0) {
-            url = word;
-            break;
-          }
-        }
-      }
-      if (url) {
-        const twentyFourHoursAgo = new Date(Date.now() - 86400000).toISOString();
-        const { data: cached } = await supabase.from("crawled_urls").select("is_spam").eq("url", url).gt("crawled_at", twentyFourHoursAgo).maybeSingle();
-        if (cached) {
-          isSpam = cached.is_spam;
-        } else {
-          try {
-            const response = await fetch(url, { signal: AbortSignal.timeout(3000) });
-            if (response.ok) {
-              const html = await response.text();
-              let text = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, " ");
-              text = text.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, " ");
-              text = text.replace(/<[^>]+>/g, " ");
-              if (checkSpam(text)) isSpam = true;
-            }
-          } catch {
-            // The existing contact flow continues when an external URL cannot be inspected.
-          }
-          await supabase.from("crawled_urls").upsert({ url, is_spam: isSpam, crawled_at: new Date().toISOString() });
-        }
-      }
-    }
-
     const { data } = await supabase.auth.getUser();
-    const userId = data.user ? data.user.id : null;
+    const userId = data.user?.id ?? null;
 
     const { error } = await supabase.from("contact_messages").insert({
       user_id: userId,
@@ -115,6 +99,7 @@ export async function POST(req: NextRequest) {
       country: body.country || null,
       subject: body.subject || null
     });
+
     if (error) return NextResponse.json({ error: "DB error" }, { status: 500 });
     return NextResponse.json({ success: true });
   } catch {
