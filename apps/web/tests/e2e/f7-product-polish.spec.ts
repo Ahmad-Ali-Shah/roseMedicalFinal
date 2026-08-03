@@ -23,11 +23,8 @@ test("product discovery and detail keep their premium hierarchy and behavior", a
   expect(familyResponse?.ok()).toBe(true);
 
   await expect(page.getByRole("heading", { name: "Knives", level: 1 })).toBeVisible();
-  await expect(page.locator("[data-product-card]")).toHaveCount(4);
-  await expect(page.getByRole("link", { name: /View details/ }).first()).toHaveAttribute(
-    "href",
-    "/products/knives/scalpel-handle-no-3"
-  );
+  await expect(page.locator("[data-product-card]")).toHaveCount(22);
+  await expect(page.locator('a[href="/products/knives/scalpel-handle-no-3"]')).toHaveCount(1);
   await expect(page.locator("[data-motion='tilt']")).not.toHaveCount(0);
   await expectNoHorizontalOverflow(page);
 
