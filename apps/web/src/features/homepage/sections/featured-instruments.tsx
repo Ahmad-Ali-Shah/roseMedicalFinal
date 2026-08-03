@@ -1,6 +1,11 @@
 import type { ReactElement } from "react";
 import { Container, Section } from "@/components/layout";
-import { ProductPreviewCard, SectionHeading, type ProductPreviewModel } from "@/features/public-catalogue";
+import { Stagger, StaggerItem } from "@/features/motion";
+import {
+  ProductPreviewCard,
+  SectionHeading,
+  type ProductPreviewModel
+} from "@/features/public-catalogue";
 import type { HomeProductsIntroModel } from "../homepage.data";
 
 export function FeaturedInstruments({
@@ -20,9 +25,18 @@ export function FeaturedInstruments({
           title={intro.title}
           copy={intro.copy}
         />
-        <ul className="product-preview-grid" aria-label="Representative products">
-          {products.map((product) => <li key={product.id}><ProductPreviewCard product={product} /></li>)}
-        </ul>
+        <Stagger
+          as="ul"
+          className="product-preview-grid"
+          aria-label="Representative products"
+          interval={0.08}
+        >
+          {products.map((product) => (
+            <StaggerItem as="li" key={product.id}>
+              <ProductPreviewCard product={product} />
+            </StaggerItem>
+          ))}
+        </Stagger>
       </Container>
     </Section>
   );
