@@ -79,7 +79,7 @@ test("inquiry edits persist immediately and quotation submission preserves its p
   let submittedPayload: Record<string, unknown> | null = null;
   await page.route("**/api/checkout", async (route) => {
     submittedPayload = route.request().postDataJSON() as Record<string, unknown>;
-    await new Promise((resolve) => setTimeout(resolve, 250));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -95,8 +95,10 @@ test("inquiry edits persist immediately and quotation submission preserves its p
   await page.getByLabel("Procurement context").fill("Please confirm packing options.");
   await page.getByRole("checkbox").check();
 
-  await page.getByRole("button", { name: "Submit quotation request" }).click();
-  await expect(page.getByRole("button", { name: "Submitting…" })).toBeDisabled();
+  const submitButton = page.locator(".quotation-submit-button");
+  await submitButton.click();
+  await expect(submitButton).toBeDisabled();
+  await expect(submitButton).toContainText("Submitting…");
   await expect(
     page.getByRole("heading", { name: "Your quotation request has been submitted.", level: 1 })
   ).toBeVisible();
