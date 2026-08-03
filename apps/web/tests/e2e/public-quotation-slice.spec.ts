@@ -14,7 +14,7 @@ test("product selection reaches the live quotation form", async ({ page }, testI
   await expect(page.getByRole("heading", { name: "Review your product inquiry." })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Scalpel Handle No. 3" })).toBeVisible();
   await page.getByRole("button", { name: /Increase Scalpel Handle No. 3 quantity/i }).click();
-  await expect(page.locator("[data-inquiry-line]").getByRole("status")).toHaveCount(0);
+  await expect(page.locator("[data-inquiry-line] output")).toHaveText("2");
   await page.getByPlaceholder("Optional requirement").fill("Sterile packing");
 
   await page.getByRole("link", { name: "Proceed to request" }).click();
