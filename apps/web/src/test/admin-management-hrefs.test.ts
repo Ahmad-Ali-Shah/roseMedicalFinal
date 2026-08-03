@@ -19,7 +19,7 @@ describe("F3E-B admin management hrefs", () => {
   });
 
   it("builds source-backed detail routes", () => {
-    const product = CATALOGUE_PRODUCTS[0];
+    const product = CATALOGUE_PRODUCTS[0]!;
     expect(adminProductHref(product)).toBe(
       `/admin/products/${product.familySlug}/${product.slug}`
     );
