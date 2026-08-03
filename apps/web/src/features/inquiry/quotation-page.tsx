@@ -2,11 +2,14 @@
 
 import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { Container, Section } from "@/components/layout";
 import { QuotationBlockedPage } from "@/features/quotation-preview";
 import { clearInquiry, readInquiry, type InquiryItem } from "./inquiry-store";
 
 type SubmissionState = "idle" | "submitting" | "success" | "error";
+
+const fieldsetTransition = { duration: 0.3 } as const;
 
 export function QuotationPage() {
   const [items, setItems] = useState<InquiryItem[] | null>(null);
@@ -34,15 +37,32 @@ export function QuotationPage() {
 
   if (state === "success") {
     return (
-      <Section tone="paper" className="quotation-blocked-page">
+      <Section tone="paper" className="quotation-blocked-page quotation-success-state">
         <Container size="reading">
-          <p className="quotation-blocked-page__eyebrow">Request received</p>
-          <h1>Your quotation request has been submitted.</h1>
-          <p>Rosa can now review the selected products and contact details.</p>
-          {reference ? <p>Reference: {reference}</p> : null}
-          <div className="quotation-blocked-page__actions">
-            <Link href="/products" className="button button--primary button--standard">Browse more products</Link>
-          </div>
+          <motion.div
+            className="quotation-success-state__content"
+            data-conversion-success="true"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.34 }}
+          >
+            <motion.span
+              className="quotation-success-state__mark"
+              aria-hidden="true"
+              initial={{ opacity: 0, scale: 0.84 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.28, delay: 0.04 }}
+            >
+              ✓
+            </motion.span>
+            <p className="quotation-blocked-page__eyebrow">Request received</p>
+            <h1>Your quotation request has been submitted.</h1>
+            <p>Rosa can now review the selected products and contact details.</p>
+            {reference ? <p>Reference: {reference}</p> : null}
+            <div className="quotation-blocked-page__actions">
+              <Link href="/products" className="button button--primary button--standard">Browse more products</Link>
+            </div>
+          </motion.div>
         </Container>
       </Section>
     );
@@ -91,15 +111,25 @@ export function QuotationPage() {
   return (
     <Section tone="paper" className="quotation-page">
       <Container size="wide">
-        <div className="quotation-form-preview">
+        <div className="quotation-form-preview" data-conversion-state={state}>
           <form className="quotation-form-preview__form" aria-label="Quotation request" onSubmit={submit}>
-            <div>
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.32 }}
+            >
               <p className="public-eyebrow">Request quotation</p>
               <h1>Send your product requirements.</h1>
               <p>Provide contact details so Rosa can review and respond to this inquiry.</p>
-            </div>
+            </motion.div>
 
-            <fieldset>
+            <motion.fieldset
+              data-motion="quotation-fieldset"
+              initial={{ opacity: 0, y: 8 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.12 }}
+              transition={fieldsetTransition}
+            >
               <legend>Contact information</legend>
               <div className="quotation-form-preview__field-grid">
                 <label><span>Customer name</span><input name="name" required minLength={2} maxLength={120} placeholder="Your full name" /></label>
@@ -108,46 +138,88 @@ export function QuotationPage() {
                 <label><span>Telephone</span><input name="phone" type="tel" required maxLength={30} placeholder="Country code and number" /></label>
                 <label><span>Country</span><input name="country" maxLength={80} placeholder="Country" /></label>
               </div>
-            </fieldset>
+            </motion.fieldset>
 
-            <fieldset>
+            <motion.fieldset
+              data-motion="quotation-fieldset"
+              initial={{ opacity: 0, y: 8 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.12 }}
+              transition={{ ...fieldsetTransition, delay: 0.05 }}
+            >
               <legend>General request notes</legend>
               <label><span>Procurement context</span><textarea name="notes" maxLength={2000} placeholder="Packing, destination or other requirements" /></label>
-            </fieldset>
+            </motion.fieldset>
 
-            <fieldset>
+            <motion.fieldset
+              data-motion="quotation-fieldset"
+              initial={{ opacity: 0, y: 8 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.12 }}
+              transition={{ ...fieldsetTransition, delay: 0.08 }}
+            >
               <legend>Submission</legend>
               <label className="quotation-preview-confirmation">
                 <input type="checkbox" required />
                 <span>I confirm that the selected product details and contact information are correct.</span>
               </label>
-              {error ? <p role="alert" className="alert alert--danger">{error}</p> : null}
+              <AnimatePresence initial={false}>
+                {error ? (
+                  <motion.p
+                    key="quotation-error"
+                    role="alert"
+                    className="alert alert--danger"
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                  >
+                    {error}
+                  </motion.p>
+                ) : null}
+              </AnimatePresence>
               <div className="quotation-form-preview__submit-row">
-                <button className="button button--primary button--standard" disabled={state === "submitting"}>
-                  {state === "submitting" ? "Submitting…" : "Submit quotation request"}
+                <button className="button button--primary button--standard quotation-submit-button" disabled={state === "submitting"}>
+                  <AnimatePresence initial={false} mode="wait">
+                    <motion.span
+                      key={state === "submitting" ? "submitting" : "ready"}
+                      className="quotation-submit-button__label"
+                      initial={{ opacity: 0, y: 3 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -3 }}
+                      transition={{ duration: 0.16 }}
+                    >
+                      {state === "submitting" ? "Submitting…" : "Submit quotation request"}
+                    </motion.span>
+                  </AnimatePresence>
                 </button>
               </div>
-            </fieldset>
+            </motion.fieldset>
           </form>
 
-          <aside className="quotation-product-summary" aria-labelledby="quotation-products-title">
+          <motion.aside
+            className="quotation-product-summary"
+            aria-labelledby="quotation-products-title"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.34, delay: 0.08 }}
+          >
             <p className="quotation-product-summary__eyebrow">Selected products</p>
             <h2 id="quotation-products-title">{items.length} products</h2>
             <ul>
               {items.map((item) => (
-                <li key={item.id}>
+                <motion.li layout key={item.id}>
                   <div>
                     <strong>{item.name}</strong>
                     <span>Code {item.code}</span>
                     <span>Quantity {item.quantity}</span>
                   </div>
                   <Link href="/inquiry">Edit</Link>
-                </li>
+                </motion.li>
               ))}
             </ul>
-            <div className="quotation-product-summary__total"><span>Total quantity</span><output>{totalQuantity}</output></div>
+            <div className="quotation-product-summary__total"><span>Total quantity</span><motion.output key={totalQuantity} className="conversion-value" aria-live="polite" initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}>{totalQuantity}</motion.output></div>
             <Link className="text-link" href="/inquiry">Return to inquiry →</Link>
-          </aside>
+          </motion.aside>
         </div>
       </Container>
     </Section>
