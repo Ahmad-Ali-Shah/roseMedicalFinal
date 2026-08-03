@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:foundation": "node --test src/test/design-foundations.static.test.mjs",
+    "test:foundation": "node --test src/test/*.static.test.mjs",
     "test:e2e": "playwright test"
   },
   "dependencies": {
@@ -28,7 +28,7 @@
     "@tailwindcss/postcss": "^4.1.0",
     "@types/node": "^24.0.0",
     "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
+    "@types/react-dom": "^19.2.0",
     "eslint": "^9.0.0",
     "eslint-config-next": "16.2.11",
     "tailwindcss": "^4.1.0",
