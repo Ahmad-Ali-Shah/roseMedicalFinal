@@ -7,6 +7,7 @@ import { ProductMediaPlaceholder } from "@/features/public-catalogue";
 import { PUBLIC_CONTENT_VALUES } from "@/features/public-content-registry";
 import { FamilyIndex } from "@/features/public-editorial";
 import { BuyerExpectations } from "./buyer-expectations";
+import { ScissorsEvolution } from "./scissors-evolution";
 import { SupportedBuyers } from "./supported-buyers";
 
 export function AboutPage(): ReactElement {
@@ -63,6 +64,12 @@ export function AboutPage(): ReactElement {
             </header>
           </Reveal>
           <BuyerExpectations />
+        </Container>
+      </Section>
+
+      <Section tone="paper" className="about-scissors-evolution-section">
+        <Container size="wide">
+          <ScissorsEvolution />
         </Container>
       </Section>
 
