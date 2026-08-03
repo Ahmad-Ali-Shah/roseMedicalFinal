@@ -42,10 +42,10 @@ export function ContactPage(): ReactElement {
       <Section tone="warm" className="contact-main-section">
         <Container size="wide">
           <div className="contact-main-layout">
-            <Reveal direction="right" className="contact-information-reveal">
+            <Reveal direction="up" className="contact-information-reveal">
               <ContactInformationPanel />
             </Reveal>
-            <Reveal direction="left" delay={0.06} className="contact-form-reveal">
+            <Reveal direction="up" delay={0.06} className="contact-form-reveal">
               <div className="contact-form-region">
                 <header className="f3d-section-heading">
                   <p className="page-eyebrow">General contact form</p>
