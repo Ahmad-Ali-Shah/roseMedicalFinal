@@ -26,69 +26,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.ref }}
-          fetch-depth: 0
-      - name: Import approved catalogue media source files
-        run: |
-          git fetch origin preview/knives-image-batch-01:refs/remotes/origin/preview/knives-image-batch-01
-          git checkout origin/preview/knives-image-batch-01 -- \
-            apps/web/public/media/catalogue-preview/scissors \
-            apps/web/public/media/catalogue-preview/chisels \
-            apps/web/public/media/catalogue-preview/cutters \
-            apps/web/public/media/catalogue-preview/knives \
-            apps/web/scripts/catalogue_media_normalize.py \
-            apps/web/scripts/prepare_scissors_wave2.py \
-            apps/web/scripts/prepare_scissors_wave3.py \
-            apps/web/scripts/prepare_chisels_batch1.py \
-            apps/web/scripts/prepare_cutters_batch1.py \
-            apps/web/scripts/prepare_knives_batch1.py \
-            apps/web/scripts/requirements-catalogue-media.txt \
-            apps/web/src/features/catalogue-media \
-            apps/web/src/features/catalogue-registry/products/scissors-batch-01.ts \
-            apps/web/src/features/catalogue-registry/products/chisels-batch-01.ts \
-            apps/web/src/features/catalogue-registry/products/cutters-batch-01.ts \
-            apps/web/src/features/catalogue-registry/products/knives-batch-01.ts \
-            apps/web/src/test/scissors-batch-01-inventory.test.ts \
-            apps/web/src/test/scissors-batch-01-media.test.ts \
-            apps/web/src/test/scissors-image-preview.test.ts \
-            apps/web/src/test/chisels-batch-01-approval.test.ts \
-            apps/web/src/test/chisels-batch-01-inventory.test.ts \
-            apps/web/src/test/chisels-batch-01-media.test.ts \
-            apps/web/src/test/chisels-image-preview.test.ts \
-            apps/web/src/test/cutters-batch-01-approval.test.ts \
-            apps/web/src/test/cutters-batch-01-inventory.test.ts \
-            apps/web/src/test/cutters-batch-01-media.test.ts \
-            apps/web/src/test/cutters-image-preview.test.ts \
-            apps/web/src/test/knives-batch-01-inventory.test.ts \
-            apps/web/src/test/knives-batch-01-media.test.ts \
-            apps/web/src/test/knives-image-preview.test.ts \
-            apps/web/tests/e2e/scissors-image-batch-01.spec.ts \
-            apps/web/tests/e2e/chisels-image-batch-01.spec.ts \
-            apps/web/tests/e2e/cutters-image-batch-01.spec.ts \
-            apps/web/tests/e2e/knives-image-batch-01.spec.ts \
-            docs/review/catalogue-media \
-            docs/review/scissors-image-batch-01.md \
-            docs/superpowers/completions/2026-08-02-scissors-batch-01-production-media.md \
-            docs/superpowers/completions/2026-08-03-chisels-batch-01-production-media.md \
-            docs/superpowers/specs/2026-08-02-production-catalogue-image-system-design.md \
-            docs/superpowers/specs/2026-08-03-knives-batch-01-design.md
-          if git diff --quiet --cached && git diff --quiet; then
-            echo "Approved catalogue media sources already imported."
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add \
-            apps/web/public/media/catalogue-preview \
-            apps/web/scripts \
-            apps/web/src/features/catalogue-media \
-            apps/web/src/features/catalogue-registry/products \
-            apps/web/src/test \
-            apps/web/tests/e2e \
-            docs/review \
-            docs/superpowers/completions \
-            docs/superpowers/specs
-          git commit -m "feat: import approved catalogue media runtime"
-          git push origin HEAD:${{ github.event.pull_request.head.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -120,5 +57,5 @@ jobs:
         run: pnpm --filter @rosa/web build
       - name: Install Playwright Chromium
         run: pnpm --filter @rosa/web exec playwright install --with-deps chromium
-      - name: Test premium public journeys in browser
-        run: pnpm --filter @rosa/web exec playwright test tests/e2e/f7-public-shell.spec.ts tests/e2e/f7-homepage-polish.spec.ts tests/e2e/f7-product-polish.spec.ts tests/e2e/f7-story-pages.spec.ts tests/e2e/f7-conversion-polish.spec.ts tests/e2e/f7-reduced-motion.spec.ts tests/e2e/f7-responsive-restraint.spec.ts
+      - name: Test premium and catalogue journeys in browser
+        run: pnpm --filter @rosa/web exec playwright test tests/e2e/f7-public-shell.spec.ts tests/e2e/f7-homepage-polish.spec.ts tests/e2e/f7-product-polish.spec.ts tests/e2e/f7-story-pages.spec.ts tests/e2e/f7-conversion-polish.spec.ts tests/e2e/f7-reduced-motion.spec.ts tests/e2e/f7-responsive-restraint.spec.ts tests/e2e/scissors-image-batch-01.spec.ts tests/e2e/chisels-image-batch-01.spec.ts tests/e2e/cutters-image-batch-01.spec.ts tests/e2e/knives-image-batch-01.spec.ts
