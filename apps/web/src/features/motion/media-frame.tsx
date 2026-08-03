@@ -1,4 +1,5 @@
-import type { CSSProperties, PropsWithChildren, ReactElement } from "react";
+import Image from "next/image";
+import type { PropsWithChildren, ReactElement } from "react";
 
 type MediaAspect = "landscape" | "portrait" | "square" | "cinematic";
 type MediaTone = "light" | "dark" | "mist";
@@ -14,6 +15,7 @@ interface MediaFrameProps extends PropsWithChildren {
   mediaSlot?: string;
   className?: string;
   loading?: "eager" | "lazy";
+  sizes?: string;
 }
 
 export function MediaFrame({
@@ -26,6 +28,7 @@ export function MediaFrame({
   mediaSlot,
   className,
   loading = "lazy",
+  sizes = "(max-width: 768px) 100vw, 50vw",
   children
 }: MediaFrameProps): ReactElement {
   const classes = ["media-frame", className].filter(Boolean).join(" ");
@@ -41,13 +44,14 @@ export function MediaFrame({
       {...(!src ? { role: "img", "aria-label": alt } : {})}
     >
       {src ? (
-        <img
+        <Image
           className="media-frame__image"
           src={src}
           alt={alt}
-          loading={loading}
-          decoding="async"
-          style={{ objectPosition: focalPoint } as CSSProperties}
+          fill
+          sizes={sizes}
+          priority={loading === "eager"}
+          style={{ objectPosition: focalPoint }}
         />
       ) : (
         <div className="media-frame__placeholder">{children}</div>
