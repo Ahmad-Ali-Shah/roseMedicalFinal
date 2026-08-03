@@ -46,6 +46,9 @@ test("About, procurement and catalogue stories remain complete and media-ready",
   ).toBeVisible();
   await expect(page.locator("[data-media-slot='about-hero']")).toHaveAttribute("data-media-state", "placeholder");
   await expect(page.locator("[data-media-slot='about-procurement']")).toHaveAttribute("data-media-state", "placeholder");
+  await expect(page.getByRole("heading", { name: "How surgical scissors became more specialised.", level: 2 })).toBeVisible();
+  await expect(page.locator("[data-scissors-evolution-stage]")).toHaveCount(5);
+  await expect(page.locator("[data-media-slot='about-scissors-evolution']")).toHaveAttribute("data-media-state", "placeholder");
   await expect(page.locator("[data-supported-buyer]")).toHaveCount(4);
   await expectNoHorizontalOverflow(page);
 
