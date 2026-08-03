@@ -1,5 +1,6 @@
 export { AddToInquiryButton } from "./add-to-inquiry-button";
 export { InquiryPage } from "./inquiry-page";
+export { QuotationPage } from "./quotation-page";
 export {
   INQUIRY_STORAGE_KEY,
   addInquiryItem,
