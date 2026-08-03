@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { addInquiryItem, type InquiryItem } from "./inquiry-store";
 
 export function AddToInquiryButton({
@@ -11,7 +11,13 @@ export function AddToInquiryButton({
   item: InquiryItem;
   className?: string;
 }) {
+  const [ready, setReady] = useState(false);
   const [added, setAdded] = useState(false);
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => setReady(true), 0);
+    return () => window.clearTimeout(timeout);
+  }, []);
 
   if (added) {
     return (
@@ -25,6 +31,8 @@ export function AddToInquiryButton({
     <button
       type="button"
       className={className}
+      disabled={!ready}
+      aria-busy={!ready}
       onClick={() => {
         addInquiryItem(item);
         setAdded(true);
