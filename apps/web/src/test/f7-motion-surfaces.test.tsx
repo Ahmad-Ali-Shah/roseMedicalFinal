@@ -53,7 +53,7 @@ describe("F7 premium motion surfaces", () => {
     expect(html).not.toContain("<img");
   });
 
-  it("renders supplied imagery with focal point and external overlay", () => {
+  it("renders responsive supplied imagery with focal point and external overlay", () => {
     const html = renderToStaticMarkup(
       <MediaFrame
         src="/media/rosa-hero.webp"
@@ -61,12 +61,14 @@ describe("F7 premium motion surfaces", () => {
         aspect="cinematic"
         focalPoint="72% 44%"
         overlay="dark"
+        sizes="(max-width: 768px) 100vw, 50vw"
       />
     );
 
     expect(html).toContain('data-media-state="ready"');
-    expect(html).toContain('src="/media/rosa-hero.webp"');
+    expect(html).toContain("rosa-hero.webp");
     expect(html).toContain('alt="Surgical instruments under directional studio light"');
+    expect(html).toContain('sizes="(max-width: 768px) 100vw, 50vw"');
     expect(html).toContain("object-position:72% 44%");
     expect(html).toContain('data-media-overlay="dark"');
   });
