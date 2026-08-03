@@ -1,10 +1,41 @@
 import { expect, test, type Page } from "@playwright/test";
 
 async function expectNoHorizontalOverflow(page: Page) {
-  const hasOverflow = await page.evaluate(
-    () => document.documentElement.scrollWidth > document.documentElement.clientWidth
-  );
-  expect(hasOverflow).toBe(false);
+  const details = await page.evaluate(() => {
+    const root = document.documentElement;
+    const viewportWidth = root.clientWidth;
+    const describe = (element: Element) => {
+      const htmlElement = element as HTMLElement;
+      const id = htmlElement.id ? `#${htmlElement.id}` : "";
+      const classes = [...htmlElement.classList].slice(0, 3).map((name) => `.${name}`).join("");
+      const dataMotion = htmlElement.dataset.motion ? `[data-motion=${htmlElement.dataset.motion}]` : "";
+      const mediaSlot = htmlElement.dataset.mediaSlot ? `[data-media-slot=${htmlElement.dataset.mediaSlot}]` : "";
+      return `${htmlElement.tagName.toLowerCase()}${id}${classes}${dataMotion}${mediaSlot}`;
+    };
+
+    const offenders = [...document.body.querySelectorAll<HTMLElement>("*")]
+      .map((element) => {
+        const rect = element.getBoundingClientRect();
+        return {
+          selector: describe(element),
+          left: Math.round(rect.left * 10) / 10,
+          right: Math.round(rect.right * 10) / 10,
+          width: Math.round(rect.width * 10) / 10,
+          overflow: Math.round(Math.max(rect.right - viewportWidth, -rect.left, 0) * 10) / 10
+        };
+      })
+      .filter((item) => item.left < -0.5 || item.right > viewportWidth + 0.5)
+      .sort((a, b) => b.overflow - a.overflow)
+      .slice(0, 12);
+
+    return {
+      clientWidth: viewportWidth,
+      scrollWidth: root.scrollWidth,
+      offenders
+    };
+  });
+
+  expect(details.scrollWidth, JSON.stringify(details, null, 2)).toBeLessThanOrEqual(details.clientWidth);
 }
 
 test("About, procurement and catalogue stories remain complete and media-ready", async ({ page }) => {
