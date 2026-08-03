@@ -16,17 +16,22 @@ for (const family of families) {
   });
 }
 
-test("product detail exposes catalogue-backed specifications and its responsive inquiry action", async ({ page }, testInfo) => {
+test("product detail exposes catalogue-backed specifications and an active inquiry action", async ({ page }, testInfo) => {
   const response = await page.goto("/products/knives/scalpel-handle-no-3");
   expect(response?.ok()).toBe(true);
   await expect(page.locator("h1")).toHaveText("Scalpel Handle No. 3");
   await expect(page.locator("table")).toBeVisible();
 
-  if (testInfo.project.name === "mobile") {
-    await expect(page.locator(".mobile-inquiry-bar").getByRole("button", { name: "Add to inquiry" })).toBeDisabled();
-  } else {
-    await expect(page.getByRole("link", { name: "Add to inquiry" })).toHaveAttribute("href", "/checkout");
-  }
+  const action = testInfo.project.name === "mobile"
+    ? page.locator(".mobile-inquiry-bar").getByRole("button", { name: "Add to inquiry" })
+    : page.locator(".product-procurement-summary").getByRole("button", { name: "Add to inquiry" });
+
+  await expect(action).toBeEnabled();
+  await action.click();
+  const addedAction = testInfo.project.name === "mobile"
+    ? page.locator(".mobile-inquiry-bar").getByRole("link", { name: /Added.*View inquiry/i })
+    : page.locator(".product-procurement-summary").getByRole("link", { name: /Added.*View inquiry/i });
+  await expect(addedAction).toHaveAttribute("href", "/inquiry");
 
   await expect(page.getByRole("link", { name: /catalogue reference/i })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)).toBe(false);
