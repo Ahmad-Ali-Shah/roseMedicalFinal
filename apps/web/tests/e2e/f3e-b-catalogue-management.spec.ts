@@ -40,8 +40,8 @@ test("source totals appear in visible desktop representations", async ({ page })
   await page.setViewportSize({ width: 1440, height: 1000 });
 
   await page.goto("/admin/products");
-  await expect(page.getByText("20 source products", { exact: true })).toBeVisible();
-  await expect(page.locator(".admin-data-table__desktop tbody tr")).toHaveCount(20);
+  await expect(page.getByText("113 source products", { exact: true })).toBeVisible();
+  await expect(page.locator(".admin-data-table__desktop tbody tr")).toHaveCount(113);
 
   await page.goto("/admin/families");
   await expect(page.locator("[data-admin-family-card]")).toHaveCount(5);
@@ -50,14 +50,14 @@ test("source totals appear in visible desktop representations", async ({ page })
   await expect(page.locator(".admin-data-table__desktop tbody tr")).toHaveCount(5);
 
   await page.goto("/admin/media");
-  await expect(page.locator("[data-admin-media-requirement]")).toHaveCount(30);
+  await expect(page.locator("[data-admin-media-requirement]")).toHaveCount(123);
   await expect(page.getByText("No managed media assets are registered.")).toBeVisible();
 });
 
 test("source tables use labelled mobile records", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/admin/products");
-  await expect(page.locator(".admin-record-list > li")).toHaveCount(20);
+  await expect(page.locator(".admin-record-list > li")).toHaveCount(113);
   await page.goto("/admin/catalogues");
   await expect(page.locator(".admin-record-list > li")).toHaveCount(5);
 });
