@@ -4,20 +4,30 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: temporary-f7-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  CI: true
+
 jobs:
   motion-config:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 24
       - run: corepack enable
-      - run: pnpm install --no-frozen-lockfile
-      - run: pnpm --filter @rosa/web test -- src/test/f7-motion-config.test.ts
-      - run: pnpm --filter @rosa/web typecheck
+      - name: Resolve lockfile
+        run: pnpm install --lockfile-only --no-frozen-lockfile --reporter=append-only
       - uses: actions/upload-artifact@v4
         with:
           name: f7-generated-lockfile
           path: pnpm-lock.yaml
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --reporter=append-only
+      - run: pnpm --filter @rosa/web test -- src/test/f7-motion-config.test.ts
+      - run: pnpm --filter @rosa/web typecheck
