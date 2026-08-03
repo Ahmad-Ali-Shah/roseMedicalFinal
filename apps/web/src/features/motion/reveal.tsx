@@ -1,11 +1,12 @@
 "use client";
 
-import type {
-  HTMLAttributes,
-  PropsWithChildren,
-  ReactElement
-} from "react";
-import { motion, useReducedMotion, type Variants } from "motion/react";
+import type { AriaRole, PropsWithChildren, ReactElement } from "react";
+import {
+  motion,
+  useReducedMotion,
+  type Transition,
+  type Variants
+} from "motion/react";
 import {
   MOTION_DISTANCE,
   MOTION_DURATION,
@@ -15,14 +16,20 @@ import type { MotionDirection } from "./types";
 
 type RevealTag = "div" | "section" | "header" | "span" | "li";
 
-type RevealProps = PropsWithChildren<
-  Omit<HTMLAttributes<HTMLElement>, "children"> & {
-    as?: RevealTag;
-    direction?: MotionDirection;
-    delay?: number;
-    once?: boolean;
-  }
->;
+interface RevealProps extends PropsWithChildren {
+  as?: RevealTag;
+  className?: string;
+  id?: string;
+  role?: AriaRole;
+  tabIndex?: number;
+  "aria-label"?: string;
+  "aria-labelledby"?: string;
+  "aria-describedby"?: string;
+  "aria-hidden"?: boolean;
+  direction?: MotionDirection;
+  delay?: number;
+  once?: boolean;
+}
 
 function offset(direction: MotionDirection) {
   const distance = MOTION_DISTANCE.desktop;
@@ -41,7 +48,7 @@ function offset(direction: MotionDirection) {
   }
 }
 
-function variants(direction: MotionDirection): Variants {
+function revealVariants(direction: MotionDirection): Variants {
   return {
     hidden: {
       opacity: 1,
@@ -61,27 +68,40 @@ export function Reveal({
   as = "div",
   children,
   className,
+  id,
+  role,
+  tabIndex,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledby,
+  "aria-describedby": ariaDescribedby,
+  "aria-hidden": ariaHidden,
   direction = "up",
   delay = 0,
-  once = true,
-  ...rest
+  once = true
 }: RevealProps): ReactElement {
   const shouldReduceMotion = useReducedMotion() === true;
+  const transition: Transition = {
+    duration: MOTION_DURATION.section,
+    delay,
+    ease: MOTION_EASING.standard
+  };
   const shared = {
-    ...rest,
-    className,
+    ...(className ? { className } : {}),
+    ...(id ? { id } : {}),
+    ...(role ? { role } : {}),
+    ...(tabIndex === undefined ? {} : { tabIndex }),
+    ...(ariaLabel ? { "aria-label": ariaLabel } : {}),
+    ...(ariaLabelledby ? { "aria-labelledby": ariaLabelledby } : {}),
+    ...(ariaDescribedby ? { "aria-describedby": ariaDescribedby } : {}),
+    ...(ariaHidden === undefined ? {} : { "aria-hidden": ariaHidden }),
     "data-motion": "reveal",
     "data-motion-direction": direction,
     initial: shouldReduceMotion ? false : "hidden",
     whileInView: "visible",
     viewport: { once, amount: 0.18, margin: "0px 0px -8% 0px" },
-    variants: variants(direction),
-    transition: {
-      duration: MOTION_DURATION.section,
-      delay,
-      ease: [...MOTION_EASING.standard]
-    }
-  };
+    variants: revealVariants(direction),
+    transition
+  } as const;
 
   switch (as) {
     case "section":
