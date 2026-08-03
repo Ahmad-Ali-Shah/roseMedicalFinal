@@ -33,7 +33,7 @@ export function ProcurementSupportPage(): ReactElement {
                 <p>{introduction.copy}</p>
               </Reveal>
             </div>
-            <Reveal direction="left" delay={0.08} className="story-hero-media-reveal">
+            <Reveal direction="up" delay={0.08} className="story-hero-media-reveal">
               <MediaFrame
                 alt="Procurement support image reserved for final approved photography"
                 aspect="portrait"
