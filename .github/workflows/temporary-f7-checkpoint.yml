@@ -13,23 +13,74 @@ permissions:
 
 env:
   CI: true
+  NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
+  SUPABASE_SERVICE_ROLE_KEY: placeholder-service-role-key
+  ROSA_OWNER_EMAIL: owner@example.com
+  ALERT_UNREAD_SECRET: placeholder-alert-secret
+  RESEND_API_KEY: placeholder-resend-key
 
 jobs:
-  browser-manifest:
+  public-pages:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.ref }}
-      - name: Collect remaining browser specs
-        run: |
-          mkdir -p diagnostics
-          find apps/web/tests/e2e -maxdepth 1 -name '*.spec.ts' ! -name 'f7-*' ! -name '*-image-batch-01.spec.ts' -printf '%f\n' | sort > diagnostics/remaining-browser-specs.txt
-          cat diagnostics/remaining-browser-specs.txt
-      - name: Upload browser manifest
-        uses: actions/upload-artifact@v4
+      - uses: actions/setup-node@v4
         with:
-          name: remaining-browser-specs
-          path: diagnostics/remaining-browser-specs.txt
-          if-no-files-found: error
+          node-version: 24
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile --reporter=append-only
+      - run: pnpm --filter @rosa/web exec playwright install --with-deps chromium
+      - name: Test F3 public browser journeys
+        run: |
+          cd apps/web
+          pnpm exec playwright test \
+            tests/e2e/f3a-public-pages.spec.ts \
+            tests/e2e/f3b-catalogue-pages.spec.ts \
+            tests/e2e/f3c-procurement-pages.spec.ts \
+            tests/e2e/f3d-public-support-pages.spec.ts
+
+  admin-pages:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile --reporter=append-only
+      - run: pnpm --filter @rosa/web exec playwright install --with-deps chromium
+      - name: Test F3E admin browser journeys
+        run: |
+          cd apps/web
+          pnpm exec playwright test \
+            tests/e2e/f3e-a-admin-foundation.spec.ts \
+            tests/e2e/f3e-b-catalogue-management.spec.ts \
+            tests/e2e/f3e-c-operations.spec.ts \
+            tests/e2e/f3e-d-governance.spec.ts
+
+  quotation-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile --reporter=append-only
+      - run: pnpm --filter @rosa/web exec playwright install --with-deps chromium
+      - name: Test quotation and route smoke journeys
+        run: |
+          cd apps/web
+          pnpm exec playwright test \
+            tests/e2e/public-quotation-slice.spec.ts \
+            tests/e2e/route-smoke.spec.ts
