@@ -17,15 +17,26 @@ export function FamilyProductCard({
   family: CatalogueFamilyRecord;
   product: CatalogueProductRecord;
 }): ReactElement {
+  const sizeCount = product.sizes.length;
+
   return (
     <TiltSurface as="article" className="family-product-card premium-surface" maxDegrees={1.6}>
       <div data-product-card={product.id} className="family-product-card__surface">
-        <ProductMediaPlaceholder label={product.mediaLabel} decorative />
+        <ProductMediaPlaceholder
+          label={product.mediaLabel}
+          decorative
+          src={product.mediaPath}
+          fallbackSrc={product.mediaFallbackPath}
+          spriteIndex={product.mediaIndex}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        />
         <div className="family-product-card__body">
           <p className="public-eyebrow">{family.name}</p>
           <h2>{product.name}</h2>
           <p className="family-product-card__meta">
-            {product.code}{product.primaryOption ? ` · ${product.primaryOption}` : ""}
+            {product.code}
+            {product.primaryOption ? ` · ${product.primaryOption}` : ""}
+            {` · ${sizeCount} ${sizeCount === 1 ? "size" : "sizes"}`}
           </p>
           <div className="family-product-card__actions">
             <Link className="premium-link" href={productHref(product)}>
