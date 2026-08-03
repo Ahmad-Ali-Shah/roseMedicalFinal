@@ -58,7 +58,7 @@ describe("Chisels Batch 01 production media", () => {
     }
   });
 
-  it("records complete approved provenance without overstating the curved Stille fallback", () => {
+  it("records complete client-catalogue provenance without overstating the curved Stille fallback", () => {
     const curvedStille = CHISELS_BATCH_01_MEDIA.find(
       (asset) => asset.id === "chisels-stille-osteotomes-curved"
     );
@@ -76,7 +76,7 @@ describe("Chisels Batch 01 production media", () => {
       );
       expect(asset.rightsMode).toBe("preferred-safe");
       expect(asset.background).toBe("transparent");
-      expect(asset.reviewStatus).toBe("approved");
+      expect(asset.reviewStatus).toBe("candidate");
       expect(asset.processingNotes.trim()).not.toBe("");
       expect(asset.orientationNotes.trim()).not.toBe("");
       expect(asset.reuseScope.trim()).not.toBe("");
