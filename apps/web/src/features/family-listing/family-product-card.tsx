@@ -4,6 +4,7 @@ import type {
   CatalogueFamilyRecord,
   CatalogueProductRecord
 } from "@/features/catalogue-registry";
+import { TiltSurface } from "@/features/motion";
 import {
   ProductMediaPlaceholder,
   productHref
@@ -17,21 +18,25 @@ export function FamilyProductCard({
   product: CatalogueProductRecord;
 }): ReactElement {
   return (
-    <article className="family-product-card" data-product-card={product.id}>
-      <ProductMediaPlaceholder label={product.mediaLabel} decorative />
-      <div className="family-product-card__body">
-        <p className="public-eyebrow">{family.name}</p>
-        <h2>{product.name}</h2>
-        <p className="family-product-card__meta">
-          {product.code}{product.primaryOption ? ` · ${product.primaryOption}` : ""}
-        </p>
-        <div className="family-product-card__actions">
-          <Link href={productHref(product)}>View details <span aria-hidden="true">→</span></Link>
-          <span className="disabled-text-action" aria-disabled="true">
-            Add to inquiry — available next phase
-          </span>
+    <TiltSurface as="article" className="family-product-card premium-surface" maxDegrees={1.6}>
+      <div data-product-card={product.id} className="family-product-card__surface">
+        <ProductMediaPlaceholder label={product.mediaLabel} decorative />
+        <div className="family-product-card__body">
+          <p className="public-eyebrow">{family.name}</p>
+          <h2>{product.name}</h2>
+          <p className="family-product-card__meta">
+            {product.code}{product.primaryOption ? ` · ${product.primaryOption}` : ""}
+          </p>
+          <div className="family-product-card__actions">
+            <Link className="premium-link" href={productHref(product)}>
+              View details <span aria-hidden="true">→</span>
+            </Link>
+            <span className="disabled-text-action" aria-disabled="true">
+              Add to inquiry — available next phase
+            </span>
+          </div>
         </div>
       </div>
-    </article>
+    </TiltSurface>
   );
 }
