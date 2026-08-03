@@ -4,13 +4,17 @@ import {
   Children,
   cloneElement,
   isValidElement,
-  type CSSProperties,
-  type HTMLAttributes,
+  type AriaRole,
   type PropsWithChildren,
   type ReactElement,
   type ReactNode
 } from "react";
-import { motion, useReducedMotion, type Variants } from "motion/react";
+import {
+  motion,
+  useReducedMotion,
+  type MotionStyle,
+  type Variants
+} from "motion/react";
 import {
   MOTION_DISTANCE,
   MOTION_DURATION,
@@ -20,7 +24,17 @@ import {
 type StaggerTag = "div" | "ul" | "ol";
 type StaggerItemTag = "div" | "li" | "article";
 
-interface StaggerItemProps extends PropsWithChildren<Omit<HTMLAttributes<HTMLElement>, "children">> {
+interface SemanticMotionProps {
+  className?: string;
+  id?: string;
+  role?: AriaRole;
+  tabIndex?: number;
+  "aria-label"?: string;
+  "aria-labelledby"?: string;
+  "aria-describedby"?: string;
+}
+
+interface StaggerItemProps extends PropsWithChildren, SemanticMotionProps {
   as?: StaggerItemTag;
   order?: number;
 }
@@ -37,7 +51,7 @@ const itemVariants: Variants = {
     y: 0,
     transition: {
       duration: MOTION_DURATION.section,
-      ease: [...MOTION_EASING.standard]
+      ease: MOTION_EASING.standard
     }
   }
 };
@@ -47,19 +61,26 @@ export function StaggerItem({
   children,
   order = 0,
   className,
-  style,
-  ...rest
+  id,
+  role,
+  tabIndex,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledby,
+  "aria-describedby": ariaDescribedby
 }: StaggerItemProps): ReactElement {
+  const style = { "--motion-order": order } as MotionStyle;
   const shared = {
-    ...rest,
-    className,
+    ...(className ? { className } : {}),
+    ...(id ? { id } : {}),
+    ...(role ? { role } : {}),
+    ...(tabIndex === undefined ? {} : { tabIndex }),
+    ...(ariaLabel ? { "aria-label": ariaLabel } : {}),
+    ...(ariaLabelledby ? { "aria-labelledby": ariaLabelledby } : {}),
+    ...(ariaDescribedby ? { "aria-describedby": ariaDescribedby } : {}),
     "data-motion": "stagger-item",
-    style: {
-      ...style,
-      "--motion-order": order
-    } as CSSProperties,
+    style,
     variants: itemVariants
-  };
+  } as const;
 
   switch (as) {
     case "li":
@@ -71,7 +92,7 @@ export function StaggerItem({
   }
 }
 
-interface StaggerProps extends Omit<HTMLAttributes<HTMLElement>, "children"> {
+interface StaggerProps extends SemanticMotionProps {
   as?: StaggerTag;
   children: ReactNode;
   interval?: number;
@@ -82,9 +103,14 @@ export function Stagger({
   as = "div",
   children,
   className,
+  id,
+  role,
+  tabIndex,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledby,
+  "aria-describedby": ariaDescribedby,
   interval = 0.07,
-  once = true,
-  ...rest
+  once = true
 }: StaggerProps): ReactElement {
   const shouldReduceMotion = useReducedMotion() === true;
   const indexedChildren = Children.map(children, (child, index) => {
@@ -104,16 +130,20 @@ export function Stagger({
       }
     }
   };
-
   const shared = {
-    ...rest,
-    className,
+    ...(className ? { className } : {}),
+    ...(id ? { id } : {}),
+    ...(role ? { role } : {}),
+    ...(tabIndex === undefined ? {} : { tabIndex }),
+    ...(ariaLabel ? { "aria-label": ariaLabel } : {}),
+    ...(ariaLabelledby ? { "aria-labelledby": ariaLabelledby } : {}),
+    ...(ariaDescribedby ? { "aria-describedby": ariaDescribedby } : {}),
     "data-motion": "stagger",
     initial: shouldReduceMotion ? false : "hidden",
     whileInView: "visible",
     viewport: { once, amount: 0.12, margin: "0px 0px -6% 0px" },
     variants: containerVariants
-  };
+  } as const;
 
   switch (as) {
     case "ul":
