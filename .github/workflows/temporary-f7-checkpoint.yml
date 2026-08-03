@@ -13,11 +13,15 @@ permissions:
 
 env:
   CI: true
+  NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
+  SUPABASE_SERVICE_ROLE_KEY: placeholder-service-role-key
+  ROSA_OWNER_EMAIL: owner@example.com
 
 jobs:
   motion-config:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
@@ -43,5 +47,15 @@ jobs:
         run: pnpm install --frozen-lockfile --reporter=append-only
       - name: Check F7 stylesheet contract
         run: node --test apps/web/src/test/f7-premium-styles.static.test.mjs
-      - run: pnpm --filter @rosa/web test
-      - run: pnpm --filter @rosa/web typecheck
+      - name: Lint web application
+        run: pnpm --filter @rosa/web lint
+      - name: Test web application
+        run: pnpm --filter @rosa/web test
+      - name: Typecheck web application
+        run: pnpm --filter @rosa/web typecheck
+      - name: Build web application
+        run: pnpm --filter @rosa/web build
+      - name: Install Playwright Chromium
+        run: pnpm --filter @rosa/web exec playwright install --with-deps chromium
+      - name: Test premium public shell in browser
+        run: pnpm --filter @rosa/web exec playwright test tests/e2e/f7-public-shell.spec.ts
