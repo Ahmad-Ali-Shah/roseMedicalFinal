@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import type { CatalogueProductRecord } from "@/features/catalogue-registry";
+import { TiltSurface } from "@/features/motion";
 import { ProductMediaPlaceholder } from "@/features/public-catalogue";
 
 export function ProductGallery({
@@ -24,7 +25,7 @@ export function ProductGallery({
           </span>
         ))}
       </div>
-      <div className="product-gallery__primary">
+      <TiltSurface className="product-gallery__primary" maxDegrees={1.35}>
         <ProductMediaPlaceholder
           className="product-gallery__image"
           label={product.mediaLabel}
@@ -32,7 +33,7 @@ export function ProductGallery({
           aspect="portrait"
         />
         <span className="product-gallery__zoom-note">Zoom preview activates next phase</span>
-      </div>
+      </TiltSurface>
     </section>
   );
 }
