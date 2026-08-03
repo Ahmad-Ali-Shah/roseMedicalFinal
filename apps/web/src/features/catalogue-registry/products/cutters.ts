@@ -69,7 +69,7 @@ export const CUTTERS_BATCH_01_PRODUCTS = CUTTERS_BATCH_01_CONFIGURATIONS.map(
   }
 ) as readonly CatalogueProductRecord[];
 
-const ESTABLISHED_CUTTER_PRODUCTS = [
+const ESTABLISHED_CUTTER_PRODUCTS: readonly CatalogueProductRecord[] = [
   {
     id: "product_sc_01t",
     familySlug: "cutters",
@@ -85,9 +85,9 @@ const ESTABLISHED_CUTTER_PRODUCTS = [
     catalogueReference: { family: "Cutters", page: "10" },
     mediaLabel: "SC-01T placeholder"
   }
-] as const satisfies readonly CatalogueProductRecord[];
+];
 
-export const CUTTER_PRODUCTS = [
+export const CUTTER_PRODUCTS: readonly CatalogueProductRecord[] = [
   ...CUTTERS_BATCH_01_PRODUCTS,
   ...ESTABLISHED_CUTTER_PRODUCTS
-] as const satisfies readonly CatalogueProductRecord[];
+];
