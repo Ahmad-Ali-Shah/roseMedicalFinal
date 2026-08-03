@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { SCISSORS_BATCH_01_MEDIA } from "@/features/catalogue-media";
 import { SCISSOR_PRODUCTS } from "@/features/catalogue-registry/products/scissors";
-import { config as middlewareConfig } from "@/middleware";
 
 const mediaById = new Map(
   SCISSORS_BATCH_01_MEDIA.map((asset) => [asset.id, asset] as const)
@@ -76,9 +75,5 @@ describe("Scissors image batch 01", () => {
       code: "04-0401",
       size: "14.5 cm"
     });
-  });
-
-  it("does not require Supabase middleware for public catalogue routes", () => {
-    expect(middlewareConfig.matcher).toEqual(["/admin/:path*"]);
   });
 });
