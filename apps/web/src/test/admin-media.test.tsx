@@ -14,14 +14,20 @@ import {
 import { renderServerComponent } from "@/test/render-server-component";
 
 describe("F3E-B media requirements", () => {
-  it("derives thirty transient requirements from current source", () => {
+  it("derives transient requirements from the complete current source", () => {
     const requirements = getAdminMediaRequirements();
     expect(requirements).toHaveLength(
       CATALOGUE_PRODUCTS.length + CATALOGUE_DOCUMENTS.length + CATALOGUE_FAMILIES.length
     );
-    expect(requirements.filter((item) => item.kind === "product")).toHaveLength(20);
-    expect(requirements.filter((item) => item.kind === "catalogue-cover")).toHaveLength(5);
-    expect(requirements.filter((item) => item.kind === "family-imagery")).toHaveLength(5);
+    expect(requirements.filter((item) => item.kind === "product")).toHaveLength(
+      CATALOGUE_PRODUCTS.length
+    );
+    expect(requirements.filter((item) => item.kind === "catalogue-cover")).toHaveLength(
+      CATALOGUE_DOCUMENTS.length
+    );
+    expect(requirements.filter((item) => item.kind === "family-imagery")).toHaveLength(
+      CATALOGUE_FAMILIES.length
+    );
   });
 
   it("keeps family imagery explicitly derived and excludes ROSA identity", () => {
