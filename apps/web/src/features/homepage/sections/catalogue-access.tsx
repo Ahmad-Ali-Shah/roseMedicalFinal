@@ -12,7 +12,13 @@ import type { HomeCatalogueModel } from "../homepage.data";
 
 export function CatalogueAccess({ model }: { model: HomeCatalogueModel }): ReactElement {
   return (
-    <Section className="home-catalogues" tone="paper" data-section="catalogue-access" aria-labelledby="catalogue-access-title">
+    <Section
+      className="home-catalogues"
+      tone="paper"
+      data-section="catalogue-access"
+      aria-labelledby="catalogue-access-title"
+      style={{ display: "block" }}
+    >
       <Container size="wide">
         <SectionHeading
           id="catalogue-access-title"
