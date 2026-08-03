@@ -85,7 +85,7 @@ export function Reveal({
     delay,
     ease: MOTION_EASING.standard
   };
-  const shared = {
+  const semanticProps = {
     ...(className ? { className } : {}),
     ...(id ? { id } : {}),
     ...(role ? { role } : {}),
@@ -95,13 +95,26 @@ export function Reveal({
     ...(ariaDescribedby ? { "aria-describedby": ariaDescribedby } : {}),
     ...(ariaHidden === undefined ? {} : { "aria-hidden": ariaHidden }),
     "data-motion": "reveal",
-    "data-motion-direction": direction,
-    initial: shouldReduceMotion ? false : "hidden",
-    whileInView: "visible",
-    viewport: { once, amount: 0.18, margin: "0px 0px -8% 0px" },
-    variants: revealVariants(direction),
-    transition
+    "data-motion-direction": direction
   } as const;
+  const shared = shouldReduceMotion
+    ? {
+        ...semanticProps,
+        initial: false,
+        style: {
+          opacity: 1,
+          filter: "none",
+          transform: "none"
+        }
+      } as const
+    : {
+        ...semanticProps,
+        initial: "hidden",
+        whileInView: "visible",
+        viewport: { once, amount: 0.18, margin: "0px 0px -8% 0px" },
+        variants: revealVariants(direction),
+        transition
+      } as const;
 
   switch (as) {
     case "section":
