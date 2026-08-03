@@ -1,15 +1,16 @@
 import type { ReactElement } from "react";
+import { Stagger, StaggerItem } from "@/features/motion";
 import { CatalogueCard } from "./catalogue-card";
 import { CATALOGUE_DOCUMENTS } from "./catalogue-document-model";
 
 export function CatalogueGrid(): ReactElement {
   return (
-    <ul className="catalogue-document-grid" aria-label="Technical catalogues">
+    <Stagger as="ul" className="catalogue-document-grid" aria-label="Technical catalogues" interval={0.07}>
       {CATALOGUE_DOCUMENTS.map((document, index) => (
-        <li key={document.familySlug}>
+        <StaggerItem as="li" key={document.familySlug}>
           <CatalogueCard document={document} featured={index === 0} />
-        </li>
+        </StaggerItem>
       ))}
-    </ul>
+    </Stagger>
   );
 }
