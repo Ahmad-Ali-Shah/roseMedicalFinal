@@ -1,6 +1,10 @@
 import { expect, test } from "@playwright/test";
+import { INQUIRY_STORAGE_KEY } from "../../src/features/inquiry/inquiry-store";
 
 test("product selection reaches the live quotation form", async ({ page }, testInfo) => {
+  const pageErrors: string[] = [];
+  page.on("pageerror", (error) => pageErrors.push(error.message));
+
   await page.goto("/products/knives/scalpel-handle-no-3");
   await page.evaluate(() => window.localStorage.clear());
   await page.reload();
@@ -9,7 +13,16 @@ test("product selection reaches the live quotation form", async ({ page }, testI
     ? page.locator(".mobile-inquiry-bar").getByRole("button", { name: "Add to inquiry" })
     : page.locator(".product-procurement-summary").getByRole("button", { name: "Add to inquiry" });
 
+  await expect(addAction).toBeEnabled();
   await addAction.click();
+
+  const diagnostic = await page.evaluate((storageKey) => ({
+    storage: window.localStorage.getItem(storageKey),
+    bodyHasAddedState: document.body.innerText.includes("Added · View inquiry"),
+    addButtons: Array.from(document.querySelectorAll("button")).filter((button) => button.textContent?.includes("Add to inquiry")).length
+  }), INQUIRY_STORAGE_KEY);
+  console.log("INQUIRY_DIAGNOSTIC", JSON.stringify({ project: testInfo.project.name, pageErrors, diagnostic }));
+
   await page.goto("/inquiry");
 
   await expect(page.getByRole("heading", { name: "Review your product inquiry." })).toBeVisible();
