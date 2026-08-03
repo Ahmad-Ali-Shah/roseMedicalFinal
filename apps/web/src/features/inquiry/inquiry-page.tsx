@@ -15,7 +15,18 @@ import {
 export function InquiryPage() {
   const [items, setItems] = useState<InquiryItem[] | null>(null);
 
-  useEffect(() => setItems(readInquiry()), []);
+  useEffect(() => {
+    const synchronize = () => setItems(readInquiry());
+    const timeout = window.setTimeout(synchronize, 0);
+    window.addEventListener("rosa-inquiry-change", synchronize);
+    window.addEventListener("storage", synchronize);
+
+    return () => {
+      window.clearTimeout(timeout);
+      window.removeEventListener("rosa-inquiry-change", synchronize);
+      window.removeEventListener("storage", synchronize);
+    };
+  }, []);
 
   if (items === null) {
     return <Section tone="paper"><Container size="wide"><p>Loading inquiry…</p></Container></Section>;
