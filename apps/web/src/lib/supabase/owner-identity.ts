@@ -6,8 +6,8 @@ interface OwnerCandidate {
 }
 
 interface OwnerConfiguration {
-  ownerUserId?: string | null;
-  ownerEmail?: string | null;
+  ownerUserId?: string | null | undefined;
+  ownerEmail?: string | null | undefined;
 }
 
 export function isConfiguredOwner(
