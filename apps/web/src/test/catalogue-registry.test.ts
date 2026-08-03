@@ -15,7 +15,7 @@ import type {
 const EXPECTED_PRODUCTS_BY_FAMILY = {
   knives: 22,
   scissors: 42,
-  punches: 4,
+  punches: 15,
   chisels: 20,
   cutters: 14
 } as const;
@@ -54,7 +54,7 @@ describe("F3B catalogue registry", () => {
         )
       ).toHaveLength(EXPECTED_PRODUCTS_BY_FAMILY[family.slug]);
     }
-    expect(CATALOGUE_PRODUCTS).toHaveLength(102);
+    expect(CATALOGUE_PRODUCTS).toHaveLength(113);
   });
 
   it("keeps IDs and family-local routes unique", () => {
