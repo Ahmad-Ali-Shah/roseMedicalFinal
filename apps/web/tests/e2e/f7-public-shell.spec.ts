@@ -18,23 +18,24 @@ test("public shell transforms without changing its landmarks", async ({ page }, 
   );
   expect(hasOverflow).toBe(false);
 
+  const menuTrigger = page.getByRole("button", { name: "Menu", exact: true });
+
   if (testInfo.project.name === "desktop") {
-    await expect(page.getByRole("button", { name: "Menu" })).toBeHidden();
+    await expect(menuTrigger).toBeHidden();
     await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeVisible();
     return;
   }
 
-  const trigger = page.getByRole("button", { name: "Menu" });
-  await expect(trigger).toBeVisible();
-  await trigger.click();
-  await expect(trigger).toHaveAttribute("aria-expanded", "true");
+  await expect(menuTrigger).toBeVisible();
+  await menuTrigger.click();
+  await expect(menuTrigger).toHaveAttribute("aria-expanded", "true");
   await expect(page.getByRole("dialog", { name: "Mobile navigation" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Products", exact: true })).toBeVisible();
   expect(await page.evaluate(() => document.body.style.overflow)).toBe("hidden");
 
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog", { name: "Mobile navigation" })).toBeHidden();
-  await expect(trigger).toHaveAttribute("aria-expanded", "false");
-  await expect(trigger).toBeFocused();
+  await expect(menuTrigger).toHaveAttribute("aria-expanded", "false");
+  await expect(menuTrigger).toBeFocused();
   expect(await page.evaluate(() => document.body.style.overflow)).toBe("");
 });
