@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { Container, Section } from "@/components/layout";
+import { Reveal, SpotlightSurface } from "@/features/motion";
 import { ProcurementPanel } from "@/features/public-catalogue";
 import type { HomeQuotationModel } from "../homepage.data";
 
@@ -7,13 +8,18 @@ export function QuotationCta({ model }: { model: HomeQuotationModel }): ReactEle
   return (
     <Section tone="paper" spacing="compact" data-section="quotation-cta" aria-label="Request a quotation">
       <Container size="wide">
-        <ProcurementPanel
-          eyebrow={model.eyebrow}
-          title={model.title}
-          copy={model.copy}
-          primary={model.primary}
-          tone="dark"
-        />
+        <Reveal direction="up">
+          <SpotlightSurface className="quotation-cta__surface">
+            <ProcurementPanel
+              eyebrow={model.eyebrow}
+              title={model.title}
+              copy={model.copy}
+              primary={model.primary}
+              tone="dark"
+              className="procurement-panel--premium-cta"
+            />
+          </SpotlightSurface>
+        </Reveal>
       </Container>
     </Section>
   );
