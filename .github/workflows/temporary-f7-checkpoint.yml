@@ -61,5 +61,17 @@ jobs:
         run: pnpm --filter @rosa/web build
       - name: Install Playwright Chromium
         run: pnpm --filter @rosa/web exec playwright install --with-deps chromium
-      - name: Test complete browser matrix
-        run: pnpm --filter @rosa/web exec playwright test
+      - name: Test premium F7 browser journeys
+        run: pnpm --filter @rosa/web exec playwright test tests/e2e/f7-*.spec.ts
+      - name: Test catalogue-media browser journeys
+        run: pnpm --filter @rosa/web exec playwright test tests/e2e/*-image-batch-01.spec.ts
+      - name: Test remaining browser journeys
+        run: |
+          mapfile -t specs < <(find apps/web/tests/e2e -maxdepth 1 -name '*.spec.ts' ! -name 'f7-*' ! -name '*-image-batch-01.spec.ts' -printf '%f\n' | sort)
+          if [ "${#specs[@]}" -eq 0 ]; then
+            echo "No remaining browser specs."
+            exit 0
+          fi
+          printf 'Remaining browser specs:\n%s\n' "${specs[@]}"
+          cd apps/web
+          pnpm exec playwright test "${specs[@]/#/tests/e2e/}"
