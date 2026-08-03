@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { requireApiOwner } from "@/lib/supabase/api-auth";
 
 interface InquiryUpdateRequest {
   id: string;
@@ -15,9 +15,10 @@ interface InquiryUpdateData {
 
 export async function POST(req: Request) {
   try {
-    const supabase = await createClient();
-    const { id, status, date } = await req.json() as InquiryUpdateRequest;
+    const auth = await requireApiOwner();
+    if (!auth.ok) return auth.response;
 
+    const { id, status, date } = await req.json() as InquiryUpdateRequest;
     const updateData: InquiryUpdateData = {
       status,
       notification: `Status updated to ${status}`
@@ -32,7 +33,7 @@ export async function POST(req: Request) {
       updateData.notification = "Inquiry reviewed";
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await auth.supabase
       .from("quote_requests")
       .update(updateData)
       .eq("id", id)
