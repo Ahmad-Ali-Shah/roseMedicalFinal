@@ -141,6 +141,8 @@
 }
 
 .contact-location-placeholder {
+  width: 100%;
+  max-width: 100%;
   min-height: clamp(18rem, 38vw, 31rem);
 }
 
@@ -175,6 +177,11 @@
 
   .contact-main-layout {
     align-items: stretch;
+  }
+
+  .contact-location-placeholder {
+    height: auto;
+    min-height: 0;
   }
 }
 
