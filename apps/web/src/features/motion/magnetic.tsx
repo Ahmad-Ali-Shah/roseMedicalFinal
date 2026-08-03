@@ -38,7 +38,7 @@ export function Magnetic({
       onPointerMove={move}
       onPointerLeave={reset}
       onPointerCancel={reset}
-      style={{ x: reduceMotion ? 0 : springX, y: reduceMotion ? 0 : springY }}
+      style={{ x: springX, y: springY }}
     >
       {children}
     </motion.div>
