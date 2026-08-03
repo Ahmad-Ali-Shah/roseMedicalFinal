@@ -1,8 +1,9 @@
 import { expect, test } from "@playwright/test";
 
 test("product selection reaches the live quotation form", async ({ page }, testInfo) => {
-  await page.addInitScript(() => window.localStorage.clear());
   await page.goto("/products/knives/scalpel-handle-no-3");
+  await page.evaluate(() => window.localStorage.clear());
+  await page.reload();
 
   const addAction = testInfo.project.name === "mobile"
     ? page.locator(".mobile-inquiry-bar").getByRole("button", { name: "Add to inquiry" })
