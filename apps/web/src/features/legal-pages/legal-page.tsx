@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactElement } from "react";
 import { Container, Section } from "@/components/layout";
+import { Reveal } from "@/features/motion";
 import type { LegalDocumentRecord } from "./legal-document-model";
 import { LegalSectionNavigation } from "./legal-section-navigation";
 import { LegalSection } from "./legal-section";
@@ -14,20 +15,22 @@ export function LegalPage({
     <>
       <Section tone="paper" spacing="compact" className="legal-page__hero">
         <Container size="wide">
-          <nav className="public-breadcrumbs" aria-label="Breadcrumb">
-            <Link href="/">Home</Link>
-            <span aria-hidden="true">/</span>
-            <span aria-current="page">{document.breadcrumbLabel}</span>
-          </nav>
-          <p className="page-eyebrow">Legal template</p>
-          <h1>{document.title}</h1>
-          <p className="legal-page__warning">
-            Template structure for client and qualified legal review. All language must
-            be confirmed before publication.
-          </p>
-          <p className="legal-page__updated">
-            Last updated: awaiting client and legal approval
-          </p>
+          <Reveal direction="up" className="legal-page__hero-reveal">
+            <nav className="public-breadcrumbs" aria-label="Breadcrumb">
+              <Link href="/">Home</Link>
+              <span aria-hidden="true">/</span>
+              <span aria-current="page">{document.breadcrumbLabel}</span>
+            </nav>
+            <p className="page-eyebrow">Legal template</p>
+            <h1>{document.title}</h1>
+            <p className="legal-page__warning">
+              Template structure for client and qualified legal review. All language must
+              be confirmed before publication.
+            </p>
+            <p className="legal-page__updated">
+              Last updated: awaiting client and legal approval
+            </p>
+          </Reveal>
         </Container>
       </Section>
 
@@ -37,7 +40,9 @@ export function LegalPage({
             <LegalSectionNavigation document={document} />
             <div className="legal-page__content">
               {document.sections.map((section) => (
-                <LegalSection key={section.id} section={section} />
+                <Reveal direction="up" key={section.id} className="legal-section-reveal">
+                  <LegalSection section={section} />
+                </Reveal>
               ))}
               <aside className="legal-page__review-note" aria-label="Legal review status">
                 <p className="page-eyebrow">Review required</p>
