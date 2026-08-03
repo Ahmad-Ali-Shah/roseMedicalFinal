@@ -1,0 +1,19 @@
+name: Temporary F7 Checkpoint
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  motion-config:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @rosa/web test -- src/test/f7-motion-config.test.ts
