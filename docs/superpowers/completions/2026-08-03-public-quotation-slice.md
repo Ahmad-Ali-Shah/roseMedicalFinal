@@ -24,6 +24,7 @@ The first usable public procurement journey is implemented:
 
 - The existing internal `/api/checkout` route now accepts the quotation-led public payload; no ecommerce UI, public pricing, payment, order, inventory or shipping behavior was added.
 - Payload validation normalizes contact fields and immutable item snapshots.
+- Telephone validation accepts one optional leading `+` followed only by digits, then applies length and fake-number checks.
 - Exact-request hashing provides duplicate detection against the existing `quote_requests.cart_hash` field.
 - The existing `quote_requests.message` field stores a readable submitted snapshot, so the existing owner inquiry queue can display the request without a database migration.
 - Anonymous submission uses the server-only Supabase admin client after validation; `user_id` is stored as `null` and initial status is `New`.
@@ -41,6 +42,16 @@ The first usable public procurement journey is implemented:
 - Added type-safe contact-message vector indexing without changing contact behavior.
 - Added missing admin-login input names and aligned stale static tests with the already-live authentication forms.
 - Added a test-time `next/navigation` mock for live client authentication components.
+- Stabilized the browser journey by waiting for the post-write inquiry link before navigating.
+
+## Review result
+
+A final structured review covered the approved design, anonymous insertion boundary, owner authorization, inquiry persistence, failure clearing rules and changed tests.
+
+- One concrete defect was found: malformed telephone strings containing multiple `+` characters were accepted.
+- The regression test failed first in run `30816482709`, then passed after the minimal normalizer correction.
+- No remaining Critical or Important code-level defect was identified inside the approved slice.
+- Production abuse controls and real Supabase acceptance remain release blockers, not completed work.
 
 ## Explicitly unchanged
 
@@ -50,21 +61,23 @@ The first usable public procurement journey is implemented:
 - No customer-account requirement.
 - No email-delivery implementation.
 - No product publishing, media, Arabic/RTL or visual-redesign work.
-- No permanent quotation-specific GitHub Actions workflow; the temporary verification workflow was removed after success.
+- No permanent quotation-specific GitHub Actions workflow; the temporary review workflow was removed after success.
 
 ## Verification
 
-Final verified implementation commit before temporary-workflow removal: `e4efb2e38fbf73ef428c83180404872794fcb775`.
+Final verified application-code commit: `7b880dd0f6329c35e8e6e40f74def0c5d69d86d8`.  
+Full verification carrier commit: `7f94e4f5c0f0258410f19fbaae0c44587f9fb650`.  
+Temporary workflow removal commit: `21a0b2c60ce8e3b7be98f4e5861e0f93b3440e21`.
 
-GitHub Actions run `30815597518` passed:
+GitHub Actions run `30816803869` passed:
 
 - `pnpm install --frozen-lockfile`
 - `pnpm lint`
 - `pnpm typecheck`
 - `pnpm test`
   - Contracts: 3 passed
-  - Web: 223 passed across 49 files
-  - Combined: 226 passed, 0 failed
+  - Web: 224 passed across 49 files
+  - Combined: 227 passed, 0 failed
 - `pnpm build`
 - Targeted Playwright desktop/mobile matrix:
   - 21 passed
@@ -79,9 +92,10 @@ Before production release, configure real Supabase values and verify:
 
 1. One quotation request inserts into the real `quote_requests` table.
 2. An exact repeat receives HTTP 409.
-3. The protected owner can sign in and see the submitted snapshot in `/admin/inquiries`.
-4. A configured `ROSA_OWNER_USER_ID` denies every other authenticated account, including an account matching only the fallback email.
-5. Production abuse protection/rate limiting is accepted for the anonymous submission endpoint.
+3. Concurrent identical submissions cannot create duplicate rows under the real database constraints.
+4. The protected owner can sign in and see the submitted snapshot in `/admin/inquiries`.
+5. A configured `ROSA_OWNER_USER_ID` denies every other authenticated account, including an account matching only the fallback email.
+6. Production abuse protection/rate limiting is accepted for the anonymous submission endpoint.
 
 ## Next exact batch
 
