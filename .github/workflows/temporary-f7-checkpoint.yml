@@ -26,6 +26,42 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+      - name: Import Punches candidate media
+        run: |
+          git fetch origin preview/punches-image-batch-01:refs/remotes/origin/preview/punches-image-batch-01
+          git checkout origin/preview/punches-image-batch-01 -- \
+            apps/web/public/media/catalogue-preview/punches \
+            apps/web/scripts/prepare_punches_batch1.py \
+            apps/web/src/features/catalogue-media/punches-batch-01.ts \
+            apps/web/src/features/catalogue-registry/products/punches-batch-01.ts \
+            apps/web/src/test/punches-batch-01-inventory.test.ts \
+            apps/web/src/test/punches-batch-01-media.test.ts \
+            apps/web/src/test/punches-image-preview.test.ts \
+            apps/web/tests/e2e/punches-image-batch-01.spec.ts \
+            docs/review/catalogue-media/punches-batch-01-sources.md \
+            docs/superpowers/plans/2026-08-04-punches-batch-01-implementation.md \
+            docs/superpowers/specs/2026-08-04-punches-batch-01-design.md
+          if git diff --quiet --cached && git diff --quiet; then
+            echo "Punches candidate media already imported."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            apps/web/public/media/catalogue-preview/punches \
+            apps/web/scripts/prepare_punches_batch1.py \
+            apps/web/src/features/catalogue-media/punches-batch-01.ts \
+            apps/web/src/features/catalogue-registry/products/punches-batch-01.ts \
+            apps/web/src/test/punches-batch-01-inventory.test.ts \
+            apps/web/src/test/punches-batch-01-media.test.ts \
+            apps/web/src/test/punches-image-preview.test.ts \
+            apps/web/tests/e2e/punches-image-batch-01.spec.ts \
+            docs/review/catalogue-media/punches-batch-01-sources.md \
+            docs/superpowers/plans/2026-08-04-punches-batch-01-implementation.md \
+            docs/superpowers/specs/2026-08-04-punches-batch-01-design.md
+          git commit -m "feat: import Punches candidate media"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: 24
