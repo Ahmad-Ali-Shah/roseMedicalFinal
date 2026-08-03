@@ -37,7 +37,7 @@ describe("F7 product discovery polish", () => {
     );
 
     expect(html).toContain("Scalpel Handle No. 3");
-    expect(html).toContain("01-0103");
+    expect(html).toContain("18-0644");
     expect(html).toContain("Add to inquiry");
     expect(html).toContain('href="/catalogues"');
     expect((html.match(/data-motion="reveal"/g) ?? []).length).toBeGreaterThanOrEqual(4);
