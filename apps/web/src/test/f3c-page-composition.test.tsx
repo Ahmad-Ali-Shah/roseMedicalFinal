@@ -12,7 +12,7 @@ function renderRoute(key: string, title: string) {
 }
 
 describe("F3C public compositions", () => {
-  it("mounts only the truthful F3C route states", () => {
+  it("preserves the established route-kind inventory", () => {
     expect(resolvePublicPageKind("catalogues")).toBe("catalogues");
     expect(resolvePublicPageKind("inquiry")).toBe("inquiry-empty");
     expect(resolvePublicPageKind("request-quotation")).toBe(
@@ -27,18 +27,18 @@ describe("F3C public compositions", () => {
     expect(html).not.toContain("[Month Year]");
   });
 
-  it("keeps populated inquiry products off the normal inquiry route", () => {
+  it("renders a hydration-safe live inquiry shell", () => {
     const html = renderRoute("inquiry", "Instrument inquiry");
-    expect(html).toContain("Your inquiry list is empty.");
+    expect(html).toContain("Loading inquiry");
     expect(html).not.toContain("18-0644");
     expect(html).not.toContain("data-preview-only");
   });
 
-  it("keeps the quotation form and success state off the normal route", () => {
+  it("renders a hydration-safe live quotation shell", () => {
     const html = renderRoute("request-quotation", "Request a quotation");
-    expect(html).toContain("Select instruments before requesting a quotation.");
-    expect(html).not.toContain("<form");
+    expect(html).toContain("Loading quotation request");
     expect(html).not.toContain("Request submitted");
     expect(html).not.toContain("RM-2026");
+    expect(html).not.toContain("data-preview-only");
   });
 });
