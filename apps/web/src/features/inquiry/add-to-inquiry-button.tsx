@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { addInquiryItem, type InquiryItem } from "./inquiry-store";
 
 export function AddToInquiryButton({
@@ -19,26 +20,44 @@ export function AddToInquiryButton({
     return () => window.clearTimeout(timeout);
   }, []);
 
-  if (added) {
-    return (
-      <Link href="/inquiry" className={className}>
-        Added · View inquiry
-      </Link>
-    );
-  }
-
   return (
-    <button
-      type="button"
-      className={className}
-      disabled={!ready}
-      aria-busy={!ready}
-      onClick={() => {
-        addInquiryItem(item);
-        setAdded(true);
-      }}
-    >
-      Add to inquiry
-    </button>
+    <AnimatePresence initial={false} mode="wait">
+      {added ? (
+        <motion.span
+          className="add-to-inquiry-transition"
+          key="added"
+          initial={{ opacity: 0, y: 4 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -4 }}
+          transition={{ duration: 0.18 }}
+        >
+          <Link href="/inquiry" className={className}>
+            Added · View inquiry
+          </Link>
+        </motion.span>
+      ) : (
+        <motion.span
+          className="add-to-inquiry-transition"
+          key="add"
+          initial={{ opacity: 0, y: 4 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -4 }}
+          transition={{ duration: 0.18 }}
+        >
+          <button
+            type="button"
+            className={className}
+            disabled={!ready}
+            aria-busy={!ready}
+            onClick={() => {
+              addInquiryItem(item);
+              setAdded(true);
+            }}
+          >
+            Add to inquiry
+          </button>
+        </motion.span>
+      )}
+    </AnimatePresence>
   );
 }
