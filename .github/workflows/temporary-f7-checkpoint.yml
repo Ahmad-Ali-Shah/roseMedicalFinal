@@ -49,6 +49,8 @@ jobs:
         run: pnpm install --frozen-lockfile --reporter=append-only
       - name: Lint workspace
         run: pnpm -r lint
+      - name: Test scissors evolution contract
+        run: pnpm --filter @rosa/web test -- src/test/about-page.test.tsx
       - name: Typecheck workspace
         run: pnpm -r typecheck
       - name: Test workspace
