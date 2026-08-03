@@ -57,5 +57,5 @@ jobs:
         run: pnpm --filter @rosa/web build
       - name: Install Playwright Chromium
         run: pnpm --filter @rosa/web exec playwright install --with-deps chromium
-      - name: Test premium public shell in browser
-        run: pnpm --filter @rosa/web exec playwright test tests/e2e/f7-public-shell.spec.ts
+      - name: Test premium shell and homepage in browser
+        run: pnpm --filter @rosa/web exec playwright test tests/e2e/f7-public-shell.spec.ts tests/e2e/f7-homepage-polish.spec.ts
