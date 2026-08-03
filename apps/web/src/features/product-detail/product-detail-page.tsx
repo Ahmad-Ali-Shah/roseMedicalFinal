@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { Container, Section } from "@/components/layout";
+import type { InquiryItem } from "@/features/inquiry";
 import { ProcurementPanel } from "@/features/public-catalogue";
 import { createProductDetailData } from "./product-detail.data";
 import { ProductBreadcrumbs } from "./product-breadcrumbs";
@@ -20,6 +21,18 @@ export function ProductDetailPage({
   const data = createProductDetailData(familySlug, productSlug);
   if (!data) return null;
 
+  const inquiryItem: InquiryItem = {
+    id: data.product.id,
+    familySlug: data.product.familySlug,
+    slug: data.product.slug,
+    name: data.product.name,
+    code: data.product.code,
+    size: data.sizeValue,
+    variant: data.variantValue,
+    quantity: 1,
+    notes: ""
+  };
+
   return (
     <div className="public-page public-page--product-detail">
       <Section tone="paper" spacing="compact" className="product-detail-intro">
@@ -33,6 +46,7 @@ export function ProductDetailPage({
               sizeValue={data.sizeValue}
               variantValue={data.variantValue}
               catalogueReference={data.catalogueReference}
+              inquiryItem={inquiryItem}
             />
           </div>
         </Container>
@@ -62,7 +76,7 @@ export function ProductDetailPage({
           />
         </Container>
       </Section>
-      <MobileInquiryBar />
+      <MobileInquiryBar item={inquiryItem} />
     </div>
   );
 }

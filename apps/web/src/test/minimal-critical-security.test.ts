@@ -14,7 +14,7 @@ describe("minimal critical security patch", () => {
     expect(account).toContain('fetch("/api/inquiries?scope=mine")');
     expect(account).not.toMatch(/\.filter\s*\([^)]*user_id/);
     expect(inquiries).toContain('scope === "mine"');
-    expect(inquiries).toContain('.eq("user_id", user.id)');
+    expect(inquiries).toContain('.eq("user_id", auth.user.id)');
   });
 
   it("requires owner authorization for admin inquiry and message operations", () => {

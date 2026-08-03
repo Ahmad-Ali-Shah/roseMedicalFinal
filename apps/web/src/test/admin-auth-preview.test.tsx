@@ -10,7 +10,7 @@ import {
 } from "@/features/admin-auth-preview";
 
 describe("F3E-A owner-access normal routes", () => {
-  it("connects login while leaving recovery explicitly static", () => {
+  it("connects live login and recovery forms", () => {
     const login = renderToStaticMarkup(<AdminLoginPage />);
     const recovery = renderToStaticMarkup(<AdminRecoveryPage />);
 
@@ -24,10 +24,11 @@ describe("F3E-A owner-access normal routes", () => {
 
     expect((recovery.match(/<h1/g) ?? [])).toHaveLength(1);
     expect(recovery).toContain("Recover owner access.");
-    expect(recovery).not.toContain("<form");
-    expect(recovery).toContain("readonly");
-    expect(recovery).toContain("disabled");
-    expect(recovery).toContain("Recovery not connected");
+    expect(recovery).toContain("<form");
+    expect(recovery).toContain('type="email"');
+    expect(recovery).toContain("Send recovery link");
+    expect(recovery).not.toContain("readonly");
+    expect(recovery).not.toContain("Recovery not connected");
   });
 
   it("contains no account creation or fake owner identity", () => {

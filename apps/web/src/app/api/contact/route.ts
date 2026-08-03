@@ -41,10 +41,15 @@ function cosineSim(vecA: Record<string, number>, vecB: Record<string, number>): 
   let magB = 0;
 
   for (const key in vecA) {
-    if (vecB[key]) dot += vecA[key] * vecB[key];
-    magA += vecA[key] ** 2;
+    const valueA = vecA[key] ?? 0;
+    const valueB = vecB[key] ?? 0;
+    dot += valueA * valueB;
+    magA += valueA ** 2;
   }
-  for (const key in vecB) magB += vecB[key] ** 2;
+  for (const key in vecB) {
+    const valueB = vecB[key] ?? 0;
+    magB += valueB ** 2;
+  }
 
   return magA && magB ? dot / (Math.sqrt(magA) * Math.sqrt(magB)) : 0;
 }

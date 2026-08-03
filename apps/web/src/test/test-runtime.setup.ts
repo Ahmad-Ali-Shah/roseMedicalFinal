@@ -9,6 +9,7 @@ function createQueryBuilder() {
     is: () => builder,
     or: () => builder,
     gt: () => builder,
+    limit: () => builder,
     insert: () => builder,
     update: () => builder,
     upsert: () => builder,
@@ -19,13 +20,38 @@ function createQueryBuilder() {
   return builder;
 }
 
+const auth = {
+  getUser: async () => ({ data: { user: null }, error: null }),
+  signInWithPassword: async () => ({ data: { user: null, session: null }, error: null }),
+  signOut: async () => ({ error: null })
+};
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    refresh: vi.fn(),
+    prefetch: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn()
+  }),
+  usePathname: () => "/",
+  useSearchParams: () => new URLSearchParams(),
+  useParams: () => ({}),
+  redirect: vi.fn(),
+  notFound: vi.fn()
+}));
+
+vi.mock("@/lib/supabase/client", () => ({
+  createClient: () => ({
+    from: () => createQueryBuilder(),
+    auth
+  })
+}));
+
 vi.mock("@/lib/supabase/server", () => ({
   createClient: async () => ({
     from: () => createQueryBuilder(),
-    auth: {
-      getUser: async () => ({ data: { user: null }, error: null }),
-      signInWithPassword: async () => ({ data: { user: null, session: null }, error: null }),
-      signOut: async () => ({ error: null })
-    }
+    auth
   })
 }));
