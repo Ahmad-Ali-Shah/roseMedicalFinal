@@ -62,7 +62,7 @@ export const KNIVES_BATCH_01_PRODUCTS = KNIVES_BATCH_01_CONFIGURATIONS.map(
   }
 ) as readonly CatalogueProductRecord[];
 
-const ESTABLISHED_KNIFE_PRODUCTS = [
+const ESTABLISHED_KNIFE_PRODUCTS: readonly CatalogueProductRecord[] = [
   {
     id: "product_scalpel_handle_3",
     familySlug: "knives",
@@ -123,9 +123,9 @@ const ESTABLISHED_KNIFE_PRODUCTS = [
     catalogueReference: { family: "Knives" },
     mediaLabel: "Resection Knife placeholder"
   }
-] as const satisfies readonly CatalogueProductRecord[];
+];
 
-export const KNIFE_PRODUCTS = [
+export const KNIFE_PRODUCTS: readonly CatalogueProductRecord[] = [
   ...KNIVES_BATCH_01_PRODUCTS,
   ...ESTABLISHED_KNIFE_PRODUCTS
-] as const satisfies readonly CatalogueProductRecord[];
+];
