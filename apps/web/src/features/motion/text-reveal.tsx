@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactElement } from "react";
-import { motion, useReducedMotion, type Variants } from "motion/react";
+import { motion, type Variants } from "motion/react";
 import { MOTION_DURATION, MOTION_EASING } from "./motion.config";
 
 type TextRevealTag = "h1" | "h2" | "h3" | "p" | "span";
@@ -21,7 +21,7 @@ const wordVariants: Variants = {
   visible: {
     opacity: 1,
     y: 0,
-    filter: "blur(0px)",
+    filter: "none",
     transition: {
       duration: MOTION_DURATION.section,
       ease: MOTION_EASING.emphasized
@@ -37,7 +37,6 @@ export function TextReveal({
   mode = "words",
   delay = 0
 }: TextRevealProps): ReactElement {
-  const reduceMotion = useReducedMotion() === true;
   const segments = mode === "lines" ? text.split("\n") : text.split(/\s+/);
   const content = segments.map((segment, index) => (
     <span className="text-reveal__clip" aria-hidden="true" key={`${segment}-${index}`}>
@@ -57,7 +56,7 @@ export function TextReveal({
     "aria-label": text,
     "data-motion": "text-reveal",
     "data-text-mode": mode,
-    initial: reduceMotion ? false : "hidden",
+    initial: "hidden",
     whileInView: "visible",
     viewport: { once: true, amount: 0.45 },
     variants: {
