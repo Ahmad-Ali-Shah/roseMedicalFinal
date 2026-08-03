@@ -21,6 +21,21 @@ test.beforeEach(async ({ page }) => {
   );
 });
 
+function collectHydrationErrors(page: Page): string[] {
+  const errors: string[] = [];
+
+  page.on("console", (message) => {
+    if (
+      message.type() === "error"
+      && /hydrated|hydration|server rendered html/i.test(message.text())
+    ) {
+      errors.push(message.text());
+    }
+  });
+
+  return errors;
+}
+
 async function expectMotionSettled(page: Page) {
   await expect.poll(async () => page.evaluate(() => {
     const selectors = [
@@ -52,6 +67,7 @@ async function expectMotionSettled(page: Page) {
 }
 
 test("reduced motion keeps public content settled and navigation functional", async ({ page }) => {
+  const hydrationErrors = collectHydrationErrors(page);
   const homeResponse = await page.goto("/");
   expect(homeResponse?.ok()).toBe(true);
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
@@ -81,9 +97,11 @@ test("reduced motion keeps public content settled and navigation functional", as
     page.getByRole("heading", { name: "A clearer way to source medical instruments.", level: 1 })
   ).toBeVisible();
   await expectMotionSettled(page);
+  expect(hydrationErrors).toEqual([]);
 });
 
 test("reduced motion keeps inquiry and quotation conversion content immediately usable", async ({ page }) => {
+  const hydrationErrors = collectHydrationErrors(page);
   const inquiryResponse = await page.goto("/inquiry");
   expect(inquiryResponse?.ok()).toBe(true);
   await expect(page.getByRole("heading", { name: "Review your product inquiry.", level: 1 })).toBeVisible();
@@ -95,4 +113,5 @@ test("reduced motion keeps inquiry and quotation conversion content immediately 
   await expect(page.locator("[data-motion='quotation-fieldset']")).toHaveCount(3);
   await expect(page.getByLabel("Customer name")).toBeEditable();
   await expectMotionSettled(page);
+  expect(hydrationErrors).toEqual([]);
 });
