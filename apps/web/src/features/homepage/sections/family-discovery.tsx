@@ -1,6 +1,11 @@
 import type { ReactElement } from "react";
 import { Container, Section } from "@/components/layout";
-import { FamilyCard, SectionHeading, type FamilyCardModel } from "@/features/public-catalogue";
+import { Stagger, StaggerItem } from "@/features/motion";
+import {
+  FamilyCard,
+  SectionHeading,
+  type FamilyCardModel
+} from "@/features/public-catalogue";
 import type { HomeFamilyIntroModel } from "../homepage.data";
 
 export function FamilyDiscovery({
@@ -20,9 +25,18 @@ export function FamilyDiscovery({
           title={intro.title}
           copy={intro.copy}
         />
-        <ul className="family-grid home-family-grid" aria-label="Instrument families">
-          {families.map((family) => <li key={family.id}><FamilyCard family={family} /></li>)}
-        </ul>
+        <Stagger
+          as="ul"
+          className="family-grid home-family-grid"
+          aria-label="Instrument families"
+          interval={0.065}
+        >
+          {families.map((family) => (
+            <StaggerItem as="li" key={family.id}>
+              <FamilyCard family={family} />
+            </StaggerItem>
+          ))}
+        </Stagger>
       </Container>
     </Section>
   );
