@@ -2,8 +2,9 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 
-const root = path.resolve("apps/web/src");
+const root = fileURLToPath(new URL("../", import.meta.url));
 const normalFiles = [
   "features/admin-auth-preview/admin-login-page.tsx",
   "features/admin-auth-preview/admin-recovery-page.tsx",
