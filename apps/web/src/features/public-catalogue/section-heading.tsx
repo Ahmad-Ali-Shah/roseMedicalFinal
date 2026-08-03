@@ -1,4 +1,5 @@
 import type { ReactElement, ReactNode } from "react";
+import { Reveal, TextReveal } from "@/features/motion";
 
 export interface SectionHeadingProps {
   id?: string;
@@ -20,17 +21,20 @@ export function SectionHeading({
   align = "start"
 }: SectionHeadingProps): ReactElement {
   const heading = level === 2
-    ? <h2 className="public-section-heading__title" id={id}>{title}</h2>
-    : <h3 className="public-section-heading__title" id={id}>{title}</h3>;
+    ? <TextReveal as="h2" className="public-section-heading__title" id={id} text={title} />
+    : <TextReveal as="h3" className="public-section-heading__title" id={id} text={title} />;
 
   return (
-    <div className={`public-section-heading public-section-heading--${align}`}>
+    <Reveal
+      className={`public-section-heading public-section-heading--${align}`}
+      direction="up"
+    >
       <div className="public-section-heading__content">
         {eyebrow ? <p className="public-eyebrow">{eyebrow}</p> : null}
         {heading}
         {copy ? <p className="public-section-heading__copy">{copy}</p> : null}
       </div>
       {action ? <div className="public-section-heading__action">{action}</div> : null}
-    </div>
+    </Reveal>
   );
 }
