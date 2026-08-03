@@ -1,8 +1,9 @@
 import Link from "next/link";
 import type { Route } from "next";
 import type {
-  AnchorHTMLAttributes,
+  AriaAttributes,
   ButtonHTMLAttributes,
+  MouseEventHandler,
   PropsWithChildren
 } from "react";
 
@@ -34,14 +35,18 @@ export function Button({
   );
 }
 
-export type ButtonLinkProps<T extends string> = PropsWithChildren<
-  Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href" | "className"> & {
-    href: Route<T>;
-    variant?: ButtonVariant;
-    size?: ButtonSize;
-    className?: string;
-  }
->;
+export type ButtonLinkProps<T extends string> = PropsWithChildren<{
+  href: Route<T>;
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  className?: string;
+  onClick?: MouseEventHandler<HTMLAnchorElement>;
+  target?: "_self" | "_blank" | "_parent" | "_top";
+  rel?: string;
+  "aria-label"?: string;
+  "aria-describedby"?: string;
+  "aria-current"?: AriaAttributes["aria-current"];
+}>;
 
 export function ButtonLink<T extends string>({
   href,
@@ -49,14 +54,24 @@ export function ButtonLink<T extends string>({
   size = "standard",
   className = "",
   children,
-  ...props
+  onClick,
+  target,
+  rel,
+  "aria-label": ariaLabel,
+  "aria-describedby": ariaDescribedby,
+  "aria-current": ariaCurrent
 }: ButtonLinkProps<T>) {
   return (
     <Link
       className={`button button--${variant} button--${size} ${className}`.trim()}
       data-button="true"
       href={href}
-      {...props}
+      {...(onClick ? { onClick } : {})}
+      {...(target ? { target } : {})}
+      {...(rel ? { rel } : {})}
+      {...(ariaLabel ? { "aria-label": ariaLabel } : {})}
+      {...(ariaDescribedby ? { "aria-describedby": ariaDescribedby } : {})}
+      {...(ariaCurrent === undefined ? {} : { "aria-current": ariaCurrent })}
     >
       <span className="button__label">{children}</span>
     </Link>
