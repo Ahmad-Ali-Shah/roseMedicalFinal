@@ -1,9 +1,9 @@
 name: Public quotation slice verification
 
 on:
-  push:
+  pull_request:
     branches:
-      - frontend/public-quotation-slice
+      - main
   workflow_dispatch:
 
 jobs:
