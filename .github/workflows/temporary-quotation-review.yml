@@ -7,9 +7,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  quotation-payload:
+  verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: test-anon-key
+      SUPABASE_SERVICE_ROLE_KEY: test-service-role-key
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -20,4 +24,9 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @rosa/web exec vitest run src/test/quotation-payload.test.ts
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build
+      - run: pnpm --filter @rosa/web exec playwright install --with-deps chromium
+      - run: pnpm --filter @rosa/web exec playwright test tests/e2e/public-quotation-slice.spec.ts tests/e2e/f3b-catalogue-pages.spec.ts --project=desktop --project=mobile
