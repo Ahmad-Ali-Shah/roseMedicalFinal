@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
+import { isConfiguredOwner } from "@/lib/supabase/owner-identity";
 import { createClient } from "@/lib/supabase/server";
-
-const temporaryOwnerEmail = "ahmadaliofficial1155@gmail.com";
 
 export async function requireAdmin() {
   const supabase = await createClient();
@@ -9,16 +8,16 @@ export async function requireAdmin() {
     data: { user }
   } = await supabase.auth.getUser();
 
-  const ownerUserId = process.env.ROSA_OWNER_USER_ID?.trim();
-  const ownerEmail = (process.env.ROSA_OWNER_EMAIL || temporaryOwnerEmail)
-    .trim()
-    .toLowerCase();
-  const matchesOwnerId = Boolean(user && ownerUserId && user.id === ownerUserId);
-  const matchesOwnerEmail = user?.email?.trim().toLowerCase() === ownerEmail;
+  const isOwner = user
+    ? isConfiguredOwner(user, {
+        ownerUserId: process.env.ROSA_OWNER_USER_ID,
+        ownerEmail: process.env.ROSA_OWNER_EMAIL
+      })
+    : false;
 
-  if (!user || (!matchesOwnerId && !matchesOwnerEmail)) {
+  if (!isOwner) {
     redirect("/admin/login");
   }
 
-  return user;
+  return user!;
 }
