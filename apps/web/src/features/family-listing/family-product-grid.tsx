@@ -3,6 +3,7 @@ import type {
   CatalogueFamilyRecord,
   CatalogueProductRecord
 } from "@/features/catalogue-registry";
+import { Stagger, StaggerItem } from "@/features/motion";
 import { FamilyProductCard } from "./family-product-card";
 
 export function FamilyProductGrid({
@@ -18,13 +19,13 @@ export function FamilyProductGrid({
         <strong>{products.length} results</strong>
         <span>No prices shown · Add instruments during the interaction phase</span>
       </div>
-      <ul className="family-product-grid">
+      <Stagger as="ul" className="family-product-grid" interval={0.055}>
         {products.map((product) => (
-          <li key={product.id}>
+          <StaggerItem as="li" key={product.id}>
             <FamilyProductCard family={family} product={product} />
-          </li>
+          </StaggerItem>
         ))}
-      </ul>
+      </Stagger>
     </div>
   );
 }
