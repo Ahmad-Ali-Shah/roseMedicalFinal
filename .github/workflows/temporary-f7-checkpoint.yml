@@ -21,9 +21,22 @@ env:
   RESEND_API_KEY: placeholder-resend-key
 
 jobs:
-  public-pages:
+  admin-spec:
+    name: admin-${{ matrix.label }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: foundation
+            spec: tests/e2e/f3e-a-admin-foundation.spec.ts
+          - label: catalogue-management
+            spec: tests/e2e/f3e-b-catalogue-management.spec.ts
+          - label: operations
+            spec: tests/e2e/f3e-c-operations.spec.ts
+          - label: governance
+            spec: tests/e2e/f3e-d-governance.spec.ts
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
         with:
@@ -34,53 +47,7 @@ jobs:
       - run: corepack enable
       - run: pnpm install --frozen-lockfile --reporter=append-only
       - run: pnpm --filter @rosa/web exec playwright install --with-deps chromium
-      - name: Test F3 public browser journeys
+      - name: Test ${{ matrix.spec }}
         run: |
           cd apps/web
-          pnpm exec playwright test \
-            tests/e2e/f3a-public-pages.spec.ts \
-            tests/e2e/f3b-catalogue-pages.spec.ts \
-            tests/e2e/f3c-procurement-pages.spec.ts \
-            tests/e2e/f3d-public-support-pages.spec.ts
-
-  admin-pages:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-      - run: corepack enable
-      - run: pnpm install --frozen-lockfile --reporter=append-only
-      - run: pnpm --filter @rosa/web exec playwright install --with-deps chromium
-      - name: Test F3E admin browser journeys
-        run: |
-          cd apps/web
-          pnpm exec playwright test \
-            tests/e2e/f3e-a-admin-foundation.spec.ts \
-            tests/e2e/f3e-b-catalogue-management.spec.ts \
-            tests/e2e/f3e-c-operations.spec.ts \
-            tests/e2e/f3e-d-governance.spec.ts
-
-  quotation-smoke:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-      - run: corepack enable
-      - run: pnpm install --frozen-lockfile --reporter=append-only
-      - run: pnpm --filter @rosa/web exec playwright install --with-deps chromium
-      - name: Test quotation and route smoke journeys
-        run: |
-          cd apps/web
-          pnpm exec playwright test \
-            tests/e2e/public-quotation-slice.spec.ts \
-            tests/e2e/route-smoke.spec.ts
+          pnpm exec playwright test "${{ matrix.spec }}"
