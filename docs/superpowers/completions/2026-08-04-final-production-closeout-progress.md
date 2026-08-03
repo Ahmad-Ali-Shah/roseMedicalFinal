@@ -10,12 +10,14 @@ Branch: `integration/final-production-closeout`
 - [x] Reduced-motion and hydration closeout.
 - [x] Premium media warning closeout.
 - [x] Scissors, Chisels, Cutters and Knives catalogue-media integration.
-- [ ] Punches media completion and visual approval.
-- [ ] Cinematic media integration.
-- [ ] Scissors evolution section.
+- [x] Punches technical media integration.
+- [ ] Punches visual approval.
+- [ ] Cinematic media integration (blocked on transferring approved binary assets from File Library into the repository).
+- [x] Scissors evolution section.
 - [ ] Final verification and release.
 
 ## Verified checkpoints
 
 - Run `30848037291`: stylesheet contract, lint, 265 Vitest tests, strict TypeScript, production build and the premium public Playwright matrix passed.
 - Run `30851389520`: stylesheet contract, lint, 330 Vitest tests, strict TypeScript, production build and the combined premium plus Scissors/Chisels/Cutters/Knives Playwright matrix passed.
+- Run `30853574029`: stylesheet contract, lint, 344 Vitest tests, strict TypeScript, production build and the combined premium plus all five catalogue-family Playwright journeys passed.
