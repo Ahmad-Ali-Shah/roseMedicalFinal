@@ -62,9 +62,13 @@ jobs:
       - name: Install Playwright Chromium
         run: pnpm --filter @rosa/web exec playwright install --with-deps chromium
       - name: Test premium F7 browser journeys
-        run: pnpm --filter @rosa/web exec playwright test tests/e2e/f7-*.spec.ts
+        run: |
+          cd apps/web
+          pnpm exec playwright test tests/e2e/f7-*.spec.ts
       - name: Test catalogue-media browser journeys
-        run: pnpm --filter @rosa/web exec playwright test tests/e2e/*-image-batch-01.spec.ts
+        run: |
+          cd apps/web
+          pnpm exec playwright test tests/e2e/*-image-batch-01.spec.ts
       - name: Test remaining browser journeys
         run: |
           mapfile -t specs < <(find apps/web/tests/e2e -maxdepth 1 -name '*.spec.ts' ! -name 'f7-*' ! -name '*-image-batch-01.spec.ts' -printf '%f\n' | sort)
