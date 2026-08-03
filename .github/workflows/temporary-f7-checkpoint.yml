@@ -41,5 +41,7 @@ jobs:
           git push origin HEAD:${{ github.event.pull_request.head.ref }}
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --reporter=append-only
+      - name: Check F7 stylesheet contract
+        run: node --test apps/web/src/test/f7-premium-styles.static.test.mjs
       - run: pnpm --filter @rosa/web test
       - run: pnpm --filter @rosa/web typecheck
