@@ -17,11 +17,13 @@ env:
   NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
   SUPABASE_SERVICE_ROLE_KEY: placeholder-service-role-key
   ROSA_OWNER_EMAIL: owner@example.com
+  ALERT_UNREAD_SECRET: placeholder-alert-secret
+  RESEND_API_KEY: placeholder-resend-key
 
 jobs:
   closeout:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
         with:
@@ -45,17 +47,17 @@ jobs:
           git push origin HEAD:${{ github.event.pull_request.head.ref }}
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --reporter=append-only
-      - name: Check F7 stylesheet contract
-        run: node --test apps/web/src/test/f7-premium-styles.static.test.mjs
-      - name: Lint web application
-        run: pnpm --filter @rosa/web lint
-      - name: Test web application
-        run: pnpm --filter @rosa/web test
-      - name: Typecheck web application
-        run: pnpm --filter @rosa/web typecheck
+      - name: Lint workspace
+        run: pnpm -r lint
+      - name: Typecheck workspace
+        run: pnpm -r typecheck
+      - name: Test workspace
+        run: pnpm -r test
+      - name: Test static foundations
+        run: pnpm --filter @rosa/web test:foundation
       - name: Build web application
         run: pnpm --filter @rosa/web build
       - name: Install Playwright Chromium
         run: pnpm --filter @rosa/web exec playwright install --with-deps chromium
-      - name: Test premium and catalogue journeys in browser
-        run: pnpm --filter @rosa/web exec playwright test tests/e2e/f7-public-shell.spec.ts tests/e2e/f7-homepage-polish.spec.ts tests/e2e/f7-product-polish.spec.ts tests/e2e/f7-story-pages.spec.ts tests/e2e/f7-conversion-polish.spec.ts tests/e2e/f7-reduced-motion.spec.ts tests/e2e/f7-responsive-restraint.spec.ts tests/e2e/scissors-image-batch-01.spec.ts tests/e2e/chisels-image-batch-01.spec.ts tests/e2e/cutters-image-batch-01.spec.ts tests/e2e/knives-image-batch-01.spec.ts tests/e2e/punches-image-batch-01.spec.ts
+      - name: Test complete browser matrix
+        run: pnpm --filter @rosa/web exec playwright test
