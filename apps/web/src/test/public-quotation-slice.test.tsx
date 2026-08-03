@@ -25,6 +25,8 @@ describe("public quotation slice", () => {
     expect(quotationPage).toContain('fetch("/api/checkout"');
     expect(quotationPage).toContain("response.ok");
     expect(quotationPage).toContain("clearInquiry()");
+    expect(quotationPage).toContain("catch");
+    expect(quotationPage).toContain('setState("error")');
     expect(quotationPage).toContain("Submit quotation request");
     expect(quotationPage).not.toContain("data-preview-only");
   });
@@ -40,8 +42,8 @@ describe("public quotation slice", () => {
   });
 
   it("does not commit the temporary owner password", () => {
-    const auth = source("src/lib/supabase/api-auth.ts");
-    expect(auth).toContain("ahmadaliofficial1155@gmail.com");
-    expect(auth).not.toContain("Admin123");
+    const ownerIdentity = source("src/lib/supabase/owner-identity.ts");
+    expect(ownerIdentity).toContain("ahmadaliofficial1155@gmail.com");
+    expect(ownerIdentity).not.toContain("Admin123");
   });
 });
