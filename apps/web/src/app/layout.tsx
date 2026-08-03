@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${lora.variable}`}>
+    <html lang="en" className={`${inter.variable} ${lora.variable}`} data-scroll-behavior="smooth">
       <body>
         <MotionProvider>
           <a className="skip-link" href="#main-content">Skip to content</a>
