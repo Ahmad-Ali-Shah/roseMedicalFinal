@@ -23,6 +23,7 @@ import {
 
 type StaggerTag = "div" | "ul" | "ol";
 type StaggerItemTag = "div" | "li" | "article";
+type DataAttributeValue = string | number | boolean | undefined;
 
 interface SemanticMotionProps {
   className?: string;
@@ -32,6 +33,7 @@ interface SemanticMotionProps {
   "aria-label"?: string;
   "aria-labelledby"?: string;
   "aria-describedby"?: string;
+  [attribute: `data-${string}`]: DataAttributeValue;
 }
 
 interface StaggerItemProps extends PropsWithChildren, SemanticMotionProps {
@@ -66,10 +68,12 @@ export function StaggerItem({
   tabIndex,
   "aria-label": ariaLabel,
   "aria-labelledby": ariaLabelledby,
-  "aria-describedby": ariaDescribedby
+  "aria-describedby": ariaDescribedby,
+  ...dataAttributes
 }: StaggerItemProps): ReactElement {
   const style = { "--motion-order": order } as MotionStyle;
   const shared = {
+    ...dataAttributes,
     ...(className ? { className } : {}),
     ...(id ? { id } : {}),
     ...(role ? { role } : {}),
@@ -110,7 +114,8 @@ export function Stagger({
   "aria-labelledby": ariaLabelledby,
   "aria-describedby": ariaDescribedby,
   interval = 0.07,
-  once = true
+  once = true,
+  ...dataAttributes
 }: StaggerProps): ReactElement {
   const shouldReduceMotion = useReducedMotion() === true;
   const indexedChildren = Children.map(children, (child, index) => {
@@ -131,6 +136,7 @@ export function Stagger({
     }
   };
   const shared = {
+    ...dataAttributes,
     ...(className ? { className } : {}),
     ...(id ? { id } : {}),
     ...(role ? { role } : {}),
