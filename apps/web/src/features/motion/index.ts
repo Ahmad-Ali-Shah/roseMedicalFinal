@@ -9,3 +9,5 @@ export * from "./tilt-surface";
 export * from "./spotlight-surface";
 export * from "./progressive-blur";
 export * from "./media-frame";
+export * from "./scroll-header-controller";
+export * from "./route-transition";
