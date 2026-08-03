@@ -1,4 +1,4 @@
-name: Temporary Final Closeout Checkpoint
+name: Temporary Final Closeout Diagnostics
 
 on:
   pull_request:
@@ -9,73 +9,27 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: write
+  contents: read
 
 env:
   CI: true
-  NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
-  SUPABASE_SERVICE_ROLE_KEY: placeholder-service-role-key
-  ROSA_OWNER_EMAIL: owner@example.com
-  ALERT_UNREAD_SECRET: placeholder-alert-secret
-  RESEND_API_KEY: placeholder-resend-key
 
 jobs:
-  closeout:
+  browser-manifest:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.ref }}
-      - uses: actions/setup-node@v4
+      - name: Collect remaining browser specs
+        run: |
+          mkdir -p diagnostics
+          find apps/web/tests/e2e -maxdepth 1 -name '*.spec.ts' ! -name 'f7-*' ! -name '*-image-batch-01.spec.ts' -printf '%f\n' | sort > diagnostics/remaining-browser-specs.txt
+          cat diagnostics/remaining-browser-specs.txt
+      - name: Upload browser manifest
+        uses: actions/upload-artifact@v4
         with:
-          node-version: 24
-      - run: corepack enable
-      - name: Resolve lockfile
-        run: pnpm install --lockfile-only --no-frozen-lockfile --reporter=append-only
-      - name: Commit generated lockfile
-        run: |
-          if git diff --quiet -- pnpm-lock.yaml; then
-            echo "Lockfile already current."
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add pnpm-lock.yaml
-          git commit -m "build: refresh final closeout lockfile"
-          git push origin HEAD:${{ github.event.pull_request.head.ref }}
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile --reporter=append-only
-      - name: Lint workspace
-        run: pnpm -r lint
-      - name: Test scissors evolution contract
-        run: pnpm --filter @rosa/web exec vitest run src/test/about-page.test.tsx
-      - name: Typecheck workspace
-        run: pnpm -r typecheck
-      - name: Test workspace
-        run: pnpm -r test
-      - name: Test static foundations
-        run: pnpm --filter @rosa/web test:foundation
-      - name: Build web application
-        run: pnpm --filter @rosa/web build
-      - name: Install Playwright Chromium
-        run: pnpm --filter @rosa/web exec playwright install --with-deps chromium
-      - name: Test premium F7 browser journeys
-        run: |
-          cd apps/web
-          pnpm exec playwright test tests/e2e/f7-*.spec.ts
-      - name: Test catalogue-media browser journeys
-        run: |
-          cd apps/web
-          pnpm exec playwright test tests/e2e/*-image-batch-01.spec.ts
-      - name: Test remaining browser journeys
-        run: |
-          mapfile -t specs < <(find apps/web/tests/e2e -maxdepth 1 -name '*.spec.ts' ! -name 'f7-*' ! -name '*-image-batch-01.spec.ts' -printf '%f\n' | sort)
-          if [ "${#specs[@]}" -eq 0 ]; then
-            echo "No remaining browser specs."
-            exit 0
-          fi
-          printf 'Remaining browser specs:\n%s\n' "${specs[@]}"
-          cd apps/web
-          pnpm exec playwright test "${specs[@]/#/tests/e2e/}"
+          name: remaining-browser-specs
+          path: diagnostics/remaining-browser-specs.txt
+          if-no-files-found: error
