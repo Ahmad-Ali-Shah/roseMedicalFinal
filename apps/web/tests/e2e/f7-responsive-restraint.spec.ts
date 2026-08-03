@@ -60,7 +60,7 @@ test("coarse-pointer mode removes pointer effects and keeps footer actions unobs
   await expect.poll(() => magnetic.evaluate((element) => getComputedStyle(element).transform)).toBe("none");
 
   const spotlight = page.locator('[data-motion="spotlight"]').first();
-  await expect(spotlight).toBeVisible();
+  await spotlight.waitFor({ state: "attached" });
   await expect.poll(() => spotlight.evaluate((element) => getComputedStyle(element, "::before").display)).toBe("none");
 
   const productResponse = await page.goto("/products/knives/scalpel-handle-no-3");
