@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
+const temporaryOwnerEmail = "ahmadaliofficial1155@gmail.com";
+
 export async function requireApiUser() {
   const supabase = await createClient();
   const {
@@ -23,19 +25,12 @@ export async function requireApiOwner() {
   if (!auth.ok) return auth;
 
   const ownerUserId = process.env.ROSA_OWNER_USER_ID?.trim();
-  const ownerEmail = process.env.ROSA_OWNER_EMAIL?.trim().toLowerCase();
+  const ownerEmail = (process.env.ROSA_OWNER_EMAIL || temporaryOwnerEmail)
+    .trim()
+    .toLowerCase();
 
-  if (!ownerUserId && !ownerEmail) {
-    return {
-      ok: false as const,
-      response: NextResponse.json({ error: "Owner access is not configured" }, { status: 503 })
-    };
-  }
-
-  const matchesOwnerId = ownerUserId === auth.user.id;
-  const matchesOwnerEmail = Boolean(
-    ownerEmail && auth.user.email?.trim().toLowerCase() === ownerEmail
-  );
+  const matchesOwnerId = Boolean(ownerUserId && ownerUserId === auth.user.id);
+  const matchesOwnerEmail = auth.user.email?.trim().toLowerCase() === ownerEmail;
 
   if (!matchesOwnerId && !matchesOwnerEmail) {
     return {
