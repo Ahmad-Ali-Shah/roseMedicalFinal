@@ -9,12 +9,7 @@ import {
   type ReactElement,
   type ReactNode
 } from "react";
-import {
-  motion,
-  useReducedMotion,
-  type MotionStyle,
-  type Variants
-} from "motion/react";
+import { motion, type MotionStyle, type Variants } from "motion/react";
 import {
   MOTION_DISTANCE,
   MOTION_DURATION,
@@ -49,7 +44,7 @@ const itemVariants: Variants = {
   },
   visible: {
     opacity: 1,
-    filter: "blur(0px)",
+    filter: "none",
     y: 0,
     transition: {
       duration: MOTION_DURATION.section,
@@ -117,7 +112,6 @@ export function Stagger({
   once = true,
   ...dataAttributes
 }: StaggerProps): ReactElement {
-  const shouldReduceMotion = useReducedMotion() === true;
   const indexedChildren = Children.map(children, (child, index) => {
     if (!isValidElement<StaggerItemProps>(child) || child.type !== StaggerItem) {
       return child;
@@ -145,7 +139,7 @@ export function Stagger({
     ...(ariaLabelledby ? { "aria-labelledby": ariaLabelledby } : {}),
     ...(ariaDescribedby ? { "aria-describedby": ariaDescribedby } : {}),
     "data-motion": "stagger",
-    initial: shouldReduceMotion ? false : "hidden",
+    initial: "hidden",
     whileInView: "visible",
     viewport: { once, amount: 0.12, margin: "0px 0px -6% 0px" },
     variants: containerVariants
