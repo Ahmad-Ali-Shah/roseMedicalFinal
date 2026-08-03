@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Container, Section } from "@/components/layout";
 import { QuotationBlockedPage } from "@/features/quotation-preview";
 import { clearInquiry, readInquiry, type InquiryItem } from "./inquiry-store";
