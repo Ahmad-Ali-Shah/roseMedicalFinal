@@ -20,9 +20,14 @@ export function SectionHeading({
   action,
   align = "start"
 }: SectionHeadingProps): ReactElement {
+  const sharedHeadingProps = {
+    className: "public-section-heading__title",
+    text: title,
+    ...(id ? { id } : {})
+  };
   const heading = level === 2
-    ? <TextReveal as="h2" className="public-section-heading__title" id={id} text={title} />
-    : <TextReveal as="h3" className="public-section-heading__title" id={id} text={title} />;
+    ? <TextReveal as="h2" {...sharedHeadingProps} />
+    : <TextReveal as="h3" {...sharedHeadingProps} />;
 
   return (
     <Reveal
