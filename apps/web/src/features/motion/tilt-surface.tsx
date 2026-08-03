@@ -45,8 +45,8 @@ export function TiltSurface({
     onPointerCancel: reset,
     style: {
       transformPerspective: 900,
-      rotateX: reduceMotion ? 0 : springX,
-      rotateY: reduceMotion ? 0 : springY
+      rotateX: springX,
+      rotateY: springY
     }
   } as const;
 
