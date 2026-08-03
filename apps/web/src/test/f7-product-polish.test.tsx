@@ -9,14 +9,15 @@ import { ProductDetailPage } from "@/features/product-detail/product-detail-page
 const source = (path: string) => readFileSync(join(process.cwd(), path), "utf8");
 
 describe("F7 product discovery polish", () => {
-  it("stages the products overview without activating unfinished search", () => {
+  it("stages the products overview while preserving discovery behavior", () => {
     const html = renderToStaticMarkup(<ProductsOverview />);
 
     expect(html).toContain('data-section="products-hero"');
     expect(html).toContain('data-motion="text-reveal"');
     expect((html.match(/data-motion="stagger"/g) ?? []).length).toBeGreaterThanOrEqual(2);
     expect((html.match(/data-motion="stagger-item"/g) ?? []).length).toBeGreaterThanOrEqual(8);
-    expect(html).toContain("Search activates in the interaction phase");
+    expect(html).toContain("Search by product name or code");
+    expect(html).toContain('href="/search"');
     expect(html).toContain("Request a quotation");
   });
 
