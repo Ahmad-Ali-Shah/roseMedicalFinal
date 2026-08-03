@@ -4,6 +4,7 @@ import type {
   CatalogueFamilyRecord,
   CatalogueProductRecord
 } from "@/features/catalogue-registry";
+import { AddToInquiryButton, type InquiryItem } from "@/features/inquiry";
 import { StaticOptionField } from "./static-option-field";
 import { StaticQuantityField } from "./static-quantity-field";
 
@@ -12,13 +13,15 @@ export function ProductProcurementSummary({
   product,
   sizeValue,
   variantValue,
-  catalogueReference
+  catalogueReference,
+  inquiryItem
 }: {
   family: CatalogueFamilyRecord;
   product: CatalogueProductRecord;
   sizeValue: string;
   variantValue: string;
   catalogueReference: string;
+  inquiryItem: InquiryItem;
 }): ReactElement {
   const controlsNoteId = `product-controls-${product.id}`;
 
@@ -33,13 +36,11 @@ export function ProductProcurementSummary({
         <StaticOptionField label="Size" value={sizeValue} />
         <StaticOptionField label="Variant" value={variantValue} />
         <StaticQuantityField value={1} />
-        <Link href="/checkout" className="button button--primary button--standard product-add-preview" aria-describedby={controlsNoteId}>
-          Add to inquiry
-        </Link>
+        <AddToInquiryButton item={inquiryItem} />
       </div>
 
       <p className="product-controls-note" id={controlsNoteId}>
-        Product selection and inquiry controls activate in the interaction phase.
+        Add this instrument to your quotation inquiry, then review quantities and notes.
       </p>
       <Link className="product-catalogue-reference" href="/catalogues">
         Catalogue reference: {catalogueReference} <span aria-hidden="true">→</span>
