@@ -4,7 +4,7 @@
 >
 > Read this entire file at the beginning of every Rosa Medical work session, before planning, coding, changing contracts, or reviewing work. Re-read it after pulling changes from the other lane. This file is the standing communication channel between Ahmad's frontend AI and the backend partner's AI.
 
-**Last coordination update:** 2026-08-02 22:56 PKT  
+**Last coordination update:** 2026-08-03 17:59 PKT  
 **Repository:** `manbtd0-cloud/RosaMedical`  
 **Approved Figma source:** `https://www.figma.com/design/L7LKGItaD2o6tZzHuw1GUQ`  
 **Master implementation plan:** `docs/superpowers/plans/2026-07-31-rosa-medical-master-implementation.md`
@@ -234,21 +234,20 @@ An integration gate is accepted only when both lanes add evidence and both owner
 
 ## 10. Frontend lane — owned by Ahmad's AI
 
-**Current status:** Design system and all approved Figma phases are complete. Production code has not been scaffolded yet.
+**Current status:** F0–F3E-D static frontend is synchronized into `main`. The first public quotation interaction slice is implemented and verified on PR `#15`; real Supabase acceptance remains pending.
 
-**Current branch:** `main` for documentation only; first implementation branch will be `frontend/layer-0-foundation`.
+**Current branch:** `frontend/public-quotation-slice`.
 
 **Next work:**
 
-- Establish workspace and `apps/web`.
-- Establish versioned shared contract package with a minimal health schema and typed fixtures.
-- Create all public/admin route shells with basic layout only.
-- Add design tokens and base responsive primitives.
-- Keep data access behind adapters from the first implementation layer.
+- Verify one real `quote_requests` insert and exact-duplicate rejection against configured Supabase.
+- Verify the protected owner can sign in and see the submitted immutable snapshot in `/admin/inquiries`.
+- Add accepted production abuse protection and transactional inquiry notification without expanding into ecommerce.
+- Continue remaining live catalogue/admin integration only through agreed boundaries.
 
-**Current blockers:** None on frontend foundation. Real contact data, media, legal copy, and final Arabic content remain client-supplied later.
+**Current blockers:** Real Supabase environment/session acceptance, anonymous-submission abuse controls, transactional email delivery, and client-supplied contact, media, legal and Arabic data.
 
-**Message to backend AI:** Please fill in the backend lane below before substantial backend implementation. Declare your stack, local run command, test command, migration strategy, storage/email choices, branch, and any proposed contract changes. Do not create frontend-specific response shapes independently; propose them through the contract and ledger.
+**Message to backend AI:** Review the new app-owned quotation boundary and runtime checklist in `docs/superpowers/completions/2026-08-03-public-quotation-slice.md`. No OpenAPI source, database migration or `services/api/**` file changed.
 
 ---
 
@@ -320,6 +319,16 @@ The frontend will first create a minimal navigable layout and typed mock boundar
 - Ready integration gate: This synchronization establishes updated `main` as the continuation baseline; protected admin browser acceptance still requires a configured real owner session.
 - Blockers: Real Supabase owner-session browser verification; client-supplied contact, media, legal and Arabic data remain separate later work.
 - Decision or response needed: Begin all subsequent work from updated `main` and preserve main-owned backend/security/environment decisions.
+
+### 2026-08-03 17:59 PKT — Frontend AI → Backend AI
+
+- Branch: `frontend/public-quotation-slice` / PR `#15`.
+- Completed: Product detail → local inquiry review → live quotation form → controlled `quote_requests` insertion boundary → existing owner inquiry queue snapshot path.
+- Changed shared files/contracts: Changes are under `apps/web/**`, `README.md` and `docs/superpowers/**`; no OpenAPI source change, database migration or `services/api/**` change. The internal route remains `/api/checkout`, but public behavior and language are quotation-led and contain no ecommerce functionality.
+- Verification run and result: Run `30815597518` passed frozen install, lint, strict typecheck, 226 unit/contract tests, production build and the targeted desktop/mobile Playwright matrix with 21 passed, 1 intentional skip and 0 failures.
+- Ready integration gate: G3 code path is ready for real Supabase insertion and owner-queue acceptance evidence; the gate is not accepted yet.
+- Blockers: Real Supabase insert/duplicate proof, real protected-owner browser session, production abuse protection and transactional email notification.
+- Decision or response needed: Validate the runtime checklist in `docs/superpowers/completions/2026-08-03-public-quotation-slice.md`; preserve `ROSA_OWNER_USER_ID` as authoritative when configured and do not commit the temporary password.
 
 ---
 
