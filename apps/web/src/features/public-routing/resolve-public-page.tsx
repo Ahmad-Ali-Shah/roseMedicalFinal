@@ -6,7 +6,7 @@ import { resolveCataloguePath } from "@/features/catalogue-registry";
 import { ContactPage } from "@/features/contact-preview";
 import { FamilyListingPage } from "@/features/family-listing/family-listing-page";
 import { Homepage } from "@/features/homepage/homepage";
-import { EmptyInquiryPage } from "@/features/inquiry-preview";
+import { InquiryPage } from "@/features/inquiry";
 import {
   LegalPage,
   PRIVACY_DOCUMENT,
@@ -77,7 +77,7 @@ export function resolvePublicPage({
     case "catalogues":
       return <CataloguesPage />;
     case "inquiry-empty":
-      return <EmptyInquiryPage />;
+      return <InquiryPage />;
     case "quotation-blocked":
       return <QuotationBlockedPage />;
     case "about":
