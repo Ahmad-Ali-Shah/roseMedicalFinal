@@ -58,7 +58,7 @@ describe("Cutters Batch 01 production media", () => {
     }
   });
 
-  it("records approved conservative matches for shared full-body direction variants", () => {
+  it("records conservative match grades for shared full-body direction variants", () => {
     const strongMatches = CUTTERS_BATCH_01_MEDIA.filter(
       (asset) => asset.matchGrade === "strong-match"
     );
@@ -74,7 +74,7 @@ describe("Cutters Batch 01 production media", () => {
       expect(asset.sourcePageUrl).toContain("cutters-batch-01-sources.md");
       expect(asset.rightsMode).toBe("preferred-safe");
       expect(asset.background).toBe("transparent");
-      expect(asset.reviewStatus).toBe("approved");
+      expect(asset.reviewStatus).toBe("candidate");
       expect(asset.processingNotes.trim()).not.toBe("");
       expect(asset.orientationNotes.trim()).not.toBe("");
       expect(asset.reuseScope.trim()).not.toBe("");
