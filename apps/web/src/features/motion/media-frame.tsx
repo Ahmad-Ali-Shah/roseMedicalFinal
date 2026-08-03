@@ -11,6 +11,7 @@ interface MediaFrameProps extends PropsWithChildren {
   focalPoint?: string;
   tone?: MediaTone;
   overlay?: MediaOverlay;
+  mediaSlot?: string;
   className?: string;
   loading?: "eager" | "lazy";
 }
@@ -22,6 +23,7 @@ export function MediaFrame({
   focalPoint = "50% 50%",
   tone = "mist",
   overlay = "none",
+  mediaSlot,
   className,
   loading = "lazy",
   children
@@ -35,6 +37,7 @@ export function MediaFrame({
       data-media-aspect={aspect}
       data-media-state={state}
       data-media-tone={tone}
+      {...(mediaSlot ? { "data-media-slot": mediaSlot } : {})}
       {...(!src ? { role: "img", "aria-label": alt } : {})}
     >
       {src ? (
