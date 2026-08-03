@@ -42,6 +42,11 @@ describe("quotation payload", () => {
     expect(normalizeQuotationPayload({ ...validPayload, phone: "11111111" }).ok).toBe(false);
   });
 
+  it("rejects telephone values with more than one plus prefix", () => {
+    expect(normalizeQuotationPayload({ ...validPayload, phone: "++923001234567" }).ok).toBe(false);
+    expect(normalizeQuotationPayload({ ...validPayload, phone: "+92+3001234567" }).ok).toBe(false);
+  });
+
   it("formats an immutable readable product snapshot", () => {
     const result = normalizeQuotationPayload(validPayload);
     expect(result.ok).toBe(true);
