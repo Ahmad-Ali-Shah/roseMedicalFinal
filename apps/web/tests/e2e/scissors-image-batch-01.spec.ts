@@ -1,36 +1,14 @@
 import { expect, test } from "@playwright/test";
+import {
+  expectImageLoaded,
+  expectImageSource,
+  expectNoHorizontalOverflow
+} from "./catalogue-media-assertions";
 
 const LOCAL_SCISSORS_AVIF =
   /^\/media\/catalogue-preview\/scissors\/[a-z0-9-]+\.avif$/;
 const LOCAL_SCISSORS_WEBP =
   /^\/media\/catalogue-preview\/scissors\/[a-z0-9-]+\.webp$/;
-
-async function expectNoHorizontalOverflow(page: import("@playwright/test").Page) {
-  expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth > document.documentElement.clientWidth
-    )
-  ).toBe(false);
-}
-
-async function expectImageLoaded(
-  image: import("@playwright/test").Locator
-): Promise<void> {
-  await image.scrollIntoViewIfNeeded();
-  await expect
-    .poll(
-      () =>
-        image.evaluate(
-          (element) =>
-            element instanceof HTMLImageElement &&
-            element.complete &&
-            element.naturalWidth > 0 &&
-            element.naturalHeight > 0
-        ),
-      { timeout: 10_000 }
-    )
-    .toBe(true);
-}
 
 test.describe("Scissors Batch 01 production media", () => {
   test.setTimeout(120_000);
@@ -56,10 +34,9 @@ test.describe("Scissors Batch 01 production media", () => {
 
     for (let index = 0; index < 42; index += 1) {
       const sourcePath = await avifSources.nth(index).getAttribute("srcset");
-      const fallbackPath = await images.nth(index).getAttribute("src");
 
       expect(sourcePath).toMatch(LOCAL_SCISSORS_AVIF);
-      expect(fallbackPath).toMatch(LOCAL_SCISSORS_WEBP);
+      await expectImageSource(images.nth(index), LOCAL_SCISSORS_WEBP);
       await expectImageLoaded(images.nth(index));
     }
 
@@ -85,8 +62,8 @@ test.describe("Scissors Batch 01 production media", () => {
       "srcset",
       "/media/catalogue-preview/scissors/scissors-mayo-regular-straight.avif"
     );
-    await expect(primaryImage).toHaveAttribute(
-      "src",
+    await expectImageSource(
+      primaryImage,
       "/media/catalogue-preview/scissors/scissors-mayo-regular-straight.webp"
     );
     await expectImageLoaded(primaryImage);
