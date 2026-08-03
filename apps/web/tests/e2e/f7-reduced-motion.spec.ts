@@ -13,9 +13,8 @@ const SEEDED_ITEM = {
   notes: ""
 };
 
-test.use({ reducedMotion: "reduce" });
-
 test.beforeEach(async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.addInitScript(
     ({ key, item }) => window.localStorage.setItem(key, JSON.stringify([item])),
     { key: STORAGE_KEY, item: SEEDED_ITEM }
