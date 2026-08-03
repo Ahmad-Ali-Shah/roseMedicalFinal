@@ -41,5 +41,5 @@ jobs:
           git push origin HEAD:${{ github.event.pull_request.head.ref }}
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --reporter=append-only
-      - run: pnpm --filter @rosa/web test -- src/test/f7-motion-config.test.ts
+      - run: pnpm --filter @rosa/web test
       - run: pnpm --filter @rosa/web typecheck
