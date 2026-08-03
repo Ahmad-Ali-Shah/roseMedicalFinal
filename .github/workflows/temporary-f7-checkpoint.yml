@@ -1,11 +1,11 @@
-name: Temporary F7 Checkpoint
+name: Temporary Final Closeout Checkpoint
 
 on:
   pull_request:
     branches: [main]
 
 concurrency:
-  group: temporary-f7-${{ github.event.pull_request.number }}
+  group: temporary-final-closeout-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 permissions:
@@ -19,13 +19,49 @@ env:
   ROSA_OWNER_EMAIL: owner@example.com
 
 jobs:
-  motion-config:
+  closeout:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+      - name: Import approved catalogue media source files
+        run: |
+          git fetch origin preview/knives-image-batch-01:refs/remotes/origin/preview/knives-image-batch-01
+          git checkout origin/preview/knives-image-batch-01 -- \
+            apps/web/public/media/catalogue-preview/scissors \
+            apps/web/public/media/catalogue-preview/chisels \
+            apps/web/public/media/catalogue-preview/cutters \
+            apps/web/public/media/catalogue-preview/knives \
+            apps/web/scripts/catalogue_media_normalize.py \
+            apps/web/scripts/prepare_scissors_wave2.py \
+            apps/web/scripts/prepare_scissors_wave3.py \
+            apps/web/scripts/prepare_chisels_batch1.py \
+            apps/web/scripts/prepare_cutters_batch1.py \
+            apps/web/scripts/prepare_knives_batch1.py \
+            apps/web/scripts/requirements-catalogue-media.txt \
+            docs/review/catalogue-media \
+            docs/review/scissors-image-batch-01.md \
+            docs/superpowers/completions/2026-08-02-scissors-batch-01-production-media.md \
+            docs/superpowers/completions/2026-08-03-chisels-batch-01-production-media.md \
+            docs/superpowers/specs/2026-08-02-production-catalogue-image-system-design.md \
+            docs/superpowers/specs/2026-08-03-knives-batch-01-design.md
+          if git diff --quiet --cached && git diff --quiet; then
+            echo "Approved catalogue media sources already imported."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            apps/web/public/media/catalogue-preview \
+            apps/web/scripts \
+            docs/review \
+            docs/superpowers/completions \
+            docs/superpowers/specs
+          git commit -m "feat: import approved catalogue media sources"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -41,7 +77,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add pnpm-lock.yaml
-          git commit -m "build: lock Motion dependency"
+          git commit -m "build: refresh final closeout lockfile"
           git push origin HEAD:${{ github.event.pull_request.head.ref }}
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --reporter=append-only
