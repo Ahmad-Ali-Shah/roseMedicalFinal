@@ -4,13 +4,23 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+interface AccountInquiry {
+  id: string;
+  created_at: string;
+  status: string | null;
+  message: string;
+  appointment_date: string | null;
+}
+
 export default function AccountPage() {
-  const [inquiries, setInquiries] = useState([]);
+  const [inquiries, setInquiries] = useState<AccountInquiry[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const supabase = createClient();
 
   useEffect(() => {
+    let active = true;
+
     async function loadData() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
@@ -18,15 +28,18 @@ export default function AccountPage() {
         return;
       }
 
-      const res = await fetch("/api/inquiries");
-      const data = await res.json();
-      
-      // Filter to only show this user is inquiries
-      const myInquiries = data.filter((inq: any) => inq.user_id === user.id);
-      setInquiries(myInquiries);
+      const response = await fetch("/api/inquiries?scope=mine");
+      const data: unknown = await response.json();
+
+      if (!active) return;
+      setInquiries(response.ok && Array.isArray(data) ? data as AccountInquiry[] : []);
       setLoading(false);
     }
-    loadData();
+
+    void loadData();
+    return () => {
+      active = false;
+    };
   }, [router, supabase]);
 
   if (loading) return <div style={{ color: "white", textAlign: "center", padding: "4rem" }}>Loading your history...</div>;
@@ -35,7 +48,7 @@ export default function AccountPage() {
     <div style={{ maxWidth: "800px", margin: "0 auto", padding: "2rem 1rem", background: "#0a0a0a", minHeight: "80vh" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
         <h1 style={{ color: "white", fontSize: "1.5rem", fontWeight: "bold" }}>My Inquiries & History</h1>
-        <button onClick={() => { supabase.auth.signOut(); router.push("/"); }} style={{ padding: "0.5rem 1rem", borderRadius: "0.25rem", border: "1px solid #444", background: "#111", color: "#888", cursor: "pointer" }}>
+        <button onClick={() => { void supabase.auth.signOut(); router.push("/"); }} style={{ padding: "0.5rem 1rem", borderRadius: "0.25rem", border: "1px solid #444", background: "#111", color: "#888", cursor: "pointer" }}>
           Sign Out
         </button>
       </div>
@@ -47,17 +60,17 @@ export default function AccountPage() {
         </div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          {inquiries.map((inq: any) => (
-            <div key={inq.id} style={{ background: "#111", padding: "1.5rem", borderRadius: "0.5rem", border: "1px solid #333" }}>
+          {inquiries.map((inquiry) => (
+            <div key={inquiry.id} style={{ background: "#111", padding: "1.5rem", borderRadius: "0.5rem", border: "1px solid #333" }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                <span style={{ color: "#888", fontSize: "0.875rem" }}>{new Date(inq.created_at).toLocaleDateString()}</span>
-                <span style={{ padding: "0.25rem 0.5rem", borderRadius: "0.25rem", fontSize: "0.75rem", fontWeight: "bold", background: inq.status === "Contacted" ? "#22c55e33" : "#facc1533", color: inq.status === "Contacted" ? "#22c55e" : "#facc15" }}>
-                  {inq.status || "New"}
+                <span style={{ color: "#888", fontSize: "0.875rem" }}>{new Date(inquiry.created_at).toLocaleDateString()}</span>
+                <span style={{ padding: "0.25rem 0.5rem", borderRadius: "0.25rem", fontSize: "0.75rem", fontWeight: "bold", background: inquiry.status === "Contacted" ? "#22c55e33" : "#facc1533", color: inquiry.status === "Contacted" ? "#22c55e" : "#facc15" }}>
+                  {inquiry.status || "New"}
                 </span>
               </div>
-              <p style={{ color: "#ccc", fontSize: "0.875rem", whiteSpace: "pre-wrap" }}>{inq.message}</p>
-              {inq.appointment_date && (
-                <p style={{ color: "#22c55e", fontSize: "0.875rem", marginTop: "0.5rem" }}>📅 Appointment Scheduled: {new Date(inq.appointment_date).toLocaleDateString()}</p>
+              <p style={{ color: "#ccc", fontSize: "0.875rem", whiteSpace: "pre-wrap" }}>{inquiry.message}</p>
+              {inquiry.appointment_date && (
+                <p style={{ color: "#22c55e", fontSize: "0.875rem", marginTop: "0.5rem" }}>📅 Appointment Scheduled: {new Date(inquiry.appointment_date).toLocaleDateString()}</p>
               )}
             </div>
           ))}
