@@ -57,8 +57,14 @@ test("reduced motion keeps public content settled and navigation functional", as
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await expectMotionSettled(page);
 
-  await page.getByRole("link", { name: "Explore Products" }).first().click();
-  await expect(page).toHaveURL(/\/products$/);
+  const productsLink = page
+    .locator("[data-section='home-hero']")
+    .getByRole("link", { name: "Explore Products" });
+  await expect(productsLink).toBeVisible();
+  await Promise.all([
+    page.waitForURL(/\/products$/),
+    productsLink.click()
+  ]);
   await expect(
     page.getByRole("heading", { name: "Medical instruments, organised for procurement.", level: 1 })
   ).toBeVisible();
