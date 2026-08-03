@@ -43,11 +43,14 @@ const prohibited = [
   /data-preview-only/i
 ];
 
-test("F3E-B normal source contains no fabricated state or behavior", () => {
+test("F3E-B uses source-backed and live database records without fabricated management state", () => {
   for (const pattern of prohibited) assert.doesNotMatch(content, pattern);
+
   assert.match(content, /Source record/);
-  assert.match(content, /No managed media assets are registered/);
-  assert.match(content, /Awaiting publication/);
+  assert.match(content, /Live Database Connection/);
+  assert.match(content, /live products from Supabase/);
+  assert.match(content, /Awaiting managed asset/);
+  assert.match(content, /No managed asset registered/);
 });
 
 test("F3E-B route view never returns a blank successful response", () => {
