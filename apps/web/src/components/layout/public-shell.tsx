@@ -1,19 +1,24 @@
 import Link from "next/link";
 import { ButtonLink } from "@/components/ui/button";
+import { RouteTransition, ScrollHeaderController } from "@/features/motion";
 import { PUBLIC_CONTENT_VALUES } from "@/features/public-content-registry";
 import { Container } from "./container";
+import {
+  MobileNavigation,
+  type NavigationItem
+} from "./mobile-navigation";
 
 const primaryLinks = [
   ["Products", "/products"],
   ["Catalogues", "/catalogues"],
   ["About", "/about"],
   ["Contact", "/contact"]
-] as const;
+] as const satisfies readonly NavigationItem[];
 
 const utilityLinks = [
   ["Search", "/search"],
   ["Inquiry (0)", "/inquiry"]
-] as const;
+] as const satisfies readonly NavigationItem[];
 
 const familyLinks = [
   ["Knives", "/products/knives"],
@@ -23,38 +28,33 @@ const familyLinks = [
   ["Cutters", "/products/cutters"]
 ] as const;
 
-function NavigationLinks({ includeQuote = false }: { includeQuote?: boolean }) {
-  return (
-    <ul className="nav-list">
-      {primaryLinks.map(([label, href]) => <li key={href}><Link className="nav-link" href={href}>{label}</Link></li>)}
-      {utilityLinks.map(([label, href]) => <li key={href}><Link className="nav-link" href={href}>{label}</Link></li>)}
-      {includeQuote && <li><ButtonLink href="/request-quotation" size="small">Request a quote</ButtonLink></li>}
-    </ul>
-  );
-}
-
 export function PublicShell({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <header className="site-header">
+      <ScrollHeaderController>
         <Container className="site-header__bar" size="wide">
           <Link className="brand" href="/" aria-label="Rosa homepage">ROSA</Link>
           <nav className="site-header__nav" aria-label="Primary navigation">
             <ul className="nav-list">
-              {primaryLinks.map(([label, href]) => <li key={href}><Link className="nav-link" href={href}>{label}</Link></li>)}
+              {primaryLinks.map(([label, href]) => (
+                <li key={href}>
+                  <Link className="nav-link" href={href}>{label}</Link>
+                </li>
+              ))}
             </ul>
           </nav>
           <div className="cluster site-header__actions">
-            {utilityLinks.map(([label, href]) => <Link className="nav-link" href={href} key={href}>{label}</Link>)}
+            {utilityLinks.map(([label, href]) => (
+              <Link className="nav-link" href={href} key={href}>{label}</Link>
+            ))}
             <ButtonLink href="/request-quotation" size="small">Request a quote</ButtonLink>
           </div>
-          <details className="mobile-navigation">
-            <summary>Menu</summary>
-            <nav className="mobile-navigation__panel" aria-label="Mobile navigation"><NavigationLinks includeQuote /></nav>
-          </details>
+          <MobileNavigation primaryLinks={primaryLinks} utilityLinks={utilityLinks} />
         </Container>
-      </header>
-      <main className="page-main" id="main-content">{children}</main>
+      </ScrollHeaderController>
+      <main className="page-main" id="main-content">
+        <RouteTransition>{children}</RouteTransition>
+      </main>
       <footer className="site-footer">
         <Container className="site-footer__grid" size="wide">
           <div className="site-footer__brand stack">
