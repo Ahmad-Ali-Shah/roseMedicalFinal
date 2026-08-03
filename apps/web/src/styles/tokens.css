@@ -35,5 +35,14 @@
   --radius-control: 0.25rem;
   --radius-surface: 0.125rem;
   --shadow-lifted: 0 1.25rem 3.5rem rgb(25 25 23 / 0.08);
-  --transition-fast: 160ms ease;
+
+  --motion-micro: 160ms;
+  --motion-component: 280ms;
+  --motion-section: 580ms;
+  --motion-hero: 960ms;
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-distance: 1.5rem;
+  --motion-distance-mobile: 0.75rem;
+  --transition-fast: var(--motion-micro) var(--motion-ease);
 }
