@@ -47,7 +47,7 @@ describe("F3E-B product selectors", () => {
       slug: source.slug,
       name: source.name,
       code: source.code,
-      description: source.description,
+      ...(source.description ? { description: source.description } : {}),
       sizes: [],
       variants: [],
       directions: [],
