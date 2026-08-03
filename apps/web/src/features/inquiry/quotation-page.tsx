@@ -54,30 +54,36 @@ export function QuotationPage() {
     setError("");
 
     const form = new FormData(event.currentTarget);
-    const response = await fetch("/api/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: form.get("name"),
-        company: form.get("company"),
-        email: form.get("email"),
-        phone: form.get("phone"),
-        country: form.get("country"),
-        notes: form.get("notes"),
-        items
-      })
-    });
 
-    const data = await response.json() as { error?: string; id?: string };
-    if (!response.ok) {
-      setError(data.error || "Unable to submit quotation request.");
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.get("name"),
+          company: form.get("company"),
+          email: form.get("email"),
+          phone: form.get("phone"),
+          country: form.get("country"),
+          notes: form.get("notes"),
+          items
+        })
+      });
+
+      const data = await response.json().catch(() => ({})) as { error?: string; id?: string };
+      if (!response.ok) {
+        setError(data.error || "Unable to submit quotation request.");
+        setState("error");
+        return;
+      }
+
+      clearInquiry();
+      setReference(data.id || "");
+      setState("success");
+    } catch {
+      setError("Unable to submit quotation request. Check your connection and try again.");
       setState("error");
-      return;
     }
-
-    clearInquiry();
-    setReference(data.id || "");
-    setState("success");
   }
 
   const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
