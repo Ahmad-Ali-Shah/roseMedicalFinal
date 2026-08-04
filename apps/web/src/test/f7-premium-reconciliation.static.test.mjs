@@ -219,6 +219,7 @@ test("reconciliation preserves product discovery motion and current catalogue me
 test("reconciliation preserves story, utility and legal restraint", async () => {
   const [
     about,
+    supportedBuyers,
     procurement,
     catalogues,
     contact,
@@ -226,6 +227,7 @@ test("reconciliation preserves story, utility and legal restraint", async () => 
     storyCss
   ] = await Promise.all([
     read("features/about/about-page.tsx"),
+    read("features/about/supported-buyers.tsx"),
     read("features/procurement-support/procurement-support-page.tsx"),
     read("features/catalogues/catalogues-page.tsx"),
     read("features/contact-preview/contact-page.tsx"),
@@ -236,9 +238,14 @@ test("reconciliation preserves story, utility and legal restraint", async () => 
   assertIncludes(about, [
     "TextReveal",
     "MediaFrame",
-    "Stagger",
+    "SupportedBuyers",
     "ScissorsEvolution"
   ], "About page");
+  assertIncludes(supportedBuyers, [
+    "Stagger",
+    "StaggerItem",
+    "supported-buyers"
+  ], "About buyer stagger");
   assertIncludes(procurement, [
     "TextReveal",
     "MediaFrame",
