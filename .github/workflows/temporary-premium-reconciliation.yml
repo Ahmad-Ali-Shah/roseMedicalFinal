@@ -1,0 +1,59 @@
+name: Temporary Premium Reconciliation Verification
+
+on:
+  push:
+    branches:
+      - integration/main-premium-polish-reconciliation
+
+concurrency:
+  group: temporary-premium-reconciliation
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CI: true
+  NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
+  SUPABASE_SERVICE_ROLE_KEY: placeholder-service-role-key
+  ROSA_OWNER_EMAIL: owner@example.com
+  ALERT_UNREAD_SECRET: placeholder-alert-secret
+  RESEND_API_KEY: placeholder-resend-key
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: corepack enable
+      - name: Install frozen workspace
+        run: pnpm install --frozen-lockfile --reporter=append-only
+      - name: Run reconciliation preservation gate
+        run: node --test apps/web/src/test/f7-premium-reconciliation.static.test.mjs
+      - name: Run all static foundation contracts
+        run: pnpm --filter @rosa/web test:foundation
+      - name: Lint web application
+        run: pnpm --filter @rosa/web lint
+      - name: Run web unit and component tests
+        run: pnpm --filter @rosa/web test
+      - name: Run strict TypeScript
+        run: pnpm --filter @rosa/web typecheck
+      - name: Build production web application
+        run: pnpm --filter @rosa/web build
+      - name: Install Playwright Chromium
+        run: pnpm --filter @rosa/web exec playwright install --with-deps chromium
+      - name: Run premium browser matrix
+        run: >-
+          pnpm --filter @rosa/web exec playwright test
+          tests/e2e/f7-public-shell.spec.ts
+          tests/e2e/f7-homepage-polish.spec.ts
+          tests/e2e/f7-product-polish.spec.ts
+          tests/e2e/f7-story-pages.spec.ts
+          tests/e2e/f7-conversion-polish.spec.ts
+          tests/e2e/f7-reduced-motion.spec.ts
+          tests/e2e/f7-responsive-restraint.spec.ts
