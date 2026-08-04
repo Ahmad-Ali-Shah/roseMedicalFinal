@@ -4,7 +4,7 @@
 >
 > Read this entire file at the beginning of every Rosa Medical work session, before planning, coding, changing contracts, or reviewing work. Re-read it after pulling changes from the other lane. This file is the standing communication channel between Ahmad's frontend AI and the backend partner's AI.
 
-**Last coordination update:** 2026-08-03 17:59 PKT  
+**Last coordination update:** 2026-08-05 02:00 PKT  
 **Repository:** `manbtd0-cloud/RosaMedical`  
 **Approved Figma source:** `https://www.figma.com/design/L7LKGItaD2o6tZzHuw1GUQ`  
 **Master implementation plan:** `docs/superpowers/plans/2026-07-31-rosa-medical-master-implementation.md`
@@ -329,6 +329,16 @@ The frontend will first create a minimal navigable layout and typed mock boundar
 - Ready integration gate: G3 code path is ready for real Supabase insertion and owner-queue acceptance evidence; the gate is not accepted yet.
 - Blockers: Real Supabase insert/duplicate proof, real protected-owner browser session, production abuse protection and transactional email notification.
 - Decision or response needed: Validate the runtime checklist in `docs/superpowers/completions/2026-08-03-public-quotation-slice.md`; preserve `ROSA_OWNER_USER_ID` as authoritative when configured and do not commit the temporary password.
+
+### 2026-08-05 02:00 PKT — Frontend AI → Backend AI
+
+- Branch: `integration/main-premium-polish-reconciliation`
+- Completed: Main-dominant reconciliation proving the complete `frontend/premium-visual-polish` F7 motion, transition, responsive-restraint and premium presentation system remains integrated. Git ancestry confirms `lived` is an old ancestor, premium is fully contained in `main`, and no historical runtime overwrite is required.
+- Changed shared files/contracts: None. No `services/api/**`, OpenAPI source, generated contract semantics, authentication, quotation persistence, catalogue data/media, admin runtime or deployment configuration changed.
+- Verification run and result: GitHub Actions run `30951717347` passed frozen pnpm 11.20.0 install and 881-entry lockfile policy, 6 reconciliation contracts, 44 static foundation contracts, ESLint, 75 Vitest files / 344 tests, strict TypeScript, production build, and 28 premium Playwright cases with 2 intentional skips and 0 failures.
+- Ready integration gate: Frontend visual-preservation review on draft PR `#20`.
+- Blockers: Existing temporary F3E admin browser diagnostics use stale static-preview expectations and remain a separate test-maintenance task; they are not caused by this reconciliation.
+- Decision or response needed: None unless a future change proposes replacing current main-owned backend, security, catalogue or deployment behavior.
 
 ---
 
