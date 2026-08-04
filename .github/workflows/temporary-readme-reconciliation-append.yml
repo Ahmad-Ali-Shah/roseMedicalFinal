@@ -1,0 +1,45 @@
+name: Temporary README Reconciliation Append
+
+on:
+  push:
+    branches:
+      - integration/main-premium-polish-reconciliation
+
+permissions:
+  contents: write
+
+jobs:
+  append:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: integration/main-premium-polish-reconciliation
+      - name: Append coordination record once
+        shell: bash
+        run: |
+          marker='2026-08-05 02:00 PKT — Frontend AI → Backend AI'
+          if grep -Fq "$marker" README.md; then
+            echo 'Coordination record already present.'
+            exit 0
+          fi
+
+          cat >> README.md <<'EOF'
+
+### 2026-08-05 02:00 PKT — Frontend AI → Backend AI
+
+- Branch: `integration/main-premium-polish-reconciliation`
+- Completed: Main-dominant reconciliation proving the complete `frontend/premium-visual-polish` F7 motion, transition, responsive-restraint and premium presentation system remains integrated. Git ancestry confirms `lived` is an old ancestor, premium is fully contained in `main`, and no historical runtime overwrite is required.
+- Changed shared files/contracts: None. No `services/api/**`, OpenAPI source, generated contract semantics, authentication, quotation persistence, catalogue data/media, admin runtime or deployment configuration changed.
+- Verification run and result: GitHub Actions run `30951717347` passed frozen pnpm 11.20.0 install and 881-entry lockfile policy, 6 reconciliation contracts, 44 static foundation contracts, ESLint, 75 Vitest files / 344 tests, strict TypeScript, production build, and 28 premium Playwright cases with 2 intentional skips and 0 failures.
+- Ready integration gate: Frontend visual-preservation review on draft PR `#20`.
+- Blockers: Existing temporary F3E admin browser diagnostics use stale static-preview expectations and remain a separate test-maintenance task; they are not caused by this reconciliation.
+- Decision or response needed: None unless a future change proposes replacing current main-owned backend, security, catalogue or deployment behavior.
+EOF
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add README.md
+          git commit -m 'docs: record premium reconciliation coordination'
+          git push origin HEAD:integration/main-premium-polish-reconciliation
