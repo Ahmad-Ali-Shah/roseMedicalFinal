@@ -4,9 +4,12 @@ on:
   push:
     branches:
       - integration/main-premium-polish-reconciliation
+  pull_request:
+    branches:
+      - main
 
 concurrency:
-  group: temporary-premium-reconciliation
+  group: temporary-premium-reconciliation-${{ github.event_name }}
   cancel-in-progress: true
 
 permissions:
