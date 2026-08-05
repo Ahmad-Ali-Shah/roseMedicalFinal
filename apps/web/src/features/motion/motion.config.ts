@@ -13,9 +13,9 @@ export const MOTION_EASING = {
 } as const;
 
 export const MOTION_DISTANCE = {
-  mobile: 12,
-  desktop: 24,
-  hero: 36
+  mobile: 8,
+  desktop: 16,
+  hero: 24
 } as const;
 
 export const MOTION_INTENSITY: Record<MotionIntensity, number> = {

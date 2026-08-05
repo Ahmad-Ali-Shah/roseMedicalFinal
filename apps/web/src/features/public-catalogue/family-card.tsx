@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactElement } from "react";
-import { SpotlightSurface, TiltSurface } from "@/features/motion";
+import { TiltSurface } from "@/features/motion";
 import { FAMILY_SLUGS, familyHref, type FamilyCardModel } from "./models";
 import { ProductMediaPlaceholder } from "./product-media-placeholder";
 
@@ -8,9 +8,9 @@ export function FamilyCard({ family }: { family: FamilyCardModel }): ReactElemen
   const ordinal = String(FAMILY_SLUGS.indexOf(family.slug) + 1).padStart(2, "0");
 
   return (
-    <TiltSurface className="family-card__tilt" maxDegrees={2.25}>
+    <TiltSurface className="family-card__tilt" maxDegrees={1.6}>
       <article className="family-card premium-surface" data-family={family.slug}>
-        <SpotlightSurface className="family-card__surface">
+        <div className="family-card__surface">
           <Link className="family-card__link" href={familyHref(family.slug)}>
             <span className="family-card__number">{ordinal}</span>
             <ProductMediaPlaceholder label={family.imageLabel} decorative aspect="landscape" />
@@ -21,7 +21,7 @@ export function FamilyCard({ family }: { family: FamilyCardModel }): ReactElemen
               </span>
             </div>
           </Link>
-        </SpotlightSurface>
+        </div>
       </article>
     </TiltSurface>
   );

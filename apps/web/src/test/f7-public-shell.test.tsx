@@ -1,12 +1,23 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+let pathname = "/";
+
+vi.mock("next/navigation", () => ({
+  usePathname: () => pathname
+}));
+
 import { PublicShell } from "@/components/layout/public-shell";
 
 const source = (path: string) => readFileSync(join(process.cwd(), path), "utf8");
 
 describe("F7 premium public shell", () => {
+  beforeEach(() => {
+    pathname = "/";
+  });
+
   it("preserves one stable header, main and footer", () => {
     const html = renderToStaticMarkup(
       <PublicShell><p>Public page content</p></PublicShell>
@@ -67,5 +78,15 @@ describe("F7 premium public shell", () => {
       <PublicShell><p>Content</p></PublicShell>
     );
     expect(html).toContain("Request a quote");
+  });
+
+  it("marks one parent navigation link for nested public routes", () => {
+    pathname = "/products/knives";
+    const html = renderToStaticMarkup(
+      <PublicShell><p>Knives catalogue</p></PublicShell>
+    );
+
+    expect((html.match(/aria-current="page"/g) ?? [])).toHaveLength(1);
+    expect(html).toMatch(/<a class="nav-link" aria-current="page"[^>]*href="\/products"/);
   });
 });

@@ -17,7 +17,7 @@ interface TextRevealProps {
 }
 
 const wordVariants: Variants = {
-  hidden: { opacity: 1, y: "0.7em", filter: "blur(3px)" },
+  hidden: { opacity: 1, y: "0.55em", filter: "blur(2px)" },
   visible: {
     opacity: 1,
     y: 0,
@@ -64,7 +64,7 @@ export function TextReveal({
       visible: {
         transition: {
           delayChildren: delay,
-          staggerChildren: mode === "words" ? 0.045 : 0.09
+          staggerChildren: mode === "words" ? 0.04 : 0.075
         }
       }
     }

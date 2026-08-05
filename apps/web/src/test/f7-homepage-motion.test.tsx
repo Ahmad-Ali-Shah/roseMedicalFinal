@@ -32,20 +32,19 @@ describe("F7 homepage cinematic polish", () => {
     expect(html).toContain('data-motion="text-reveal"');
     expect(html).toContain('data-media-slot="homepage-hero"');
     expect(html).toContain('data-media-state="placeholder"');
-    expect(html).toContain('data-motion="magnetic"');
+    expect((html.match(/data-motion="magnetic"/g) ?? [])).toHaveLength(2);
     expect(html).not.toContain("<img");
   });
 
-  it("keeps the homepage story ordered without adding decorative noise to assistive technology", () => {
+  it("keeps the homepage story ordered without structural motion decoration", () => {
     const html = renderToStaticMarkup(<Homepage />);
 
-    for (const index of ["01", "02", "03", "04", "05", "06"]) {
-      expect(html).toContain(`data-home-index="${index}"`);
-    }
-    expect((html.match(/data-home-index=/g) ?? [])).toHaveLength(6);
-    expect((html.match(/class="home-section-index" aria-hidden="true"/g) ?? [])).toHaveLength(5);
-    expect(html).toContain('class="home-hero__stage-caption" aria-hidden="true"');
-    expect(html).toContain("Precision steel study");
+    expect(html).not.toContain("data-home-index");
+    expect(html).not.toContain("home-section-index");
+    expect(html).not.toContain("home-hero__stage-caption");
+    expect(html).not.toContain("Precision steel study");
+    expect(html).toContain('data-home-choreography="hero"');
+    expect(html).toContain('data-media-slot="homepage-hero"');
   });
 
   it("stages family, product, process and catalogue groups through shared motion", () => {

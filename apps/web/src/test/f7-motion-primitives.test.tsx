@@ -20,6 +20,8 @@ describe("F7 motion primitives", () => {
     expect(html).toContain("Premium instruments");
     expect(html).toContain('data-motion="reveal"');
     expect(html).toContain('data-motion-direction="up"');
+    expect(html).toContain("filter:blur(3px)");
+    expect(html).toContain("transform:translateY(16px)");
     expect(html).not.toMatch(/opacity:\s*0/);
   });
 
@@ -37,6 +39,8 @@ describe("F7 motion primitives", () => {
     expect(html).toContain("Scissors");
     expect(html).toContain("--motion-order:0");
     expect(html).toContain("--motion-order:1");
+    expect(html).toContain("filter:blur(2px)");
+    expect(html).toContain("transform:translateY(8px)");
     expect(html).not.toMatch(/opacity:\s*0/);
   });
 });

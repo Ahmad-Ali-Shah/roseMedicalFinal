@@ -12,6 +12,7 @@ import {
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ButtonLink } from "@/components/ui/button";
 import { MOTION_DURATION, MOTION_EASING } from "@/features/motion";
+import { isPublicNavigationActive } from "./public-navigation-link";
 
 export type NavigationItem = readonly [label: string, href: Route<string>];
 
@@ -118,7 +119,13 @@ export function MobileNavigation({
                         ease: MOTION_EASING.standard
                       }}
                     >
-                      <Link href={href} onClick={close}>{label}</Link>
+                      <Link
+                        href={href}
+                        onClick={close}
+                        aria-current={isPublicNavigationActive(pathname, href) ? "page" : undefined}
+                      >
+                        {label}
+                      </Link>
                     </motion.li>
                   ))}
                 </ul>

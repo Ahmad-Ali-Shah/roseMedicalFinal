@@ -7,6 +7,7 @@ import {
   MobileNavigation,
   type NavigationItem
 } from "./mobile-navigation";
+import { PublicNavigationLink } from "./public-navigation-link";
 
 const primaryLinks = [
   ["Products", "/products"],
@@ -38,14 +39,14 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
             <ul className="nav-list">
               {primaryLinks.map(([label, href]) => (
                 <li key={href}>
-                  <Link className="nav-link" href={href}>{label}</Link>
+                  <PublicNavigationLink href={href} label={label} />
                 </li>
               ))}
             </ul>
           </nav>
           <div className="cluster site-header__actions">
             {utilityLinks.map(([label, href]) => (
-              <Link className="nav-link" href={href} key={href}>{label}</Link>
+              <PublicNavigationLink href={href} label={label} key={href} />
             ))}
             <ButtonLink href="/request-quotation" size="small">Request a quote</ButtonLink>
           </div>

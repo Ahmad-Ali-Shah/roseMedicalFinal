@@ -15,10 +15,8 @@ export function ProcurementSupport({ model }: { model: HomeProcurementModel }): 
     <Section
       tone="paper"
       data-section="procurement-support"
-      data-home-index="03"
       aria-labelledby="procurement-support-title"
     >
-      <span className="home-section-index" aria-hidden="true">03</span>
       <Container size="wide">
         <SectionHeading
           id="procurement-support-title"

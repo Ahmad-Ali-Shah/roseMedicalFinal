@@ -39,7 +39,7 @@ interface StaggerItemProps extends PropsWithChildren, SemanticMotionProps {
 const itemVariants: Variants = {
   hidden: {
     opacity: 1,
-    filter: "blur(3px)",
+    filter: "blur(2px)",
     y: MOTION_DISTANCE.mobile
   },
   visible: {
@@ -108,7 +108,7 @@ export function Stagger({
   "aria-label": ariaLabel,
   "aria-labelledby": ariaLabelledby,
   "aria-describedby": ariaDescribedby,
-  interval = 0.07,
+  interval = 0.055,
   once = true,
   ...dataAttributes
 }: StaggerProps): ReactElement {
@@ -124,7 +124,10 @@ export function Stagger({
     hidden: {},
     visible: {
       transition: {
-        staggerChildren: interval,
+        staggerChildren: Math.min(
+          interval,
+          0.24 / Math.max(1, Children.count(indexedChildren) - 1)
+        ),
         delayChildren: 0.02
       }
     }

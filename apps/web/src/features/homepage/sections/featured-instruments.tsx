@@ -19,10 +19,8 @@ export function FeaturedInstruments({
     <Section
       tone="paper"
       data-section="featured-instruments"
-      data-home-index="04"
       aria-labelledby="featured-instruments-title"
     >
-      <span className="home-section-index" aria-hidden="true">04</span>
       <Container size="wide">
         <SectionHeading
           id="featured-instruments-title"

@@ -47,6 +47,13 @@ describe("public catalogue components", () => {
     expect(html).not.toMatch(/price|stock|rating|buy now/i);
   });
 
+  it("keeps repeated family cards shallow without a pointer spotlight on every item", () => {
+    const html = renderToStaticMarkup(<FamilyCard family={family} />);
+
+    expect((html.match(/data-motion="tilt"/g) ?? [])).toHaveLength(1);
+    expect(html).not.toContain('data-motion="spotlight"');
+  });
+
   it("hides decorative media from assistive technology", () => {
     const html = renderToStaticMarkup(
       <ProductMediaPlaceholder label="Decorative instrument marker" decorative />
