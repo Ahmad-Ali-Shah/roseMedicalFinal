@@ -21,9 +21,9 @@ export function ProductPreviewGrid({
           aria-label="Representative products"
           interval={0.06}
         >
-          {products.map((product) => (
+          {products.map((product, index) => (
             <StaggerItem as="li" key={product.id}>
-              <ProductPreviewCard product={product} />
+              <ProductPreviewCard product={product} featured={index === 0} />
             </StaggerItem>
           ))}
         </Stagger>

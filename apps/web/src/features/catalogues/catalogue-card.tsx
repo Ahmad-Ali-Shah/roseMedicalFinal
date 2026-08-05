@@ -21,7 +21,7 @@ export function CatalogueCard({
         }`}
         data-catalogue-document={document.familySlug}
       >
-        <CatalogueCover document={document} />
+        <CatalogueCover document={document} featured={featured} />
         <div className="catalogue-document-card__content">
           <p className="catalogue-document-card__eyebrow">
             Instrument family {document.sequence}

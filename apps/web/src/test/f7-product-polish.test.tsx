@@ -11,6 +11,10 @@ const source = (path: string) => readFileSync(join(process.cwd(), path), "utf8")
 describe("F7 product discovery polish", () => {
   it("stages the products overview while preserving discovery behavior", () => {
     const html = renderToStaticMarkup(<ProductsOverview />);
+    const productGrid = html.slice(
+      html.indexOf('data-section="product-preview-grid"'),
+      html.indexOf('data-section="catalogue-support"')
+    );
 
     expect(html).toContain('data-section="products-hero"');
     expect(html).toContain('data-motion="text-reveal"');
@@ -19,6 +23,7 @@ describe("F7 product discovery polish", () => {
     expect(html).toContain("Search by product name or code");
     expect(html).toContain('href="/search"');
     expect(html).toContain("Request a quotation");
+    expect((productGrid.match(/data-motion="tilt"/g) ?? [])).toHaveLength(1);
   });
 
   it("keeps family results and product paths intact while adding spatial choreography", () => {
@@ -44,6 +49,8 @@ describe("F7 product discovery polish", () => {
     expect((html.match(/data-motion="reveal"/g) ?? []).length).toBeGreaterThanOrEqual(4);
     expect(html).toContain('data-motion="tilt"');
     expect(html).toContain('data-motion="stagger"');
+    expect(html).toContain('data-gallery-state="current"');
+    expect(html).toContain('data-motion="mobile-inquiry-bar"');
   });
 
   it("morphs the add action while retaining the current storage boundary", () => {

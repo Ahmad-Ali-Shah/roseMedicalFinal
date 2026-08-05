@@ -93,6 +93,32 @@
 .catalogue-document-cover {
   isolation: isolate;
   overflow: hidden;
+  transition: transform var(--motion-component) var(--motion-ease);
+}
+
+.catalogue-document-cover > span {
+  position: relative;
+  z-index: 1;
+}
+
+.catalogue-document-cover--glare::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: -45% -80%;
+  background: linear-gradient(
+    108deg,
+    transparent 43%,
+    rgb(255 255 255 / 0.34) 49%,
+    rgb(255 255 255 / 0.14) 53%,
+    transparent 60%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-42%) rotate(6deg);
+  transition:
+    opacity 120ms linear,
+    transform 400ms var(--motion-ease);
 }
 
 .catalogue-document-cover::after {
@@ -103,6 +129,19 @@
   background: currentColor;
   opacity: 0.18;
   transform: rotate(-12deg);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .catalogue-document-card:hover .catalogue-document-cover,
+  .catalogue-document-card:focus-within .catalogue-document-cover {
+    transform: scale(1.006);
+  }
+
+  .catalogue-document-card:hover .catalogue-document-cover--glare::before,
+  .catalogue-document-card:focus-within .catalogue-document-cover--glare::before {
+    opacity: 1;
+    transform: translateX(42%) rotate(6deg);
+  }
 }
 
 .contact-information-reveal,
@@ -199,6 +238,11 @@
   .catalogue-document-card:focus-within {
     box-shadow: none;
   }
+
+  .catalogue-document-cover,
+  .catalogue-document-cover--glare::before {
+    transform: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -206,9 +250,15 @@
   .supported-buyers__item,
   .information-checklist > li,
   .catalogue-document-card,
+  .catalogue-document-cover,
+  .catalogue-document-cover--glare::before,
   .contact-information-panel dl > div::after,
   .contact-preview-field::after {
     transition: none !important;
     transform: none !important;
+  }
+
+  .catalogue-document-cover--glare::before {
+    display: none;
   }
 }

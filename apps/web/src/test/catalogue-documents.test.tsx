@@ -61,6 +61,7 @@ describe("F3C catalogue documents", () => {
 
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
     expect((html.match(/data-catalogue-document=/g) ?? [])).toHaveLength(5);
+    expect((html.match(/catalogue-document-cover--glare/g) ?? [])).toHaveLength(1);
     expect(html).toContain('href="/search"');
     expect(html).toContain('href="/request-quotation"');
   });

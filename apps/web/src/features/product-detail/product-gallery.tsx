@@ -15,6 +15,7 @@ export function ProductGallery({
           <span
             className={`product-gallery__thumbnail ${index === 0 ? "is-current" : ""}`.trim()}
             aria-current={index === 0 ? "true" : undefined}
+            data-gallery-state={index === 0 ? "current" : "preview"}
             key={index}
           >
             <ProductMediaPlaceholder
