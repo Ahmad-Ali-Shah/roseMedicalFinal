@@ -2,9 +2,9 @@
 
 > **Superseded for implementation decisions.** The user clarified that the intended work is an effects-only enhancement, not the extension of new structural motifs. Use [`2026-08-05-public-site-motion-effects-research-audit.md`](./2026-08-05-public-site-motion-effects-research-audit.md) as the authoritative motion direction. This file remains historical context only.
 
-**Date:** 2026-08-05  
-**Status:** Direction approved; implementation specification recorded  
-**Authoritative base:** `integration/main-premium-polish-reconciliation` at `4e67fc1`  
+**Date:** 2026-08-05
+**Status:** Direction approved; implementation specification recorded
+**Authoritative base:** `integration/main-premium-polish-reconciliation` at `4e67fc1`
 **Scope:** Remaining public-site visual, motion, interaction, responsive, and performance refinement after the homepage pass
 
 ## 1. Outcome
