@@ -45,7 +45,7 @@ test("homepage keeps its cinematic hierarchy and media geometry", async ({ page 
 
   await expect(page.locator("[data-motion='stagger']")).toHaveCount(4);
   expect(await page.locator("[data-motion='stagger-item']").count()).toBeGreaterThanOrEqual(16);
-  expect(await page.locator("[data-motion='tilt']").count()).toBeGreaterThanOrEqual(8);
+  await expect(page.locator("[data-motion='tilt']")).toHaveCount(7);
   expect(await page.locator("[data-motion='spotlight']").count()).toBeGreaterThanOrEqual(2);
   await expect(page.locator("[data-media-slot^='homepage-catalogue-']")).toHaveCount(5);
 

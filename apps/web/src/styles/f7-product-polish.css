@@ -170,6 +170,24 @@
   width: 100%;
 }
 
+@keyframes mobile-inquiry-bar-enter {
+  from {
+    opacity: 0.96;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 40rem) and (prefers-reduced-motion: no-preference) {
+  .mobile-inquiry-bar {
+    animation: mobile-inquiry-bar-enter 200ms var(--motion-ease) both;
+  }
+}
+
 @media (max-width: 48rem) {
   .family-hero__actions-reveal,
   .add-to-inquiry-transition {

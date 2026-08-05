@@ -52,7 +52,7 @@ describe("F7 homepage cinematic polish", () => {
 
     expect((html.match(/data-motion="stagger"/g) ?? []).length).toBeGreaterThanOrEqual(4);
     expect((html.match(/data-motion="stagger-item"/g) ?? []).length).toBeGreaterThanOrEqual(12);
-    expect(html).toContain('data-motion="tilt"');
+    expect((html.match(/data-motion="tilt"/g) ?? [])).toHaveLength(7);
     expect(html).toContain('data-motion="spotlight"');
     expect(html).toContain('data-motion="progressive-blur"');
   });

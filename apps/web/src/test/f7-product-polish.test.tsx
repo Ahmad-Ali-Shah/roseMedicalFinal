@@ -76,9 +76,11 @@ describe("F7 product discovery polish", () => {
 
   it("keeps the mobile inquiry entrance hydration-stable", () => {
     const mobileBar = source("src/features/product-detail/mobile-inquiry-bar.tsx");
+    const styles = source("src/styles/f7-product-polish.css");
 
-    expect(mobileBar).toContain("initial={false}");
-    expect(mobileBar).toContain("setEntered(true)");
-    expect(mobileBar).toContain("useReducedMotion");
+    expect(mobileBar).not.toContain("motion.aside");
+    expect(mobileBar).not.toContain("useEffect");
+    expect(styles).toContain("@keyframes mobile-inquiry-bar-enter");
+    expect(styles).toContain("prefers-reduced-motion: no-preference");
   });
 });
