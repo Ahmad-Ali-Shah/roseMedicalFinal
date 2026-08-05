@@ -17,6 +17,7 @@ const source = (path: string) => readFileSync(join(process.cwd(), path), "utf8")
 describe("F7 public story and utility polish", () => {
   it("frames About cinematically without inventing company history", () => {
     const html = renderToStaticMarkup(<AboutPage />);
+    const styles = source("src/styles/f7-story-polish.css");
 
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
     expect(html).toContain("Useful structure at every step.");
@@ -29,6 +30,8 @@ describe("F7 public story and utility polish", () => {
     expect(html).toContain('data-motion="text-reveal"');
     expect(html).toContain('data-motion="stagger"');
     expect((html.match(/data-supported-buyer=/g) ?? []).length).toBe(4);
+    expect(styles).toContain("scale(1.01)");
+    expect(styles).not.toMatch(/story-media-frame:hover[^}]*rotate\(/s);
     expect(html).not.toMatch(/founded|since \d{4}|factory|manufacturer|certified|years of experience/i);
   });
 
@@ -73,6 +76,9 @@ describe("F7 public story and utility polish", () => {
     expect(form).toContain('fetch("/api/contact"');
     expect(form).toContain('method: "POST"');
     expect(form).toContain('form.reset()');
+    expect(form).toContain("AnimatePresence");
+    expect(form).toContain("useReducedMotion");
+    expect(form).not.toContain("style={{ color:");
     expect(html).not.toMatch(/mailto:|tel:|wa\.me|contact@placeholder|\+966 XX/i);
   });
 

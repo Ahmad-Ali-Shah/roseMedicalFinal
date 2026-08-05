@@ -25,7 +25,7 @@
 }
 
 .story-media-frame:hover .product-media-placeholder__instrument {
-  transform: translate3d(-0.35rem, -0.2rem, 0) rotate(-7deg) scale(1.025);
+  transform: translate3d(-0.08rem, -0.05rem, 0) scale(1.01);
 }
 
 .about-expectations-section .numbered-editorial-list,
@@ -64,7 +64,7 @@
 .supported-buyers__item:focus-within,
 .information-checklist > li:hover,
 .information-checklist > li:focus-within {
-  transform: translateY(-0.2rem);
+  transform: translateY(-0.1rem);
   border-color: color-mix(in srgb, var(--color-ink) 32%, var(--color-border));
 }
 
@@ -179,6 +179,29 @@
   transform: scaleX(1);
 }
 
+.contact-form-preview__actions .button {
+  min-width: 9.75rem;
+}
+
+.contact-form-status {
+  display: grid;
+  align-items: center;
+  min-height: 1.5rem;
+}
+
+.contact-form-status__message {
+  grid-area: 1 / 1;
+  margin: 0;
+}
+
+.contact-form-status__message--success {
+  color: var(--color-success);
+}
+
+.contact-form-status__message--error {
+  color: var(--color-rosa-red-dark);
+}
+
 .contact-location-placeholder {
   width: 100%;
   max-width: 100%;
@@ -254,6 +277,11 @@
   .catalogue-document-cover--glare::before,
   .contact-information-panel dl > div::after,
   .contact-preview-field::after {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  .contact-form-status__message {
     transition: none !important;
     transform: none !important;
   }

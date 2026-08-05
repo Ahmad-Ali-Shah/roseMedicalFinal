@@ -80,6 +80,14 @@ test("About, procurement and catalogue stories remain complete and media-ready",
 });
 
 test("contact and legal utilities stay usable, explicit and calm", async ({ page }) => {
+  await page.route("**/api/contact", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ success: true })
+    });
+  });
+
   const contactResponse = await page.goto("/contact");
   expect(contactResponse?.ok()).toBe(true);
   await expect(
@@ -89,6 +97,15 @@ test("contact and legal utilities stay usable, explicit and calm", async ({ page
   await expect(page.getByLabel("Name")).toBeEditable();
   await expect(page.getByLabel("Email")).toBeEditable();
   await expect(page.getByRole("button", { name: "Send Message" })).toBeEnabled();
+  await page.getByLabel("Name").fill("Procurement Team");
+  await page.getByLabel("Email").fill("buyer@example.com");
+  await page.getByLabel("Telephone").fill("+1 202 555 0100");
+  await page.getByRole("textbox", { name: "Message", exact: true }).fill(
+    "Please share your catalogue guidance."
+  );
+  await page.getByRole("button", { name: "Send Message" }).click();
+  await expect(page.getByRole("status")).toHaveText("Message sent successfully.");
+  await expect(page.getByLabel("Name")).toHaveValue("");
   await expect(page.locator("[data-media-slot='contact-location']")).toHaveAttribute(
     "data-media-state",
     "placeholder"

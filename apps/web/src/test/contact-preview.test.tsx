@@ -32,6 +32,9 @@ describe("F3D contact normal state", () => {
     expect(html).toContain('name="phone"');
     expect(html).toContain('name="message"');
     expect(html).toContain("Send Message");
+    expect(html).toContain('role="status"');
+    expect(html).toContain('aria-live="polite"');
+    expect(html).toContain('data-contact-status="idle"');
     expect(html).not.toContain('readOnly=""');
     expect(html).not.toMatch(/mailto:|tel:|wa\.me|contact@placeholder|\+966 XX/i);
     expect(html).not.toContain("MESSAGE SENT");
