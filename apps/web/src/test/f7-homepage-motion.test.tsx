@@ -36,6 +36,18 @@ describe("F7 homepage cinematic polish", () => {
     expect(html).not.toContain("<img");
   });
 
+  it("keeps the homepage story ordered without adding decorative noise to assistive technology", () => {
+    const html = renderToStaticMarkup(<Homepage />);
+
+    for (const index of ["01", "02", "03", "04", "05", "06"]) {
+      expect(html).toContain(`data-home-index="${index}"`);
+    }
+    expect((html.match(/data-home-index=/g) ?? [])).toHaveLength(6);
+    expect((html.match(/class="home-section-index" aria-hidden="true"/g) ?? [])).toHaveLength(5);
+    expect(html).toContain('class="home-hero__stage-caption" aria-hidden="true"');
+    expect(html).toContain("Precision steel study");
+  });
+
   it("stages family, product, process and catalogue groups through shared motion", () => {
     const html = renderToStaticMarkup(<Homepage />);
 

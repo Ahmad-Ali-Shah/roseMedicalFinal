@@ -16,7 +16,13 @@ export function FamilyDiscovery({
   families: readonly FamilyCardModel[];
 }): ReactElement {
   return (
-    <Section tone="paper" data-section="family-discovery" aria-labelledby="family-discovery-title">
+    <Section
+      tone="paper"
+      data-section="family-discovery"
+      data-home-index="02"
+      aria-labelledby="family-discovery-title"
+    >
+      <span className="home-section-index" aria-hidden="true">02</span>
       <Container size="wide">
         <SectionHeading
           id="family-discovery-title"

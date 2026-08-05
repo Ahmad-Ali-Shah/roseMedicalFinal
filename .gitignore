@@ -15,6 +15,7 @@ test-results/
 uploads/
 local-data/
 .worktrees/
+.superdesign/tmp/
 .open-next/
 .next/
 .open-next/

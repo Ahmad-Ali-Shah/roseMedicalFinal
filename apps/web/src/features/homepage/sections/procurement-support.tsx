@@ -12,7 +12,13 @@ import type { HomeProcurementModel } from "../homepage.data";
 
 export function ProcurementSupport({ model }: { model: HomeProcurementModel }): ReactElement {
   return (
-    <Section tone="paper" data-section="procurement-support" aria-labelledby="procurement-support-title">
+    <Section
+      tone="paper"
+      data-section="procurement-support"
+      data-home-index="03"
+      aria-labelledby="procurement-support-title"
+    >
+      <span className="home-section-index" aria-hidden="true">03</span>
       <Container size="wide">
         <SectionHeading
           id="procurement-support-title"

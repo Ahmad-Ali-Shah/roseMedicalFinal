@@ -19,6 +19,7 @@ export function HomeHero({ model }: { model: HomeHeroModel }): ReactElement {
       tone="dark"
       spacing="compact"
       data-section="home-hero"
+      data-home-index="01"
       data-home-choreography="hero"
       aria-labelledby="home-title"
     >
@@ -55,6 +56,10 @@ export function HomeHero({ model }: { model: HomeHeroModel }): ReactElement {
         </div>
         <Reveal className="home-hero__visual" direction="left" delay={0.18}>
           <SpotlightSurface className="home-hero__visual-surface">
+            <span className="home-hero__stage-caption" aria-hidden="true">
+              <span>01 / Rosa Instruments</span>
+              <span>Precision steel study</span>
+            </span>
             <TiltSurface className="home-hero__visual-tilt" maxDegrees={1.6}>
               <MediaFrame
                 alt="Cinematic surgical instrument composition reserved for final imagery"

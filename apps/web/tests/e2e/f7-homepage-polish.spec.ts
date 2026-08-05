@@ -9,6 +9,18 @@ const sections = [
   "quotation-cta"
 ] as const;
 
+function boxesOverlap(
+  first: { x: number; y: number; width: number; height: number },
+  second: { x: number; y: number; width: number; height: number }
+) {
+  return !(
+    first.x + first.width <= second.x
+    || second.x + second.width <= first.x
+    || first.y + first.height <= second.y
+    || second.y + second.height <= first.y
+  );
+}
+
 test("homepage keeps its cinematic hierarchy and media geometry", async ({ page }, testInfo) => {
   const response = await page.goto("/");
   expect(response?.ok()).toBe(true);
@@ -48,4 +60,38 @@ test("homepage keeps its cinematic hierarchy and media geometry", async ({ page 
     () => document.documentElement.scrollWidth > document.documentElement.clientWidth
   );
   expect(hasOverflow).toBe(false);
+});
+
+test("mobile hero keeps its instrument stage clear of the editorial copy", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile", "Mobile composition runs on the mobile project.");
+
+  const response = await page.goto("/");
+  expect(response?.ok()).toBe(true);
+
+  const title = page.locator(".home-hero__title");
+  const visual = page.locator(".home-hero__visual");
+  await expect(title).toBeVisible();
+  await expect(visual).toBeVisible();
+
+  const [titleBox, visualBox] = await Promise.all([title.boundingBox(), visual.boundingBox()]);
+  expect(titleBox).not.toBeNull();
+  expect(visualBox).not.toBeNull();
+  expect(boxesOverlap(titleBox!, visualBox!)).toBe(false);
+  expect(visualBox!.y).toBeGreaterThan(titleBox!.y + titleBox!.height);
+
+  const viewport = await page.evaluate(() => ({
+    clientWidth: document.documentElement.clientWidth,
+    scrollWidth: document.documentElement.scrollWidth
+  }));
+  expect(viewport.scrollWidth, JSON.stringify(viewport)).toBeLessThanOrEqual(viewport.clientWidth);
+
+  const minimumGutter = 16;
+  await expect.poll(async () => {
+    const settledBoxes = await Promise.all([title.boundingBox(), visual.boundingBox()]);
+    return settledBoxes.every((box) => (
+      box !== null
+      && box.x >= minimumGutter
+      && box.x + box.width <= viewport.clientWidth - minimumGutter
+    ));
+  }).toBe(true);
 });

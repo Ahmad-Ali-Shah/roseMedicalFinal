@@ -6,7 +6,14 @@ import type { HomeQuotationModel } from "../homepage.data";
 
 export function QuotationCta({ model }: { model: HomeQuotationModel }): ReactElement {
   return (
-    <Section tone="paper" spacing="compact" data-section="quotation-cta" aria-label="Request a quotation">
+    <Section
+      tone="paper"
+      spacing="compact"
+      data-section="quotation-cta"
+      data-home-index="06"
+      aria-label="Request a quotation"
+    >
+      <span className="home-section-index" aria-hidden="true">06</span>
       <Container size="wide">
         <Reveal direction="up">
           <SpotlightSurface className="quotation-cta__surface">

@@ -16,9 +16,11 @@ export function CatalogueAccess({ model }: { model: HomeCatalogueModel }): React
       className="home-catalogues"
       tone="paper"
       data-section="catalogue-access"
+      data-home-index="05"
       aria-labelledby="catalogue-access-title"
       style={{ display: "block" }}
     >
+      <span className="home-section-index" aria-hidden="true">05</span>
       <Container size="wide">
         <SectionHeading
           id="catalogue-access-title"
