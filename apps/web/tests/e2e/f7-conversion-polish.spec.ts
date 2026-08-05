@@ -69,12 +69,14 @@ test("inquiry edits persist immediately and quotation submission preserves its p
   await bardLine.getByRole("button", { name: "Remove" }).click();
   await expect.poll(async () => (await readStoredInquiry(page))?.length).toBe(1);
   await expect(page.locator("[data-inquiry-line]")).toHaveCount(1);
+  await expect(scalpelLine.getByRole("button", { name: "Remove" })).toBeFocused();
   await expect(page.getByText("1 unique products · 2 total quantity")).toBeVisible();
   await expectNoHorizontalOverflow(page);
 
   await page.getByRole("link", { name: "Proceed to request" }).click();
   await expect(page.getByRole("heading", { name: "Send your product requirements.", level: 1 })).toBeVisible();
-  await expect(page.locator("[data-motion='quotation-fieldset']")).toHaveCount(3);
+  await expect(page.locator("[data-quotation-fieldset]")).toHaveCount(3);
+  await expect(page.locator("[data-motion='quotation-form-fields']")).toHaveCount(1);
 
   let submittedPayload: Record<string, unknown> | null = null;
   await page.route("**/api/checkout", async (route) => {

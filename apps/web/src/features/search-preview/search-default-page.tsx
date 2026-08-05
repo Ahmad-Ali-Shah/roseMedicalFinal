@@ -1,12 +1,13 @@
 import type { ReactElement } from "react";
 import { Container, Section } from "@/components/layout";
+import { Reveal } from "@/features/motion";
 import { SearchFamilyShortcuts } from "./search-family-shortcuts";
 
 export function SearchDefaultPage(): ReactElement {
   return (
     <Section tone="paper" spacing="compact" className="search-default-page">
       <Container size="wide">
-        <div className="search-default-page__panel">
+        <Reveal className="search-default-page__panel" direction="up">
           <p className="page-eyebrow">Global search</p>
           <h1>Find an instrument.</h1>
           <label className="search-default-page__field">
@@ -23,7 +24,7 @@ export function SearchDefaultPage(): ReactElement {
           </p>
           <h2>Start with a family</h2>
           <SearchFamilyShortcuts />
-        </div>
+        </Reveal>
       </Container>
     </Section>
   );

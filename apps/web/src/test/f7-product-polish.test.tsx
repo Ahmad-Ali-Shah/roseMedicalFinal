@@ -73,4 +73,12 @@ describe("F7 product discovery polish", () => {
     expect(changedSurfaces).not.toMatch(/\.webp|\.avif|\.jpe?g|\.png|\/media\//i);
     expect(changedSurfaces).toContain("ProductMediaPlaceholder");
   });
+
+  it("keeps the mobile inquiry entrance hydration-stable", () => {
+    const mobileBar = source("src/features/product-detail/mobile-inquiry-bar.tsx");
+
+    expect(mobileBar).toContain("initial={false}");
+    expect(mobileBar).toContain("setEntered(true)");
+    expect(mobileBar).toContain("useReducedMotion");
+  });
 });

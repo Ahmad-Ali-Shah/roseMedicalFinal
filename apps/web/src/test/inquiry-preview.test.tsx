@@ -33,6 +33,7 @@ describe("F3C inquiry previews", () => {
     const html = renderToStaticMarkup(<EmptyInquiryPage />);
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
     expect(html).toContain("Your inquiry list is empty.");
+    expect(html).toContain("data-inquiry-empty-focus");
     expect(html).toContain('href="/products"');
     expect(html).toContain('href="/catalogues"');
     expect(html).not.toContain("18-0644");

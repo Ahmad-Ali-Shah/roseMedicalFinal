@@ -208,6 +208,89 @@
   min-height: clamp(18rem, 38vw, 31rem);
 }
 
+.search-family-shortcuts > [data-motion="stagger-item"] {
+  min-width: 0;
+  height: 100%;
+}
+
+.search-default-page__field input[readonly] {
+  cursor: default;
+  caret-color: transparent;
+}
+
+.search-family-shortcuts a {
+  position: relative;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto 1fr;
+  height: 100%;
+  transition:
+    background-color var(--motion-component) var(--motion-ease),
+    border-color var(--motion-component) var(--motion-ease),
+    transform var(--motion-component) var(--motion-ease);
+}
+
+.search-family-shortcuts__sequence,
+.search-family-shortcuts strong,
+.search-family-shortcuts__arrow {
+  transition:
+    color var(--motion-component) var(--motion-ease),
+    transform var(--motion-component) var(--motion-ease);
+}
+
+.search-family-shortcuts__sequence,
+.search-family-shortcuts strong {
+  grid-column: 1;
+}
+
+.search-family-shortcuts__arrow {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  align-self: center;
+  color: var(--color-ink);
+  font-size: 1rem;
+}
+
+.legal-section-navigation a {
+  position: relative;
+}
+
+.legal-section-navigation a::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: -0.2rem;
+  height: 1px;
+  background: var(--color-rosa-red);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--motion-component) var(--motion-ease);
+  pointer-events: none;
+}
+
+.legal-section-navigation a:hover::after,
+.legal-section-navigation a:focus-visible::after {
+  transform: scaleX(1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .search-family-shortcuts a:hover,
+  .search-family-shortcuts a:focus-visible {
+    border-color: color-mix(in srgb, var(--color-ink) 32%, var(--color-border));
+    transform: translateY(-1px);
+  }
+
+  .search-family-shortcuts a:hover strong,
+  .search-family-shortcuts a:focus-visible strong {
+    color: var(--color-rosa-red);
+    transform: translateY(-1px);
+  }
+
+  .search-family-shortcuts a:hover .search-family-shortcuts__arrow,
+  .search-family-shortcuts a:focus-visible .search-family-shortcuts__arrow {
+    transform: translateX(0.2rem);
+  }
+}
+
 .legal-page__hero-reveal {
   max-width: 68rem;
 }
@@ -266,6 +349,12 @@
   .catalogue-document-cover--glare::before {
     transform: none;
   }
+
+  .search-family-shortcuts a,
+  .search-family-shortcuts strong,
+  .search-family-shortcuts__arrow {
+    transform: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -284,6 +373,18 @@
   .contact-form-status__message {
     transition: none !important;
     transform: none !important;
+  }
+
+  .search-family-shortcuts a,
+  .search-family-shortcuts__sequence,
+  .search-family-shortcuts strong,
+  .search-family-shortcuts__arrow {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  .legal-section-navigation a::after {
+    transition: none !important;
   }
 
   .catalogue-document-cover--glare::before {

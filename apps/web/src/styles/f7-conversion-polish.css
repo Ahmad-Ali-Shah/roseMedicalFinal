@@ -49,11 +49,16 @@
   cursor: progress;
 }
 
-.quotation-form-preview [data-motion="quotation-fieldset"] {
+.quotation-form-preview__fields {
+  display: grid;
+  gap: var(--space-8);
+}
+
+.quotation-form-preview [data-quotation-fieldset] {
   position: relative;
 }
 
-.quotation-form-preview [data-motion="quotation-fieldset"]::after {
+.quotation-form-preview [data-quotation-fieldset]::after {
   content: "";
   position: absolute;
   inset: auto 0 0;
@@ -65,7 +70,7 @@
   pointer-events: none;
 }
 
-.quotation-form-preview [data-motion="quotation-fieldset"]:focus-within::after {
+.quotation-form-preview [data-quotation-fieldset]:focus-within::after {
   transform: scaleX(1);
 }
 
@@ -129,8 +134,8 @@
   .conversion-value,
   .inquiry-preview-summary,
   .quotation-product-summary,
-  .quotation-form-preview [data-motion="quotation-fieldset"],
-  .quotation-form-preview [data-motion="quotation-fieldset"]::after,
+  .quotation-form-preview__fields,
+  .quotation-form-preview [data-quotation-fieldset]::after,
   .quotation-submit-button__label,
   .quotation-success-state__content,
   .quotation-success-state__mark {

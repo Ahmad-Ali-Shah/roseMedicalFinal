@@ -113,10 +113,20 @@ test("contact and legal utilities stay usable, explicit and calm", async ({ page
   await expect(page.getByText("Awaiting client confirmation").first()).toBeVisible();
   await expectNoHorizontalOverflow(page);
 
+  const searchResponse = await page.goto("/search");
+  expect(searchResponse?.ok()).toBe(true);
+  await expect(page.getByRole("heading", { name: "Find an instrument.", level: 1 })).toBeVisible();
+  await expect(page.locator("[data-motion='reveal']")).toHaveCount(1);
+  await expect(page.locator("[data-motion='stagger-item']")).toHaveCount(5);
+  await expect(page.getByRole("searchbox", { name: "Search the catalogue" })).toHaveAttribute("readonly", "");
+  await expect(page.locator("[data-search-result]")).toHaveCount(0);
+  await expectNoHorizontalOverflow(page);
+
   const privacyResponse = await page.goto("/privacy");
   expect(privacyResponse?.ok()).toBe(true);
   await expect(page.getByRole("heading", { name: "Privacy Policy", level: 1 })).toBeVisible();
   await expect(page.locator("[data-legal-section]")).toHaveCount(9);
+  await expect(page.locator("[data-motion='reveal']")).toHaveCount(2);
   await expect(page.getByText("Last updated: awaiting client and legal approval")).toBeVisible();
   await page.locator("[data-legal-section='policy-updates']").scrollIntoViewIfNeeded();
   await expect(page.locator("[data-legal-section='policy-updates']")).toBeVisible();

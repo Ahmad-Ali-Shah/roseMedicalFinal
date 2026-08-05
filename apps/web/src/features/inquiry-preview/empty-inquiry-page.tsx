@@ -10,7 +10,7 @@ export function EmptyInquiryPage(): ReactElement {
         <div className="empty-inquiry-page__layout">
           <div className="empty-inquiry-page__content">
             <p className="empty-inquiry-page__eyebrow">Empty inquiry</p>
-            <h1>Your inquiry list is empty.</h1>
+            <h1 data-inquiry-empty-focus tabIndex={-1}>Your inquiry list is empty.</h1>
             <p>
               Browse an instrument family and review the products you want Rosa
               to consider for quotation.

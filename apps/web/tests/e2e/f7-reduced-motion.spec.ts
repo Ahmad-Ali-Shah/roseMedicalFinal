@@ -45,6 +45,8 @@ async function expectMotionSettled(page: Page) {
       '[data-motion="route-transition"]',
       '[data-motion="magnetic"]',
       '[data-motion="tilt"]',
+      '[data-motion="mobile-inquiry-bar"]',
+      '[data-motion="quotation-form-fields"]',
       ".text-reveal__segment"
     ].join(",");
 
@@ -110,7 +112,8 @@ test("reduced motion keeps inquiry and quotation conversion content immediately 
 
   await page.getByRole("link", { name: "Proceed to request" }).click();
   await expect(page.getByRole("heading", { name: "Send your product requirements.", level: 1 })).toBeVisible();
-  await expect(page.locator("[data-motion='quotation-fieldset']")).toHaveCount(3);
+  await expect(page.locator("[data-quotation-fieldset]")).toHaveCount(3);
+  await expect(page.locator("[data-motion='quotation-form-fields']")).toHaveCount(1);
   await expect(page.getByLabel("Customer name")).toBeEditable();
   await expectMotionSettled(page);
   expect(hydrationErrors).toEqual([]);

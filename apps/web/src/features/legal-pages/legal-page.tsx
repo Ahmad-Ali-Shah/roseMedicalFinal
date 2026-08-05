@@ -39,10 +39,12 @@ export function LegalPage({
           <div className="legal-page__layout">
             <LegalSectionNavigation document={document} />
             <div className="legal-page__content">
-              {document.sections.map((section) => (
+              {document.sections.map((section, index) => index === 0 ? (
                 <Reveal direction="up" key={section.id} className="legal-section-reveal">
                   <LegalSection section={section} />
                 </Reveal>
+              ) : (
+                <LegalSection key={section.id} section={section} />
               ))}
               <aside className="legal-page__review-note" aria-label="Legal review status">
                 <p className="page-eyebrow">Review required</p>

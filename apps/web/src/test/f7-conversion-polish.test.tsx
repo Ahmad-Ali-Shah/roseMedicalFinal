@@ -14,8 +14,13 @@ describe("F7 inquiry and quotation conversion polish", () => {
     expect(inquiry).toContain("setItems(updateInquiryItem(item.id, { quantity: item.quantity - 1 }))");
     expect(inquiry).toContain("setItems(updateInquiryItem(item.id, { quantity: item.quantity + 1 }))");
     expect(inquiry).toContain("setItems(updateInquiryItem(item.id, { notes: event.target.value }))");
-    expect(inquiry).toContain("setItems(removeInquiryItem(item.id))");
-    expect(inquiry).toContain("clearInquiry(); setItems([]);");
+    expect(inquiry).toContain("handleRemove(item.id)");
+    expect(inquiry).toContain("pendingFocusTarget");
+    expect(inquiry).toContain("data-inquiry-empty-focus");
+    expect(inquiry).toContain("useReducedMotion");
+    expect(inquiry).toContain("function handleClear()");
+    expect(inquiry).toContain("clearInquiry();");
+    expect(inquiry).toContain("setItems([]);");
     expect(inquiry).toContain('href="/request-quotation"');
   });
 
@@ -44,12 +49,15 @@ describe("F7 inquiry and quotation conversion polish", () => {
     expect(quotation).toContain('href="/inquiry"');
   });
 
-  it("reveals fieldsets and morphs submission and success states without changing form semantics", () => {
+  it("reveals the form once and morphs submission and success states without changing form semantics", () => {
     const quotation = source("src/features/inquiry/quotation-page.tsx");
 
     expect(quotation).toContain("AnimatePresence");
-    expect(quotation).toContain("motion.fieldset");
-    expect(quotation).toContain('data-motion="quotation-fieldset"');
+    expect(quotation).toContain('data-motion="quotation-form-fields"');
+    expect((quotation.match(/data-quotation-fieldset/g) ?? [])).toHaveLength(3);
+    expect(quotation).not.toContain("motion.fieldset");
+    expect(quotation).not.toContain("whileInView");
+    expect(quotation).toContain("useReducedMotion");
     expect(quotation).toContain("Submitting…");
     expect(quotation).toContain("Submit quotation request");
     expect(quotation).toContain('data-conversion-state={state}');

@@ -23,6 +23,9 @@ describe("F3D search default and preview data", () => {
     const html = renderToStaticMarkup(<SearchDefaultPage />);
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
     expect((html.match(/data-search-family-shortcut=/g) ?? [])).toHaveLength(5);
+    expect((html.match(/data-motion="reveal"/g) ?? [])).toHaveLength(1);
+    expect((html.match(/data-motion="stagger"/g) ?? [])).toHaveLength(1);
+    expect((html.match(/data-motion="stagger-item"/g) ?? [])).toHaveLength(5);
     expect(html).toContain('readOnly=""');
     expect(html).not.toContain("18-0644");
     expect(html).not.toContain("2 results");

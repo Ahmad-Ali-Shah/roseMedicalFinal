@@ -89,7 +89,7 @@ describe("F7 public story and utility polish", () => {
     const html = renderToStaticMarkup(<LegalPage document={document} />);
 
     expect((html.match(/data-legal-section=/g) ?? []).length).toBe(count);
-    expect((html.match(/data-motion="reveal"/g) ?? []).length).toBeGreaterThanOrEqual(count + 1);
+    expect((html.match(/data-motion="reveal"/g) ?? [])).toHaveLength(2);
     expect(html).not.toContain('data-motion="tilt"');
     expect(html).not.toContain('data-motion="stagger"');
     expect(html).not.toContain('data-motion="text-reveal"');
