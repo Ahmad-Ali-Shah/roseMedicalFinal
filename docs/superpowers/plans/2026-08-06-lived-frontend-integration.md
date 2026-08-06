@@ -145,39 +145,46 @@ Expected: the merge commit has two parents and both source tips are ancestors.
 ### Task 3: Add integration hygiene tests
 
 **Files:**
-- Create: `apps/web/src/test/lived-frontend-integration-security.test.ts`
+- Create: `apps/web/src/test/admin-client-configuration.test.ts`
+- Create: `apps/web/src/test/server-only.ts`
 - Modify: `apps/web/src/lib/supabase/admin.ts`
+- Modify: `apps/web/vitest.config.ts`
 - Delete: `.github/workflows/temporary-f7-checkpoint.yml`
 
 **Interfaces:**
 - Consumes: the merged deployment and security boundary
-- Produces: static regression coverage for server-only service-role use, fail-closed configuration, build enforcement, and removal of temporary credential injection
+- Produces: behavioral regression coverage for fail-closed service-role configuration, plus production-build and repository-hygiene verification for the server-only boundary and removal of temporary credential injection
 
 - [ ] **Step 1: Write the failing integration security test**
 
-Create a test that asserts:
+Create a test that stubs both required environment values to empty strings, calls the real factory, and asserts the integration-owned failure:
 
 ```ts
-expect(existsSync(join(repoRoot, ".github/workflows/temporary-f7-checkpoint.yml"))).toBe(false);
-expect(adminClientSource).toContain('import "server-only"');
-expect(adminClientSource).toContain("if (!supabaseUrl || !serviceRoleKey)");
-expect(nextConfigSource).not.toContain("ignoreBuildErrors");
-expect(nextConfigSource).not.toContain("ignoreDuringBuilds");
+vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "");
+vi.stubEnv("SUPABASE_SERVICE_ROLE_KEY", "");
+
+expect(() => createAdminClient()).toThrowError(
+  "Supabase admin client is not configured."
+);
 ```
+
+The production change that makes this test pass is an explicit configuration guard before Supabase client construction. Removing that guard later makes the test fail with the dependency's different error.
 
 - [ ] **Step 2: Run the focused test and verify RED**
 
 Run from `apps/web`:
 
 ```powershell
-pnpm exec vitest run src/test/lived-frontend-integration-security.test.ts
+pnpm exec vitest run src/test/admin-client-configuration.test.ts
 ```
 
-Expected: failure because the temporary workflow still exists and `admin.ts` lacks an explicit server-only/fail-closed guard.
+Expected: assertion failure because `admin.ts` lacks the integration-owned fail-closed guard.
 
 - [ ] **Step 3: Apply the minimal integration corrections**
 
 Delete `.github/workflows/temporary-f7-checkpoint.yml`.
+
+Add an empty `apps/web/src/test/server-only.ts` test adapter and map `server-only` to it in `apps/web/vitest.config.ts`. This keeps the test runner in its Node test context while the real Next.js production build consumes the actual `server-only` marker.
 
 Update `apps/web/src/lib/supabase/admin.ts` to:
 
@@ -204,7 +211,7 @@ export function createAdminClient() {
 Run:
 
 ```powershell
-pnpm exec vitest run src/test/lived-frontend-integration-security.test.ts src/test/minimal-critical-security.test.ts src/test/backend-integration-boundary.test.ts
+pnpm exec vitest run src/test/admin-client-configuration.test.ts src/test/minimal-critical-security.test.ts src/test/backend-integration-boundary.test.ts
 ```
 
 Expected: all focused integration/security tests pass.
@@ -214,7 +221,7 @@ Expected: all focused integration/security tests pass.
 Run:
 
 ```powershell
-git add -A -- .github/workflows/temporary-f7-checkpoint.yml apps/web/src/lib/supabase/admin.ts apps/web/src/test/lived-frontend-integration-security.test.ts
+git add -A -- .github/workflows/temporary-f7-checkpoint.yml apps/web/src/lib/supabase/admin.ts apps/web/vitest.config.ts apps/web/src/test/admin-client-configuration.test.ts apps/web/src/test/server-only.ts
 git commit -m "security: harden merged runtime configuration"
 ```
 
