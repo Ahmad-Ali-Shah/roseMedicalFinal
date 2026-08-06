@@ -1,4 +1,4 @@
-import type { ReactElement, ChangeEvent } from "react";
+import type { ReactElement, ChangeEvent, HTMLAttributes } from "react";
 
 export interface ContactFieldPreviewProps {
   id: string;
@@ -11,6 +11,11 @@ export interface ContactFieldPreviewProps {
   focused?: boolean;
   required?: boolean;
   type?: string;
+  autoComplete?: string;
+  minLength?: number;
+  maxLength?: number;
+  inputMode?: HTMLAttributes<HTMLInputElement>["inputMode"];
+  dir?: "ltr" | "rtl" | "auto";
   readOnly?: boolean;
   onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
@@ -26,6 +31,11 @@ export function ContactFieldPreview({
   focused = false,
   required = false,
   type = "text",
+  autoComplete,
+  minLength,
+  maxLength,
+  inputMode,
+  dir,
   readOnly = false,
   onChange
 }: ContactFieldPreviewProps): ReactElement {
@@ -48,6 +58,10 @@ export function ContactFieldPreview({
           readOnly={readOnly}
           rows={6}
           required={required}
+          autoComplete={autoComplete}
+          minLength={minLength}
+          maxLength={maxLength}
+          dir={dir}
           onChange={onChange}
           aria-invalid={error ? true : undefined}
           aria-describedby={errorId}
@@ -61,6 +75,11 @@ export function ContactFieldPreview({
           readOnly={readOnly}
           type={type}
           required={required}
+          autoComplete={autoComplete}
+          minLength={minLength}
+          maxLength={maxLength}
+          inputMode={inputMode}
+          dir={dir}
           onChange={onChange}
           aria-invalid={error ? true : undefined}
           aria-describedby={errorId}

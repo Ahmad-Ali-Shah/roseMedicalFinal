@@ -16,7 +16,7 @@ describe("F3E-B product selectors", () => {
   });
 
   it("preserves source identity and uses real route helpers", () => {
-    const source = CATALOGUE_PRODUCTS[0];
+    const source = CATALOGUE_PRODUCTS[0]!;
     const row = getAdminProductRows().at(0);
     expect(row).toBeDefined();
     expect(row!).toMatchObject({
@@ -34,12 +34,12 @@ describe("F3E-B product selectors", () => {
     for (const product of CATALOGUE_PRODUCTS) {
       expect(getAdminProductEditor(product.familySlug, product.slug)?.product.id).toBe(product.id);
     }
-    const product = CATALOGUE_PRODUCTS[0];
+    const product = CATALOGUE_PRODUCTS[0]!;
     expect(getAdminProductEditor("scissors", product.slug)).toBeUndefined();
   });
 
   it("deduplicates documented options and provides an explicit fallback", () => {
-    const source = CATALOGUE_PRODUCTS[0];
+    const source = CATALOGUE_PRODUCTS[0]!;
     expect(getDocumentedOptionSummary(source).length).toBeGreaterThan(0);
     expect(getDocumentedOptionSummary({
       id: source.id,
@@ -47,7 +47,7 @@ describe("F3E-B product selectors", () => {
       slug: source.slug,
       name: source.name,
       code: source.code,
-      description: source.description,
+      ...(source.description ? { description: source.description } : {}),
       sizes: [],
       variants: [],
       directions: [],

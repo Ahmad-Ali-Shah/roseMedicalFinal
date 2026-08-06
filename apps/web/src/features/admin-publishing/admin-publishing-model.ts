@@ -40,6 +40,6 @@ export function getAdminPublishingModel() {
     domains: PUBLISHABLE_DOMAINS,
     excludedSystems: NON_PUBLISHABLE_SYSTEMS,
     sensitiveRules: SENSITIVE_REVIEW_RULES,
-    blockers: ADMIN_READINESS_ITEMS
+    blockers: ADMIN_READINESS_ITEMS.filter((item) => item.status !== "Implemented")
   } as const;
 }

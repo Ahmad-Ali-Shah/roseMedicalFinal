@@ -64,12 +64,12 @@
   padding: var(--space-6);
   border: 1px solid var(--color-border);
   background: var(--color-warm-white);
-}
-
-.catalogue-document-card--featured {
-  border-color: var(--color-ink);
-  background: var(--color-ink);
-  color: var(--color-paper);
+  color: var(--color-ink);
+  transition:
+    background-color var(--motion-component) var(--motion-ease),
+    border-color var(--motion-component) var(--motion-ease),
+    color var(--motion-component) var(--motion-ease),
+    box-shadow var(--motion-component) var(--motion-ease);
 }
 
 .catalogue-document-cover {
@@ -83,7 +83,15 @@
   color: var(--color-ink);
 }
 
-.catalogue-document-card--featured .catalogue-document-cover {
+.catalogue-document-card:hover,
+.catalogue-document-card:focus-within {
+  border-color: var(--color-ink);
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+
+.catalogue-document-card:hover .catalogue-document-cover,
+.catalogue-document-card:focus-within .catalogue-document-cover {
   border-color: var(--color-rosa-red);
   background: var(--color-rosa-red);
   color: var(--color-paper);
@@ -108,7 +116,8 @@
   color: var(--color-steel);
 }
 
-.catalogue-document-card--featured .catalogue-document-cover__format {
+.catalogue-document-card:hover .catalogue-document-cover__format,
+.catalogue-document-card:focus-within .catalogue-document-cover__format {
   color: inherit;
 }
 
@@ -133,10 +142,25 @@
   color: var(--color-steel);
 }
 
-.catalogue-document-card--featured .catalogue-document-card__description,
-.catalogue-document-card--featured .catalogue-document-card__status,
-.catalogue-document-card--featured .catalogue-document-card__pdf-note {
+.catalogue-document-card:hover .catalogue-document-card__description,
+.catalogue-document-card:hover .catalogue-document-card__status,
+.catalogue-document-card:hover .catalogue-document-card__pdf-note,
+.catalogue-document-card:focus-within .catalogue-document-card__description,
+.catalogue-document-card:focus-within .catalogue-document-card__status,
+.catalogue-document-card:focus-within .catalogue-document-card__pdf-note {
   color: var(--color-paper);
+}
+
+.catalogue-document-card:hover .button--secondary,
+.catalogue-document-card:focus-within .button--secondary {
+  border-color: var(--color-paper);
+  color: var(--color-paper);
+}
+
+.catalogue-document-card:hover .button--secondary:not(:disabled):hover,
+.catalogue-document-card:focus-within .button--secondary:not(:disabled):hover {
+  background: var(--color-paper);
+  color: var(--color-ink);
 }
 
 .catalogue-document-card__status {

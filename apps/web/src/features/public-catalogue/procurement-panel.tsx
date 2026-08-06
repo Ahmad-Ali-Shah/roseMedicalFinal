@@ -1,7 +1,7 @@
-import Link from "next/link";
 import type { Route } from "next";
 import type { ReactElement } from "react";
-import { ButtonLink } from "@/components/ui/button";
+import { Magnetic } from "@/features/motion";
+import { LocaleLink, LocalizedButtonLink } from "@/features/localization";
 
 export interface ProcurementPanelProps<
   TPrimary extends string,
@@ -36,8 +36,10 @@ export function ProcurementPanel<
         <p className="procurement-panel__copy">{copy}</p>
       </div>
       <div className="procurement-panel__actions">
-        <ButtonLink<TPrimary> href={primary.href}>{primary.label}</ButtonLink>
-        {secondary ? <Link className="text-link" href={secondary.href}>{secondary.label}</Link> : null}
+        <Magnetic>
+          <LocalizedButtonLink href={primary.href}>{primary.label}</LocalizedButtonLink>
+        </Magnetic>
+        {secondary ? <LocaleLink className="text-link" href={secondary.href}>{secondary.label}</LocaleLink> : null}
       </div>
     </div>
   );

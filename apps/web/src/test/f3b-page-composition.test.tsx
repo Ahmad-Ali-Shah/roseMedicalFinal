@@ -1,17 +1,30 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
+import { CATALOGUE_PRODUCTS } from "@/features/catalogue-registry";
 import { FamilyListingPage } from "@/features/family-listing/family-listing-page";
 import { ProductDetailPage } from "@/features/product-detail/product-detail-page";
 
+const FAMILY_SLUGS = [
+  "knives",
+  "scissors",
+  "punches",
+  "chisels",
+  "cutters"
+] as const;
+
 describe("F3B family composition", () => {
-  it.each(["knives", "scissors", "punches", "chisels", "cutters"])(
-    "renders the %s family with one h1 and four products",
+  it.each(FAMILY_SLUGS)(
+    "renders the complete %s family inventory with one h1",
     (familySlug) => {
       const html = renderToStaticMarkup(<FamilyListingPage familySlug={familySlug} />);
+      const expectedCount = CATALOGUE_PRODUCTS.filter(
+        (product) => product.familySlug === familySlug
+      ).length;
+
       expect((html.match(/<h1/g) || [])).toHaveLength(1);
-      expect((html.match(/data-product-card=/g) || [])).toHaveLength(4);
+      expect((html.match(/data-product-card=/g) || [])).toHaveLength(expectedCount);
       expect(html).not.toContain("<form");
-      expect(html).not.toMatch(/in stock|checkout|rating|certified/i);
+      expect(html).not.toMatch(/\bin stock\b|\bcheckout\b|\brating\b|\bcertified\b/i);
     }
   );
 });

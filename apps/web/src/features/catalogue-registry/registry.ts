@@ -10,11 +10,11 @@ const familyBySlug = new Map(
   CATALOGUE_FAMILIES.map((family) => [family.slug, family] as const)
 );
 
-const productByRoute = new Map(
+const productByRoute = new Map<string, CatalogueProductRecord>(
   CATALOGUE_PRODUCTS.map((product) => [
     `${product.familySlug}/${product.slug}`,
     product
-  ] as const)
+  ])
 );
 
 function assertRegistryIntegrity(): void {

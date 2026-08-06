@@ -1,12 +1,28 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { requireApiOwner } from "@/lib/supabase/api-auth";
+
+interface InquiryUpdateRequest {
+  id: string;
+  status: string;
+  date?: string;
+}
+
+interface InquiryUpdateData {
+  status: string;
+  appointment_date?: string;
+  notification: string;
+}
 
 export async function POST(req: Request) {
   try {
-    const supabase = await createClient();
-    const { id, status, date } = await req.json();
+    const auth = await requireApiOwner();
+    if (!auth.ok) return auth.response;
 
-    const updateData: any = { status: status };
+    const { id, status, date } = await req.json() as InquiryUpdateRequest;
+    const updateData: InquiryUpdateData = {
+      status,
+      notification: `Status updated to ${status}`
+    };
 
     if (status === "Contacted" && date) {
       updateData.appointment_date = date;
@@ -15,11 +31,9 @@ export async function POST(req: Request) {
       updateData.notification = "Inquiry declined and closed";
     } else if (status === "Reviewed") {
       updateData.notification = "Inquiry reviewed";
-    } else {
-      updateData.notification = `Status updated to ${status}`;
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await auth.supabase
       .from("quote_requests")
       .update(updateData)
       .eq("id", id)
@@ -28,7 +42,7 @@ export async function POST(req: Request) {
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     return NextResponse.json(data);
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

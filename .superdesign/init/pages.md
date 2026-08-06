@@ -1,0 +1,1171 @@
+# Key Page Dependency Trees
+
+These trees trace local imports recursively. Repeated files are marked after their first expansion in each route tree. Shared `RootLayout -> PublicLayout -> PublicShell` applies to every public route.
+
+## / (Homepage)
+
+- Entry: `apps/web/src/features/homepage/homepage.tsx`
+- Summary: Six-section public landing page: hero, family discovery, procurement, featured instruments, catalogues, quotation CTA.
+- Dependencies:
+- apps/web/src/features/homepage/homepage.tsx
+  - apps/web/src/features/homepage/homepage.data.ts
+    - apps/web/src/features/public-catalogue/index.ts
+      - apps/web/src/features/public-catalogue/models.ts
+      - apps/web/src/features/public-catalogue/selectors.ts
+        - apps/web/src/features/public-catalogue/models.ts (already traced)
+      - apps/web/src/features/public-catalogue/section-heading.tsx
+        - apps/web/src/features/motion/index.ts
+          - apps/web/src/features/motion/motion.config.ts
+            - apps/web/src/features/motion/types.ts
+          - apps/web/src/features/motion/types.ts (already traced)
+          - apps/web/src/features/motion/motion-provider.tsx
+            - apps/web/src/features/motion/motion.config.ts (already traced)
+          - apps/web/src/features/motion/reveal.tsx
+            - apps/web/src/features/motion/motion.config.ts (already traced)
+            - apps/web/src/features/motion/types.ts (already traced)
+          - apps/web/src/features/motion/stagger.tsx
+            - apps/web/src/features/motion/motion.config.ts (already traced)
+          - apps/web/src/features/motion/text-reveal.tsx
+            - apps/web/src/features/motion/motion.config.ts (already traced)
+          - apps/web/src/features/motion/magnetic.tsx
+          - apps/web/src/features/motion/tilt-surface.tsx
+          - apps/web/src/features/motion/spotlight-surface.tsx
+          - apps/web/src/features/motion/progressive-blur.tsx
+          - apps/web/src/features/motion/media-frame.tsx
+          - apps/web/src/features/motion/scroll-header-controller.tsx
+          - apps/web/src/features/motion/route-transition.tsx
+            - apps/web/src/features/motion/motion.config.ts (already traced)
+      - apps/web/src/features/public-catalogue/product-media-placeholder.tsx
+      - apps/web/src/features/public-catalogue/family-card.tsx
+        - apps/web/src/features/motion/index.ts (already traced)
+        - apps/web/src/features/public-catalogue/models.ts (already traced)
+        - apps/web/src/features/public-catalogue/product-media-placeholder.tsx (already traced)
+      - apps/web/src/features/public-catalogue/product-preview-card.tsx
+        - apps/web/src/features/motion/index.ts (already traced)
+        - apps/web/src/features/public-catalogue/models.ts (already traced)
+        - apps/web/src/features/public-catalogue/product-media-placeholder.tsx (already traced)
+      - apps/web/src/features/public-catalogue/procurement-panel.tsx
+        - apps/web/src/components/ui/button.tsx
+        - apps/web/src/features/motion/index.ts (already traced)
+    - apps/web/src/features/public-content-registry/index.ts
+      - apps/web/src/features/public-content-registry/public-content-values.ts
+      - apps/web/src/features/public-content-registry/public-content-registry.ts
+        - apps/web/src/features/public-content-registry/public-content-values.ts (already traced)
+  - apps/web/src/features/homepage/sections/home-hero.tsx
+    - apps/web/src/components/ui/button.tsx (already traced)
+    - apps/web/src/components/layout/index.ts
+      - apps/web/src/components/layout/container.tsx
+      - apps/web/src/components/layout/grid.tsx
+      - apps/web/src/components/layout/section.tsx
+      - apps/web/src/components/layout/stack.tsx
+    - apps/web/src/features/motion/index.ts (already traced)
+    - apps/web/src/features/homepage/homepage.data.ts (already traced)
+  - apps/web/src/features/homepage/sections/family-discovery.tsx
+    - apps/web/src/components/layout/index.ts (already traced)
+    - apps/web/src/features/motion/index.ts (already traced)
+    - apps/web/src/features/public-catalogue/index.ts (already traced)
+    - apps/web/src/features/homepage/homepage.data.ts (already traced)
+  - apps/web/src/features/homepage/sections/procurement-support.tsx
+    - apps/web/src/components/layout/index.ts (already traced)
+    - apps/web/src/features/motion/index.ts (already traced)
+    - apps/web/src/features/public-catalogue/index.ts (already traced)
+    - apps/web/src/features/homepage/homepage.data.ts (already traced)
+  - apps/web/src/features/homepage/sections/featured-instruments.tsx
+    - apps/web/src/components/layout/index.ts (already traced)
+    - apps/web/src/features/motion/index.ts (already traced)
+    - apps/web/src/features/public-catalogue/index.ts (already traced)
+    - apps/web/src/features/homepage/homepage.data.ts (already traced)
+  - apps/web/src/features/homepage/sections/catalogue-access.tsx
+    - apps/web/src/components/layout/index.ts (already traced)
+    - apps/web/src/features/motion/index.ts (already traced)
+    - apps/web/src/features/public-catalogue/index.ts (already traced)
+    - apps/web/src/features/homepage/homepage.data.ts (already traced)
+  - apps/web/src/features/homepage/sections/quotation-cta.tsx
+    - apps/web/src/components/layout/index.ts (already traced)
+    - apps/web/src/features/motion/index.ts (already traced)
+    - apps/web/src/features/public-catalogue/index.ts (already traced)
+    - apps/web/src/features/homepage/homepage.data.ts (already traced)
+
+## /products
+
+- Entry: `apps/web/src/features/products/products-overview.tsx`
+- Summary: Product discovery overview.
+- Dependencies:
+- apps/web/src/features/products/products-overview.tsx
+  - apps/web/src/features/products/products.data.ts
+    - apps/web/src/features/public-catalogue/index.ts
+      - apps/web/src/features/public-catalogue/models.ts
+      - apps/web/src/features/public-catalogue/selectors.ts
+        - apps/web/src/features/public-catalogue/models.ts (already traced)
+      - apps/web/src/features/public-catalogue/section-heading.tsx
+        - apps/web/src/features/motion/index.ts
+          - apps/web/src/features/motion/motion.config.ts
+            - apps/web/src/features/motion/types.ts
+          - apps/web/src/features/motion/types.ts (already traced)
+          - apps/web/src/features/motion/motion-provider.tsx
+            - apps/web/src/features/motion/motion.config.ts (already traced)
+          - apps/web/src/features/motion/reveal.tsx
+            - apps/web/src/features/motion/motion.config.ts (already traced)
+            - apps/web/src/features/motion/types.ts (already traced)
+          - apps/web/src/features/motion/stagger.tsx
+            - apps/web/src/features/motion/motion.config.ts (already traced)
+          - apps/web/src/features/motion/text-reveal.tsx
+            - apps/web/src/features/motion/motion.config.ts (already traced)
+          - apps/web/src/features/motion/magnetic.tsx
+          - apps/web/src/features/motion/tilt-surface.tsx
+          - apps/web/src/features/motion/spotlight-surface.tsx
+          - apps/web/src/features/motion/progressive-blur.tsx
+          - apps/web/src/features/motion/media-frame.tsx
+          - apps/web/src/features/motion/scroll-header-controller.tsx
+          - apps/web/src/features/motion/route-transition.tsx
+            - apps/web/src/features/motion/motion.config.ts (already traced)
+      - apps/web/src/features/public-catalogue/product-media-placeholder.tsx
+      - apps/web/src/features/public-catalogue/family-card.tsx
+        - apps/web/src/features/motion/index.ts (already traced)
+        - apps/web/src/features/public-catalogue/models.ts (already traced)
+        - apps/web/src/features/public-catalogue/product-media-placeholder.tsx (already traced)
+      - apps/web/src/features/public-catalogue/product-preview-card.tsx
+        - apps/web/src/features/motion/index.ts (already traced)
+        - apps/web/src/features/public-catalogue/models.ts (already traced)
+        - apps/web/src/features/public-catalogue/product-media-placeholder.tsx (already traced)
+      - apps/web/src/features/public-catalogue/procurement-panel.tsx
+        - apps/web/src/components/ui/button.tsx
+        - apps/web/src/features/motion/index.ts (already traced)
+  - apps/web/src/features/products/sections/products-hero.tsx
+    - apps/web/src/components/layout/index.ts
+      - apps/web/src/components/layout/container.tsx
+      - apps/web/src/components/layout/grid.tsx
+      - apps/web/src/components/layout/section.tsx
+      - apps/web/src/components/layout/stack.tsx
+    - apps/web/src/features/motion/index.ts (already traced)
+    - apps/web/src/features/products/products.data.ts (already traced)
+  - apps/web/src/features/products/sections/discovery-toolbar-shell.tsx
+    - apps/web/src/components/layout/index.ts (already traced)
+    - apps/web/src/features/products/products.data.ts (already traced)
+  - apps/web/src/features/products/sections/family-index.tsx
+    - apps/web/src/components/layout/index.ts (already traced)
+    - apps/web/src/features/motion/index.ts (already traced)
+    - apps/web/src/features/public-catalogue/index.ts (already traced)
+    - apps/web/src/features/products/products.data.ts (already traced)
+  - apps/web/src/features/products/sections/product-preview-grid.tsx
+    - apps/web/src/components/layout/index.ts (already traced)
+    - apps/web/src/features/motion/index.ts (already traced)
+    - apps/web/src/features/public-catalogue/index.ts (already traced)
+    - apps/web/src/features/products/products.data.ts (already traced)
+  - apps/web/src/features/products/sections/catalogue-support.tsx
+    - apps/web/src/components/layout/index.ts (already traced)
+    - apps/web/src/features/products/products.data.ts (already traced)
+  - apps/web/src/features/products/sections/products-procurement-cta.tsx
+    - apps/web/src/components/layout/index.ts (already traced)
+    - apps/web/src/features/public-catalogue/index.ts (already traced)
+    - apps/web/src/features/products/products.data.ts (already traced)
+
+## /products/[family]
+
+- Entry: `apps/web/src/features/family-listing/family-listing-page.tsx`
+- Summary: Family catalogue with hero, filtering shell, and product grid.
+- Dependencies:
+- apps/web/src/features/family-listing/family-listing-page.tsx
+  - apps/web/src/components/layout/index.ts
+    - apps/web/src/components/layout/container.tsx
+    - apps/web/src/components/layout/grid.tsx
+    - apps/web/src/components/layout/section.tsx
+    - apps/web/src/components/layout/stack.tsx
+  - apps/web/src/features/family-listing/family-listing.data.ts
+    - apps/web/src/features/catalogue-registry/index.ts
+      - apps/web/src/features/catalogue-registry/types.ts
+        - apps/web/src/features/public-catalogue/index.ts
+          - apps/web/src/features/public-catalogue/models.ts
+          - apps/web/src/features/public-catalogue/selectors.ts
+            - apps/web/src/features/public-catalogue/models.ts (already traced)
+          - apps/web/src/features/public-catalogue/section-heading.tsx
+            - apps/web/src/features/motion/index.ts
+              - apps/web/src/features/motion/motion.config.ts
+                - apps/web/src/features/motion/types.ts
+              - apps/web/src/features/motion/types.ts (already traced)
+              - apps/web/src/features/motion/motion-provider.tsx
+                - apps/web/src/features/motion/motion.config.ts (already traced)
+              - apps/web/src/features/motion/reveal.tsx
+                - apps/web/src/features/motion/motion.config.ts (already traced)
+                - apps/web/src/features/motion/types.ts (already traced)
+              - apps/web/src/features/motion/stagger.tsx
+                - apps/web/src/features/motion/motion.config.ts (already traced)
+              - apps/web/src/features/motion/text-reveal.tsx
+                - apps/web/src/features/motion/motion.config.ts (already traced)
+              - apps/web/src/features/motion/magnetic.tsx
+              - apps/web/src/features/motion/tilt-surface.tsx
+              - apps/web/src/features/motion/spotlight-surface.tsx
+              - apps/web/src/features/motion/progressive-blur.tsx
+              - apps/web/src/features/motion/media-frame.tsx
+              - apps/web/src/features/motion/scroll-header-controller.tsx
+              - apps/web/src/features/motion/route-transition.tsx
+                - apps/web/src/features/motion/motion.config.ts (already traced)
+          - apps/web/src/features/public-catalogue/product-media-placeholder.tsx
+          - apps/web/src/features/public-catalogue/family-card.tsx
+            - apps/web/src/features/motion/index.ts (already traced)
+            - apps/web/src/features/public-catalogue/models.ts (already traced)
+            - apps/web/src/features/public-catalogue/product-media-placeholder.tsx (already traced)
+          - apps/web/src/features/public-catalogue/product-preview-card.tsx
+            - apps/web/src/features/motion/index.ts (already traced)
+            - apps/web/src/features/public-catalogue/models.ts (already traced)
+            - apps/web/src/features/public-catalogue/product-media-placeholder.tsx (already traced)
+          - apps/web/src/features/public-catalogue/procurement-panel.tsx
+            - apps/web/src/components/ui/button.tsx
+            - apps/web/src/features/motion/index.ts (already traced)
+      - apps/web/src/features/catalogue-registry/families.ts
+        - apps/web/src/features/catalogue-registry/types.ts (already traced)
+      - apps/web/src/features/catalogue-registry/products/index.ts
+        - apps/web/src/features/catalogue-registry/products/knives.ts
+          - apps/web/src/features/catalogue-media/index.ts
+            - apps/web/src/features/catalogue-media/types.ts
+            - apps/web/src/features/catalogue-media/validation.ts
+              - apps/web/src/features/catalogue-media/types.ts (already traced)
+            - apps/web/src/features/catalogue-media/scissors-batch-01-combined.ts
+              - apps/web/src/features/catalogue-media/types.ts (already traced)
+              - apps/web/src/features/catalogue-media/scissors-batch-01.ts
+                - apps/web/src/features/catalogue-media/types.ts (already traced)
+              - apps/web/src/features/catalogue-media/scissors-batch-01-operating.ts
+                - apps/web/src/features/catalogue-media/types.ts (already traced)
+            - apps/web/src/features/catalogue-media/scissors-batch-01-operating.ts (already traced)
+            - apps/web/src/features/catalogue-media/chisels-batch-01.ts
+              - apps/web/src/features/catalogue-media/types.ts (already traced)
+            - apps/web/src/features/catalogue-media/cutters-batch-01.ts
+              - apps/web/src/features/catalogue-media/types.ts (already traced)
+            - apps/web/src/features/catalogue-media/knives-batch-01-approved.ts
+              - apps/web/src/features/catalogue-media/types.ts (already traced)
+              - apps/web/src/features/catalogue-media/knives-batch-01.ts
+                - apps/web/src/features/catalogue-media/types.ts (already traced)
+            - apps/web/src/features/catalogue-media/punches-batch-01.ts
+              - apps/web/src/features/catalogue-media/types.ts (already traced)
+          - apps/web/src/features/catalogue-registry/types.ts (already traced)
+          - apps/web/src/features/catalogue-registry/products/knives-batch-01.ts
+        - apps/web/src/features/catalogue-registry/products/scissors.ts
+          - apps/web/src/features/catalogue-media/index.ts (already traced)
+          - apps/web/src/features/catalogue-registry/types.ts (already traced)
+          - apps/web/src/features/catalogue-registry/products/scissors-batch-01.ts
+        - apps/web/src/features/catalogue-registry/products/punches.ts
+          - apps/web/src/features/catalogue-media/index.ts (already traced)
+          - apps/web/src/features/catalogue-registry/types.ts (already traced)
+          - apps/web/src/features/catalogue-registry/products/punches-batch-01.ts
+        - apps/web/src/features/catalogue-registry/products/chisels.ts
+          - apps/web/src/features/catalogue-media/index.ts (already traced)
+          - apps/web/src/features/catalogue-registry/types.ts (already traced)
+          - apps/web/src/features/catalogue-registry/products/chisels-batch-01.ts
+        - apps/web/src/features/catalogue-registry/products/cutters.ts
+          - apps/web/src/features/catalogue-media/index.ts (already traced)
+          - apps/web/src/features/catalogue-registry/types.ts (already traced)
+          - apps/web/src/features/catalogue-registry/products/cutters-batch-01.ts
+      - apps/web/src/features/catalogue-registry/registry.ts
+        - apps/web/src/features/public-catalogue/index.ts (already traced)
+        - apps/web/src/features/catalogue-registry/families.ts (already traced)
+        - apps/web/src/features/catalogue-registry/products/index.ts (already traced)
+        - apps/web/src/features/catalogue-registry/types.ts (already traced)
+  - apps/web/src/features/family-listing/family-hero.tsx
+    - apps/web/src/features/catalogue-registry/index.ts (already traced)
+    - apps/web/src/features/motion/index.ts (already traced)
+    - apps/web/src/features/public-catalogue/index.ts (already traced)
+  - apps/web/src/features/family-listing/family-discovery-shell.tsx
+  - apps/web/src/features/family-listing/family-filter-preview.tsx
+  - apps/web/src/features/family-listing/family-product-grid.tsx
+    - apps/web/src/features/catalogue-registry/index.ts (already traced)
+    - apps/web/src/features/motion/index.ts (already traced)
+    - apps/web/src/features/family-listing/family-product-card.tsx
+      - apps/web/src/features/catalogue-registry/index.ts (already traced)
+      - apps/web/src/features/motion/index.ts (already traced)
+      - apps/web/src/features/public-catalogue/index.ts (already traced)
+  - apps/web/src/features/family-listing/family-loading-state.tsx
+  - apps/web/src/features/family-listing/family-no-results-state.tsx
+  - apps/web/src/features/family-listing/family-support-panel.tsx
+    - apps/web/src/features/public-catalogue/index.ts (already traced)
+
+## /products/[family]/[product]
+
+- Entry: `apps/web/src/features/product-detail/product-detail-page.tsx`
+- Summary: Product gallery, specifications, procurement summary, and related products.
+- Dependencies:
+- apps/web/src/features/product-detail/product-detail-page.tsx
+  - apps/web/src/components/layout/index.ts
+    - apps/web/src/components/layout/container.tsx
+    - apps/web/src/components/layout/grid.tsx
+    - apps/web/src/components/layout/section.tsx
+    - apps/web/src/components/layout/stack.tsx
+  - apps/web/src/features/inquiry/index.ts
+    - apps/web/src/features/inquiry/add-to-inquiry-button.tsx
+      - apps/web/src/features/inquiry/inquiry-store.ts
+    - apps/web/src/features/inquiry/inquiry-page.tsx
+      - apps/web/src/components/layout/index.ts (already traced)
+      - apps/web/src/features/inquiry-preview/index.ts
+        - apps/web/src/features/inquiry-preview/inquiry-preview-model.ts
+          - apps/web/src/features/catalogue-registry/index.ts
+            - apps/web/src/features/catalogue-registry/types.ts
+              - apps/web/src/features/public-catalogue/index.ts
+                - apps/web/src/features/public-catalogue/models.ts
+                - apps/web/src/features/public-catalogue/selectors.ts
+                  - apps/web/src/features/public-catalogue/models.ts (already traced)
+                - apps/web/src/features/public-catalogue/section-heading.tsx
+                  - apps/web/src/features/motion/index.ts
+                    - apps/web/src/features/motion/motion.config.ts
+                      - apps/web/src/features/motion/types.ts
+                    - apps/web/src/features/motion/types.ts (already traced)
+                    - apps/web/src/features/motion/motion-provider.tsx
+                      - apps/web/src/features/motion/motion.config.ts (already traced)
+                    - apps/web/src/features/motion/reveal.tsx
+                      - apps/web/src/features/motion/motion.config.ts (already traced)
+                      - apps/web/src/features/motion/types.ts (already traced)
+                    - apps/web/src/features/motion/stagger.tsx
+                      - apps/web/src/features/motion/motion.config.ts (already traced)
+                    - apps/web/src/features/motion/text-reveal.tsx
+                      - apps/web/src/features/motion/motion.config.ts (already traced)
+                    - apps/web/src/features/motion/magnetic.tsx
+                    - apps/web/src/features/motion/tilt-surface.tsx
+                    - apps/web/src/features/motion/spotlight-surface.tsx
+                    - apps/web/src/features/motion/progressive-blur.tsx
+                    - apps/web/src/features/motion/media-frame.tsx
+                    - apps/web/src/features/motion/scroll-header-controller.tsx
+                    - apps/web/src/features/motion/route-transition.tsx
+                      - apps/web/src/features/motion/motion.config.ts (already traced)
+                - apps/web/src/features/public-catalogue/product-media-placeholder.tsx
+                - apps/web/src/features/public-catalogue/family-card.tsx
+                  - apps/web/src/features/motion/index.ts (already traced)
+                  - apps/web/src/features/public-catalogue/models.ts (already traced)
+                  - apps/web/src/features/public-catalogue/product-media-placeholder.tsx (already traced)
+                - apps/web/src/features/public-catalogue/product-preview-card.tsx
+                  - apps/web/src/features/motion/index.ts (already traced)
+                  - apps/web/src/features/public-catalogue/models.ts (already traced)
+                  - apps/web/src/features/public-catalogue/product-media-placeholder.tsx (already traced)
+                - apps/web/src/features/public-catalogue/procurement-panel.tsx
+                  - apps/web/src/components/ui/button.tsx
+                  - apps/web/src/features/motion/index.ts (already traced)
+            - apps/web/src/features/catalogue-registry/families.ts
+              - apps/web/src/features/catalogue-registry/types.ts (already traced)
+            - apps/web/src/features/catalogue-registry/products/index.ts
+              - apps/web/src/features/catalogue-registry/products/knives.ts
+                - apps/web/src/features/catalogue-media/index.ts
+                  - apps/web/src/features/catalogue-media/types.ts
+                  - apps/web/src/features/catalogue-media/validation.ts
+                    - apps/web/src/features/catalogue-media/types.ts (already traced)
+                  - apps/web/src/features/catalogue-media/scissors-batch-01-combined.ts
+                    - apps/web/src/features/catalogue-media/types.ts (already traced)
+                    - apps/web/src/features/catalogue-media/scissors-batch-01.ts
+                      - apps/web/src/features/catalogue-media/types.ts (already traced)
+                    - apps/web/src/features/catalogue-media/scissors-batch-01-operating.ts
+                      - apps/web/src/features/catalogue-media/types.ts (already traced)
+                  - apps/web/src/features/catalogue-media/scissors-batch-01-operating.ts (already traced)
+                  - apps/web/src/features/catalogue-media/chisels-batch-01.ts
+                    - apps/web/src/features/catalogue-media/types.ts (already traced)
+                  - apps/web/src/features/catalogue-media/cutters-batch-01.ts
+                    - apps/web/src/features/catalogue-media/types.ts (already traced)
+                  - apps/web/src/features/catalogue-media/knives-batch-01-approved.ts
+                    - apps/web/src/features/catalogue-media/types.ts (already traced)
+                    - apps/web/src/features/catalogue-media/knives-batch-01.ts
+                      - apps/web/src/features/catalogue-media/types.ts (already traced)
+                  - apps/web/src/features/catalogue-media/punches-batch-01.ts
+                    - apps/web/src/features/catalogue-media/types.ts (already traced)
+                - apps/web/src/features/catalogue-registry/types.ts (already traced)
+                - apps/web/src/features/catalogue-registry/products/knives-batch-01.ts
+              - apps/web/src/features/catalogue-registry/products/scissors.ts
+                - apps/web/src/features/catalogue-media/index.ts (already traced)
+                - apps/web/src/features/catalogue-registry/types.ts (already traced)
+                - apps/web/src/features/catalogue-registry/products/scissors-batch-01.ts
+              - apps/web/src/features/catalogue-registry/products/punches.ts
+                - apps/web/src/features/catalogue-media/index.ts (already traced)
+                - apps/web/src/features/catalogue-registry/types.ts (already traced)
+                - apps/web/src/features/catalogue-registry/products/punches-batch-01.ts
+              - apps/web/src/features/catalogue-registry/products/chisels.ts
+                - apps/web/src/features/catalogue-media/index.ts (already traced)
+                - apps/web/src/features/catalogue-registry/types.ts (already traced)
+                - apps/web/src/features/catalogue-registry/products/chisels-batch-01.ts
+              - apps/web/src/features/catalogue-registry/products/cutters.ts
+                - apps/web/src/features/catalogue-media/index.ts (already traced)
+                - apps/web/src/features/catalogue-registry/types.ts (already traced)
+                - apps/web/src/features/catalogue-registry/products/cutters-batch-01.ts
+            - apps/web/src/features/catalogue-registry/registry.ts
+              - apps/web/src/features/public-catalogue/index.ts (already traced)
+              - apps/web/src/features/catalogue-registry/families.ts (already traced)
+              - apps/web/src/features/catalogue-registry/products/index.ts (already traced)
+              - apps/web/src/features/catalogue-registry/types.ts (already traced)
+        - apps/web/src/features/inquiry-preview/inquiry-line-preview.tsx
+          - apps/web/src/features/public-catalogue/index.ts (already traced)
+          - apps/web/src/features/inquiry-preview/inquiry-preview-model.ts (already traced)
+        - apps/web/src/features/inquiry-preview/inquiry-summary-preview.tsx
+          - apps/web/src/components/ui/index.ts
+            - apps/web/src/components/ui/alert.tsx
+            - apps/web/src/components/ui/button.tsx (already traced)
+            - apps/web/src/components/ui/card.tsx
+            - apps/web/src/components/ui/field.tsx
+            - apps/web/src/components/ui/status.tsx
+          - apps/web/src/features/inquiry-preview/inquiry-preview-model.ts (already traced)
+        - apps/web/src/features/inquiry-preview/general-request-preview.tsx
+          - apps/web/src/components/ui/index.ts (already traced)
+        - apps/web/src/features/inquiry-preview/populated-inquiry-preview.tsx
+          - apps/web/src/components/layout/index.ts (already traced)
+          - apps/web/src/components/ui/index.ts (already traced)
+          - apps/web/src/features/inquiry-preview/general-request-preview.tsx (already traced)
+          - apps/web/src/features/inquiry-preview/inquiry-line-preview.tsx (already traced)
+          - apps/web/src/features/inquiry-preview/inquiry-preview-model.ts (already traced)
+          - apps/web/src/features/inquiry-preview/inquiry-summary-preview.tsx (already traced)
+        - apps/web/src/features/inquiry-preview/empty-inquiry-page.tsx
+          - apps/web/src/components/layout/index.ts (already traced)
+          - apps/web/src/components/ui/index.ts (already traced)
+          - apps/web/src/features/public-catalogue/index.ts (already traced)
+      - apps/web/src/features/inquiry/inquiry-store.ts (already traced)
+    - apps/web/src/features/inquiry/quotation-page.tsx
+      - apps/web/src/components/layout/index.ts (already traced)
+      - apps/web/src/features/quotation-preview/index.ts
+        - apps/web/src/features/quotation-preview/quotation-field-preview.tsx
+        - apps/web/src/features/quotation-preview/quotation-product-summary.tsx
+          - apps/web/src/features/public-catalogue/index.ts (already traced)
+          - apps/web/src/features/inquiry-preview/index.ts (already traced)
+        - apps/web/src/features/quotation-preview/quotation-validation-preview.tsx
+          - apps/web/src/features/quotation-preview/quotation-field-preview.tsx (already traced)
+        - apps/web/src/features/quotation-preview/quotation-failure-preview.tsx
+          - apps/web/src/components/ui/index.ts (already traced)
+        - apps/web/src/features/quotation-preview/quotation-form-preview.tsx
+          - apps/web/src/components/ui/index.ts (already traced)
+          - apps/web/src/features/quotation-preview/quotation-failure-preview.tsx (already traced)
+          - apps/web/src/features/quotation-preview/quotation-field-preview.tsx (already traced)
+          - apps/web/src/features/quotation-preview/quotation-product-summary.tsx (already traced)
+          - apps/web/src/features/quotation-preview/quotation-validation-preview.tsx (already traced)
+        - apps/web/src/features/quotation-preview/quotation-success-preview.tsx
+          - apps/web/src/components/ui/index.ts (already traced)
+        - apps/web/src/features/quotation-preview/quotation-blocked-page.tsx
+          - apps/web/src/components/layout/index.ts (already traced)
+          - apps/web/src/components/ui/index.ts (already traced)
+      - apps/web/src/features/inquiry/inquiry-store.ts (already traced)
+    - apps/web/src/features/inquiry/inquiry-store.ts (already traced)
+  - apps/web/src/features/motion/index.ts (already traced)
+  - apps/web/src/features/public-catalogue/index.ts (already traced)
+  - apps/web/src/features/product-detail/product-detail.data.ts
+    - apps/web/src/features/catalogue-registry/index.ts (already traced)
+  - apps/web/src/features/product-detail/product-breadcrumbs.tsx
+    - apps/web/src/features/catalogue-registry/index.ts (already traced)
+    - apps/web/src/features/public-catalogue/index.ts (already traced)
+  - apps/web/src/features/product-detail/product-gallery.tsx
+    - apps/web/src/features/catalogue-registry/index.ts (already traced)
+    - apps/web/src/features/motion/index.ts (already traced)
+    - apps/web/src/features/public-catalogue/index.ts (already traced)
+  - apps/web/src/features/product-detail/product-procurement-summary.tsx
+    - apps/web/src/features/catalogue-registry/index.ts (already traced)
+    - apps/web/src/features/inquiry/index.ts (already traced)
+    - apps/web/src/features/product-detail/static-option-field.tsx
+    - apps/web/src/features/product-detail/static-quantity-field.tsx
+  - apps/web/src/features/product-detail/product-specification-table.tsx
+    - apps/web/src/features/product-detail/product-detail.data.ts (already traced)
+  - apps/web/src/features/product-detail/product-procurement-note.tsx
+  - apps/web/src/features/product-detail/related-product-grid.tsx
+    - apps/web/src/features/catalogue-registry/index.ts (already traced)
+    - apps/web/src/features/motion/index.ts (already traced)
+    - apps/web/src/features/public-catalogue/index.ts (already traced)
+  - apps/web/src/features/product-detail/mobile-inquiry-bar.tsx
+    - apps/web/src/features/inquiry/index.ts (already traced)
+
+## /catalogues
+
+- Entry: `apps/web/src/features/catalogues/catalogues-page.tsx`
+- Summary: Editorial technical catalogue index.
+- Dependencies:
+- apps/web/src/features/catalogues/catalogues-page.tsx
+  - apps/web/src/components/layout/index.ts
+    - apps/web/src/components/layout/container.tsx
+    - apps/web/src/components/layout/grid.tsx
+    - apps/web/src/components/layout/section.tsx
+    - apps/web/src/components/layout/stack.tsx
+  - apps/web/src/features/motion/index.ts
+    - apps/web/src/features/motion/motion.config.ts
+      - apps/web/src/features/motion/types.ts
+    - apps/web/src/features/motion/types.ts (already traced)
+    - apps/web/src/features/motion/motion-provider.tsx
+      - apps/web/src/features/motion/motion.config.ts (already traced)
+    - apps/web/src/features/motion/reveal.tsx
+      - apps/web/src/features/motion/motion.config.ts (already traced)
+      - apps/web/src/features/motion/types.ts (already traced)
+    - apps/web/src/features/motion/stagger.tsx
+      - apps/web/src/features/motion/motion.config.ts (already traced)
+    - apps/web/src/features/motion/text-reveal.tsx
+      - apps/web/src/features/motion/motion.config.ts (already traced)
+    - apps/web/src/features/motion/magnetic.tsx
+    - apps/web/src/features/motion/tilt-surface.tsx
+    - apps/web/src/features/motion/spotlight-surface.tsx
+    - apps/web/src/features/motion/progressive-blur.tsx
+    - apps/web/src/features/motion/media-frame.tsx
+    - apps/web/src/features/motion/scroll-header-controller.tsx
+    - apps/web/src/features/motion/route-transition.tsx
+      - apps/web/src/features/motion/motion.config.ts (already traced)
+  - apps/web/src/features/catalogues/catalogue-grid.tsx
+    - apps/web/src/features/motion/index.ts (already traced)
+    - apps/web/src/features/catalogues/catalogue-card.tsx
+      - apps/web/src/components/ui/index.ts
+        - apps/web/src/components/ui/alert.tsx
+        - apps/web/src/components/ui/button.tsx
+        - apps/web/src/components/ui/card.tsx
+        - apps/web/src/components/ui/field.tsx
+        - apps/web/src/components/ui/status.tsx
+      - apps/web/src/features/motion/index.ts (already traced)
+      - apps/web/src/features/catalogues/catalogue-cover.tsx
+        - apps/web/src/features/catalogues/catalogue-document-model.ts
+          - apps/web/src/features/catalogue-registry/index.ts
+            - apps/web/src/features/catalogue-registry/types.ts
+              - apps/web/src/features/public-catalogue/index.ts
+                - apps/web/src/features/public-catalogue/models.ts
+                - apps/web/src/features/public-catalogue/selectors.ts
+                  - apps/web/src/features/public-catalogue/models.ts (already traced)
+                - apps/web/src/features/public-catalogue/section-heading.tsx
+                  - apps/web/src/features/motion/index.ts (already traced)
+                - apps/web/src/features/public-catalogue/product-media-placeholder.tsx
+                - apps/web/src/features/public-catalogue/family-card.tsx
+                  - apps/web/src/features/motion/index.ts (already traced)
+                  - apps/web/src/features/public-catalogue/models.ts (already traced)
+                  - apps/web/src/features/public-catalogue/product-media-placeholder.tsx (already traced)
+                - apps/web/src/features/public-catalogue/product-preview-card.tsx
+                  - apps/web/src/features/motion/index.ts (already traced)
+                  - apps/web/src/features/public-catalogue/models.ts (already traced)
+                  - apps/web/src/features/public-catalogue/product-media-placeholder.tsx (already traced)
+                - apps/web/src/features/public-catalogue/procurement-panel.tsx
+                  - apps/web/src/components/ui/button.tsx (already traced)
+                  - apps/web/src/features/motion/index.ts (already traced)
+            - apps/web/src/features/catalogue-registry/families.ts
+              - apps/web/src/features/catalogue-registry/types.ts (already traced)
+            - apps/web/src/features/catalogue-registry/products/index.ts
+              - apps/web/src/features/catalogue-registry/products/knives.ts
+                - apps/web/src/features/catalogue-media/index.ts
+                  - apps/web/src/features/catalogue-media/types.ts
+                  - apps/web/src/features/catalogue-media/validation.ts
+                    - apps/web/src/features/catalogue-media/types.ts (already traced)
+                  - apps/web/src/features/catalogue-media/scissors-batch-01-combined.ts
+                    - apps/web/src/features/catalogue-media/types.ts (already traced)
+                    - apps/web/src/features/catalogue-media/scissors-batch-01.ts
+                      - apps/web/src/features/catalogue-media/types.ts (already traced)
+                    - apps/web/src/features/catalogue-media/scissors-batch-01-operating.ts
+                      - apps/web/src/features/catalogue-media/types.ts (already traced)
+                  - apps/web/src/features/catalogue-media/scissors-batch-01-operating.ts (already traced)
+                  - apps/web/src/features/catalogue-media/chisels-batch-01.ts
+                    - apps/web/src/features/catalogue-media/types.ts (already traced)
+                  - apps/web/src/features/catalogue-media/cutters-batch-01.ts
+                    - apps/web/src/features/catalogue-media/types.ts (already traced)
+                  - apps/web/src/features/catalogue-media/knives-batch-01-approved.ts
+                    - apps/web/src/features/catalogue-media/types.ts (already traced)
+                    - apps/web/src/features/catalogue-media/knives-batch-01.ts
+                      - apps/web/src/features/catalogue-media/types.ts (already traced)
+                  - apps/web/src/features/catalogue-media/punches-batch-01.ts
+                    - apps/web/src/features/catalogue-media/types.ts (already traced)
+                - apps/web/src/features/catalogue-registry/types.ts (already traced)
+                - apps/web/src/features/catalogue-registry/products/knives-batch-01.ts
+              - apps/web/src/features/catalogue-registry/products/scissors.ts
+                - apps/web/src/features/catalogue-media/index.ts (already traced)
+                - apps/web/src/features/catalogue-registry/types.ts (already traced)
+                - apps/web/src/features/catalogue-registry/products/scissors-batch-01.ts
+              - apps/web/src/features/catalogue-registry/products/punches.ts
+                - apps/web/src/features/catalogue-media/index.ts (already traced)
+                - apps/web/src/features/catalogue-registry/types.ts (already traced)
+                - apps/web/src/features/catalogue-registry/products/punches-batch-01.ts
+              - apps/web/src/features/catalogue-registry/products/chisels.ts
+                - apps/web/src/features/catalogue-media/index.ts (already traced)
+                - apps/web/src/features/catalogue-registry/types.ts (already traced)
+                - apps/web/src/features/catalogue-registry/products/chisels-batch-01.ts
+              - apps/web/src/features/catalogue-registry/products/cutters.ts
+                - apps/web/src/features/catalogue-media/index.ts (already traced)
+                - apps/web/src/features/catalogue-registry/types.ts (already traced)
+                - apps/web/src/features/catalogue-registry/products/cutters-batch-01.ts
+            - apps/web/src/features/catalogue-registry/registry.ts
+              - apps/web/src/features/public-catalogue/index.ts (already traced)
+              - apps/web/src/features/catalogue-registry/families.ts (already traced)
+              - apps/web/src/features/catalogue-registry/products/index.ts (already traced)
+              - apps/web/src/features/catalogue-registry/types.ts (already traced)
+          - apps/web/src/features/public-catalogue/index.ts (already traced)
+      - apps/web/src/features/catalogues/catalogue-document-model.ts (already traced)
+    - apps/web/src/features/catalogues/catalogue-document-model.ts (already traced)
+  - apps/web/src/features/catalogues/catalogue-guidance.tsx
+    - apps/web/src/components/ui/index.ts (already traced)
+
+## /about
+
+- Entry: `apps/web/src/features/about/about-page.tsx`
+- Summary: Company story, buyer expectations, and scissors evolution.
+- Dependencies:
+- apps/web/src/features/about/about-page.tsx
+  - apps/web/src/components/layout/index.ts
+    - apps/web/src/components/layout/container.tsx
+    - apps/web/src/components/layout/grid.tsx
+    - apps/web/src/components/layout/section.tsx
+    - apps/web/src/components/layout/stack.tsx
+  - apps/web/src/components/ui/index.ts
+    - apps/web/src/components/ui/alert.tsx
+    - apps/web/src/components/ui/button.tsx
+    - apps/web/src/components/ui/card.tsx
+    - apps/web/src/components/ui/field.tsx
+    - apps/web/src/components/ui/status.tsx
+  - apps/web/src/features/motion/index.ts
+    - apps/web/src/features/motion/motion.config.ts
+      - apps/web/src/features/motion/types.ts
+    - apps/web/src/features/motion/types.ts (already traced)
+    - apps/web/src/features/motion/motion-provider.tsx
+      - apps/web/src/features/motion/motion.config.ts (already traced)
+    - apps/web/src/features/motion/reveal.tsx
+      - apps/web/src/features/motion/motion.config.ts (already traced)
+      - apps/web/src/features/motion/types.ts (already traced)
+    - apps/web/src/features/motion/stagger.tsx
+      - apps/web/src/features/motion/motion.config.ts (already traced)
+    - apps/web/src/features/motion/text-reveal.tsx
+      - apps/web/src/features/motion/motion.config.ts (already traced)
+    - apps/web/src/features/motion/magnetic.tsx
+    - apps/web/src/features/motion/tilt-surface.tsx
+    - apps/web/src/features/motion/spotlight-surface.tsx
+    - apps/web/src/features/motion/progressive-blur.tsx
+    - apps/web/src/features/motion/media-frame.tsx
+    - apps/web/src/features/motion/scroll-header-controller.tsx
+    - apps/web/src/features/motion/route-transition.tsx
+      - apps/web/src/features/motion/motion.config.ts (already traced)
+  - apps/web/src/features/public-catalogue/index.ts
+    - apps/web/src/features/public-catalogue/models.ts
+    - apps/web/src/features/public-catalogue/selectors.ts
+      - apps/web/src/features/public-catalogue/models.ts (already traced)
+    - apps/web/src/features/public-catalogue/section-heading.tsx
+      - apps/web/src/features/motion/index.ts (already traced)
+    - apps/web/src/features/public-catalogue/product-media-placeholder.tsx
+    - apps/web/src/features/public-catalogue/family-card.tsx
+      - apps/web/src/features/motion/index.ts (already traced)
+      - apps/web/src/features/public-catalogue/models.ts (already traced)
+      - apps/web/src/features/public-catalogue/product-media-placeholder.tsx (already traced)
+    - apps/web/src/features/public-catalogue/product-preview-card.tsx
+      - apps/web/src/features/motion/index.ts (already traced)
+      - apps/web/src/features/public-catalogue/models.ts (already traced)
+      - apps/web/src/features/public-catalogue/product-media-placeholder.tsx (already traced)
+    - apps/web/src/features/public-catalogue/procurement-panel.tsx
+      - apps/web/src/components/ui/button.tsx (already traced)
+      - apps/web/src/features/motion/index.ts (already traced)
+  - apps/web/src/features/public-content-registry/index.ts
+    - apps/web/src/features/public-content-registry/public-content-values.ts
+    - apps/web/src/features/public-content-registry/public-content-registry.ts
+      - apps/web/src/features/public-content-registry/public-content-values.ts (already traced)
+  - apps/web/src/features/public-editorial/index.ts
+    - apps/web/src/features/public-editorial/numbered-editorial-list.tsx
+    - apps/web/src/features/public-editorial/family-index.tsx
+      - apps/web/src/features/catalogue-registry/index.ts
+        - apps/web/src/features/catalogue-registry/types.ts
+          - apps/web/src/features/public-catalogue/index.ts (already traced)
+        - apps/web/src/features/catalogue-registry/families.ts
+          - apps/web/src/features/catalogue-registry/types.ts (already traced)
+        - apps/web/src/features/catalogue-registry/products/index.ts
+          - apps/web/src/features/catalogue-registry/products/knives.ts
+            - apps/web/src/features/catalogue-media/index.ts
+              - apps/web/src/features/catalogue-media/types.ts
+              - apps/web/src/features/catalogue-media/validation.ts
+                - apps/web/src/features/catalogue-media/types.ts (already traced)
+              - apps/web/src/features/catalogue-media/scissors-batch-01-combined.ts
+                - apps/web/src/features/catalogue-media/types.ts (already traced)
+                - apps/web/src/features/catalogue-media/scissors-batch-01.ts
+                  - apps/web/src/features/catalogue-media/types.ts (already traced)
+                - apps/web/src/features/catalogue-media/scissors-batch-01-operating.ts
+                  - apps/web/src/features/catalogue-media/types.ts (already traced)
+              - apps/web/src/features/catalogue-media/scissors-batch-01-operating.ts (already traced)
+              - apps/web/src/features/catalogue-media/chisels-batch-01.ts
+                - apps/web/src/features/catalogue-media/types.ts (already traced)
+              - apps/web/src/features/catalogue-media/cutters-batch-01.ts
+                - apps/web/src/features/catalogue-media/types.ts (already traced)
+              - apps/web/src/features/catalogue-media/knives-batch-01-approved.ts
+                - apps/web/src/features/catalogue-media/types.ts (already traced)
+                - apps/web/src/features/catalogue-media/knives-batch-01.ts
+                  - apps/web/src/features/catalogue-media/types.ts (already traced)
+              - apps/web/src/features/catalogue-media/punches-batch-01.ts
+                - apps/web/src/features/catalogue-media/types.ts (already traced)
+            - apps/web/src/features/catalogue-registry/types.ts (already traced)
+            - apps/web/src/features/catalogue-registry/products/knives-batch-01.ts
+          - apps/web/src/features/catalogue-registry/products/scissors.ts
+            - apps/web/src/features/catalogue-media/index.ts (already traced)
+            - apps/web/src/features/catalogue-registry/types.ts (already traced)
+            - apps/web/src/features/catalogue-registry/products/scissors-batch-01.ts
+          - apps/web/src/features/catalogue-registry/products/punches.ts
+            - apps/web/src/features/catalogue-media/index.ts (already traced)
+            - apps/web/src/features/catalogue-registry/types.ts (already traced)
+            - apps/web/src/features/catalogue-registry/products/punches-batch-01.ts
+          - apps/web/src/features/catalogue-registry/products/chisels.ts
+            - apps/web/src/features/catalogue-media/index.ts (already traced)
+            - apps/web/src/features/catalogue-registry/types.ts (already traced)
+            - apps/web/src/features/catalogue-registry/products/chisels-batch-01.ts
+          - apps/web/src/features/catalogue-registry/products/cutters.ts
+            - apps/web/src/features/catalogue-media/index.ts (already traced)
+            - apps/web/src/features/catalogue-registry/types.ts (already traced)
+            - apps/web/src/features/catalogue-registry/products/cutters-batch-01.ts
+        - apps/web/src/features/catalogue-registry/registry.ts
+          - apps/web/src/features/public-catalogue/index.ts (already traced)
+          - apps/web/src/features/catalogue-registry/families.ts (already traced)
+          - apps/web/src/features/catalogue-registry/products/index.ts (already traced)
+          - apps/web/src/features/catalogue-registry/types.ts (already traced)
+      - apps/web/src/features/public-catalogue/index.ts (already traced)
+  - apps/web/src/features/about/buyer-expectations.tsx
+    - apps/web/src/features/motion/index.ts (already traced)
+    - apps/web/src/features/public-editorial/index.ts (already traced)
+    - apps/web/src/features/about/about.data.ts
+      - apps/web/src/features/public-editorial/index.ts (already traced)
+  - apps/web/src/features/about/scissors-evolution.tsx
+    - apps/web/src/features/motion/index.ts (already traced)
+    - apps/web/src/features/public-catalogue/index.ts (already traced)
+  - apps/web/src/features/about/supported-buyers.tsx
+    - apps/web/src/features/motion/index.ts (already traced)
+    - apps/web/src/features/about/about.data.ts (already traced)
+
+## /procurement-support
+
+- Entry: `apps/web/src/features/procurement-support/procurement-support-page.tsx`
+- Summary: Procurement process and information requirements.
+- Dependencies:
+- apps/web/src/features/procurement-support/procurement-support-page.tsx
+  - apps/web/src/components/layout/index.ts
+    - apps/web/src/components/layout/container.tsx
+    - apps/web/src/components/layout/grid.tsx
+    - apps/web/src/components/layout/section.tsx
+    - apps/web/src/components/layout/stack.tsx
+  - apps/web/src/components/ui/index.ts
+    - apps/web/src/components/ui/alert.tsx
+    - apps/web/src/components/ui/button.tsx
+    - apps/web/src/components/ui/card.tsx
+    - apps/web/src/components/ui/field.tsx
+    - apps/web/src/components/ui/status.tsx
+  - apps/web/src/features/motion/index.ts
+    - apps/web/src/features/motion/motion.config.ts
+      - apps/web/src/features/motion/types.ts
+    - apps/web/src/features/motion/types.ts (already traced)
+    - apps/web/src/features/motion/motion-provider.tsx
+      - apps/web/src/features/motion/motion.config.ts (already traced)
+    - apps/web/src/features/motion/reveal.tsx
+      - apps/web/src/features/motion/motion.config.ts (already traced)
+      - apps/web/src/features/motion/types.ts (already traced)
+    - apps/web/src/features/motion/stagger.tsx
+      - apps/web/src/features/motion/motion.config.ts (already traced)
+    - apps/web/src/features/motion/text-reveal.tsx
+      - apps/web/src/features/motion/motion.config.ts (already traced)
+    - apps/web/src/features/motion/magnetic.tsx
+    - apps/web/src/features/motion/tilt-surface.tsx
+    - apps/web/src/features/motion/spotlight-surface.tsx
+    - apps/web/src/features/motion/progressive-blur.tsx
+    - apps/web/src/features/motion/media-frame.tsx
+    - apps/web/src/features/motion/scroll-header-controller.tsx
+    - apps/web/src/features/motion/route-transition.tsx
+      - apps/web/src/features/motion/motion.config.ts (already traced)
+  - apps/web/src/features/public-catalogue/index.ts
+    - apps/web/src/features/public-catalogue/models.ts
+    - apps/web/src/features/public-catalogue/selectors.ts
+      - apps/web/src/features/public-catalogue/models.ts (already traced)
+    - apps/web/src/features/public-catalogue/section-heading.tsx
+      - apps/web/src/features/motion/index.ts (already traced)
+    - apps/web/src/features/public-catalogue/product-media-placeholder.tsx
+    - apps/web/src/features/public-catalogue/family-card.tsx
+      - apps/web/src/features/motion/index.ts (already traced)
+      - apps/web/src/features/public-catalogue/models.ts (already traced)
+      - apps/web/src/features/public-catalogue/product-media-placeholder.tsx (already traced)
+    - apps/web/src/features/public-catalogue/product-preview-card.tsx
+      - apps/web/src/features/motion/index.ts (already traced)
+      - apps/web/src/features/public-catalogue/models.ts (already traced)
+      - apps/web/src/features/public-catalogue/product-media-placeholder.tsx (already traced)
+    - apps/web/src/features/public-catalogue/procurement-panel.tsx
+      - apps/web/src/components/ui/button.tsx (already traced)
+      - apps/web/src/features/motion/index.ts (already traced)
+  - apps/web/src/features/public-content-registry/index.ts
+    - apps/web/src/features/public-content-registry/public-content-values.ts
+    - apps/web/src/features/public-content-registry/public-content-registry.ts
+      - apps/web/src/features/public-content-registry/public-content-values.ts (already traced)
+  - apps/web/src/features/procurement-support/information-checklist.tsx
+    - apps/web/src/features/motion/index.ts (already traced)
+    - apps/web/src/features/procurement-support/procurement-support.data.ts
+      - apps/web/src/features/public-editorial/index.ts
+        - apps/web/src/features/public-editorial/numbered-editorial-list.tsx
+        - apps/web/src/features/public-editorial/family-index.tsx
+          - apps/web/src/features/catalogue-registry/index.ts
+            - apps/web/src/features/catalogue-registry/types.ts
+              - apps/web/src/features/public-catalogue/index.ts (already traced)
+            - apps/web/src/features/catalogue-registry/families.ts
+              - apps/web/src/features/catalogue-registry/types.ts (already traced)
+            - apps/web/src/features/catalogue-registry/products/index.ts
+              - apps/web/src/features/catalogue-registry/products/knives.ts
+                - apps/web/src/features/catalogue-media/index.ts
+                  - apps/web/src/features/catalogue-media/types.ts
+                  - apps/web/src/features/catalogue-media/validation.ts
+                    - apps/web/src/features/catalogue-media/types.ts (already traced)
+                  - apps/web/src/features/catalogue-media/scissors-batch-01-combined.ts
+                    - apps/web/src/features/catalogue-media/types.ts (already traced)
+                    - apps/web/src/features/catalogue-media/scissors-batch-01.ts
+                      - apps/web/src/features/catalogue-media/types.ts (already traced)
+                    - apps/web/src/features/catalogue-media/scissors-batch-01-operating.ts
+                      - apps/web/src/features/catalogue-media/types.ts (already traced)
+                  - apps/web/src/features/catalogue-media/scissors-batch-01-operating.ts (already traced)
+                  - apps/web/src/features/catalogue-media/chisels-batch-01.ts
+                    - apps/web/src/features/catalogue-media/types.ts (already traced)
+                  - apps/web/src/features/catalogue-media/cutters-batch-01.ts
+                    - apps/web/src/features/catalogue-media/types.ts (already traced)
+                  - apps/web/src/features/catalogue-media/knives-batch-01-approved.ts
+                    - apps/web/src/features/catalogue-media/types.ts (already traced)
+                    - apps/web/src/features/catalogue-media/knives-batch-01.ts
+                      - apps/web/src/features/catalogue-media/types.ts (already traced)
+                  - apps/web/src/features/catalogue-media/punches-batch-01.ts
+                    - apps/web/src/features/catalogue-media/types.ts (already traced)
+                - apps/web/src/features/catalogue-registry/types.ts (already traced)
+                - apps/web/src/features/catalogue-registry/products/knives-batch-01.ts
+              - apps/web/src/features/catalogue-registry/products/scissors.ts
+                - apps/web/src/features/catalogue-media/index.ts (already traced)
+                - apps/web/src/features/catalogue-registry/types.ts (already traced)
+                - apps/web/src/features/catalogue-registry/products/scissors-batch-01.ts
+              - apps/web/src/features/catalogue-registry/products/punches.ts
+                - apps/web/src/features/catalogue-media/index.ts (already traced)
+                - apps/web/src/features/catalogue-registry/types.ts (already traced)
+                - apps/web/src/features/catalogue-registry/products/punches-batch-01.ts
+              - apps/web/src/features/catalogue-registry/products/chisels.ts
+                - apps/web/src/features/catalogue-media/index.ts (already traced)
+                - apps/web/src/features/catalogue-registry/types.ts (already traced)
+                - apps/web/src/features/catalogue-registry/products/chisels-batch-01.ts
+              - apps/web/src/features/catalogue-registry/products/cutters.ts
+                - apps/web/src/features/catalogue-media/index.ts (already traced)
+                - apps/web/src/features/catalogue-registry/types.ts (already traced)
+                - apps/web/src/features/catalogue-registry/products/cutters-batch-01.ts
+            - apps/web/src/features/catalogue-registry/registry.ts
+              - apps/web/src/features/public-catalogue/index.ts (already traced)
+              - apps/web/src/features/catalogue-registry/families.ts (already traced)
+              - apps/web/src/features/catalogue-registry/products/index.ts (already traced)
+              - apps/web/src/features/catalogue-registry/types.ts (already traced)
+          - apps/web/src/features/public-catalogue/index.ts (already traced)
+  - apps/web/src/features/procurement-support/procurement-process.tsx
+    - apps/web/src/features/motion/index.ts (already traced)
+    - apps/web/src/features/public-editorial/index.ts (already traced)
+    - apps/web/src/features/procurement-support/procurement-support.data.ts (already traced)
+  - apps/web/src/features/procurement-support/requirement-types.tsx
+    - apps/web/src/features/motion/index.ts (already traced)
+    - apps/web/src/features/public-editorial/index.ts (already traced)
+    - apps/web/src/features/procurement-support/procurement-support.data.ts (already traced)
+
+## /contact
+
+- Entry: `apps/web/src/features/contact-preview/contact-page.tsx`
+- Summary: Contact information and inquiry form preview.
+- Dependencies:
+- apps/web/src/features/contact-preview/contact-page.tsx
+  - apps/web/src/components/layout/index.ts
+    - apps/web/src/components/layout/container.tsx
+    - apps/web/src/components/layout/grid.tsx
+    - apps/web/src/components/layout/section.tsx
+    - apps/web/src/components/layout/stack.tsx
+  - apps/web/src/components/ui/index.ts
+    - apps/web/src/components/ui/alert.tsx
+    - apps/web/src/components/ui/button.tsx
+    - apps/web/src/components/ui/card.tsx
+    - apps/web/src/components/ui/field.tsx
+    - apps/web/src/components/ui/status.tsx
+  - apps/web/src/features/motion/index.ts
+    - apps/web/src/features/motion/motion.config.ts
+      - apps/web/src/features/motion/types.ts
+    - apps/web/src/features/motion/types.ts (already traced)
+    - apps/web/src/features/motion/motion-provider.tsx
+      - apps/web/src/features/motion/motion.config.ts (already traced)
+    - apps/web/src/features/motion/reveal.tsx
+      - apps/web/src/features/motion/motion.config.ts (already traced)
+      - apps/web/src/features/motion/types.ts (already traced)
+    - apps/web/src/features/motion/stagger.tsx
+      - apps/web/src/features/motion/motion.config.ts (already traced)
+    - apps/web/src/features/motion/text-reveal.tsx
+      - apps/web/src/features/motion/motion.config.ts (already traced)
+    - apps/web/src/features/motion/magnetic.tsx
+    - apps/web/src/features/motion/tilt-surface.tsx
+    - apps/web/src/features/motion/spotlight-surface.tsx
+    - apps/web/src/features/motion/progressive-blur.tsx
+    - apps/web/src/features/motion/media-frame.tsx
+    - apps/web/src/features/motion/scroll-header-controller.tsx
+    - apps/web/src/features/motion/route-transition.tsx
+      - apps/web/src/features/motion/motion.config.ts (already traced)
+  - apps/web/src/features/public-catalogue/index.ts
+    - apps/web/src/features/public-catalogue/models.ts
+    - apps/web/src/features/public-catalogue/selectors.ts
+      - apps/web/src/features/public-catalogue/models.ts (already traced)
+    - apps/web/src/features/public-catalogue/section-heading.tsx
+      - apps/web/src/features/motion/index.ts (already traced)
+    - apps/web/src/features/public-catalogue/product-media-placeholder.tsx
+    - apps/web/src/features/public-catalogue/family-card.tsx
+      - apps/web/src/features/motion/index.ts (already traced)
+      - apps/web/src/features/public-catalogue/models.ts (already traced)
+      - apps/web/src/features/public-catalogue/product-media-placeholder.tsx (already traced)
+    - apps/web/src/features/public-catalogue/product-preview-card.tsx
+      - apps/web/src/features/motion/index.ts (already traced)
+      - apps/web/src/features/public-catalogue/models.ts (already traced)
+      - apps/web/src/features/public-catalogue/product-media-placeholder.tsx (already traced)
+    - apps/web/src/features/public-catalogue/procurement-panel.tsx
+      - apps/web/src/components/ui/button.tsx (already traced)
+      - apps/web/src/features/motion/index.ts (already traced)
+  - apps/web/src/features/public-content-registry/index.ts
+    - apps/web/src/features/public-content-registry/public-content-values.ts
+    - apps/web/src/features/public-content-registry/public-content-registry.ts
+      - apps/web/src/features/public-content-registry/public-content-values.ts (already traced)
+  - apps/web/src/features/contact-preview/contact-form-preview.tsx
+    - apps/web/src/components/ui/index.ts (already traced)
+    - apps/web/src/features/contact-preview/contact-field-preview.tsx
+  - apps/web/src/features/contact-preview/contact-information-panel.tsx
+    - apps/web/src/features/contact-preview/contact-information-model.ts
+
+## /inquiry
+
+- Entry: `apps/web/src/features/inquiry/inquiry-page.tsx`
+- Summary: Inquiry list and summary.
+- Dependencies:
+- apps/web/src/features/inquiry/inquiry-page.tsx
+  - apps/web/src/components/layout/index.ts
+    - apps/web/src/components/layout/container.tsx
+    - apps/web/src/components/layout/grid.tsx
+    - apps/web/src/components/layout/section.tsx
+    - apps/web/src/components/layout/stack.tsx
+  - apps/web/src/features/inquiry-preview/index.ts
+    - apps/web/src/features/inquiry-preview/inquiry-preview-model.ts
+      - apps/web/src/features/catalogue-registry/index.ts
+        - apps/web/src/features/catalogue-registry/types.ts
+          - apps/web/src/features/public-catalogue/index.ts
+            - apps/web/src/features/public-catalogue/models.ts
+            - apps/web/src/features/public-catalogue/selectors.ts
+              - apps/web/src/features/public-catalogue/models.ts (already traced)
+            - apps/web/src/features/public-catalogue/section-heading.tsx
+              - apps/web/src/features/motion/index.ts
+                - apps/web/src/features/motion/motion.config.ts
+                  - apps/web/src/features/motion/types.ts
+                - apps/web/src/features/motion/types.ts (already traced)
+                - apps/web/src/features/motion/motion-provider.tsx
+                  - apps/web/src/features/motion/motion.config.ts (already traced)
+                - apps/web/src/features/motion/reveal.tsx
+                  - apps/web/src/features/motion/motion.config.ts (already traced)
+                  - apps/web/src/features/motion/types.ts (already traced)
+                - apps/web/src/features/motion/stagger.tsx
+                  - apps/web/src/features/motion/motion.config.ts (already traced)
+                - apps/web/src/features/motion/text-reveal.tsx
+                  - apps/web/src/features/motion/motion.config.ts (already traced)
+                - apps/web/src/features/motion/magnetic.tsx
+                - apps/web/src/features/motion/tilt-surface.tsx
+                - apps/web/src/features/motion/spotlight-surface.tsx
+                - apps/web/src/features/motion/progressive-blur.tsx
+                - apps/web/src/features/motion/media-frame.tsx
+                - apps/web/src/features/motion/scroll-header-controller.tsx
+                - apps/web/src/features/motion/route-transition.tsx
+                  - apps/web/src/features/motion/motion.config.ts (already traced)
+            - apps/web/src/features/public-catalogue/product-media-placeholder.tsx
+            - apps/web/src/features/public-catalogue/family-card.tsx
+              - apps/web/src/features/motion/index.ts (already traced)
+              - apps/web/src/features/public-catalogue/models.ts (already traced)
+              - apps/web/src/features/public-catalogue/product-media-placeholder.tsx (already traced)
+            - apps/web/src/features/public-catalogue/product-preview-card.tsx
+              - apps/web/src/features/motion/index.ts (already traced)
+              - apps/web/src/features/public-catalogue/models.ts (already traced)
+              - apps/web/src/features/public-catalogue/product-media-placeholder.tsx (already traced)
+            - apps/web/src/features/public-catalogue/procurement-panel.tsx
+              - apps/web/src/components/ui/button.tsx
+              - apps/web/src/features/motion/index.ts (already traced)
+        - apps/web/src/features/catalogue-registry/families.ts
+          - apps/web/src/features/catalogue-registry/types.ts (already traced)
+        - apps/web/src/features/catalogue-registry/products/index.ts
+          - apps/web/src/features/catalogue-registry/products/knives.ts
+            - apps/web/src/features/catalogue-media/index.ts
+              - apps/web/src/features/catalogue-media/types.ts
+              - apps/web/src/features/catalogue-media/validation.ts
+                - apps/web/src/features/catalogue-media/types.ts (already traced)
+              - apps/web/src/features/catalogue-media/scissors-batch-01-combined.ts
+                - apps/web/src/features/catalogue-media/types.ts (already traced)
+                - apps/web/src/features/catalogue-media/scissors-batch-01.ts
+                  - apps/web/src/features/catalogue-media/types.ts (already traced)
+                - apps/web/src/features/catalogue-media/scissors-batch-01-operating.ts
+                  - apps/web/src/features/catalogue-media/types.ts (already traced)
+              - apps/web/src/features/catalogue-media/scissors-batch-01-operating.ts (already traced)
+              - apps/web/src/features/catalogue-media/chisels-batch-01.ts
+                - apps/web/src/features/catalogue-media/types.ts (already traced)
+              - apps/web/src/features/catalogue-media/cutters-batch-01.ts
+                - apps/web/src/features/catalogue-media/types.ts (already traced)
+              - apps/web/src/features/catalogue-media/knives-batch-01-approved.ts
+                - apps/web/src/features/catalogue-media/types.ts (already traced)
+                - apps/web/src/features/catalogue-media/knives-batch-01.ts
+                  - apps/web/src/features/catalogue-media/types.ts (already traced)
+              - apps/web/src/features/catalogue-media/punches-batch-01.ts
+                - apps/web/src/features/catalogue-media/types.ts (already traced)
+            - apps/web/src/features/catalogue-registry/types.ts (already traced)
+            - apps/web/src/features/catalogue-registry/products/knives-batch-01.ts
+          - apps/web/src/features/catalogue-registry/products/scissors.ts
+            - apps/web/src/features/catalogue-media/index.ts (already traced)
+            - apps/web/src/features/catalogue-registry/types.ts (already traced)
+            - apps/web/src/features/catalogue-registry/products/scissors-batch-01.ts
+          - apps/web/src/features/catalogue-registry/products/punches.ts
+            - apps/web/src/features/catalogue-media/index.ts (already traced)
+            - apps/web/src/features/catalogue-registry/types.ts (already traced)
+            - apps/web/src/features/catalogue-registry/products/punches-batch-01.ts
+          - apps/web/src/features/catalogue-registry/products/chisels.ts
+            - apps/web/src/features/catalogue-media/index.ts (already traced)
+            - apps/web/src/features/catalogue-registry/types.ts (already traced)
+            - apps/web/src/features/catalogue-registry/products/chisels-batch-01.ts
+          - apps/web/src/features/catalogue-registry/products/cutters.ts
+            - apps/web/src/features/catalogue-media/index.ts (already traced)
+            - apps/web/src/features/catalogue-registry/types.ts (already traced)
+            - apps/web/src/features/catalogue-registry/products/cutters-batch-01.ts
+        - apps/web/src/features/catalogue-registry/registry.ts
+          - apps/web/src/features/public-catalogue/index.ts (already traced)
+          - apps/web/src/features/catalogue-registry/families.ts (already traced)
+          - apps/web/src/features/catalogue-registry/products/index.ts (already traced)
+          - apps/web/src/features/catalogue-registry/types.ts (already traced)
+    - apps/web/src/features/inquiry-preview/inquiry-line-preview.tsx
+      - apps/web/src/features/public-catalogue/index.ts (already traced)
+      - apps/web/src/features/inquiry-preview/inquiry-preview-model.ts (already traced)
+    - apps/web/src/features/inquiry-preview/inquiry-summary-preview.tsx
+      - apps/web/src/components/ui/index.ts
+        - apps/web/src/components/ui/alert.tsx
+        - apps/web/src/components/ui/button.tsx (already traced)
+        - apps/web/src/components/ui/card.tsx
+        - apps/web/src/components/ui/field.tsx
+        - apps/web/src/components/ui/status.tsx
+      - apps/web/src/features/inquiry-preview/inquiry-preview-model.ts (already traced)
+    - apps/web/src/features/inquiry-preview/general-request-preview.tsx
+      - apps/web/src/components/ui/index.ts (already traced)
+    - apps/web/src/features/inquiry-preview/populated-inquiry-preview.tsx
+      - apps/web/src/components/layout/index.ts (already traced)
+      - apps/web/src/components/ui/index.ts (already traced)
+      - apps/web/src/features/inquiry-preview/general-request-preview.tsx (already traced)
+      - apps/web/src/features/inquiry-preview/inquiry-line-preview.tsx (already traced)
+      - apps/web/src/features/inquiry-preview/inquiry-preview-model.ts (already traced)
+      - apps/web/src/features/inquiry-preview/inquiry-summary-preview.tsx (already traced)
+    - apps/web/src/features/inquiry-preview/empty-inquiry-page.tsx
+      - apps/web/src/components/layout/index.ts (already traced)
+      - apps/web/src/components/ui/index.ts (already traced)
+      - apps/web/src/features/public-catalogue/index.ts (already traced)
+  - apps/web/src/features/inquiry/inquiry-store.ts
+
+## /request-quotation
+
+- Entry: `apps/web/src/features/inquiry/quotation-page.tsx`
+- Summary: Quotation form and product summary.
+- Dependencies:
+- apps/web/src/features/inquiry/quotation-page.tsx
+  - apps/web/src/components/layout/index.ts
+    - apps/web/src/components/layout/container.tsx
+    - apps/web/src/components/layout/grid.tsx
+    - apps/web/src/components/layout/section.tsx
+    - apps/web/src/components/layout/stack.tsx
+  - apps/web/src/features/quotation-preview/index.ts
+    - apps/web/src/features/quotation-preview/quotation-field-preview.tsx
+    - apps/web/src/features/quotation-preview/quotation-product-summary.tsx
+      - apps/web/src/features/public-catalogue/index.ts
+        - apps/web/src/features/public-catalogue/models.ts
+        - apps/web/src/features/public-catalogue/selectors.ts
+          - apps/web/src/features/public-catalogue/models.ts (already traced)
+        - apps/web/src/features/public-catalogue/section-heading.tsx
+          - apps/web/src/features/motion/index.ts
+            - apps/web/src/features/motion/motion.config.ts
+              - apps/web/src/features/motion/types.ts
+            - apps/web/src/features/motion/types.ts (already traced)
+            - apps/web/src/features/motion/motion-provider.tsx
+              - apps/web/src/features/motion/motion.config.ts (already traced)
+            - apps/web/src/features/motion/reveal.tsx
+              - apps/web/src/features/motion/motion.config.ts (already traced)
+              - apps/web/src/features/motion/types.ts (already traced)
+            - apps/web/src/features/motion/stagger.tsx
+              - apps/web/src/features/motion/motion.config.ts (already traced)
+            - apps/web/src/features/motion/text-reveal.tsx
+              - apps/web/src/features/motion/motion.config.ts (already traced)
+            - apps/web/src/features/motion/magnetic.tsx
+            - apps/web/src/features/motion/tilt-surface.tsx
+            - apps/web/src/features/motion/spotlight-surface.tsx
+            - apps/web/src/features/motion/progressive-blur.tsx
+            - apps/web/src/features/motion/media-frame.tsx
+            - apps/web/src/features/motion/scroll-header-controller.tsx
+            - apps/web/src/features/motion/route-transition.tsx
+              - apps/web/src/features/motion/motion.config.ts (already traced)
+        - apps/web/src/features/public-catalogue/product-media-placeholder.tsx
+        - apps/web/src/features/public-catalogue/family-card.tsx
+          - apps/web/src/features/motion/index.ts (already traced)
+          - apps/web/src/features/public-catalogue/models.ts (already traced)
+          - apps/web/src/features/public-catalogue/product-media-placeholder.tsx (already traced)
+        - apps/web/src/features/public-catalogue/product-preview-card.tsx
+          - apps/web/src/features/motion/index.ts (already traced)
+          - apps/web/src/features/public-catalogue/models.ts (already traced)
+          - apps/web/src/features/public-catalogue/product-media-placeholder.tsx (already traced)
+        - apps/web/src/features/public-catalogue/procurement-panel.tsx
+          - apps/web/src/components/ui/button.tsx
+          - apps/web/src/features/motion/index.ts (already traced)
+      - apps/web/src/features/inquiry-preview/index.ts
+        - apps/web/src/features/inquiry-preview/inquiry-preview-model.ts
+          - apps/web/src/features/catalogue-registry/index.ts
+            - apps/web/src/features/catalogue-registry/types.ts
+              - apps/web/src/features/public-catalogue/index.ts (already traced)
+            - apps/web/src/features/catalogue-registry/families.ts
+              - apps/web/src/features/catalogue-registry/types.ts (already traced)
+            - apps/web/src/features/catalogue-registry/products/index.ts
+              - apps/web/src/features/catalogue-registry/products/knives.ts
+                - apps/web/src/features/catalogue-media/index.ts
+                  - apps/web/src/features/catalogue-media/types.ts
+                  - apps/web/src/features/catalogue-media/validation.ts
+                    - apps/web/src/features/catalogue-media/types.ts (already traced)
+                  - apps/web/src/features/catalogue-media/scissors-batch-01-combined.ts
+                    - apps/web/src/features/catalogue-media/types.ts (already traced)
+                    - apps/web/src/features/catalogue-media/scissors-batch-01.ts
+                      - apps/web/src/features/catalogue-media/types.ts (already traced)
+                    - apps/web/src/features/catalogue-media/scissors-batch-01-operating.ts
+                      - apps/web/src/features/catalogue-media/types.ts (already traced)
+                  - apps/web/src/features/catalogue-media/scissors-batch-01-operating.ts (already traced)
+                  - apps/web/src/features/catalogue-media/chisels-batch-01.ts
+                    - apps/web/src/features/catalogue-media/types.ts (already traced)
+                  - apps/web/src/features/catalogue-media/cutters-batch-01.ts
+                    - apps/web/src/features/catalogue-media/types.ts (already traced)
+                  - apps/web/src/features/catalogue-media/knives-batch-01-approved.ts
+                    - apps/web/src/features/catalogue-media/types.ts (already traced)
+                    - apps/web/src/features/catalogue-media/knives-batch-01.ts
+                      - apps/web/src/features/catalogue-media/types.ts (already traced)
+                  - apps/web/src/features/catalogue-media/punches-batch-01.ts
+                    - apps/web/src/features/catalogue-media/types.ts (already traced)
+                - apps/web/src/features/catalogue-registry/types.ts (already traced)
+                - apps/web/src/features/catalogue-registry/products/knives-batch-01.ts
+              - apps/web/src/features/catalogue-registry/products/scissors.ts
+                - apps/web/src/features/catalogue-media/index.ts (already traced)
+                - apps/web/src/features/catalogue-registry/types.ts (already traced)
+                - apps/web/src/features/catalogue-registry/products/scissors-batch-01.ts
+              - apps/web/src/features/catalogue-registry/products/punches.ts
+                - apps/web/src/features/catalogue-media/index.ts (already traced)
+                - apps/web/src/features/catalogue-registry/types.ts (already traced)
+                - apps/web/src/features/catalogue-registry/products/punches-batch-01.ts
+              - apps/web/src/features/catalogue-registry/products/chisels.ts
+                - apps/web/src/features/catalogue-media/index.ts (already traced)
+                - apps/web/src/features/catalogue-registry/types.ts (already traced)
+                - apps/web/src/features/catalogue-registry/products/chisels-batch-01.ts
+              - apps/web/src/features/catalogue-registry/products/cutters.ts
+                - apps/web/src/features/catalogue-media/index.ts (already traced)
+                - apps/web/src/features/catalogue-registry/types.ts (already traced)
+                - apps/web/src/features/catalogue-registry/products/cutters-batch-01.ts
+            - apps/web/src/features/catalogue-registry/registry.ts
+              - apps/web/src/features/public-catalogue/index.ts (already traced)
+              - apps/web/src/features/catalogue-registry/families.ts (already traced)
+              - apps/web/src/features/catalogue-registry/products/index.ts (already traced)
+              - apps/web/src/features/catalogue-registry/types.ts (already traced)
+        - apps/web/src/features/inquiry-preview/inquiry-line-preview.tsx
+          - apps/web/src/features/public-catalogue/index.ts (already traced)
+          - apps/web/src/features/inquiry-preview/inquiry-preview-model.ts (already traced)
+        - apps/web/src/features/inquiry-preview/inquiry-summary-preview.tsx
+          - apps/web/src/components/ui/index.ts
+            - apps/web/src/components/ui/alert.tsx
+            - apps/web/src/components/ui/button.tsx (already traced)
+            - apps/web/src/components/ui/card.tsx
+            - apps/web/src/components/ui/field.tsx
+            - apps/web/src/components/ui/status.tsx
+          - apps/web/src/features/inquiry-preview/inquiry-preview-model.ts (already traced)
+        - apps/web/src/features/inquiry-preview/general-request-preview.tsx
+          - apps/web/src/components/ui/index.ts (already traced)
+        - apps/web/src/features/inquiry-preview/populated-inquiry-preview.tsx
+          - apps/web/src/components/layout/index.ts (already traced)
+          - apps/web/src/components/ui/index.ts (already traced)
+          - apps/web/src/features/inquiry-preview/general-request-preview.tsx (already traced)
+          - apps/web/src/features/inquiry-preview/inquiry-line-preview.tsx (already traced)
+          - apps/web/src/features/inquiry-preview/inquiry-preview-model.ts (already traced)
+          - apps/web/src/features/inquiry-preview/inquiry-summary-preview.tsx (already traced)
+        - apps/web/src/features/inquiry-preview/empty-inquiry-page.tsx
+          - apps/web/src/components/layout/index.ts (already traced)
+          - apps/web/src/components/ui/index.ts (already traced)
+          - apps/web/src/features/public-catalogue/index.ts (already traced)
+    - apps/web/src/features/quotation-preview/quotation-validation-preview.tsx
+      - apps/web/src/features/quotation-preview/quotation-field-preview.tsx (already traced)
+    - apps/web/src/features/quotation-preview/quotation-failure-preview.tsx
+      - apps/web/src/components/ui/index.ts (already traced)
+    - apps/web/src/features/quotation-preview/quotation-form-preview.tsx
+      - apps/web/src/components/ui/index.ts (already traced)
+      - apps/web/src/features/quotation-preview/quotation-failure-preview.tsx (already traced)
+      - apps/web/src/features/quotation-preview/quotation-field-preview.tsx (already traced)
+      - apps/web/src/features/quotation-preview/quotation-product-summary.tsx (already traced)
+      - apps/web/src/features/quotation-preview/quotation-validation-preview.tsx (already traced)
+    - apps/web/src/features/quotation-preview/quotation-success-preview.tsx
+      - apps/web/src/components/ui/index.ts (already traced)
+    - apps/web/src/features/quotation-preview/quotation-blocked-page.tsx
+      - apps/web/src/components/layout/index.ts (already traced)
+      - apps/web/src/components/ui/index.ts (already traced)
+  - apps/web/src/features/inquiry/inquiry-store.ts

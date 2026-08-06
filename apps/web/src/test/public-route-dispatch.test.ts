@@ -20,7 +20,7 @@ describe("public route dispatch", () => {
     ["products/scissors/scalpel-handle-no-3", "not-found"],
     ["products/unknown", "not-found"],
     ["products/knives/scalpel-handle-no-3/extra", "not-found"],
-    ["unplanned-page", "placeholder"]
+    ["unplanned-page", "not-found"]
   ] as const)("maps %s to %s", (key, expected) => {
     expect(resolvePublicPageKind(key)).toBe(expected);
   });

@@ -1,22 +1,37 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { requireApiOwner, requireApiUser } from "@/lib/supabase/api-auth";
 
 export async function GET(req: Request) {
-  const supabase = await createClient();
   const { searchParams } = new URL(req.url);
-  const search = searchParams.get("search") || "";
-  const status = searchParams.get("status") || "All inquiry states";
+  const scope = searchParams.get("scope");
+  const auth = scope === "mine" ? await requireApiUser() : await requireApiOwner();
 
-  let query = supabase.from("quote_requests").select("*").order("created_at", { ascending: false });
-  
-  if (search) {
-    query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%`);
+  if (!auth.ok) return auth.response;
+
+  let query = auth.supabase
+    .from("quote_requests")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (scope === "mine") {
+    query = query.eq("user_id", auth.user.id);
+  } else {
+    const search = searchParams.get("search") || "";
+    const status = searchParams.get("status") || "All inquiry states";
+
+    if (search) {
+      query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%`);
+    }
+
+    if (status !== "All inquiry states") {
+      query = query.eq("status", status);
+    }
   }
-  
-  if (status !== "All inquiry states") {
-    query = query.eq("status", status);
+
+  const { data, error } = await query;
+  if (error) {
+    return NextResponse.json({ error: "Failed to load inquiries" }, { status: 500 });
   }
-  
-  const { data } = await query;
+
   return NextResponse.json(data || []);
 }

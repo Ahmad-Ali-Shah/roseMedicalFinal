@@ -1,9 +1,11 @@
-import Link from "next/link";
 import type { ReactElement } from "react";
 import type {
   CatalogueFamilyRecord,
   CatalogueProductRecord
 } from "@/features/catalogue-registry";
+import { TiltSurface } from "@/features/motion";
+import { AddToInquiryButton, createInquiryItemFromProduct } from "@/features/inquiry";
+import { LocaleLink, LocalizedText } from "@/features/localization";
 import {
   ProductMediaPlaceholder,
   productHref
@@ -16,22 +18,38 @@ export function FamilyProductCard({
   family: CatalogueFamilyRecord;
   product: CatalogueProductRecord;
 }): ReactElement {
+  const sizeCount = product.sizes.length;
+
   return (
-    <article className="family-product-card" data-product-card={product.id}>
-      <ProductMediaPlaceholder label={product.mediaLabel} decorative />
-      <div className="family-product-card__body">
-        <p className="public-eyebrow">{family.name}</p>
-        <h2>{product.name}</h2>
-        <p className="family-product-card__meta">
-          {product.code}{product.primaryOption ? ` · ${product.primaryOption}` : ""}
-        </p>
-        <div className="family-product-card__actions">
-          <Link href={productHref(product)}>View details <span aria-hidden="true">→</span></Link>
-          <span className="disabled-text-action" aria-disabled="true">
-            Add to inquiry — available next phase
-          </span>
+    <TiltSurface as="article" className="family-product-card premium-surface" maxDegrees={1.6}>
+      <div data-product-card={product.id} className="family-product-card__surface">
+        <ProductMediaPlaceholder
+          label={product.mediaLabel}
+          decorative
+          src={product.mediaPath}
+          fallbackSrc={product.mediaFallbackPath}
+          spriteIndex={product.mediaIndex}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        />
+        <div className="family-product-card__body">
+          <p className="public-eyebrow">{family.name}</p>
+          <h2>{product.name}</h2>
+          <p className="family-product-card__meta">
+            {product.code}
+            {product.primaryOption ? ` · ${product.primaryOption}` : ""}
+            {` · ${sizeCount} ${sizeCount === 1 ? "size" : "sizes"}`}
+          </p>
+          <div className="family-product-card__actions">
+            <LocaleLink className="premium-link" href={productHref(product)}>
+              <LocalizedText en="View details" ar="عرض التفاصيل" /> <span aria-hidden="true">→</span>
+            </LocaleLink>
+            <AddToInquiryButton
+              item={createInquiryItemFromProduct(product)}
+              className="family-card-add"
+            />
+          </div>
         </div>
       </div>
-    </article>
+    </TiltSurface>
   );
 }

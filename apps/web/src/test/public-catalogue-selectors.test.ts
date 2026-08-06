@@ -39,9 +39,30 @@ describe("public catalogue route models", () => {
     expect(productHref(product)).toBe("/products/knives/scalpel-handle-no-3");
   });
 
-  it("maps all five shared families in approved order", () => {
-    expect(selectFamilyCards().map((family) => family.slug)).toEqual(FAMILY_SLUGS);
-    expect(selectFamilyCards()).toHaveLength(5);
+  it("maps all five family cards in the owner-approved visual order with media", () => {
+    const cards = selectFamilyCards();
+
+    expect(cards.map((family) => family.slug)).toEqual([
+      "knives",
+      "scissors",
+      "cutters",
+      "chisels",
+      "punches"
+    ]);
+    expect(cards.map((family) => family.sequence)).toEqual(["01", "02", "03", "04", "05"]);
+    expect(cards).toHaveLength(5);
+    expect(cards).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          slug: "knives",
+          media: expect.objectContaining({ src: "/media/families/knives-family.jpg" })
+        }),
+        expect.objectContaining({
+          slug: "punches",
+          media: expect.objectContaining({ src: "/media/families/punches-family.webp", fit: "contain" })
+        })
+      ])
+    );
   });
 
   it("maps shared products with family names and codes", () => {

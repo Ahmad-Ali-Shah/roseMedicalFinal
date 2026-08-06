@@ -2,8 +2,9 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 
-const root = path.resolve("apps/web/src");
+const root = fileURLToPath(new URL("../", import.meta.url));
 const normalFiles = [
   "features/admin-inquiries/admin-inquiry-workflow.ts",
   "features/admin-inquiries/admin-inquiries-page.tsx",
@@ -33,21 +34,24 @@ const prohibited = [
   /RM-\d+/i,
   /mailto:|tel:|whatsapp/i,
   /href=["'][^"']*(?:inquiries|messages)\//i,
-  /<form|type=["']file["']/i,
-  /onSubmit=|onClick=|fetch\(|localStorage|sessionStorage|document\.cookie/i,
+  /type=["']file["']/i,
+  /localStorage|sessionStorage|document\.cookie/i,
   /0 inquiries|0 messages|0 new|4 inquiries|20 latest submissions/i,
   /No new inquiries today|All caught up|Inbox empty|Last synced/i,
   /data-preview-only/i
 ];
 
-test("F3E-C normal operations source contains no fictional records or live behavior", () => {
+test("F3E-C uses protected live queues without fictional records or browser persistence", () => {
   for (const pattern of prohibited) {
     assert.doesNotMatch(content, pattern);
   }
-  assert.match(content, /No live inquiry source is connected/);
-  assert.match(content, /No live message source is connected/);
-  assert.match(content, /No live quotation inquiries are available/);
-  assert.match(content, /No live general messages are available/);
+
+  assert.match(content, /\/api\/inquiries\?/);
+  assert.match(content, /\/api\/inquiries\/update/);
+  assert.match(content, /\/api\/messages/);
+  assert.match(content, /updateMessageStatus/);
+  assert.match(content, /protected owner queue/i);
+  assert.match(content, /No general messages are currently available/);
 });
 
 test("F3E-C route view fails closed rather than returning a blank success", () => {

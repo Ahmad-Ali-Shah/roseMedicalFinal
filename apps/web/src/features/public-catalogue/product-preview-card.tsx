@@ -1,15 +1,28 @@
-import Link from "next/link";
 import type { ReactElement } from "react";
+import { TiltSurface } from "@/features/motion";
+import { LocaleLink } from "@/features/localization";
 import { productHref, type ProductPreviewModel } from "./models";
 import { ProductMediaPlaceholder } from "./product-media-placeholder";
 
-export function ProductPreviewCard({ product }: { product: ProductPreviewModel }): ReactElement {
+export function ProductPreviewCard({
+  product,
+  featured = false
+}: {
+  product: ProductPreviewModel;
+  featured?: boolean;
+}): ReactElement {
   const primaryOption = product.optionSummary[0];
-
-  return (
-    <article className="product-preview-card" data-family={product.familySlug}>
-      <Link className="product-preview-card__link" href={productHref(product)}>
-        <ProductMediaPlaceholder label={product.imageLabel} decorative aspect="landscape" />
+  const card = (
+    <article className="product-preview-card premium-surface" data-family={product.familySlug}>
+      <LocaleLink className="product-preview-card__link" href={productHref(product)}>
+        <ProductMediaPlaceholder
+          label={product.imageLabel}
+          decorative
+          aspect="landscape"
+          src={product.mediaPath}
+          fallbackSrc={product.mediaFallbackPath}
+          spriteIndex={product.mediaIndex}
+        />
         <div className="product-preview-card__body">
           <p className="product-preview-card__family">{product.familyName}</p>
           <h3 className="product-preview-card__title">{product.name}</h3>
@@ -17,9 +30,19 @@ export function ProductPreviewCard({ product }: { product: ProductPreviewModel }
             <span className="product-code">{product.code}</span>
             {primaryOption ? <><span aria-hidden="true"> · </span><span>{primaryOption}</span></> : null}
           </p>
-          <span className="product-preview-card__action" aria-hidden="true">View details <span>→</span></span>
+          <span className="product-preview-card__action" aria-hidden="true">
+            View details <span>→</span>
+          </span>
         </div>
-      </Link>
+      </LocaleLink>
     </article>
+  );
+
+  return featured ? (
+    <TiltSurface className="product-preview-card__tilt" maxDegrees={0.9}>
+      {card}
+    </TiltSurface>
+  ) : (
+    <div className="product-preview-card__tilt">{card}</div>
   );
 }

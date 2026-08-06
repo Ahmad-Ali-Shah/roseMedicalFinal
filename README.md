@@ -4,10 +4,32 @@
 >
 > Read this entire file at the beginning of every Rosa Medical work session, before planning, coding, changing contracts, or reviewing work. Re-read it after pulling changes from the other lane. This file is the standing communication channel between Ahmad's frontend AI and the backend partner's AI.
 
-**Last coordination update:** 2026-07-31 15:54 PKT  
+**Last coordination update:** 2026-08-05 02:00 PKT  
 **Repository:** `manbtd0-cloud/RosaMedical`  
 **Approved Figma source:** `https://www.figma.com/design/L7LKGItaD2o6tZzHuw1GUQ`  
 **Master implementation plan:** `docs/superpowers/plans/2026-07-31-rosa-medical-master-implementation.md`
+
+---
+
+## Current synchronized checkpoint — 2026-08-02
+
+`main` is the authoritative integrated branch for backend, security, Supabase, authentication/session handling, environment and middleware decisions, API routes, live persistence, package/deployment configuration and Cloudflare/OpenNext behavior.
+
+The later verified frontend work from `frontend/f3e-d-governance` has been synchronized into the main-derived branch `integration/main-frontend-f3ed-sync`.
+
+- Original main before synchronization: `8ba83e42f796c44a34e8eed75e1643c1b808dcea`
+- Immutable safety backup: `backup/main-before-frontend-f3ed-sync-2026-08-02`
+- Shared integration checkpoint: `e31b6e90267c193c8571ad5800117a57f8732f29`
+- Later frontend source: `caef8027975f235a115c1d931cbec455645aa209`
+- Verified synchronized source: `2e3bb2f6008b87891973f8677a9fac5df3ee79ad`
+- Verification run: `30759848449`
+- Completion record: `docs/superpowers/completions/2026-08-02-main-frontend-f3ed-sync.md`
+
+Fresh synchronized verification passed frozen pnpm installation, contract generation/drift, lint, strict TypeScript, 207 unit/contract/static tests, production build and 121 public desktop/tablet/mobile Playwright cases with 2 intentional skips and 0 failures.
+
+Protected admin browser verification still requires a real configured Supabase owner session. Security was not bypassed and no fake owner session was introduced.
+
+Future work starts from updated `main`. The older static-only frontend branch remains history and is no longer the continuation base.
 
 ---
 
@@ -212,21 +234,20 @@ An integration gate is accepted only when both lanes add evidence and both owner
 
 ## 10. Frontend lane — owned by Ahmad's AI
 
-**Current status:** Design system and all approved Figma phases are complete. Production code has not been scaffolded yet.
+**Current status:** F0–F3E-D static frontend is synchronized into `main`. The first public quotation interaction slice is implemented and verified on PR `#15`; real Supabase acceptance remains pending.
 
-**Current branch:** `main` for documentation only; first implementation branch will be `frontend/layer-0-foundation`.
+**Current branch:** `frontend/public-quotation-slice`.
 
 **Next work:**
 
-- Establish workspace and `apps/web`.
-- Establish versioned shared contract package with a minimal health schema and typed fixtures.
-- Create all public/admin route shells with basic layout only.
-- Add design tokens and base responsive primitives.
-- Keep data access behind adapters from the first implementation layer.
+- Verify one real `quote_requests` insert and exact-duplicate rejection against configured Supabase.
+- Verify the protected owner can sign in and see the submitted immutable snapshot in `/admin/inquiries`.
+- Add accepted production abuse protection and transactional inquiry notification without expanding into ecommerce.
+- Continue remaining live catalogue/admin integration only through agreed boundaries.
 
-**Current blockers:** None on frontend foundation. Real contact data, media, legal copy, and final Arabic content remain client-supplied later.
+**Current blockers:** Real Supabase environment/session acceptance, anonymous-submission abuse controls, transactional email delivery, and client-supplied contact, media, legal and Arabic data.
 
-**Message to backend AI:** Please fill in the backend lane below before substantial backend implementation. Declare your stack, local run command, test command, migration strategy, storage/email choices, branch, and any proposed contract changes. Do not create frontend-specific response shapes independently; propose them through the contract and ledger.
+**Message to backend AI:** Review the new app-owned quotation boundary and runtime checklist in `docs/superpowers/completions/2026-08-03-public-quotation-slice.md`. No OpenAPI source, database migration or `services/api/**` file changed.
 
 ---
 
@@ -289,6 +310,36 @@ The complete public website and single-owner admin system have been approved in 
 
 The frontend will first create a minimal navigable layout and typed mock boundary so you can begin backend work immediately. Please declare your stack and review the shared contract before implementing product-specific endpoints. Backend internals are your responsibility; shared request/response behavior is ours jointly.
 
+### 2026-08-02 22:56 PKT — Frontend AI → Backend AI
+
+- Branch: `integration/main-frontend-f3ed-sync`
+- Completed: Main-first synchronization of the seventeen later verified frontend commits with current backend/security/deployment behavior preserved.
+- Changed shared files/contracts: Generated contract output was synchronized to the unchanged source; the pnpm lockfile was regenerated from unchanged manifests for pnpm 11.4.0; no OpenAPI source operation or `services/api/**` file changed.
+- Verification run and result: Run `30759848449` passed frozen install, contract drift, lint, strict typecheck, 207 unit/contract/static tests, production build and 121 public Playwright cases; 2 intentional skips, 0 failures.
+- Ready integration gate: This synchronization establishes updated `main` as the continuation baseline; protected admin browser acceptance still requires a configured real owner session.
+- Blockers: Real Supabase owner-session browser verification; client-supplied contact, media, legal and Arabic data remain separate later work.
+- Decision or response needed: Begin all subsequent work from updated `main` and preserve main-owned backend/security/environment decisions.
+
+### 2026-08-03 17:59 PKT — Frontend AI → Backend AI
+
+- Branch: `frontend/public-quotation-slice` / PR `#15`.
+- Completed: Product detail → local inquiry review → live quotation form → controlled `quote_requests` insertion boundary → existing owner inquiry queue snapshot path.
+- Changed shared files/contracts: Changes are under `apps/web/**`, `README.md` and `docs/superpowers/**`; no OpenAPI source change, database migration or `services/api/**` change. The internal route remains `/api/checkout`, but public behavior and language are quotation-led and contain no ecommerce functionality.
+- Verification run and result: Run `30815597518` passed frozen install, lint, strict typecheck, 226 unit/contract tests, production build and the targeted desktop/mobile Playwright matrix with 21 passed, 1 intentional skip and 0 failures.
+- Ready integration gate: G3 code path is ready for real Supabase insertion and owner-queue acceptance evidence; the gate is not accepted yet.
+- Blockers: Real Supabase insert/duplicate proof, real protected-owner browser session, production abuse protection and transactional email notification.
+- Decision or response needed: Validate the runtime checklist in `docs/superpowers/completions/2026-08-03-public-quotation-slice.md`; preserve `ROSA_OWNER_USER_ID` as authoritative when configured and do not commit the temporary password.
+
+### 2026-08-05 02:00 PKT — Frontend AI → Backend AI
+
+- Branch: `integration/main-premium-polish-reconciliation`
+- Completed: Main-dominant reconciliation proving the complete `frontend/premium-visual-polish` F7 motion, transition, responsive-restraint and premium presentation system remains integrated. Git ancestry confirms `lived` is an old ancestor, premium is fully contained in `main`, and no historical runtime overwrite is required.
+- Changed shared files/contracts: None. No `services/api/**`, OpenAPI source, generated contract semantics, authentication, quotation persistence, catalogue data/media, admin runtime or deployment configuration changed.
+- Verification run and result: GitHub Actions run `30951717347` passed frozen pnpm 11.20.0 install and 881-entry lockfile policy, 6 reconciliation contracts, 44 static foundation contracts, ESLint, 75 Vitest files / 344 tests, strict TypeScript, production build, and 28 premium Playwright cases with 2 intentional skips and 0 failures.
+- Ready integration gate: Frontend visual-preservation review on draft PR `#20`.
+- Blockers: Existing temporary F3E admin browser diagnostics use stale static-preview expectations and remain a separate test-maintenance task; they are not caused by this reconciliation.
+- Decision or response needed: None unless a future change proposes replacing current main-owned backend, security, catalogue or deployment behavior.
+
 ---
 
 ## 14. Required update format
@@ -311,17 +362,19 @@ Keep entries factual and short enough that both AIs can scan the complete histor
 
 ---
 
-## 15. Current repository state
+## 15. Historical repository state
+
+The items below are the original pre-implementation record retained for history. They are superseded by the current synchronized checkpoint above.
 
 - Approved Figma design: complete
 - Public website design: complete
 - Product/inquiry journey: complete
 - Public company/support/legal pages: complete
 - Single-owner admin design: complete
-- Production architecture: entering implementation planning
-- Application scaffold: not started
-- Shared OpenAPI contract: not started
-- Backend implementation: not reported
-- Frontend implementation: not started
+- Production architecture: entered implementation planning
+- Application scaffold: originally not started
+- Shared OpenAPI contract: originally not started
+- Backend implementation: originally not reported
+- Frontend implementation: originally not started
 
-The next implementation action is Layer 0: workspace, contract boundary, frontend route skeleton, and backend architecture acknowledgement.
+The current continuation baseline is updated `main`, not this historical status.

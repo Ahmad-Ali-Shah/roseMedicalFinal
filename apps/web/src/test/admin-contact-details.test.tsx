@@ -22,12 +22,13 @@ describe("F3E-D Contact Details", () => {
     expect(model.unresolvedCount).toBe(CONTACT_INFORMATION.filter((row) => !row.confirmed).length);
   });
 
-  it("renders no invented actionable contact data", () => {
+  it("renders the centralized example contact data without exposing public actions in admin", () => {
     const html = renderToStaticMarkup(<AdminContactDetailsPage />);
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
-    expect(html).toContain("Replace unresolved contact values safely.");
-    expect(html).toContain("Awaiting client confirmation");
-    expect(html).not.toMatch(/\+966|Riyadh|Saudi Arabia|placeholder\.com|mailto:|tel:|wa\.me/i);
+    expect(html).toContain("Review centralized example contact details.");
+    expect(html).toContain("hello@example.com");
+    expect(html).toContain("Riyadh");
+    expect(html).not.toMatch(/mailto:|tel:|wa\.me/i);
     expect(html).not.toContain("data-preview-only");
     expect(html).not.toContain("<form");
   });

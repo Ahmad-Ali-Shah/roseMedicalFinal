@@ -13,6 +13,9 @@ code { font-size: 0.9em; }
 :focus-visible { outline: 3px solid color-mix(in srgb, var(--color-rosa-red) 55%, white); outline-offset: 3px; }
 .skip-link { position: fixed; inset: 1rem auto auto 1rem; z-index: 200; transform: translateY(-220%); border: 1px solid var(--color-ink); background: var(--color-paper); padding: 0.75rem 1rem; }
 .skip-link:focus { transform: translateY(0); }
+.skip-link__label--ar { display: none; }
+html[lang="ar"] .skip-link__label--en { display: none; }
+html[lang="ar"] .skip-link__label--ar { display: inline; }
 .visually-hidden { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

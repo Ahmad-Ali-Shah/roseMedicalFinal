@@ -46,21 +46,23 @@ export function AdminSection({
   ...props
 }: AdminSectionProps) {
   const headingId = useId();
+  const headerProps: AdminSectionHeaderProps | undefined = title
+    ? {
+        id: headingId,
+        title,
+        ...(eyebrow ? { eyebrow } : {}),
+        ...(description ? { description } : {}),
+        ...(actions ? { actions } : {})
+      }
+    : undefined;
+
   return (
     <section
       className={`admin-section ${className}`.trim()}
-      aria-labelledby={title ? headingId : undefined}
+      aria-labelledby={headerProps ? headingId : undefined}
       {...props}
     >
-      {title ? (
-        <AdminSectionHeader
-          id={headingId}
-          title={title}
-          eyebrow={eyebrow}
-          description={description}
-          actions={actions}
-        />
-      ) : null}
+      {headerProps ? <AdminSectionHeader {...headerProps} /> : null}
       {children}
     </section>
   );

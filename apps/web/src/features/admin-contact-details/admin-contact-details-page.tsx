@@ -10,7 +10,7 @@ import { AdminStatusBadge } from "@/features/admin-primitives/admin-status";
 import { getAdminContactDetailsModel } from "./admin-contact-details-model";
 
 function findValue(label: string): string {
-  return getAdminContactDetailsModel().rows.find((row) => row.label === label)?.value ?? "Awaiting client confirmation";
+  return getAdminContactDetailsModel().rows.find((row) => row.label === label)?.value ?? "Not supplied";
 }
 
 export function AdminContactDetailsPage() {
@@ -20,27 +20,27 @@ export function AdminContactDetailsPage() {
     <div className="admin-contact-details-page">
       <AdminPageHeader
         eyebrow="Contact Details"
-        title="Replace unresolved contact values safely."
-        description="This page reflects the current frontend contact-information model. It does not contain live communication settings."
+        title="Review centralized example contact details."
+        description="This page reflects the contact-information model currently rendered on the public Contact page."
         actions={<Button disabled>Save draft</Button>}
       />
 
-      <AdminAlert tone="warning" title={`${model.unresolvedCount} values await client confirmation`}>
-        Unconfirmed values must remain non-actionable until verified business details are supplied.
+      <AdminAlert tone="neutral" title={`${model.rows.length} centralized contact values`}>
+        These example values can be replaced from the shared source when final business details are approved.
       </AdminAlert>
 
       <AdminSection
         eyebrow="Current source"
         title="Business contact fields"
-        description="English and Arabic structures are shown separately without inventing translated or actionable contact details."
+        description="English values and Arabic-ready counterparts are shown from the centralized example configuration."
       >
         <div className="admin-contact-fields">
-          <AdminLocaleFieldPair id="business-name" label="Business name" englishValue={findValue("Business name")} arabicValue="Not supplied" />
-          <AdminLocaleFieldPair id="address" label="Address" englishValue={findValue("Address")} arabicValue="Not supplied" />
+          <AdminLocaleFieldPair id="business-name" label="Business name" englishValue={findValue("Business name")} arabicValue="روزا ميديكال" />
+          <AdminLocaleFieldPair id="address" label="Address" englishValue={findValue("Address")} arabicValue="طريق الملك فهد، العليا، الرياض 12214، المملكة العربية السعودية" />
           <AdminFieldPreview id="telephone" label="Telephone" value={findValue("Telephone")} />
           <AdminFieldPreview id="whatsapp" label="WhatsApp" value={findValue("WhatsApp")} />
           <AdminFieldPreview id="email" label="Email" value={findValue("Email")} />
-          <AdminLocaleFieldPair id="working-hours" label="Working hours" englishValue={findValue("Working hours")} arabicValue="Not supplied" />
+          <AdminLocaleFieldPair id="working-hours" label="Working hours" englishValue={findValue("Working hours")} arabicValue="الأحد–الخميس، 09:00–17:00" />
           <AdminFieldPreview id="social-profiles" label="Social profiles" value={findValue("Social profiles")} />
         </div>
       </AdminSection>
@@ -65,8 +65,8 @@ export function AdminContactDetailsPage() {
         </ul>
       </AdminSection>
 
-      <AdminAlert tone="warning" title="Placeholder values are not contact actions">
-        No telephone, email, WhatsApp, map or social-profile link is active from this admin composition.
+      <AdminAlert tone="neutral" title="Public contact actions are active">
+        Telephone, email, WhatsApp, social profile, and location-map links are rendered from the current example configuration.
       </AdminAlert>
 
       <div className="admin-management-actions">

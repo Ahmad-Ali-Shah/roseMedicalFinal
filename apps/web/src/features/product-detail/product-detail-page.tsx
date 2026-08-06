@@ -1,5 +1,7 @@
 import type { ReactElement } from "react";
 import { Container, Section } from "@/components/layout";
+import type { InquiryItem } from "@/features/inquiry";
+import { Reveal } from "@/features/motion";
 import { ProcurementPanel } from "@/features/public-catalogue";
 import { createProductDetailData } from "./product-detail.data";
 import { ProductBreadcrumbs } from "./product-breadcrumbs";
@@ -9,60 +11,94 @@ import { ProductSpecificationTable } from "./product-specification-table";
 import { ProductProcurementNote } from "./product-procurement-note";
 import { RelatedProductGrid } from "./related-product-grid";
 import { MobileInquiryBar } from "./mobile-inquiry-bar";
+import type { PublicLocale } from "@/features/localization/locales";
+import { FAMILY_NAMES_AR } from "@/features/localization/public-copy";
 
 export function ProductDetailPage({
   familySlug,
-  productSlug
+  productSlug,
+  locale = "en"
 }: {
   familySlug: string;
   productSlug: string;
+  locale?: PublicLocale;
 }): ReactElement | null {
   const data = createProductDetailData(familySlug, productSlug);
   if (!data) return null;
+  const ar = locale === "ar";
+  const family = ar ? { ...data.family, name: FAMILY_NAMES_AR[data.family.slug] } : data.family;
+
+  const inquiryItem: InquiryItem = {
+    id: data.product.id,
+    familySlug: data.product.familySlug,
+    slug: data.product.slug,
+    name: data.product.name,
+    code: data.product.code,
+    size: data.sizeValue,
+    variant: data.variantValue,
+    quantity: 1,
+    notes: ""
+  };
 
   return (
     <div className="public-page public-page--product-detail">
       <Section tone="paper" spacing="compact" className="product-detail-intro">
         <Container size="wide">
-          <ProductBreadcrumbs family={data.family} product={data.product} />
+          <Reveal direction="none" className="product-detail__breadcrumbs-reveal">
+            <ProductBreadcrumbs family={family} product={data.product} locale={locale} />
+          </Reveal>
           <div className="product-detail-layout">
-            <ProductGallery product={data.product} />
-            <ProductProcurementSummary
-              family={data.family}
-              product={data.product}
-              sizeValue={data.sizeValue}
-              variantValue={data.variantValue}
-              catalogueReference={data.catalogueReference}
-            />
+            <Reveal direction="right" delay={0.04} className="product-detail-layout__gallery-reveal">
+              <ProductGallery product={data.product} />
+            </Reveal>
+            <Reveal direction="left" delay={0.1} className="product-detail-layout__summary-reveal">
+              <ProductProcurementSummary
+                family={family}
+                product={data.product}
+                sizeValue={data.sizeValue}
+                variantValue={data.variantValue}
+                catalogueReference={data.catalogueReference}
+                inquiryItem={inquiryItem}
+                locale={locale}
+              />
+            </Reveal>
           </div>
         </Container>
       </Section>
 
       <Section tone="paper">
         <Container size="wide">
-          <ProductSpecificationTable rows={data.specifications} />
-          <ProductProcurementNote />
+          <Reveal direction="up">
+            <ProductSpecificationTable rows={data.specifications} locale={locale} />
+          </Reveal>
+          <Reveal direction="up" delay={0.08}>
+            <ProductProcurementNote locale={locale} />
+          </Reveal>
         </Container>
       </Section>
 
       <Section tone="paper">
         <Container size="wide">
-          <RelatedProductGrid family={data.family} products={data.related} />
+          <Reveal direction="up">
+            <RelatedProductGrid family={family} products={data.related} locale={locale} />
+          </Reveal>
         </Container>
       </Section>
 
       <Section tone="paper" className="product-detail-final-cta">
         <Container size="wide">
-          <ProcurementPanel
-            eyebrow="Inquiry ready"
-            title="Continue building your product list."
-            copy="Review selected instruments, quantities and line notes before requesting a quotation."
-            primary={{ label: "View inquiry", href: "/inquiry" }}
-            tone="dark"
-          />
+          <Reveal direction="up">
+            <ProcurementPanel
+              eyebrow={ar ? "الاستفسار جاهز" : "Inquiry ready"}
+              title={ar ? "واصل إعداد قائمة المنتجات." : "Continue building your product list."}
+              copy={ar ? "راجع الأدوات والكميات وملاحظات البنود قبل طلب عرض السعر." : "Review selected instruments, quantities and line notes before requesting a quotation."}
+              primary={{ label: ar ? "عرض الاستفسار" : "View inquiry", href: "/inquiry" }}
+              tone="dark"
+            />
+          </Reveal>
         </Container>
       </Section>
-      <MobileInquiryBar />
+      <MobileInquiryBar item={inquiryItem} />
     </div>
   );
 }

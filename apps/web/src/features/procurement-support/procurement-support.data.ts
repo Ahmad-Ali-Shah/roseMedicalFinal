@@ -64,3 +64,28 @@ export const INFORMATION_CHECKLIST = [
   "Destination country",
   "Packing, finish and additional notes"
 ] as const;
+
+export const PROCUREMENT_STEPS_AR = [
+  { sequence: "01", title: "الاستعراض حسب العائلة", description: "ابدأ بالمشارط أو المقصات أو أدوات الثقب أو الأزاميل أو أدوات القطع." },
+  { sequence: "02", title: "مراجعة الرموز والخيارات", description: "تحقق من رموز المنتجات والمقاسات والأشكال والخيارات المدرجة." },
+  { sequence: "03", title: "إضافة المنتجات إلى الاستفسار", description: "اجمع الأدوات والكميات المطلوبة في استفسار منتجات واحد." },
+  { sequence: "04", title: "إضافة ملاحظات مفيدة", description: "أدرج ملاحظات البنود أو تفاصيل التغليف والتشطيب والوجهة." },
+  { sequence: "05", title: "إرسال بيانات التواصل", description: "يتضمن الطلب المكتمل معلومات العمل اللازمة للمتابعة." },
+  { sequence: "06", title: "استلام التأكيد", description: "يحصل الطلب المكتمل على مرجع يمكن استخدامه في متابعة روزا." }
+] as const satisfies readonly NumberedEditorialItem[];
+
+export const REQUIREMENT_TYPES_AR = [
+  { sequence: "01", title: "استفسار عن منتج محدد", description: "أداة واحدة محددة برمزها وخياراتها الدقيقة." },
+  { sequence: "02", title: "قائمة متعددة المنتجات", description: "عدة منتجات مع الكميات والملاحظات الخاصة بكل بند." },
+  { sequence: "03", title: "استفسار مبني على الكتالوج", description: "طلب يُعد أثناء مراجعة الكتالوجات التقنية." },
+  { sequence: "04", title: "طلب منتج غير مدرج", description: "وصف متطلب عام عندما لا يكون المنتج الدقيق مدرجًا." }
+] as const satisfies readonly NumberedEditorialItem[];
+
+export const INFORMATION_CHECKLIST_AR = [
+  "رموز المنتجات",
+  "المقاسات",
+  "الخيارات",
+  "الكميات",
+  "بلد الوجهة",
+  "التغليف والتشطيب والملاحظات الإضافية"
+] as const;

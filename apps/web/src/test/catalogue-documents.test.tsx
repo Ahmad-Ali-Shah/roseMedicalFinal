@@ -27,10 +27,12 @@ describe("F3C catalogue documents", () => {
     expect(CATALOGUE_DOCUMENTS).toHaveLength(5);
   });
 
-  it("uses restrained descriptions and no fabricated PDF path", () => {
+  it("uses restrained descriptions and the owner-supplied PDF path", () => {
     for (const document of CATALOGUE_DOCUMENTS) {
       expect(document.description).toBe(descriptions[document.familySlug]);
-      expect(document.pdfPath).toBeUndefined();
+      expect(document.pdfPath).toBe(
+        `/media/catalogues/pdf/rosa-${document.familySlug}-catalogue.pdf`
+      );
       expect(document.familyHref).toBe(`/products/${document.familySlug}`);
     }
   });
@@ -40,14 +42,21 @@ describe("F3C catalogue documents", () => {
     expect(getCatalogueDocument("unknown")).toBeUndefined();
   });
 
-  it("renders a real family link and a native disabled PDF control", () => {
-    const html = renderToStaticMarkup(
-      <CatalogueCard document={CATALOGUE_DOCUMENTS[0]} featured />
-    );
+  it("renders a real family link and a downloadable PDF control", () => {
+    const document = CATALOGUE_DOCUMENTS[0];
+    expect(document).toBeDefined();
+    if (!document) throw new Error("Expected the first catalogue document");
+
+    const html = renderToStaticMarkup(<CatalogueCard document={document} />);
 
     expect(html).toContain('href="/products/knives"');
-    expect(html).toContain("PDF not available online");
-    expect(html).toContain("disabled");
+    expect(html).toContain('href="/media/catalogues/pdf/rosa-knives-catalogue.pdf"');
+    expect(html).toContain("download=");
+    expect(html).toContain("Download PDF");
+    expect(html).not.toContain("PDF not available online");
+    expect(html).not.toContain("disabled");
+    expect(html).toContain("knives-number-3.webp");
+    expect(html).toContain("catalogue-document-cover__format");
     expect(html).not.toContain('href=""');
     expect(html).not.toContain("[Month Year]");
   });
@@ -57,6 +66,9 @@ describe("F3C catalogue documents", () => {
 
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
     expect((html.match(/data-catalogue-document=/g) ?? [])).toHaveLength(5);
+    expect((html.match(/catalogue-document-cover--glare/g) ?? [])).toHaveLength(5);
+    expect((html.match(/data-catalogue-family-media=/g) ?? [])).toHaveLength(5);
+    expect(html).not.toContain("catalogue-document-card--featured");
     expect(html).toContain('href="/search"');
     expect(html).toContain('href="/request-quotation"');
   });

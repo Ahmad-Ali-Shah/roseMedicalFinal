@@ -1,6 +1,71 @@
+import {
+  KNIVES_BATCH_01_MEDIA,
+  OWNER_CATALOGUE_PRODUCT_MEDIA
+} from "@/features/catalogue-media";
 import type { CatalogueProductRecord } from "../types";
+import { KNIVES_BATCH_01_CONFIGURATIONS } from "./knives-batch-01";
 
-export const KNIFE_PRODUCTS = [
+const MEDIA_BY_ID = new Map(
+  KNIVES_BATCH_01_MEDIA.map((asset) => [asset.id, asset] as const)
+);
+
+function unique(values: readonly string[]): readonly string[] {
+  return [...new Set(values)];
+}
+
+export const KNIVES_BATCH_01_PRODUCTS = KNIVES_BATCH_01_CONFIGURATIONS.map(
+  (configuration): CatalogueProductRecord => {
+    const catalogueCodes = configuration.codeOptions.map(({ code, size }) => ({
+      code,
+      size
+    }));
+    const primaryCode = catalogueCodes[0];
+    const media = MEDIA_BY_ID.get(configuration.mediaAssetId);
+
+    if (!primaryCode) {
+      throw new Error(`Missing catalogue code for ${configuration.id}`);
+    }
+
+    if (!media) {
+      throw new Error(
+        `Missing catalogue media for ${configuration.id}: ${configuration.mediaAssetId}`
+      );
+    }
+
+    const directions =
+      configuration.variant === "Straight" || configuration.variant === "Curved"
+        ? [configuration.variant]
+        : configuration.variant === "Long curved"
+          ? ["Curved"]
+          : [];
+
+    return {
+      id: configuration.id,
+      familySlug: "knives",
+      slug: configuration.slug,
+      name: configuration.name,
+      code: primaryCode.code,
+      description: `Catalogue-listed ${configuration.name}. Codes remain grouped only where the catalogue presents one unchanged visible configuration with size or listed code variants.`,
+      sizes: unique(catalogueCodes.map((option) => option.size)),
+      variants: [configuration.variant],
+      directions,
+      primaryOption: configuration.variant,
+      catalogueReference: {
+        family: "Knives",
+        page: configuration.cataloguePage
+      },
+      mediaLabel: `${configuration.name}, ${configuration.variant}`,
+      catalogueCodes,
+      mediaAssetId: configuration.mediaAssetId,
+      mediaPath: media.avifPath,
+      mediaFallbackPath: media.webpPath,
+      mediaSourceUrl: media.sourcePageUrl,
+      mediaReviewNote: `${media.matchGrade} · ${media.rightsMode} · ${media.background} · ${media.reviewStatus}`
+    };
+  }
+) as readonly CatalogueProductRecord[];
+
+const ESTABLISHED_KNIFE_PRODUCTS: readonly CatalogueProductRecord[] = [
   {
     id: "product_scalpel_handle_3",
     familySlug: "knives",
@@ -14,7 +79,8 @@ export const KNIFE_PRODUCTS = [
     directions: [],
     primaryOption: "14.5 cm",
     catalogueReference: { family: "Knives", page: "6" },
-    mediaLabel: "Scalpel Handle No. 3 placeholder"
+    mediaLabel: "Scalpel Handle No. 3",
+    ...OWNER_CATALOGUE_PRODUCT_MEDIA.product_scalpel_handle_3
   },
   {
     id: "product_bard_parker_handle",
@@ -29,7 +95,8 @@ export const KNIFE_PRODUCTS = [
     directions: [],
     primaryOption: "14.5 cm",
     catalogueReference: { family: "Knives" },
-    mediaLabel: "Bard Parker Handle placeholder"
+    mediaLabel: "Bard Parker Handle",
+    ...OWNER_CATALOGUE_PRODUCT_MEDIA.product_bard_parker_handle
   },
   {
     id: "product_amputation_knife",
@@ -44,7 +111,8 @@ export const KNIFE_PRODUCTS = [
     directions: [],
     primaryOption: "14.5 cm",
     catalogueReference: { family: "Knives" },
-    mediaLabel: "Amputation Knife placeholder"
+    mediaLabel: "Amputation Knife",
+    ...OWNER_CATALOGUE_PRODUCT_MEDIA.product_amputation_knife
   },
   {
     id: "product_resection_knife",
@@ -59,6 +127,12 @@ export const KNIFE_PRODUCTS = [
     directions: [],
     primaryOption: "14.5 cm",
     catalogueReference: { family: "Knives" },
-    mediaLabel: "Resection Knife placeholder"
+    mediaLabel: "Resection Knife",
+    ...OWNER_CATALOGUE_PRODUCT_MEDIA.product_resection_knife
   }
-] as const satisfies readonly CatalogueProductRecord[];
+];
+
+export const KNIFE_PRODUCTS: readonly CatalogueProductRecord[] = [
+  ...KNIVES_BATCH_01_PRODUCTS,
+  ...ESTABLISHED_KNIFE_PRODUCTS
+];

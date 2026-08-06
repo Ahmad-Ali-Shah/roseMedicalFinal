@@ -20,8 +20,9 @@ describe("F3D legal templates", () => {
 
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
     expect((html.match(/data-legal-section=/g) ?? [])).toHaveLength(count);
-    expect(html).toContain("awaiting client and legal approval");
-    expect(html).toContain("qualified legal review");
+    expect(html).toContain(`Last updated: ${document.updated}`);
+    expect(html).toContain("Questions about this policy?");
+    expect(html).not.toMatch(/template|awaiting|not launch-ready/i);
     expect(html).not.toMatch(/Saudi law governs|retained for \d+ years|Google Analytics|Mailchimp/i);
   });
 });

@@ -1,50 +1,54 @@
-import Link from "next/link";
 import type { ReactElement } from "react";
 import type {
   CatalogueFamilyRecord,
   CatalogueProductRecord
 } from "@/features/catalogue-registry";
+import type { InquiryItem } from "@/features/inquiry";
 import { StaticOptionField } from "./static-option-field";
-import { StaticQuantityField } from "./static-quantity-field";
+import { ProductInquiryControls } from "./product-inquiry-controls";
+import type { PublicLocale } from "@/features/localization/locales";
+import { LocaleLink } from "@/features/localization";
 
 export function ProductProcurementSummary({
   family,
   product,
   sizeValue,
   variantValue,
-  catalogueReference
+  catalogueReference,
+  inquiryItem,
+  locale = "en"
 }: {
   family: CatalogueFamilyRecord;
   product: CatalogueProductRecord;
   sizeValue: string;
   variantValue: string;
   catalogueReference: string;
+  inquiryItem: InquiryItem;
+  locale?: PublicLocale;
 }): ReactElement {
+  const ar = locale === "ar";
   const controlsNoteId = `product-controls-${product.id}`;
 
   return (
     <section className="product-procurement-summary" aria-labelledby="product-title">
       <p className="public-eyebrow">{family.name}</p>
       <h1 id="product-title">{product.name}</h1>
-      <strong className="product-procurement-summary__code">Product code {product.code}</strong>
+      <strong className="product-procurement-summary__code">{ar ? "رمز المنتج" : "Product code"} <bdi dir="ltr">{product.code}</bdi></strong>
       {product.description ? <p className="product-procurement-summary__description">{product.description}</p> : null}
 
       <div className="product-procurement-summary__options">
-        <StaticOptionField label="Size" value={sizeValue} />
-        <StaticOptionField label="Variant" value={variantValue} />
-        <StaticQuantityField value={1} />
-        <Link href="/checkout" className="button button--primary button--standard product-add-preview" aria-describedby={controlsNoteId}>
-          Add to inquiry
-        </Link>
+        <StaticOptionField label={ar ? "المقاس" : "Size"} value={sizeValue} />
+        <StaticOptionField label={ar ? "الخيار" : "Variant"} value={variantValue} />
+        <ProductInquiryControls item={inquiryItem} />
       </div>
 
       <p className="product-controls-note" id={controlsNoteId}>
-        Product selection and inquiry controls activate in the interaction phase.
+        {ar ? "أضف هذه الأداة إلى استفسار عرض السعر ثم راجع الكميات والملاحظات." : "Add this instrument to your quotation inquiry, then review quantities and notes."}
       </p>
-      <Link className="product-catalogue-reference" href="/catalogues">
-        Catalogue reference: {catalogueReference} <span aria-hidden="true">→</span>
-      </Link>
-      <p className="product-quotation-note">No public price ¹ Quotation required</p>
+      <LocaleLink className="product-catalogue-reference" href="/catalogues">
+        {ar ? "مرجع الكتالوج" : "Catalogue reference"}: <bdi dir="ltr">{catalogueReference}</bdi> <span aria-hidden="true">→</span>
+      </LocaleLink>
+      <p className="product-quotation-note">{ar ? "لا يوجد سعر عام · يلزم عرض سعر" : "No public price · Quotation required"}</p>
     </section>
   );
 }

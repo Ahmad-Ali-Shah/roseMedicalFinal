@@ -1,6 +1,11 @@
 import Link from "next/link";
 import type { Route } from "next";
-import type { ButtonHTMLAttributes, PropsWithChildren } from "react";
+import type {
+  AriaAttributes,
+  ButtonHTMLAttributes,
+  MouseEventHandler,
+  PropsWithChildren
+} from "react";
 
 type ButtonVariant = "primary" | "secondary" | "quiet" | "danger";
 type ButtonSize = "standard" | "small";
@@ -10,8 +15,24 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: ButtonSize;
 }
 
-export function Button({ variant = "primary", size = "standard", className = "", type = "button", ...props }: ButtonProps) {
-  return <button className={`button button--${variant} button--${size} ${className}`.trim()} type={type} {...props} />;
+export function Button({
+  variant = "primary",
+  size = "standard",
+  className = "",
+  type = "button",
+  children,
+  ...props
+}: ButtonProps) {
+  return (
+    <button
+      className={`button button--${variant} button--${size} ${className}`.trim()}
+      data-button="true"
+      type={type}
+      {...props}
+    >
+      <span className="button__label">{children}</span>
+    </button>
+  );
 }
 
 export type ButtonLinkProps<T extends string> = PropsWithChildren<{
@@ -19,8 +40,40 @@ export type ButtonLinkProps<T extends string> = PropsWithChildren<{
   variant?: ButtonVariant;
   size?: ButtonSize;
   className?: string;
+  onClick?: MouseEventHandler<HTMLAnchorElement>;
+  target?: "_self" | "_blank" | "_parent" | "_top";
+  rel?: string;
+  "aria-label"?: string;
+  "aria-describedby"?: string;
+  "aria-current"?: AriaAttributes["aria-current"];
 }>;
 
-export function ButtonLink<T extends string>({ href, variant = "primary", size = "standard", className = "", children }: ButtonLinkProps<T>) {
-  return <Link className={`button button--${variant} button--${size} ${className}`.trim()} href={href}>{children}</Link>;
+export function ButtonLink<T extends string>({
+  href,
+  variant = "primary",
+  size = "standard",
+  className = "",
+  children,
+  onClick,
+  target,
+  rel,
+  "aria-label": ariaLabel,
+  "aria-describedby": ariaDescribedby,
+  "aria-current": ariaCurrent
+}: ButtonLinkProps<T>) {
+  return (
+    <Link
+      className={`button button--${variant} button--${size} ${className}`.trim()}
+      data-button="true"
+      href={href}
+      {...(onClick ? { onClick } : {})}
+      {...(target ? { target } : {})}
+      {...(rel ? { rel } : {})}
+      {...(ariaLabel ? { "aria-label": ariaLabel } : {})}
+      {...(ariaDescribedby ? { "aria-describedby": ariaDescribedby } : {})}
+      {...(ariaCurrent === undefined ? {} : { "aria-current": ariaCurrent })}
+    >
+      <span className="button__label">{children}</span>
+    </Link>
+  );
 }

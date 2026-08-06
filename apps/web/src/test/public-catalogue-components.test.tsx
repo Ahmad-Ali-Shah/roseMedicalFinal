@@ -11,8 +11,15 @@ const family = {
   id: "family_knives",
   slug: "knives" as const,
   name: "Knives",
+  sequence: "01",
   description: "Precision cutting instruments organised for professional inquiry.",
-  imageLabel: "Knives instrument placeholder"
+  imageLabel: "Knives instruments",
+  media: {
+    src: "/media/families/knives-family.jpg",
+    alt: "A gloved hand holding a precision surgical blade",
+    focalPoint: "72% 50%",
+    fit: "cover" as const
+  }
 };
 
 const product = {
@@ -45,6 +52,13 @@ describe("public catalogue components", () => {
     expect(html).toContain("18-0644");
     expect(html).toContain("14.5 cm");
     expect(html).not.toMatch(/price|stock|rating|buy now/i);
+  });
+
+  it("keeps repeated family cards shallow without a pointer spotlight on every item", () => {
+    const html = renderToStaticMarkup(<FamilyCard family={family} />);
+
+    expect((html.match(/data-motion="tilt"/g) ?? [])).toHaveLength(1);
+    expect(html).not.toContain('data-motion="spotlight"');
   });
 
   it("hides decorative media from assistive technology", () => {

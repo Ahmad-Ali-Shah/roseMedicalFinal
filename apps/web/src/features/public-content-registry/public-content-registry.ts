@@ -1,4 +1,3 @@
-import type { Route } from "next";
 import { PUBLIC_CONTENT_VALUES } from "./public-content-values";
 
 export type PublicContentBlockKey =
@@ -15,6 +14,12 @@ export type PublicContentPageKey =
   | "procurement"
   | "contact"
   | "global";
+
+export type PublicContentHref =
+  | "/"
+  | "/about"
+  | "/procurement-support"
+  | "/contact";
 
 export type PublicContentSensitivity =
   | "standard"
@@ -35,7 +40,7 @@ export interface PublicContentBlock {
   pageKey: PublicContentPageKey;
   label: string;
   fields: readonly PublicContentField[];
-  publicHref: Route<string>;
+  publicHref: PublicContentHref;
   affectedComponent: string;
   sensitivity: PublicContentSensitivity;
 }

@@ -7,13 +7,14 @@ export type AdminReadinessStatus =
   | "Awaiting publication"
   | "Awaiting replacement"
   | "Awaiting legal approval"
-  | "Deferred";
+  | "Deferred"
+  | "Implemented";
 
 export interface AdminReadinessItem {
   key: AdminReadinessKey;
   label: string;
   status: AdminReadinessStatus;
-  tone: Extract<AdminStatusTone, "neutral" | "warning">;
+  tone: Extract<AdminStatusTone, "neutral" | "warning" | "success">;
 }
 
 export const ADMIN_READINESS_ITEMS = [
@@ -21,5 +22,5 @@ export const ADMIN_READINESS_ITEMS = [
   { key: "pdfs", label: "Catalogue PDF paths", status: "Awaiting publication", tone: "warning" },
   { key: "media", label: "Product media", status: "Awaiting replacement", tone: "warning" },
   { key: "legal", label: "Privacy and Terms", status: "Awaiting legal approval", tone: "warning" },
-  { key: "arabic", label: "Arabic content", status: "Deferred", tone: "neutral" }
+  { key: "arabic", label: "Arabic public experience", status: "Implemented", tone: "success" }
 ] as const satisfies readonly AdminReadinessItem[];

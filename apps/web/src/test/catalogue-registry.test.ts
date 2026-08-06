@@ -12,6 +12,14 @@ import type {
   CatalogueProductRecord
 } from "@/features/catalogue-registry/types";
 
+const EXPECTED_PRODUCTS_BY_FAMILY = {
+  knives: 22,
+  scissors: 42,
+  punches: 15,
+  chisels: 20,
+  cutters: 14
+} as const;
+
 describe("F3B catalogue registry", () => {
   it("accepts explicit catalogue records", () => {
     const family: CatalogueFamilyRecord = {
@@ -37,19 +45,22 @@ describe("F3B catalogue registry", () => {
     expect(family.slug).toBe(product.familySlug);
   });
 
-  it("registers five families and four products per family", () => {
+  it("registers five families and the complete current product inventory", () => {
     expect(CATALOGUE_FAMILIES).toHaveLength(5);
     for (const family of CATALOGUE_FAMILIES) {
       expect(
         CATALOGUE_PRODUCTS.filter(
           (product) => product.familySlug === family.slug
         )
-      ).toHaveLength(4);
+      ).toHaveLength(EXPECTED_PRODUCTS_BY_FAMILY[family.slug]);
     }
+    expect(CATALOGUE_PRODUCTS).toHaveLength(113);
   });
 
   it("keeps IDs and family-local routes unique", () => {
-    expect(new Set(CATALOGUE_PRODUCTS.map((product) => product.id)).size).toBe(20);
+    expect(new Set(CATALOGUE_PRODUCTS.map((product) => product.id)).size).toBe(
+      CATALOGUE_PRODUCTS.length
+    );
     const routes = CATALOGUE_PRODUCTS.map(
       (product) => `${product.familySlug}/${product.slug}`
     );

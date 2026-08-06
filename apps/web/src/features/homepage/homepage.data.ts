@@ -1,5 +1,14 @@
-import { selectFamilyCards, selectFeaturedProducts } from "@/features/public-catalogue";
+import {
+  FAMILY_SLUGS,
+  familyNameBySlug,
+  selectFamilyCards,
+  selectFeaturedProducts,
+  type FamilySlug,
+  type PublicMediaModel
+} from "@/features/public-catalogue";
+import { HOME_CATALOGUE_MEDIA_BY_SLUG } from "@/features/public-media";
 import { PUBLIC_CONTENT_VALUES } from "@/features/public-content-registry";
+import type { Route } from "next";
 
 const families = selectFamilyCards();
 
@@ -32,9 +41,11 @@ export const HOME_PAGE_MODEL = {
     eyebrow: "Catalogues",
     title: "Technical catalogues for structured browsing.",
     copy: "Five instrument-family documents presented as part of the product experience, not as a file archive.",
-    items: families.map((family, index) => ({
+    items: FAMILY_SLUGS.map((slug, index) => ({
       number: String(index + 1).padStart(2, "0"),
-      name: family.name,
+      slug,
+      name: familyNameBySlug(slug),
+      media: HOME_CATALOGUE_MEDIA_BY_SLUG[slug],
       href: "/catalogues" as const
     }))
   },
@@ -46,9 +57,9 @@ export const HOME_PAGE_MODEL = {
   }
 } as const;
 
-export type HomeHeroModel = typeof HOME_PAGE_MODEL.hero;
-export type HomeFamilyIntroModel = typeof HOME_PAGE_MODEL.familyIntro;
-export type HomeProcurementModel = typeof HOME_PAGE_MODEL.procurement;
-export type HomeProductsIntroModel = typeof HOME_PAGE_MODEL.productsIntro;
-export type HomeCatalogueModel = typeof HOME_PAGE_MODEL.catalogue;
-export type HomeQuotationModel = typeof HOME_PAGE_MODEL.quotation;
+export interface HomeHeroModel { eyebrow: string; title: string; copy: string; primary: { label: string; href: Route<string> }; secondary: { label: string; href: Route<string> } }
+export interface HomeFamilyIntroModel { eyebrow: string; title: string; copy: string }
+export interface HomeProcurementModel { eyebrow: string; title: string; copy: string; detailEyebrow: string; detailTitle: string; detailCopy: string; steps: readonly string[] }
+export interface HomeProductsIntroModel { eyebrow: string; title: string; copy: string }
+export interface HomeCatalogueModel { eyebrow: string; title: string; copy: string; items: readonly { number: string; slug: FamilySlug; name: string; media: PublicMediaModel; href: Route<string> }[] }
+export interface HomeQuotationModel { eyebrow: string; title: string; copy: string; primary: { label: string; href: Route<string> } }

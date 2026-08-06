@@ -1,11 +1,31 @@
 import type { ReactElement } from "react";
 import { Container, Section } from "@/components/layout";
+import {
+  MediaFrame,
+  Reveal,
+  Stagger,
+  StaggerItem,
+  TextReveal
+} from "@/features/motion";
 import { SectionHeading } from "@/features/public-catalogue";
 import type { HomeProcurementModel } from "../homepage.data";
+import { ROSA_LOGO_MEDIA } from "@/features/public-media";
+import { publicMediaAlt } from "@/features/public-media";
+import type { PublicLocale } from "@/features/localization";
 
-export function ProcurementSupport({ model }: { model: HomeProcurementModel }): ReactElement {
+export function ProcurementSupport({
+  model,
+  locale = "en"
+}: {
+  model: HomeProcurementModel;
+  locale?: PublicLocale;
+}): ReactElement {
   return (
-    <Section tone="paper" data-section="procurement-support" aria-labelledby="procurement-support-title">
+    <Section
+      tone="paper"
+      data-section="procurement-support"
+      aria-labelledby="procurement-support-title"
+    >
       <Container size="wide">
         <SectionHeading
           id="procurement-support-title"
@@ -15,19 +35,36 @@ export function ProcurementSupport({ model }: { model: HomeProcurementModel }): 
           copy={model.copy}
         />
         <div className="procurement-editorial">
-          <div className="procurement-editorial__visual" aria-hidden="true">
-            <span /><span /><span /><span />
-          </div>
-          <div className="procurement-editorial__copy">
+          <Reveal direction="right" className="procurement-editorial__media-reveal">
+            <MediaFrame
+              src={ROSA_LOGO_MEDIA.src}
+              alt={publicMediaAlt(ROSA_LOGO_MEDIA, locale)}
+              aspect="portrait"
+              focalPoint={ROSA_LOGO_MEDIA.focalPoint}
+              fit={ROSA_LOGO_MEDIA.fit}
+              tone="light"
+              mediaSlot="homepage-procurement"
+              className="procurement-editorial__visual procurement-editorial__brand"
+              sizes="(max-width: 768px) 100vw, 42vw"
+            />
+          </Reveal>
+          <Reveal direction="left" className="procurement-editorial__copy" delay={0.08}>
             <p className="public-eyebrow">{model.detailEyebrow}</p>
-            <h3 className="procurement-editorial__title">{model.detailTitle}</h3>
+            <TextReveal
+              as="h3"
+              className="procurement-editorial__title"
+              text={model.detailTitle}
+            />
             <p className="procurement-editorial__body">{model.detailCopy}</p>
-            <ol className="procurement-steps">
+            <Stagger as="ol" className="procurement-steps" interval={0.085}>
               {model.steps.map((step, index) => (
-                <li key={step}><span>{String(index + 1).padStart(2, "0")}</span>{step}</li>
+                <StaggerItem as="li" key={step}>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  {step}
+                </StaggerItem>
               ))}
-            </ol>
-          </div>
+            </Stagger>
+          </Reveal>
         </div>
       </Container>
     </Section>

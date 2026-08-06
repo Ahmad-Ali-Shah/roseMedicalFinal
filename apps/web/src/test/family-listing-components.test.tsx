@@ -4,14 +4,14 @@ import { FamilyFilterPreview } from "@/features/family-listing/family-filter-pre
 import { FamilyLoadingState } from "@/features/family-listing/family-loading-state";
 import { FamilyNoResultsState } from "@/features/family-listing/family-no-results-state";
 
-describe("F3B family control previews", () => {
-  it("renders native output and disabled semantics without a form", () => {
+describe("F3B family controls", () => {
+  it("renders enabled form controls", () => {
     const html = renderToStaticMarkup(
       <><FamilyFilterPreview /><FamilyNoResultsState /></>
     );
-    expect(html).toContain("<output");
-    expect(html).toContain("disabled");
-    expect(html).not.toContain("<form");
+    expect(html).toContain("<select");
+    expect(html).not.toContain("available next phase");
+    expect(html).not.toContain("disabled");
   });
 
   it("exposes reusable loading and no-results state labels", () => {
@@ -19,6 +19,6 @@ describe("F3B family control previews", () => {
       <><FamilyLoadingState /><FamilyNoResultsState /></>
     );
     expect(html).toContain("Catalogue loading-state preview");
-    expect(html).toContain("No-results preview");
+    expect(html).toContain("No matching products");
   });
 });

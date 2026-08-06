@@ -111,6 +111,16 @@
   color: var(--color-steel);
 }
 
+.family-sort-preview select,
+.family-filter-preview select {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  background: var(--color-paper);
+  padding: 0.7rem 2rem 0.7rem 0.75rem;
+  color: var(--color-ink);
+  font: inherit;
+}
+
 .family-mobile-filter-trigger,
 .family-mobile-result-count {
   display: none;
@@ -136,7 +146,7 @@
   padding: var(--space-5);
 }
 
-.family-filter-preview dl {
+.family-filter-preview__fields {
   margin: var(--space-5) 0;
 }
 
@@ -147,7 +157,7 @@
   border-bottom: 1px solid var(--color-border);
 }
 
-.family-filter-preview__row dt {
+.family-filter-preview__row > span {
   font-weight: 750;
 }
 
@@ -248,6 +258,76 @@ button.disabled-text-action:disabled,
   color: var(--color-rosa-red);
 }
 
+.filter-clear-action {
+  border: 0;
+  background: transparent;
+  color: var(--color-rosa-red);
+  padding: 0;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.family-filter-dialog-backdrop {
+  position: fixed;
+  z-index: 90;
+  inset: 0;
+  display: grid;
+  align-items: end;
+  background: rgb(15 15 14 / 0.55);
+}
+
+.family-filter-dialog {
+  max-height: min(90vh, 44rem);
+  overflow: auto;
+  background: var(--color-paper);
+  padding: var(--space-5);
+  box-shadow: 0 -1rem 3rem rgb(0 0 0 / 0.16);
+}
+
+.family-filter-dialog > header {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.family-filter-dialog h2 {
+  margin: var(--space-2) 0 var(--space-4);
+  font-family: var(--font-editorial);
+  font-size: 2rem;
+  font-weight: 400;
+}
+
+.family-filter-dialog > .family-filter-preview {
+  display: block;
+  border: 0;
+  padding: 0;
+}
+
+@media (min-width: 901px) {
+  .family-filter-dialog-backdrop {
+    display: none;
+  }
+}
+
+.family-card-add {
+  border: 0;
+  background: transparent;
+  color: var(--color-rosa-red);
+  padding: 0;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.family-card-add:hover,
+.family-card-add:focus-visible {
+  color: var(--color-ink);
+}
+
 .family-review-states h2,
 .product-specifications h2,
 .related-products h2 {
@@ -322,10 +402,6 @@ button.disabled-text-action:disabled,
 
 .family-support-section {
   padding-top: var(--space-8);
-}
-
-.mobile-filter-sheet-preview {
-  display: none;
 }
 
 .product-detail-layout {
@@ -457,6 +533,36 @@ button.disabled-text-action:disabled,
 
 .product-add-preview {
   min-height: 4.3rem;
+}
+
+.product-inquiry-controls {
+  display: contents;
+}
+
+.product-inquiry-controls__note {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 0.45rem;
+  color: var(--color-steel);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.product-inquiry-controls__note textarea {
+  width: 100%;
+  resize: vertical;
+  border: 1px solid var(--color-border);
+  background: var(--color-paper);
+  padding: 0.85rem 1rem;
+  color: var(--color-ink);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.45;
+  text-transform: none;
 }
 
 .product-controls-note,
