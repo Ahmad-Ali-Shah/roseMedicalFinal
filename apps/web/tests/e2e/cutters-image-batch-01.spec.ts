@@ -11,7 +11,7 @@ const LOCAL_CUTTERS_WEBP = /^\/media\/catalogue-preview\/cutters\/[a-z0-9-]+\.we
 test.describe("Cutters Batch 01 production media", () => {
   test.setTimeout(120_000);
 
-  test("renders 13 local Batch 01 images alongside the preserved SC-01T record", async ({ page }) => {
+  test("renders media for all 14 Cutters records", async ({ page }) => {
     const response = await page.goto("/products/cutters");
     expect(response?.ok()).toBe(true);
     await expect(page.locator("h1")).toHaveText("Cutters");
@@ -22,10 +22,13 @@ test.describe("Cutters Batch 01 production media", () => {
     const images = pictures.locator("img");
 
     await expect(cards).toHaveCount(14);
-    await expect(pictures).toHaveCount(13);
+    await expect(pictures).toHaveCount(14);
+    await expect(avifSources).toHaveCount(13);
     for (let index = 0; index < 13; index += 1) {
       expect(await avifSources.nth(index).getAttribute("srcset")).toMatch(LOCAL_CUTTERS_AVIF);
       await expectImageSource(images.nth(index), LOCAL_CUTTERS_WEBP);
+    }
+    for (let index = 0; index < 14; index += 1) {
       await expectImageLoaded(images.nth(index));
     }
     await expect(page.getByText("SC-01T", { exact: true }).first()).toBeVisible();

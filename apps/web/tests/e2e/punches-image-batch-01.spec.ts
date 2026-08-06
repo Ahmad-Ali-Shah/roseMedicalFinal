@@ -11,7 +11,7 @@ const LOCAL_PUNCHES_WEBP = /^\/media\/catalogue-preview\/punches\/[a-z0-9-]+\.we
 test.describe("Punches Batch 01 candidate media", () => {
   test.setTimeout(120_000);
 
-  test("renders 14 local candidate images alongside the preserved Biopsy Punch", async ({ page }) => {
+  test("renders media for all 15 Punches records", async ({ page }) => {
     const response = await page.goto("/products/punches");
     expect(response?.ok()).toBe(true);
     await expect(page.locator("h1")).toHaveText("Punches");
@@ -22,10 +22,13 @@ test.describe("Punches Batch 01 candidate media", () => {
     const images = pictures.locator("img");
 
     await expect(cards).toHaveCount(15);
-    await expect(pictures).toHaveCount(14);
+    await expect(pictures).toHaveCount(15);
+    await expect(avifSources).toHaveCount(14);
     for (let index = 0; index < 14; index += 1) {
       expect(await avifSources.nth(index).getAttribute("srcset")).toMatch(LOCAL_PUNCHES_AVIF);
       await expectImageSource(images.nth(index), LOCAL_PUNCHES_WEBP);
+    }
+    for (let index = 0; index < 15; index += 1) {
       await expectImageLoaded(images.nth(index));
     }
     await expect(page.getByText("Biopsy Punch", { exact: true }).first()).toBeVisible();

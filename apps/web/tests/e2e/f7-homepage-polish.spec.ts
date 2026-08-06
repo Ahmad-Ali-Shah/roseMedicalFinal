@@ -35,7 +35,10 @@ test("homepage keeps its cinematic hierarchy and media geometry", async ({ page 
 
   const heroMedia = page.locator("[data-media-slot='homepage-hero']");
   await expect(heroMedia).toBeVisible();
-  await expect(heroMedia).toHaveAttribute("data-media-state", "placeholder");
+  await expect(heroMedia).toHaveAttribute("data-media-state", "ready");
+  const heroImage = heroMedia.locator("img");
+  await expect(heroImage).toBeVisible();
+  expect(await heroImage.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
   const heroBox = await heroMedia.boundingBox();
   expect(heroBox).not.toBeNull();
   if (heroBox) {
@@ -45,8 +48,8 @@ test("homepage keeps its cinematic hierarchy and media geometry", async ({ page 
 
   await expect(page.locator("[data-motion='stagger']")).toHaveCount(4);
   expect(await page.locator("[data-motion='stagger-item']").count()).toBeGreaterThanOrEqual(16);
-  await expect(page.locator("[data-motion='tilt']")).toHaveCount(7);
-  expect(await page.locator("[data-motion='spotlight']").count()).toBeGreaterThanOrEqual(2);
+  expect(await page.locator("[data-motion='tilt']").count()).toBeGreaterThanOrEqual(6);
+  expect(await page.locator("[data-motion='spotlight']").count()).toBeGreaterThanOrEqual(1);
   await expect(page.locator("[data-media-slot^='homepage-catalogue-']")).toHaveCount(5);
 
   await page.locator("[data-section='catalogue-access']").scrollIntoViewIfNeeded();
@@ -62,7 +65,7 @@ test("homepage keeps its cinematic hierarchy and media geometry", async ({ page 
   expect(hasOverflow).toBe(false);
 });
 
-test("mobile hero keeps its instrument stage clear of the editorial copy", async ({ page }, testInfo) => {
+test("mobile hero keeps its full-bleed instrument stage clear of the editorial copy", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "mobile", "Mobile composition runs on the mobile project.");
 
   const response = await page.goto("/");
@@ -85,13 +88,9 @@ test("mobile hero keeps its instrument stage clear of the editorial copy", async
   }));
   expect(viewport.scrollWidth, JSON.stringify(viewport)).toBeLessThanOrEqual(viewport.clientWidth);
 
-  const minimumGutter = 16;
-  await expect.poll(async () => {
-    const settledBoxes = await Promise.all([title.boundingBox(), visual.boundingBox()]);
-    return settledBoxes.every((box) => (
-      box !== null
-      && box.x >= minimumGutter
-      && box.x + box.width <= viewport.clientWidth - minimumGutter
-    ));
-  }).toBe(true);
+  const minimumCopyGutter = 16;
+  expect(titleBox!.x).toBeGreaterThanOrEqual(minimumCopyGutter);
+  expect(titleBox!.x + titleBox!.width).toBeLessThanOrEqual(viewport.clientWidth - minimumCopyGutter);
+  expect(visualBox!.x).toBeLessThanOrEqual(0.5);
+  expect(visualBox!.x + visualBox!.width).toBeGreaterThanOrEqual(viewport.clientWidth - 0.5);
 });

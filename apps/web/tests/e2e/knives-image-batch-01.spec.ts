@@ -11,7 +11,7 @@ const LOCAL_KNIVES_WEBP = /^\/media\/catalogue-preview\/knives\/[a-z0-9-]+\.webp
 test.describe("Knives Batch 01 production media", () => {
   test.setTimeout(120_000);
 
-  test("renders 18 local Batch 01 images alongside four preserved Knives records", async ({ page }) => {
+  test("renders media for all 22 Knives records", async ({ page }) => {
     const response = await page.goto("/products/knives");
     expect(response?.ok()).toBe(true);
     await expect(page.locator("h1")).toHaveText("Knives");
@@ -22,10 +22,13 @@ test.describe("Knives Batch 01 production media", () => {
     const images = pictures.locator("img");
 
     await expect(cards).toHaveCount(22);
-    await expect(pictures).toHaveCount(18);
+    await expect(pictures).toHaveCount(22);
+    await expect(avifSources).toHaveCount(18);
     for (let index = 0; index < 18; index += 1) {
       expect(await avifSources.nth(index).getAttribute("srcset")).toMatch(LOCAL_KNIVES_AVIF);
       await expectImageSource(images.nth(index), LOCAL_KNIVES_WEBP);
+    }
+    for (let index = 0; index < 22; index += 1) {
       await expectImageLoaded(images.nth(index));
     }
     await expect(page.getByText("Bard Parker Handle", { exact: true }).first()).toBeVisible();

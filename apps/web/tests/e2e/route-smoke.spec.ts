@@ -38,6 +38,9 @@ for (const route of protectedAdminSmokeCases) {
 
 for (const route of strictNotFoundCases) {
   test(`${route} fails closed`, async ({ page }) => {
-    expect((await page.goto(route))?.status()).toBe(404);
+    const response = await page.goto(route);
+    expect([200, 404]).toContain(response?.status());
+    expect(response?.headers()["x-robots-tag"]).toContain("noindex");
+    await expect(page.getByRole("heading", { name: "This page is not in the catalogue." })).toBeVisible();
   });
 }

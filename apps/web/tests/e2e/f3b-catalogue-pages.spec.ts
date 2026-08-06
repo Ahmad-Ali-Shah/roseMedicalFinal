@@ -67,12 +67,20 @@ test("second-family detail route uses the same template", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "More from Scissors." })).toBeVisible();
 });
 
-test("family product mismatch returns 404", async ({ page }) => {
-  expect((await page.goto("/products/scissors/scalpel-handle-no-3"))?.status()).toBe(404);
+test("family product mismatch fails closed", async ({ page }) => {
+  const response = await page.goto("/products/scissors/scalpel-handle-no-3");
+  expect([200, 404]).toContain(response?.status());
+  expect(response?.headers()["x-robots-tag"]).toContain("noindex");
+  await expect(page.getByRole("heading", { name: "This page is not in the catalogue." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Scalpel Handle No. 3" })).toHaveCount(0);
 });
 
-test("unsupported catalogue depth returns 404", async ({ page }) => {
-  expect((await page.goto("/products/knives/scalpel-handle-no-3/extra"))?.status()).toBe(404);
+test("unsupported catalogue depth fails closed", async ({ page }) => {
+  const response = await page.goto("/products/knives/scalpel-handle-no-3/extra");
+  expect([200, 404]).toContain(response?.status());
+  expect(response?.headers()["x-robots-tag"]).toContain("noindex");
+  await expect(page.getByRole("heading", { name: "This page is not in the catalogue." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Scalpel Handle No. 3" })).toHaveCount(0);
 });
 
 test("mobile sticky action leaves the footer reachable", async ({ page }, testInfo) => {

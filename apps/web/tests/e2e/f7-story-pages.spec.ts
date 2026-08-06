@@ -44,12 +44,17 @@ test("About, procurement and catalogue stories remain complete and media-ready",
   await expect(
     page.getByRole("heading", { name: "A clearer way to source medical instruments.", level: 1 })
   ).toBeVisible();
-  await expect(page.locator("[data-media-slot='about-hero']")).toHaveAttribute("data-media-state", "placeholder");
-  await expect(page.locator("[data-media-slot='about-procurement']")).toHaveAttribute("data-media-state", "placeholder");
-  await expect(page.getByRole("heading", { name: "How surgical scissors became more specialised.", level: 2 })).toBeVisible();
-  await expect(page.locator("[data-scissors-evolution-stage]")).toHaveCount(5);
-  await expect(page.locator("[data-media-slot='about-scissors-evolution']")).toHaveAttribute("data-media-state", "placeholder");
+  await expect(page.locator("[data-media-slot='about-hero']")).toHaveAttribute("data-media-state", "ready");
+  await expect(page.getByRole("heading", { name: "We are Rosa Medical.", level: 2 })).toBeVisible();
+  await expect(page.locator("[data-company-profile='true']")).toHaveCount(1);
+  await expect(page.locator("[data-media-slot='about-procurement']")).toHaveAttribute("data-media-state", "ready");
+  await expect(page.locator("[data-scissors-evolution-stage]")).toHaveCount(0);
   await expect(page.locator("[data-supported-buyer]")).toHaveCount(4);
+  const buyerMedia = page.locator("[data-media-slot^='about-buyer-']");
+  await expect(buyerMedia).toHaveCount(4);
+  for (let index = 0; index < 4; index += 1) {
+    await expect(buyerMedia.nth(index)).toHaveAttribute("data-media-state", "ready");
+  }
   await expectNoHorizontalOverflow(page);
 
   const procurementResponse = await page.goto("/procurement-support");
@@ -61,7 +66,7 @@ test("About, procurement and catalogue stories remain complete and media-ready",
   await expect(page.locator("[data-information-item]")).toHaveCount(6);
   await expect(page.locator("[data-media-slot='procurement-support-hero']")).toHaveAttribute(
     "data-media-state",
-    "placeholder"
+    "ready"
   );
   await expectNoHorizontalOverflow(page);
 
@@ -74,7 +79,12 @@ test("About, procurement and catalogue stories remain complete and media-ready",
     })
   ).toBeVisible();
   await expect(page.locator("[data-catalogue-document]")).toHaveCount(5);
-  await expect(page.getByRole("button", { name: "PDF not available online" })).toHaveCount(5);
+  await expect(page.getByRole("link", { name: /Download .* catalogue PDF/ })).toHaveCount(5);
+  const catalogueMedia = page.locator("[data-media-slot^='catalogue-document-']");
+  await expect(catalogueMedia).toHaveCount(5);
+  for (let index = 0; index < 5; index += 1) {
+    await expect(catalogueMedia.nth(index)).toHaveAttribute("data-media-state", "ready");
+  }
   await expect(page.locator("[data-motion='tilt']")).toHaveCount(5);
   await expectNoHorizontalOverflow(page);
 });
@@ -93,7 +103,7 @@ test("contact and legal utilities stay usable, explicit and calm", async ({ page
   await expect(
     page.getByRole("heading", { name: "Send a general business message.", level: 1 })
   ).toBeVisible();
-  await expect(page.getByRole("form", { name: "General contact form preview" })).toBeVisible();
+  await expect(page.getByRole("form", { name: "General contact form" })).toBeVisible();
   await expect(page.getByLabel("Name")).toBeEditable();
   await expect(page.getByLabel("Email")).toBeEditable();
   await expect(page.getByRole("button", { name: "Send Message" })).toBeEnabled();
@@ -106,11 +116,9 @@ test("contact and legal utilities stay usable, explicit and calm", async ({ page
   await page.getByRole("button", { name: "Send Message" }).click();
   await expect(page.getByRole("status")).toHaveText("Message sent successfully.");
   await expect(page.getByLabel("Name")).toHaveValue("");
-  await expect(page.locator("[data-media-slot='contact-location']")).toHaveAttribute(
-    "data-media-state",
-    "placeholder"
-  );
-  await expect(page.getByText("Awaiting client confirmation").first()).toBeVisible();
+  await expect(page.locator('iframe[title="Map showing Riyadh, Saudi Arabia"]')).toBeVisible();
+  await expect(page.locator('a[href="mailto:hello@example.com"]')).toBeVisible();
+  await expect(page.locator('a[href="tel:+966115550142"]')).toBeVisible();
   await expectNoHorizontalOverflow(page);
 
   const searchResponse = await page.goto("/search");
@@ -118,8 +126,11 @@ test("contact and legal utilities stay usable, explicit and calm", async ({ page
   await expect(page.getByRole("heading", { name: "Find an instrument.", level: 1 })).toBeVisible();
   await expect(page.locator("[data-motion='reveal']")).toHaveCount(1);
   await expect(page.locator("[data-motion='stagger-item']")).toHaveCount(5);
-  await expect(page.getByRole("searchbox", { name: "Search the catalogue" })).toHaveAttribute("readonly", "");
+  const searchbox = page.getByRole("searchbox", { name: "Search the catalogue" });
+  await expect(searchbox).toBeEditable();
   await expect(page.locator("[data-search-result]")).toHaveCount(0);
+  await searchbox.fill("Mayo");
+  await expect(page.locator("[data-search-result]").first()).toBeVisible();
   await expectNoHorizontalOverflow(page);
 
   const privacyResponse = await page.goto("/privacy");
@@ -127,7 +138,7 @@ test("contact and legal utilities stay usable, explicit and calm", async ({ page
   await expect(page.getByRole("heading", { name: "Privacy Policy", level: 1 })).toBeVisible();
   await expect(page.locator("[data-legal-section]")).toHaveCount(9);
   await expect(page.locator("[data-motion='reveal']")).toHaveCount(2);
-  await expect(page.getByText("Last updated: awaiting client and legal approval")).toBeVisible();
+  await expect(page.getByText("Last updated: 6 August 2026")).toBeVisible();
   await page.locator("[data-legal-section='policy-updates']").scrollIntoViewIfNeeded();
   await expect(page.locator("[data-legal-section='policy-updates']")).toBeVisible();
   await expectNoHorizontalOverflow(page);
@@ -138,6 +149,6 @@ test("contact and legal utilities stay usable, explicit and calm", async ({ page
   await expect(page.locator("[data-legal-section]")).toHaveCount(11);
   await page.locator("[data-legal-section='contact']").scrollIntoViewIfNeeded();
   await expect(page.locator("[data-legal-section='contact']")).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Not launch-ready legal advice." })).toBeVisible();
+  await expect(page.getByText("Last updated: 6 August 2026")).toBeVisible();
   await expectNoHorizontalOverflow(page);
 });

@@ -19,10 +19,15 @@ for (const route of routes) {
   });
 }
 
-test("catalogues exposes five family documents and no active PDF link", async ({ page }) => {
+test("catalogues exposes five downloadable family documents", async ({ page }) => {
   await page.goto("/catalogues");
   await expect(page.locator("[data-catalogue-document]")).toHaveCount(5);
-  await expect(page.getByRole("button", { name: "PDF not available online" })).toHaveCount(5);
+  const downloads = page.getByRole("link", { name: /Download .* catalogue PDF/ });
+  await expect(downloads).toHaveCount(5);
+  for (let index = 0; index < 5; index += 1) {
+    await expect(downloads.nth(index)).toHaveAttribute("href", /\/media\/catalogues\/pdf\/rosa-.*-catalogue\.pdf$/);
+    await expect(downloads.nth(index)).toHaveAttribute("download", /rosa-.*-catalogue\.pdf$/);
+  }
   await expect(page.getByRole("link", { name: "Explore products" })).toHaveCount(5);
 });
 

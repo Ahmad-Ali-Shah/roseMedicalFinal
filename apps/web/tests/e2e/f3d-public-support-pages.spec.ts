@@ -36,14 +36,14 @@ for (const viewport of viewports) {
   }
 }
 
-test("contact exposes the connected form and search stays in discovery state", async ({ page }) => {
+test("contact exposes the connected form and search starts in its empty state", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
 
   await page.goto("/contact");
   await expect(page.getByRole("button", { name: "Send Message" })).toBeEnabled();
-  await expect(page.locator('form[aria-label="General contact form preview"]')).toHaveCount(1);
-  await expect(page.locator('a[href^="mailto:"]')).toHaveCount(0);
-  await expect(page.locator('a[href^="tel:"]')).toHaveCount(0);
+  await expect(page.getByRole("form", { name: "General contact form" })).toBeVisible();
+  await expect(page.locator('a[href="mailto:hello@example.com"]')).toHaveCount(1);
+  await expect(page.locator('a[href="tel:+966115550142"]')).toHaveCount(1);
 
   await page.goto("/search");
   await expect(page.locator("[data-search-family-shortcut]")).toHaveCount(5);

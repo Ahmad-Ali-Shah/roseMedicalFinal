@@ -11,7 +11,7 @@ const LOCAL_CHISELS_WEBP = /^\/media\/catalogue-preview\/chisels\/[a-z0-9-]+\.we
 test.describe("Chisels Batch 01 production media", () => {
   test.setTimeout(120_000);
 
-  test("renders 16 local Batch 01 images alongside four preserved Chisels records", async ({ page }) => {
+  test("renders media for all 20 Chisels records", async ({ page }) => {
     const response = await page.goto("/products/chisels");
     expect(response?.ok()).toBe(true);
     await expect(page.locator("h1")).toHaveText("Chisels");
@@ -22,10 +22,13 @@ test.describe("Chisels Batch 01 production media", () => {
     const images = pictures.locator("img");
 
     await expect(cards).toHaveCount(20);
-    await expect(pictures).toHaveCount(16);
+    await expect(pictures).toHaveCount(20);
+    await expect(avifSources).toHaveCount(16);
     for (let index = 0; index < 16; index += 1) {
       expect(await avifSources.nth(index).getAttribute("srcset")).toMatch(LOCAL_CHISELS_AVIF);
       await expectImageSource(images.nth(index), LOCAL_CHISELS_WEBP);
+    }
+    for (let index = 0; index < 20; index += 1) {
       await expectImageLoaded(images.nth(index));
     }
     await expectNoHorizontalOverflow(page);

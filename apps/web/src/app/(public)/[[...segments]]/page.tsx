@@ -68,6 +68,7 @@ export async function generateMetadata({ params }: { params: Promise<{ segments?
   const { locale, segments } = parseLocaleSegments(rawSegments);
   const key = segments.join("/");
   const kind = resolvePublicPageKind(key);
+  if (kind === "not-found") notFound();
   let title = routeTitles[key] ?? "Rosa Medical";
   let description = routeDescriptions[key] ?? "Rosa Medical product catalogue and quotation support.";
 
@@ -114,8 +115,7 @@ export async function generateMetadata({ params }: { params: Promise<{ segments?
       canonical,
       languages: { en: plainPath, ar: plainPath === "/" ? "/ar" : `/ar${plainPath}` }
     },
-    openGraph: { title, description, url: canonical, locale: locale === "ar" ? "ar_SA" : "en_US" },
-    robots: kind === "not-found" ? { index: false, follow: false } : undefined
+    openGraph: { title, description, url: canonical, locale: locale === "ar" ? "ar_SA" : "en_US" }
   };
 }
 

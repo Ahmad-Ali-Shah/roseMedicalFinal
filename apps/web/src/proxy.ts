@@ -1,7 +1,18 @@
-import type { NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
+import { shouldRenderPublicNotFound } from "@/features/public-routing/public-route-policy";
 import { updateSession } from "@/lib/supabase/middleware";
 
 export async function proxy(request: NextRequest) {
+  if (shouldRenderPublicNotFound(request.nextUrl.pathname)) {
+    const notFoundUrl = request.nextUrl.clone();
+    notFoundUrl.pathname = "/__rosa-not-found";
+    notFoundUrl.search = "";
+
+    const response = NextResponse.rewrite(notFoundUrl, { status: 404 });
+    response.headers.set("X-Robots-Tag", "noindex, nofollow");
+    return response;
+  }
+
   return updateSession(request);
 }
 
