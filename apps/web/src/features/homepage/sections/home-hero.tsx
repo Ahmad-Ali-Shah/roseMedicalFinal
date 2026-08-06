@@ -1,18 +1,24 @@
 import type { ReactElement } from "react";
-import { ButtonLink } from "@/components/ui/button";
+import { LocalizedButtonLink } from "@/features/localization";
 import { Container, Section } from "@/components/layout";
 import {
   Magnetic,
   MediaFrame,
-  ProgressiveBlur,
   Reveal,
-  SpotlightSurface,
-  TextReveal,
-  TiltSurface
+  TextReveal
 } from "@/features/motion";
 import type { HomeHeroModel } from "../homepage.data";
+import { HOME_HERO_MEDIA } from "@/features/public-media";
+import { publicMediaAlt } from "@/features/public-media";
+import type { PublicLocale } from "@/features/localization";
 
-export function HomeHero({ model }: { model: HomeHeroModel }): ReactElement {
+export function HomeHero({
+  model,
+  locale = "en"
+}: {
+  model: HomeHeroModel;
+  locale?: PublicLocale;
+}): ReactElement {
   return (
     <Section
       className="home-hero public-hero"
@@ -40,40 +46,36 @@ export function HomeHero({ model }: { model: HomeHeroModel }): ReactElement {
           <Reveal direction="up" delay={0.32}>
             <div className="home-hero__actions">
               <Magnetic>
-                <ButtonLink href={model.primary.href}>{model.primary.label}</ButtonLink>
+                <LocalizedButtonLink href={model.primary.href}>{model.primary.label}</LocalizedButtonLink>
               </Magnetic>
-              <ButtonLink href={model.secondary.href} variant="secondary">
+              <LocalizedButtonLink href={model.secondary.href} variant="secondary">
                 {model.secondary.label}
-              </ButtonLink>
+              </LocalizedButtonLink>
             </div>
           </Reveal>
           <Reveal direction="up" delay={0.42}>
-            <span className="home-hero__scroll">Scroll to explore</span>
+            <span className="home-hero__scroll">
+              {locale === "ar" ? "مرر للاستكشاف" : "Scroll to explore"}
+            </span>
           </Reveal>
         </div>
-        <Reveal className="home-hero__visual" direction="left" delay={0.18}>
-          <SpotlightSurface className="home-hero__visual-surface">
-            <TiltSurface className="home-hero__visual-tilt" maxDegrees={1.6}>
-              <MediaFrame
-                alt="Cinematic surgical instrument composition reserved for final imagery"
-                aspect="cinematic"
-                tone="dark"
-                overlay="soft"
-                mediaSlot="homepage-hero"
-                className="home-hero__media"
-              >
-                <div className="home-hero__instrument-composition" aria-hidden="true">
-                  <span className="home-hero__instrument home-hero__instrument--primary" />
-                  <span className="home-hero__instrument home-hero__instrument--secondary" />
-                  <span className="home-hero__instrument home-hero__instrument--detail" />
-                  <span className="home-hero__instrument-orbit" />
-                </div>
-              </MediaFrame>
-            </TiltSurface>
-            <ProgressiveBlur edge="bottom" className="home-hero__blur" />
-          </SpotlightSurface>
-        </Reveal>
       </Container>
+      <Reveal className="home-hero__visual home-hero__visual--fullbleed" direction="left" delay={0.18}>
+        <MediaFrame
+          src={HOME_HERO_MEDIA.src}
+          alt={publicMediaAlt(HOME_HERO_MEDIA, locale)}
+          aspect="cinematic"
+          focalPoint={HOME_HERO_MEDIA.focalPoint}
+          fit={HOME_HERO_MEDIA.fit}
+          tone="dark"
+          mediaSlot="homepage-hero"
+          className="home-hero__media"
+          loading="eager"
+          quality={92}
+          sizes="(max-width: 640px) 100vw, 68vw"
+        />
+        <span className="home-hero__media-fade" aria-hidden="true" />
+      </Reveal>
     </Section>
   );
 }

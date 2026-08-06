@@ -47,12 +47,10 @@ function revealVariants(direction: MotionDirection): Variants {
   return {
     hidden: {
       opacity: 1,
-      filter: "blur(3px)",
       ...offset(direction)
     },
     visible: {
       opacity: 1,
-      filter: "none",
       x: 0,
       y: 0
     }

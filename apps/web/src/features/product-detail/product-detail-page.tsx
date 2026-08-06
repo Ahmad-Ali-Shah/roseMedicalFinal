@@ -11,16 +11,22 @@ import { ProductSpecificationTable } from "./product-specification-table";
 import { ProductProcurementNote } from "./product-procurement-note";
 import { RelatedProductGrid } from "./related-product-grid";
 import { MobileInquiryBar } from "./mobile-inquiry-bar";
+import type { PublicLocale } from "@/features/localization/locales";
+import { FAMILY_NAMES_AR } from "@/features/localization/public-copy";
 
 export function ProductDetailPage({
   familySlug,
-  productSlug
+  productSlug,
+  locale = "en"
 }: {
   familySlug: string;
   productSlug: string;
+  locale?: PublicLocale;
 }): ReactElement | null {
   const data = createProductDetailData(familySlug, productSlug);
   if (!data) return null;
+  const ar = locale === "ar";
+  const family = ar ? { ...data.family, name: FAMILY_NAMES_AR[data.family.slug] } : data.family;
 
   const inquiryItem: InquiryItem = {
     id: data.product.id,
@@ -39,7 +45,7 @@ export function ProductDetailPage({
       <Section tone="paper" spacing="compact" className="product-detail-intro">
         <Container size="wide">
           <Reveal direction="none" className="product-detail__breadcrumbs-reveal">
-            <ProductBreadcrumbs family={data.family} product={data.product} />
+            <ProductBreadcrumbs family={family} product={data.product} locale={locale} />
           </Reveal>
           <div className="product-detail-layout">
             <Reveal direction="right" delay={0.04} className="product-detail-layout__gallery-reveal">
@@ -47,12 +53,13 @@ export function ProductDetailPage({
             </Reveal>
             <Reveal direction="left" delay={0.1} className="product-detail-layout__summary-reveal">
               <ProductProcurementSummary
-                family={data.family}
+                family={family}
                 product={data.product}
                 sizeValue={data.sizeValue}
                 variantValue={data.variantValue}
                 catalogueReference={data.catalogueReference}
                 inquiryItem={inquiryItem}
+                locale={locale}
               />
             </Reveal>
           </div>
@@ -62,10 +69,10 @@ export function ProductDetailPage({
       <Section tone="paper">
         <Container size="wide">
           <Reveal direction="up">
-            <ProductSpecificationTable rows={data.specifications} />
+            <ProductSpecificationTable rows={data.specifications} locale={locale} />
           </Reveal>
           <Reveal direction="up" delay={0.08}>
-            <ProductProcurementNote />
+            <ProductProcurementNote locale={locale} />
           </Reveal>
         </Container>
       </Section>
@@ -73,7 +80,7 @@ export function ProductDetailPage({
       <Section tone="paper">
         <Container size="wide">
           <Reveal direction="up">
-            <RelatedProductGrid family={data.family} products={data.related} />
+            <RelatedProductGrid family={family} products={data.related} locale={locale} />
           </Reveal>
         </Container>
       </Section>
@@ -82,10 +89,10 @@ export function ProductDetailPage({
         <Container size="wide">
           <Reveal direction="up">
             <ProcurementPanel
-              eyebrow="Inquiry ready"
-              title="Continue building your product list."
-              copy="Review selected instruments, quantities and line notes before requesting a quotation."
-              primary={{ label: "View inquiry", href: "/inquiry" }}
+              eyebrow={ar ? "الاستفسار جاهز" : "Inquiry ready"}
+              title={ar ? "واصل إعداد قائمة المنتجات." : "Continue building your product list."}
+              copy={ar ? "راجع الأدوات والكميات وملاحظات البنود قبل طلب عرض السعر." : "Review selected instruments, quantities and line notes before requesting a quotation."}
+              primary={{ label: ar ? "عرض الاستفسار" : "View inquiry", href: "/inquiry" }}
               tone="dark"
             />
           </Reveal>

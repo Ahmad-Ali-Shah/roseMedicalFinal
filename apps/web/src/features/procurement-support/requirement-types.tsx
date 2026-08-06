@@ -1,14 +1,16 @@
 import type { ReactElement } from "react";
 import { Reveal } from "@/features/motion";
 import { NumberedEditorialList } from "@/features/public-editorial";
-import { REQUIREMENT_TYPES } from "./procurement-support.data";
+import type { PublicLocale } from "@/features/localization";
+import { REQUIREMENT_TYPES, REQUIREMENT_TYPES_AR } from "./procurement-support.data";
 
-export function RequirementTypes(): ReactElement {
+export function RequirementTypes({ locale = "en" }: { locale?: PublicLocale }): ReactElement {
+  const ar = locale === "ar";
   return (
     <Reveal direction="up" delay={0.05}>
       <NumberedEditorialList
-        items={REQUIREMENT_TYPES}
-        ariaLabel="Common requirement types"
+        items={ar ? REQUIREMENT_TYPES_AR : REQUIREMENT_TYPES}
+        ariaLabel={ar ? "أنواع المتطلبات الشائعة" : "Common requirement types"}
         kind="requirement-type"
         className="requirement-types"
       />

@@ -1,18 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { parseContactPayload, PublicRequestError, readBoundedJson } from "@/lib/http/public-request";
 
 const spamKeywords = ["viagra", "v1agra", "cialis", "c1alis", "casino", "crypto", "bitcoin", "pharma", "lottery", "xxx", "loan"];
-
-interface ContactRequestBody {
-  company_name?: string;
-  name?: string;
-  company?: string;
-  email?: string;
-  phone?: string;
-  country?: string;
-  subject?: string;
-  message?: string;
-}
 
 function checkSpam(text: string) {
   const lower = text.toLowerCase();
@@ -56,20 +46,16 @@ function cosineSim(vecA: Record<string, number>, vecB: Record<string, number>): 
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json() as ContactRequestBody;
+    const rawBody = await readBoundedJson(req, 16_384);
+    if (rawBody && typeof rawBody === "object" && "company_name" in rawBody && Boolean((rawBody as { company_name?: unknown }).company_name)) {
+      return NextResponse.json({ success: true });
+    }
+    const parsed = parseContactPayload(rawBody);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Check the contact details and message, then try again." }, { status: 400 });
+    }
+    const body = parsed.data;
     const supabase = await createClient();
-
-    if (body.company_name) return NextResponse.json({ success: true });
-
-    let phone = (body.phone || "").split(" ").join("").split("-").join("");
-    if (!phone.startsWith("+")) phone = `+${phone}`;
-    if (phone.length < 8) {
-      return NextResponse.json({ error: "Invalid phone." }, { status: 400 });
-    }
-
-    if (!body.name || !body.email || !body.message) {
-      return NextResponse.json({ error: "Missing fields." }, { status: 400 });
-    }
 
     let isSpam = checkSpam(body.message);
 
@@ -97,7 +83,7 @@ export async function POST(req: NextRequest) {
       user_id: userId,
       name: body.name,
       email: body.email,
-      phone,
+      phone: body.phone,
       message: body.message,
       is_spam: isSpam,
       company: body.company || null,
@@ -105,9 +91,12 @@ export async function POST(req: NextRequest) {
       subject: body.subject || null
     });
 
-    if (error) return NextResponse.json({ error: "DB error" }, { status: 500 });
+    if (error) return NextResponse.json({ error: "Unable to send message." }, { status: 500 });
     return NextResponse.json({ success: true });
-  } catch {
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  } catch (error) {
+    if (error instanceof PublicRequestError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+    return NextResponse.json({ error: "Unable to send message." }, { status: 500 });
   }
 }

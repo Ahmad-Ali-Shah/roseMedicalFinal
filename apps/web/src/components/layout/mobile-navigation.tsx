@@ -11,8 +11,11 @@ import {
 } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ButtonLink } from "@/components/ui/button";
+import { InquiryCountLabel } from "@/features/inquiry";
+import { getLocaleFromPathname, LanguageSwitcher, localizePath, stripLocalePath } from "@/features/localization";
 import { MOTION_DURATION, MOTION_EASING } from "@/features/motion";
 import { isPublicNavigationActive } from "./public-navigation-link";
+import { PublicBrandMark } from "./public-brand-mark";
 
 export type NavigationItem = readonly [label: string, href: Route<string>];
 
@@ -26,11 +29,13 @@ export function MobileNavigation({
   utilityLinks
 }: MobileNavigationProps): ReactElement {
   const pathname = usePathname();
+  const locale = getLocaleFromPathname(pathname);
   const [openPath, setOpenPath] = useState<string | null>(null);
   const open = openPath === pathname;
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion() === true;
+  const closedX = locale === "ar" ? "-100%" : "100%";
 
   useEffect(() => {
     if (!open) return;
@@ -66,7 +71,7 @@ export function MobileNavigation({
         aria-controls="rosa-mobile-navigation"
         onClick={() => setOpenPath(open ? null : pathname)}
       >
-        <span>Menu</span>
+        <span>{locale === "ar" ? "القائمة" : "Menu"}</span>
         <span className="mobile-navigation__trigger-lines" aria-hidden="true">
           <span />
           <span />
@@ -79,7 +84,7 @@ export function MobileNavigation({
             <motion.button
               type="button"
               className="mobile-navigation__backdrop"
-              aria-label="Close menu"
+              aria-label={locale === "ar" ? "إغلاق القائمة" : "Close menu"}
               initial={reduceMotion ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -91,22 +96,22 @@ export function MobileNavigation({
               className="mobile-navigation__panel"
               role="dialog"
               aria-modal="true"
-              aria-label="Mobile navigation"
-              initial={reduceMotion ? false : { x: "100%" }}
+              aria-label={locale === "ar" ? "التنقل عبر الهاتف" : "Mobile navigation"}
+              initial={reduceMotion ? false : { x: closedX }}
               animate={{ x: 0 }}
-              exit={{ x: "100%" }}
+              exit={{ x: closedX }}
               transition={{
                 duration: MOTION_DURATION.section,
                 ease: MOTION_EASING.emphasized
               }}
             >
               <div className="mobile-navigation__panel-header">
-                <Link className="brand" href="/" onClick={close}>ROSA</Link>
+                <PublicBrandMark onClick={close} />
                 <button type="button" className="mobile-navigation__close" onClick={close}>
-                  Close
+                  {locale === "ar" ? "إغلاق" : "Close"}
                 </button>
               </div>
-              <nav aria-label="Mobile navigation">
+              <nav aria-label={locale === "ar" ? "التنقل عبر الهاتف" : "Mobile navigation"}>
                 <ul className="mobile-navigation__links">
                   {[...primaryLinks, ...utilityLinks].map(([label, href], index) => (
                     <motion.li
@@ -120,18 +125,22 @@ export function MobileNavigation({
                       }}
                     >
                       <Link
-                        href={href}
+                        href={localizePath(href, locale) as Route<string>}
                         onClick={close}
-                        aria-current={isPublicNavigationActive(pathname, href) ? "page" : undefined}
+                        aria-current={isPublicNavigationActive(stripLocalePath(pathname), href) ? "page" : undefined}
                       >
-                        {label}
+                        {href === "/inquiry" ? <InquiryCountLabel /> : locale === "ar" ? ({
+                          "/products": "المنتجات", "/catalogues": "الكتالوجات", "/about": "من نحن",
+                          "/contact": "اتصل بنا", "/search": "بحث"
+                        } as Record<string, string>)[href] ?? label : label}
                       </Link>
                     </motion.li>
                   ))}
                 </ul>
               </nav>
-              <ButtonLink href="/request-quotation" onClick={close}>
-                Request a quote
+              <LanguageSwitcher onNavigate={close} />
+              <ButtonLink href={localizePath("/request-quotation", locale) as Route<string>} onClick={close}>
+                {locale === "ar" ? "اطلب عرض سعر" : "Request a quote"}
               </ButtonLink>
             </motion.div>
           </>

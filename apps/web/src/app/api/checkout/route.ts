@@ -5,10 +5,11 @@ import {
   normalizeQuotationPayload
 } from "@/features/inquiry/quotation-payload";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { PublicRequestError, readBoundedJson } from "@/lib/http/public-request";
 
 export async function POST(req: NextRequest) {
   try {
-    const result = normalizeQuotationPayload(await req.json());
+    const result = normalizeQuotationPayload(await readBoundedJson(req, 98_304));
     if (!result.ok) {
       return NextResponse.json({ error: result.error }, { status: 400 });
     }
@@ -56,6 +57,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, id: data.id }, { status: 201 });
   } catch (error) {
+    if (error instanceof PublicRequestError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error("Quotation route failed:", error);
     return NextResponse.json({ error: "Unable to submit quotation request." }, { status: 500 });
   }

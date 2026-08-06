@@ -1,4 +1,7 @@
-import { KNIVES_BATCH_01_MEDIA } from "@/features/catalogue-media";
+import {
+  KNIVES_BATCH_01_MEDIA,
+  OWNER_CATALOGUE_PRODUCT_MEDIA
+} from "@/features/catalogue-media";
 import type { CatalogueProductRecord } from "../types";
 import { KNIVES_BATCH_01_CONFIGURATIONS } from "./knives-batch-01";
 
@@ -76,7 +79,8 @@ const ESTABLISHED_KNIFE_PRODUCTS: readonly CatalogueProductRecord[] = [
     directions: [],
     primaryOption: "14.5 cm",
     catalogueReference: { family: "Knives", page: "6" },
-    mediaLabel: "Scalpel Handle No. 3 placeholder"
+    mediaLabel: "Scalpel Handle No. 3",
+    ...OWNER_CATALOGUE_PRODUCT_MEDIA.product_scalpel_handle_3
   },
   {
     id: "product_bard_parker_handle",
@@ -91,7 +95,8 @@ const ESTABLISHED_KNIFE_PRODUCTS: readonly CatalogueProductRecord[] = [
     directions: [],
     primaryOption: "14.5 cm",
     catalogueReference: { family: "Knives" },
-    mediaLabel: "Bard Parker Handle placeholder"
+    mediaLabel: "Bard Parker Handle",
+    ...OWNER_CATALOGUE_PRODUCT_MEDIA.product_bard_parker_handle
   },
   {
     id: "product_amputation_knife",
@@ -106,7 +111,8 @@ const ESTABLISHED_KNIFE_PRODUCTS: readonly CatalogueProductRecord[] = [
     directions: [],
     primaryOption: "14.5 cm",
     catalogueReference: { family: "Knives" },
-    mediaLabel: "Amputation Knife placeholder"
+    mediaLabel: "Amputation Knife",
+    ...OWNER_CATALOGUE_PRODUCT_MEDIA.product_amputation_knife
   },
   {
     id: "product_resection_knife",
@@ -121,7 +127,8 @@ const ESTABLISHED_KNIFE_PRODUCTS: readonly CatalogueProductRecord[] = [
     directions: [],
     primaryOption: "14.5 cm",
     catalogueReference: { family: "Knives" },
-    mediaLabel: "Resection Knife placeholder"
+    mediaLabel: "Resection Knife",
+    ...OWNER_CATALOGUE_PRODUCT_MEDIA.product_resection_knife
   }
 ];
 

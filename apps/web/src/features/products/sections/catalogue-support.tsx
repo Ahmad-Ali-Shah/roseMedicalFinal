@@ -1,6 +1,6 @@
-import Link from "next/link";
 import type { ReactElement } from "react";
 import { Container, Section } from "@/components/layout";
+import { LocaleLink } from "@/features/localization";
 import type { ProductsCatalogueModel } from "../products.data";
 
 export function CatalogueSupport({ model }: { model: ProductsCatalogueModel }): ReactElement {
@@ -14,11 +14,11 @@ export function CatalogueSupport({ model }: { model: ProductsCatalogueModel }): 
           <ul className="catalogue-mini-grid" aria-label="Technical catalogue families">
             {model.items.map((item) => (
               <li key={item.name}>
-                <Link className="catalogue-mini-card" href={item.href} aria-label={`Browse ${item.name} catalogue`}>
+                <LocaleLink className="catalogue-mini-card" href={item.href} aria-label={`Browse ${item.name} catalogue`}>
                   <span className="catalogue-mini-card__number">{item.number}</span>
                   <span className="catalogue-mini-card__title">{item.name}</span>
                   <span aria-hidden="true">→</span>
-                </Link>
+                </LocaleLink>
               </li>
             ))}
           </ul>

@@ -26,7 +26,9 @@ describe("F3D search default and preview data", () => {
     expect((html.match(/data-motion="reveal"/g) ?? [])).toHaveLength(1);
     expect((html.match(/data-motion="stagger"/g) ?? [])).toHaveLength(1);
     expect((html.match(/data-motion="stagger-item"/g) ?? [])).toHaveLength(5);
-    expect(html).toContain('readOnly=""');
+    expect(html).toContain('name="q"');
+    expect(html).toContain('type="submit"');
+    expect(html).not.toContain('readOnly=""');
     expect(html).not.toContain("18-0644");
     expect(html).not.toContain("2 results");
     expect(html).not.toContain("Search could not be completed");
@@ -41,7 +43,8 @@ describe("F3D search default and preview data", () => {
     expect(desktop).toContain('href="/products/knives/bard-parker-handle"');
     expect(desktop).toContain("18-0644");
     expect(desktop).toContain("18-0650");
-    expect(desktop).toContain("disabled");
+    expect(desktop).toContain("Add to inquiry");
+    expect(desktop).not.toContain("disabled");
     expect(mobile).toContain("data-mobile-search-preview");
   });
 

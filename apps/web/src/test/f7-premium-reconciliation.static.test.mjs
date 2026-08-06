@@ -38,11 +38,9 @@ test("reconciliation preserves the complete Rosa-owned motion boundary", async (
     "./scroll-header-controller",
     "./route-transition"
   ], "motion index");
-  assert.equal(
-    globals.trim().endsWith('@import "../styles/f7-premium-polish.css";'),
-    true,
-    "the premium stylesheet must remain the final cascade layer"
-  );
+  const premiumImport = globals.indexOf('@import "../styles/f7-premium-polish.css";');
+  const rtlImport = globals.indexOf('@import "../styles/rtl.css";');
+  assert.equal(premiumImport > -1 && rtlImport > premiumImport, true, "RTL overrides must follow the premium motion layer");
   assertIncludes(reducedMotion, [
     "prefers-reduced-motion: reduce",
     "opacity: 1 !important",
@@ -122,10 +120,9 @@ test("reconciliation preserves homepage cinematic choreography", async () => {
   assertIncludes(hero, [
     "TextReveal",
     "Magnetic",
-    "SpotlightSurface",
-    "TiltSurface",
     "MediaFrame",
-    "ProgressiveBlur",
+    "home-hero__visual--fullbleed",
+    "home-hero__media-fade",
     'data-home-choreography="hero"',
     'mediaSlot="homepage-hero"'
   ], "homepage hero");
@@ -140,16 +137,19 @@ test("reconciliation preserves homepage cinematic choreography", async () => {
   assertIncludes(catalogueAccess, [
     "MediaFrame",
     "ProgressiveBlur",
-    "catalogue-card__document",
     "catalogue-grid__blur"
   ], "catalogue access");
   assertIncludes(quotationCta, ["Reveal", "SpotlightSurface", "procurement-panel--premium-cta"], "quotation CTA");
-  assertIncludes(familyCard, ["TiltSurface", "SpotlightSurface", "premium-surface"], "family card");
+  assertIncludes(familyCard, ["TiltSurface", "family-card__surface", "premium-surface"], "family card");
+  assert.equal(
+    familyCard.includes("SpotlightSurface"),
+    false,
+    "repeated family cards must not attach pointer spotlights"
+  );
   assertIncludes(productCard, ["TiltSurface", "premium-surface"], "product preview card");
   assertIncludes(premiumCss, [
     ".home-hero__instrument-composition",
     ".procurement-steps::before",
-    ".catalogue-card__document",
     ".procurement-panel--premium-cta::after"
   ], "homepage premium styles");
 });
@@ -239,7 +239,7 @@ test("reconciliation preserves story, utility and legal restraint", async () => 
     "TextReveal",
     "MediaFrame",
     "SupportedBuyers",
-    "ScissorsEvolution"
+    "CompanyProfile"
   ], "About page");
   assertIncludes(supportedBuyers, [
     "Stagger",
@@ -255,7 +255,7 @@ test("reconciliation preserves story, utility and legal restraint", async () => 
   assertIncludes(catalogues, ["TextReveal", "Reveal", "CatalogueGrid"], "catalogues page");
   assertIncludes(contact, [
     "TextReveal",
-    "MediaFrame",
+    "RiyadhMap",
     "contact-information-reveal",
     "contact-form-reveal"
   ], "contact page");
@@ -287,8 +287,8 @@ test("reconciliation preserves inquiry and quotation conversion polish", async (
     "inquiry-preview-summary"
   ], "inquiry conversion flow");
   assertIncludes(quotation, [
-    "motion.fieldset",
-    'data-motion="quotation-fieldset"',
+    'data-motion="quotation-form-fields"',
+    "data-quotation-fieldset",
     "quotation-submit-button__label",
     "quotation-success-state__mark",
     "AnimatePresence"
@@ -296,7 +296,7 @@ test("reconciliation preserves inquiry and quotation conversion polish", async (
   assertIncludes(conversionCss, [
     ".inquiry-preview-line",
     ".conversion-value",
-    ".quotation-form-preview [data-motion=\"quotation-fieldset\"]::after",
+    ".quotation-form-preview [data-quotation-fieldset]::after",
     "position: sticky",
     ".quotation-success-state__mark"
   ], "conversion premium styles");

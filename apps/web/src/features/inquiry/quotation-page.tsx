@@ -1,10 +1,11 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useState, type FormEvent } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Container, Section } from "@/components/layout";
 import { QuotationBlockedPage } from "@/features/quotation-preview";
+import { LocaleLink, getLocaleFromPathname } from "@/features/localization";
 import { clearInquiry, readInquiry, type InquiryItem } from "./inquiry-store";
 
 type SubmissionState = "idle" | "submitting" | "success" | "error";
@@ -14,7 +15,9 @@ export function QuotationPage() {
   const [state, setState] = useState<SubmissionState>("idle");
   const [error, setError] = useState("");
   const [reference, setReference] = useState("");
+  const successRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion() === true;
+  const ar = getLocaleFromPathname(usePathname()) === "ar";
 
   useEffect(() => {
     const synchronize = () => setItems(readInquiry());
@@ -29,8 +32,15 @@ export function QuotationPage() {
     };
   }, []);
 
+  useEffect(() => {
+    if (state !== "success") return;
+
+    const frame = window.requestAnimationFrame(() => successRef.current?.focus());
+    return () => window.cancelAnimationFrame(frame);
+  }, [state]);
+
   if (items === null) {
-    return <Section tone="paper"><Container size="wide"><p>Loading quotation request…</p></Container></Section>;
+    return <Section tone="paper"><Container size="wide"><p>{ar ? "جارٍ تحميل طلب عرض السعر…" : "Loading quotation request…"}</p></Container></Section>;
   }
   if (items.length === 0 && state !== "success") return <QuotationBlockedPage />;
 
@@ -39,8 +49,13 @@ export function QuotationPage() {
       <Section tone="paper" className="quotation-blocked-page quotation-success-state">
         <Container size="reading">
           <motion.div
+            ref={successRef}
             className="quotation-success-state__content"
             data-conversion-success="true"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+            tabIndex={-1}
             initial={reduceMotion ? false : { opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: reduceMotion ? 0 : 0.34 }}
@@ -54,12 +69,12 @@ export function QuotationPage() {
             >
               ✓
             </motion.span>
-            <p className="quotation-blocked-page__eyebrow">Request received</p>
-            <h1>Your quotation request has been submitted.</h1>
-            <p>Rosa can now review the selected products and contact details.</p>
-            {reference ? <p>Reference: {reference}</p> : null}
+            <p className="quotation-blocked-page__eyebrow">{ar ? "تم استلام الطلب" : "Request received"}</p>
+            <h1>{ar ? "تم إرسال طلب عرض السعر." : "Your quotation request has been submitted."}</h1>
+            <p>{ar ? "يمكن لروزا الآن مراجعة المنتجات المحددة وبيانات التواصل." : "Rosa can now review the selected products and contact details."}</p>
+            {reference ? <p>{ar ? "المرجع" : "Reference"}: <bdi dir="ltr">{reference}</bdi></p> : null}
             <div className="quotation-blocked-page__actions">
-              <Link href="/products" className="button button--primary button--standard">Browse more products</Link>
+              <LocaleLink href="/products" className="button button--primary button--standard">{ar ? "استعرض المزيد من المنتجات" : "Browse more products"}</LocaleLink>
             </div>
           </motion.div>
         </Container>
@@ -91,7 +106,7 @@ export function QuotationPage() {
 
       const data = await response.json().catch(() => ({})) as { error?: string; id?: string };
       if (!response.ok) {
-        setError(data.error || "Unable to submit quotation request.");
+        setError(ar ? "تعذر إرسال طلب عرض السعر. راجع البيانات وحاول مرة أخرى." : data.error || "Unable to submit quotation request.");
         setState("error");
         return;
       }
@@ -100,7 +115,7 @@ export function QuotationPage() {
       setReference(data.id || "");
       setState("success");
     } catch {
-      setError("Unable to submit quotation request. Check your connection and try again.");
+      setError(ar ? "تعذر إرسال طلب عرض السعر. تحقق من الاتصال وحاول مرة أخرى." : "Unable to submit quotation request. Check your connection and try again.");
       setState("error");
     }
   }
@@ -113,18 +128,19 @@ export function QuotationPage() {
         <div className="quotation-form-preview" data-conversion-state={state}>
           <form
             className="quotation-form-preview__form"
-            aria-label="Quotation request"
+            aria-label={ar ? "طلب عرض سعر" : "Quotation request"}
             aria-busy={state === "submitting"}
             onSubmit={submit}
           >
             <motion.div
+              className="quotation-form-preview__introduction"
               initial={reduceMotion ? false : { opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: reduceMotion ? 0 : 0.32 }}
             >
-              <p className="public-eyebrow">Request quotation</p>
-              <h1>Send your product requirements.</h1>
-              <p>Provide contact details so Rosa can review and respond to this inquiry.</p>
+              <p className="public-eyebrow">{ar ? "طلب عرض سعر" : "Request quotation"}</p>
+              <h1>{ar ? "أرسل متطلبات المنتجات." : "Send your product requirements."}</h1>
+              <p>{ar ? "أدخل بيانات التواصل لتتمكن روزا من مراجعة هذا الاستفسار والرد عليه." : "Provide contact details so Rosa can review and respond to this inquiry."}</p>
             </motion.div>
 
             <motion.div
@@ -135,26 +151,45 @@ export function QuotationPage() {
               transition={{ duration: reduceMotion ? 0 : 0.4, ease: [0.22, 1, 0.36, 1] }}
             >
               <fieldset data-quotation-fieldset="contact">
-                <legend>Contact information</legend>
+                <legend>{ar ? "بيانات التواصل" : "Contact information"}</legend>
                 <div className="quotation-form-preview__field-grid">
-                  <label><span>Customer name</span><input name="name" required minLength={2} maxLength={120} placeholder="Your full name" /></label>
-                  <label><span>Company name</span><input name="company" maxLength={120} placeholder="Company or organisation" /></label>
-                  <label><span>Email</span><input name="email" type="email" required maxLength={254} placeholder="name@company.com" /></label>
-                  <label><span>Telephone</span><input name="phone" type="tel" required maxLength={30} placeholder="Country code and number" /></label>
-                  <label><span>Country</span><input name="country" maxLength={80} placeholder="Country" /></label>
+                  <label className="quotation-field">
+                    <span className="quotation-field__label">{ar ? "اسم العميل" : "Customer name"}<span aria-hidden="true"> *</span></span>
+                    <input name="name" required minLength={2} maxLength={120} autoComplete="name" placeholder={ar ? "الاسم الكامل" : "Your full name"} />
+                  </label>
+                  <label className="quotation-field">
+                    <span className="quotation-field__label">{ar ? "اسم الشركة" : "Company name"}</span>
+                    <input name="company" maxLength={120} autoComplete="organization" placeholder={ar ? "الشركة أو الجهة" : "Company or organisation"} />
+                  </label>
+                  <label className="quotation-field">
+                    <span className="quotation-field__label">{ar ? "البريد الإلكتروني" : "Email"}<span aria-hidden="true"> *</span></span>
+                    <input name="email" type="email" required maxLength={254} autoComplete="email" inputMode="email" placeholder="name@company.com" dir="ltr" />
+                  </label>
+                  <label className="quotation-field">
+                    <span className="quotation-field__label">{ar ? "الهاتف" : "Telephone"}<span aria-hidden="true"> *</span></span>
+                    <input name="phone" type="tel" required maxLength={30} autoComplete="tel" inputMode="tel" placeholder={ar ? "رمز الدولة والرقم" : "Country code and number"} dir="ltr" />
+                  </label>
+                  <label className="quotation-field quotation-field--full">
+                    <span className="quotation-field__label">{ar ? "الدولة" : "Country"}</span>
+                    <input name="country" maxLength={80} autoComplete="country-name" placeholder={ar ? "الدولة" : "Country"} />
+                  </label>
                 </div>
               </fieldset>
 
               <fieldset data-quotation-fieldset="notes">
-                <legend>General request notes</legend>
-                <label><span>Procurement context</span><textarea name="notes" maxLength={2000} placeholder="Packing, destination or other requirements" /></label>
+                <legend>{ar ? "ملاحظات الطلب العامة" : "General request notes"}</legend>
+                <label className="quotation-field quotation-field--full">
+                  <span className="quotation-field__label">{ar ? "سياق المشتريات" : "Procurement context"}</span>
+                  <textarea name="notes" maxLength={2000} placeholder={ar ? "التغليف أو الوجهة أو أي متطلبات أخرى" : "Packing, destination or other requirements"} />
+                  <small>{ar ? "أضف متطلبات التشطيب أو التغليف أو الوجهة أو الرموز غير المدرجة." : "Add finish, packing, destination, or unlisted-code requirements."}</small>
+                </label>
               </fieldset>
 
               <fieldset data-quotation-fieldset="submission">
-                <legend>Submission</legend>
+                <legend>{ar ? "الإرسال" : "Submission"}</legend>
                 <label className="quotation-preview-confirmation">
-                  <input type="checkbox" required />
-                  <span>I confirm that the selected product details and contact information are correct.</span>
+                  <input type="checkbox" name="confirmation" required />
+                  <span>{ar ? "أؤكد صحة تفاصيل المنتجات المحددة وبيانات التواصل." : "I confirm that the selected product details and contact information are correct."}</span>
                 </label>
                 <AnimatePresence initial={false}>
                   {error ? (
@@ -172,7 +207,7 @@ export function QuotationPage() {
                   ) : null}
                 </AnimatePresence>
                 <div className="quotation-form-preview__submit-row">
-                  <button className="button button--primary button--standard quotation-submit-button" disabled={state === "submitting"}>
+                  <button type="submit" className="button button--primary button--standard quotation-submit-button" disabled={state === "submitting"}>
                     <AnimatePresence initial={false} mode="wait">
                       <motion.span
                         key={state === "submitting" ? "submitting" : "ready"}
@@ -182,7 +217,7 @@ export function QuotationPage() {
                         exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -3 }}
                         transition={{ duration: reduceMotion ? 0 : 0.16 }}
                       >
-                        {state === "submitting" ? "Submitting…" : "Submit quotation request"}
+                        {state === "submitting" ? (ar ? "جارٍ الإرسال…" : "Submitting…") : (ar ? "إرسال طلب عرض السعر" : "Submit quotation request")}
                       </motion.span>
                     </AnimatePresence>
                   </button>
@@ -193,27 +228,30 @@ export function QuotationPage() {
 
           <motion.aside
             className="quotation-product-summary"
+            data-quotation-summary="true"
             aria-labelledby="quotation-products-title"
             initial={reduceMotion ? false : { opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: reduceMotion ? 0 : 0.34, delay: reduceMotion ? 0 : 0.06 }}
           >
-            <p className="quotation-product-summary__eyebrow">Selected products</p>
-            <h2 id="quotation-products-title">{items.length} products</h2>
+            <p className="quotation-product-summary__eyebrow">{ar ? "المنتجات المحددة" : "Selected products"}</p>
+            <h2 id="quotation-products-title">{ar ? `${items.length} منتج` : `${items.length} ${items.length === 1 ? "product" : "products"}`}</h2>
             <ul>
               {items.map((item) => (
                 <motion.li layout={!reduceMotion} key={item.id}>
                   <div>
                     <strong>{item.name}</strong>
-                    <span>Code {item.code}</span>
-                    <span>Quantity {item.quantity}</span>
+                    <span>{ar ? "الرمز" : "Code"} <bdi dir="ltr">{item.code}</bdi></span>
+                    {item.size ? <span>{ar ? "المقاس" : "Size"} <bdi dir="ltr">{item.size}</bdi></span> : null}
+                    {item.variant ? <span>{ar ? "الخيار" : "Variant"} {item.variant}</span> : null}
+                    <span>{ar ? "الكمية" : "Quantity"} {item.quantity}</span>
                   </div>
-                  <Link href="/inquiry">Edit</Link>
+                  <LocaleLink href="/inquiry">{ar ? "تعديل" : "Edit"}</LocaleLink>
                 </motion.li>
               ))}
             </ul>
-            <div className="quotation-product-summary__total"><span>Total quantity</span><motion.output key={totalQuantity} className="conversion-value" aria-live="polite" initial={reduceMotion ? false : { opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}>{totalQuantity}</motion.output></div>
-            <Link className="text-link" href="/inquiry">Return to inquiry →</Link>
+            <div className="quotation-product-summary__total"><span>{ar ? "الكمية الإجمالية" : "Total quantity"}</span><motion.output key={totalQuantity} className="conversion-value" aria-live="polite" initial={reduceMotion ? false : { opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}>{totalQuantity}</motion.output></div>
+            <LocaleLink className="text-link" href="/inquiry">{ar ? "العودة إلى الاستفسار ←" : "Return to inquiry →"}</LocaleLink>
           </motion.aside>
         </div>
       </Container>

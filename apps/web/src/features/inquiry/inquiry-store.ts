@@ -1,4 +1,6 @@
 export const INQUIRY_STORAGE_KEY = "rosa-medical-inquiry-v1";
+export const INQUIRY_CHANGE_EVENT = "rosa-inquiry-change";
+export const INQUIRY_MAX_QUANTITY = 999;
 
 export interface InquiryItem {
   id: string;
@@ -32,7 +34,7 @@ function isInquiryItem(value: unknown): value is InquiryItem {
 function normalizeItem(item: InquiryItem): InquiryItem {
   return {
     ...item,
-    quantity: Math.max(1, Math.floor(item.quantity || 1)),
+    quantity: Math.min(INQUIRY_MAX_QUANTITY, Math.max(1, Math.floor(item.quantity || 1))),
     notes: item.notes.slice(0, 500)
   };
 }
@@ -43,7 +45,7 @@ function storage(): Storage | null {
 
 function notify(): void {
   if (typeof window !== "undefined") {
-    window.dispatchEvent(new Event("rosa-inquiry-change"));
+    window.dispatchEvent(new Event(INQUIRY_CHANGE_EVENT));
   }
 }
 
@@ -71,6 +73,10 @@ export function readInquiry(): InquiryItem[] {
   }
 }
 
+export function getInquiryLineCount(items: readonly InquiryItem[] = readInquiry()): number {
+  return items.length;
+}
+
 export function addInquiryItem(item: InquiryItem): InquiryItem[] {
   const normalized = normalizeItem(item);
   const items = readInquiry();
@@ -84,7 +90,8 @@ export function addInquiryItem(item: InquiryItem): InquiryItem[] {
   const next = [...items];
   next[existingIndex] = normalizeItem({
     ...existing,
-    quantity: existing.quantity + normalized.quantity
+    quantity: existing.quantity + normalized.quantity,
+    notes: normalized.notes.trim() ? normalized.notes : existing.notes
   });
   return writeInquiry(next);
 }

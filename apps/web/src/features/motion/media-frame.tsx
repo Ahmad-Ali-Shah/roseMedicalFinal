@@ -16,6 +16,8 @@ interface MediaFrameProps extends PropsWithChildren {
   className?: string;
   loading?: "eager" | "lazy";
   sizes?: string;
+  fit?: "cover" | "contain";
+  quality?: number;
 }
 
 export function MediaFrame({
@@ -29,6 +31,8 @@ export function MediaFrame({
   className,
   loading = "lazy",
   sizes = "(max-width: 768px) 100vw, 50vw",
+  fit = "cover",
+  quality,
   children
 }: MediaFrameProps): ReactElement {
   const classes = ["media-frame", className].filter(Boolean).join(" ");
@@ -40,6 +44,8 @@ export function MediaFrame({
       data-media-aspect={aspect}
       data-media-state={state}
       data-media-tone={tone}
+      data-media-fit={fit}
+      {...(quality ? { "data-media-quality": quality } : {})}
       {...(mediaSlot ? { "data-media-slot": mediaSlot } : {})}
       {...(!src ? { role: "img", "aria-label": alt } : {})}
     >
@@ -51,7 +57,8 @@ export function MediaFrame({
           fill
           sizes={sizes}
           priority={loading === "eager"}
-          style={{ objectPosition: focalPoint }}
+          {...(quality === undefined ? {} : { quality })}
+          style={{ objectFit: fit, objectPosition: focalPoint }}
         />
       ) : (
         <div className="media-frame__placeholder">{children}</div>

@@ -25,7 +25,7 @@ describe("F3E-B family pages", () => {
     expect(html).toContain(model.family.name);
     expect(html).toContain("Not supplied");
     expect(html).toContain("No family content, imagery, featured assignment or catalogue file can be changed here.");
-    expect(html).toContain("Awaiting publication");
+    expect(html).toContain("Public PDF path registered");
     expect(html).not.toContain("<form");
     expect(html).not.toMatch(/Last updated:\s*\S|Published on|data-published-status/i);
   });

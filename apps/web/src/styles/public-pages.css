@@ -76,11 +76,6 @@ body:has(.public-page--home) .mobile-navigation summary {
   color: var(--color-paper);
 }
 
-body:has(.public-page--home) .site-header__actions .button,
-body:has(.public-page--products) .site-header__actions .button {
-  display: none;
-}
-
 .public-hero {
   position: relative;
   overflow: clip;
@@ -671,20 +666,10 @@ body:has(.public-page--products) .site-header__actions .button {
   text-decoration: none;
 }
 
-.catalogue-mini-grid li:first-child .catalogue-mini-card {
-  border-color: var(--color-rosa-red);
-  background: var(--color-rosa-red);
-  color: var(--color-paper);
-}
-
 .catalogue-mini-card__number {
   color: var(--color-rosa-red);
   font-size: 0.68rem;
   font-weight: 800;
-}
-
-.catalogue-mini-grid li:first-child .catalogue-mini-card__number {
-  color: var(--color-paper);
 }
 
 .catalogue-mini-card__title {
@@ -926,16 +911,6 @@ body:has(.public-page--products) .site-header__actions .button {
     padding: 0.35rem 0;
     border: 0;
     background: transparent;
-  }
-
-  .catalogue-mini-grid li:first-child .catalogue-mini-card {
-    border: 0;
-    background: transparent;
-    color: var(--color-ink);
-  }
-
-  .catalogue-mini-grid li:first-child .catalogue-mini-card__number {
-    color: var(--color-ink);
   }
 
   .products-hero {

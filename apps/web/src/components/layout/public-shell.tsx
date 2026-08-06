@@ -1,13 +1,20 @@
-import Link from "next/link";
-import { ButtonLink } from "@/components/ui/button";
 import { RouteTransition, ScrollHeaderController } from "@/features/motion";
 import { PUBLIC_CONTENT_VALUES } from "@/features/public-content-registry";
+import { InquiryCountLabel } from "@/features/inquiry";
+import {
+  LanguageSwitcher,
+  LocaleDocumentController,
+  LocaleLink,
+  LocalizedButtonLink,
+  LocalizedText
+} from "@/features/localization";
 import { Container } from "./container";
 import {
   MobileNavigation,
   type NavigationItem
 } from "./mobile-navigation";
 import { PublicNavigationLink } from "./public-navigation-link";
+import { PublicBrandMark } from "./public-brand-mark";
 
 const primaryLinks = [
   ["Products", "/products"],
@@ -18,37 +25,54 @@ const primaryLinks = [
 
 const utilityLinks = [
   ["Search", "/search"],
-  ["Inquiry (0)", "/inquiry"]
+  ["Inquiry", "/inquiry"]
 ] as const satisfies readonly NavigationItem[];
 
 const familyLinks = [
-  ["Knives", "/products/knives"],
-  ["Scissors", "/products/scissors"],
-  ["Punches", "/products/punches"],
-  ["Chisels", "/products/chisels"],
-  ["Cutters", "/products/cutters"]
+  ["Knives", "المشارط والسكاكين الجراحية", "/products/knives"],
+  ["Scissors", "المقصات الجراحية", "/products/scissors"],
+  ["Punches", "أدوات الثقب", "/products/punches"],
+  ["Chisels", "الأزاميل الجراحية", "/products/chisels"],
+  ["Cutters", "أدوات القطع", "/products/cutters"]
 ] as const;
 
 export function PublicShell({ children }: { children: React.ReactNode }) {
+  const year = new Date().getFullYear();
   return (
     <>
       <ScrollHeaderController>
+        <LocaleDocumentController />
         <Container className="site-header__bar" size="wide">
-          <Link className="brand" href="/" aria-label="Rosa homepage">ROSA</Link>
-          <nav className="site-header__nav" aria-label="Primary navigation">
+          <PublicBrandMark />
+          <nav className="site-header__nav" aria-label="Primary navigation / التنقل الرئيسي">
             <ul className="nav-list">
               {primaryLinks.map(([label, href]) => (
                 <li key={href}>
-                  <PublicNavigationLink href={href} label={label} />
+                  <PublicNavigationLink
+                    href={href}
+                    label={
+                      href === "/products" ? <LocalizedText en={label} ar="المنتجات" /> :
+                      href === "/catalogues" ? <LocalizedText en={label} ar="الكتالوجات" /> :
+                      href === "/about" ? <LocalizedText en={label} ar="من نحن" /> :
+                      <LocalizedText en={label} ar="اتصل بنا" />
+                    }
+                  />
                 </li>
               ))}
             </ul>
           </nav>
           <div className="cluster site-header__actions">
             {utilityLinks.map(([label, href]) => (
-              <PublicNavigationLink href={href} label={label} key={href} />
+              <PublicNavigationLink
+                href={href}
+                label={href === "/inquiry" ? <InquiryCountLabel /> : <LocalizedText en={label} ar="بحث" />}
+                key={href}
+              />
             ))}
-            <ButtonLink href="/request-quotation" size="small">Request a quote</ButtonLink>
+            <LanguageSwitcher />
+            <LocalizedButtonLink href="/request-quotation" size="small">
+              <LocalizedText en="Request a quote" ar="اطلب عرض سعر" />
+            </LocalizedButtonLink>
           </div>
           <MobileNavigation primaryLinks={primaryLinks} utilityLinks={utilityLinks} />
         </Container>
@@ -59,38 +83,40 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
       <footer className="site-footer">
         <Container className="site-footer__grid" size="wide">
           <div className="site-footer__brand stack">
-            <Link className="brand" href="/">ROSA</Link>
-            <p>{PUBLIC_CONTENT_VALUES.footerDescription.copy}</p>
-            <ButtonLink href="/request-quotation" size="small">Request a quote</ButtonLink>
+            <LocaleLink className="brand" href="/">ROSA</LocaleLink>
+            <p><LocalizedText en={PUBLIC_CONTENT_VALUES.footerDescription.copy} ar="كتالوج منظم للأدوات الطبية ودعم واضح لطلبات عروض الأسعار والمشتريات المهنية." /></p>
+            <LocalizedButtonLink href="/request-quotation" size="small">
+              <LocalizedText en="Request a quote" ar="اطلب عرض سعر" />
+            </LocalizedButtonLink>
           </div>
-          <nav aria-label="Product families">
-            <p className="site-footer__title">Products</p>
+          <nav aria-label="Product families / عائلات المنتجات">
+            <p className="site-footer__title"><LocalizedText en="Products" ar="المنتجات" /></p>
             <ul className="site-footer__links">
-              {familyLinks.map(([label, href]) => <li key={href}><Link href={href}>{label}</Link></li>)}
-              <li><Link href="/catalogues">Catalogues</Link></li>
+              {familyLinks.map(([label, labelAr, href]) => <li key={href}><LocaleLink href={href}><LocalizedText en={label} ar={labelAr} /></LocaleLink></li>)}
+              <li><LocaleLink href="/catalogues"><LocalizedText en="Catalogues" ar="الكتالوجات" /></LocaleLink></li>
             </ul>
           </nav>
-          <nav aria-label="Company navigation">
-            <p className="site-footer__title">Company</p>
+          <nav aria-label="Company navigation / روابط الشركة">
+            <p className="site-footer__title"><LocalizedText en="Company" ar="الشركة" /></p>
             <ul className="site-footer__links">
-              <li><Link href="/about">About</Link></li>
-              <li><Link href="/procurement-support">Procurement support</Link></li>
-              <li><Link href="/contact">Contact</Link></li>
+              <li><LocaleLink href="/about"><LocalizedText en="About" ar="من نحن" /></LocaleLink></li>
+              <li><LocaleLink href="/procurement-support"><LocalizedText en="Procurement support" ar="دعم المشتريات" /></LocaleLink></li>
+              <li><LocaleLink href="/contact"><LocalizedText en="Contact" ar="اتصل بنا" /></LocaleLink></li>
             </ul>
           </nav>
-          <nav aria-label="Footer navigation">
-            <p className="site-footer__title">Support</p>
+          <nav aria-label="Footer navigation / روابط التذييل">
+            <p className="site-footer__title"><LocalizedText en="Support" ar="الدعم" /></p>
             <ul className="site-footer__links">
-              <li><Link href="/inquiry">Inquiry</Link></li>
-              <li><Link href="/search">Search</Link></li>
-              <li><Link href="/privacy">Privacy Policy</Link></li>
-              <li><Link href="/terms">Terms</Link></li>
+              <li><LocaleLink href="/inquiry"><LocalizedText en="Inquiry" ar="الاستفسار" /></LocaleLink></li>
+              <li><LocaleLink href="/search"><LocalizedText en="Search" ar="بحث" /></LocaleLink></li>
+              <li><LocaleLink href="/privacy"><LocalizedText en="Privacy Policy" ar="سياسة الخصوصية" /></LocaleLink></li>
+              <li><LocaleLink href="/terms"><LocalizedText en="Terms" ar="الشروط" /></LocaleLink></li>
             </ul>
           </nav>
         </Container>
         <Container className="site-footer__bottom cluster" size="wide">
-          <span>© ROSA. Replace legal and company details after verification.</span>
-          <span>English first · Arabic-ready structure</span>
+          <span><LocalizedText en={`© ${year} Rosa Medical. All rights reserved.`} ar={`© ${year} روزا ميديكال. جميع الحقوق محفوظة.`} /></span>
+          <span><LocalizedText en="Medical instrument catalogue and quotation support." ar="كتالوج أدوات طبية ودعم طلبات عروض الأسعار." /></span>
         </Container>
       </footer>
     </>

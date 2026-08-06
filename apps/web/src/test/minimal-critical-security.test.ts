@@ -7,12 +7,12 @@ const webRoot = fileURLToPath(new URL("../../", import.meta.url));
 const source = (path: string) => readFileSync(join(webRoot, path), "utf8");
 
 describe("minimal critical security patch", () => {
-  it("scopes customer inquiry history on the server", () => {
+  it("keeps public browsing account-free while server inquiry history stays scoped", () => {
     const account = source("src/app/(public)/account/page.tsx");
     const inquiries = source("src/app/api/inquiries/route.ts");
 
-    expect(account).toContain('fetch("/api/inquiries?scope=mine")');
-    expect(account).not.toMatch(/\.filter\s*\([^)]*user_id/);
+    expect(account).toContain('redirect("/inquiry")');
+    expect(account).not.toContain("createClient");
     expect(inquiries).toContain('scope === "mine"');
     expect(inquiries).toContain('.eq("user_id", auth.user.id)');
   });
@@ -37,6 +37,8 @@ describe("minimal critical security patch", () => {
     expect(secretCheck).toBeGreaterThan(-1);
     expect(adminClient).toBeGreaterThan(secretCheck);
     expect(alertRoute).toContain("authorization");
+    expect(alertRoute).toContain("ROSA_OWNER_EMAIL");
+    expect(alertRoute).not.toContain("ahmadaliofficial1155@gmail.com");
   });
 
   it("does not fetch visitor-supplied URLs from the contact request", () => {

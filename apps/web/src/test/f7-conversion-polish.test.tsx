@@ -62,8 +62,20 @@ describe("F7 inquiry and quotation conversion polish", () => {
     expect(quotation).toContain("Submit quotation request");
     expect(quotation).toContain('data-conversion-state={state}');
     expect(quotation).toContain('data-conversion-success="true"');
-    expect(quotation).toContain('aria-label="Quotation request"');
-    expect(quotation).toContain('type="checkbox" required');
+    expect(quotation).toContain('role="status"');
+    expect(quotation).toContain('aria-live="polite"');
+    expect(quotation).toContain("successRef.current?.focus()");
+    expect(quotation).toContain("tabIndex={-1}");
+    expect(quotation).toContain('aria-label={ar ? "طلب عرض سعر" : "Quotation request"}');
+    expect(quotation).toMatch(/type="checkbox"[^>]*required/);
+    expect((quotation.match(/<label className="quotation-field/g) ?? [])).toHaveLength(6);
+    expect(quotation).toContain("quotation-field--full");
+    expect(quotation).toContain('autoComplete="name"');
+    expect(quotation).toContain('autoComplete="organization"');
+    expect(quotation).toContain('autoComplete="email"');
+    expect(quotation).toContain('autoComplete="tel"');
+    expect(quotation).toContain('autoComplete="country-name"');
+    expect(quotation).toContain('data-quotation-summary="true"');
   });
 
   it("does not introduce ecommerce language into the quotation-led flow", () => {

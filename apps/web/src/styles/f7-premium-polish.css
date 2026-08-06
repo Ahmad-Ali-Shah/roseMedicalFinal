@@ -19,18 +19,23 @@
 
 .text-reveal__segment {
   transform-origin: left bottom;
-  will-change: transform, filter;
 }
 
 [data-motion="magnetic"] {
   width: fit-content;
   display: inline-flex;
-  will-change: transform;
 }
 
 [data-motion="tilt"] {
   transform-style: preserve-3d;
-  will-change: transform;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-motion="magnetic"]:hover,
+  [data-motion="tilt"]:hover,
+  [data-motion="tilt"]:focus-within {
+    will-change: transform;
+  }
 }
 
 [data-motion="spotlight"] {
@@ -221,7 +226,7 @@
   z-index: 100;
   isolation: isolate;
   background: rgb(255 255 255 / 0.93);
-  backdrop-filter: blur(18px) saturate(115%);
+  backdrop-filter: blur(10px) saturate(110%);
   transition:
     background-color var(--motion-component) var(--motion-ease),
     border-color var(--motion-component) var(--motion-ease),
@@ -229,16 +234,12 @@
 }
 
 .site-header__bar {
-  transition: min-height var(--motion-component) var(--motion-ease);
+  min-height: 5rem;
 }
 
 .site-header[data-scrolled="true"] {
   border-bottom-color: color-mix(in srgb, var(--color-border) 78%, transparent);
   box-shadow: 0 0.75rem 2rem rgb(25 25 23 / 0.05);
-}
-
-.site-header[data-scrolled="true"] .site-header__bar {
-  min-height: 4.35rem;
 }
 
 .site-header .brand,
@@ -277,22 +278,22 @@
 }
 
 body:has(.public-page--home) .site-header[data-scrolled="false"] {
-  border-bottom-color: transparent;
-  background: transparent;
+  border-bottom-color: rgb(25 25 23 / 0.08);
+  background: rgb(255 255 255 / 0.9);
   box-shadow: none;
-  backdrop-filter: none;
+  backdrop-filter: blur(10px) saturate(110%);
 }
 
 body:has(.public-page--home) .site-header[data-scrolled="false"] .brand,
 body:has(.public-page--home) .site-header[data-scrolled="false"] .nav-link,
 body:has(.public-page--home) .site-header[data-scrolled="false"] .mobile-navigation__trigger {
-  color: var(--color-paper);
+  color: var(--color-ink);
 }
 
 body:has(.public-page--home) .site-header[data-scrolled="true"] {
   border-bottom-color: color-mix(in srgb, var(--color-border) 78%, transparent);
   background: rgb(255 255 255 / 0.94);
-  backdrop-filter: blur(18px) saturate(115%);
+  backdrop-filter: blur(10px) saturate(110%);
 }
 
 body:has(.public-page--home) .site-header[data-scrolled="true"] .brand,
@@ -428,7 +429,7 @@ body:has(.public-page--home) .site-header[data-scrolled="true"] .mobile-navigati
 
 .site-footer__links a:hover,
 .site-footer__links a:focus-visible {
-  color: var(--color-paper);
+  color: var(--color-ink);
 }
 
 .site-footer__links a:hover::after,
@@ -777,33 +778,6 @@ body:has(.public-page--home) .site-header[data-scrolled="true"] .mobile-navigati
   transform: scale(1.012);
 }
 
-.catalogue-card__document {
-  position: relative;
-  width: 58%;
-  aspect-ratio: 0.72;
-  display: grid;
-  align-content: end;
-  gap: 0.55rem;
-  padding: 1rem;
-  border: 1px solid rgb(25 25 23 / 0.1);
-  background: rgb(255 255 255 / 0.72);
-  box-shadow:
-    0.45rem 0.55rem 0 rgb(255 255 255 / 0.3),
-    1rem 1.25rem 2rem rgb(25 25 23 / 0.12);
-  transform: rotate(-5deg) translateY(0.8rem);
-  transition: transform var(--motion-section) var(--motion-ease);
-}
-
-.catalogue-card__document > span {
-  height: 1px;
-  background: rgb(25 25 23 / 0.24);
-}
-
-.catalogue-card:hover .catalogue-card__document,
-.catalogue-card:focus-visible .catalogue-card__document {
-  transform: rotate(-3deg) translateY(0.35rem);
-}
-
 .catalogue-card__number,
 .catalogue-card__title,
 .catalogue-card__action {
@@ -933,6 +907,13 @@ body:has(.public-page--home) .site-header[data-scrolled="true"] .mobile-navigati
 }
 
 @media (hover: none), (pointer: coarse) {
+  .site-header,
+  body:has(.public-page--home) .site-header[data-scrolled="false"],
+  body:has(.public-page--home) .site-header[data-scrolled="true"],
+  .mobile-navigation__backdrop {
+    backdrop-filter: none;
+  }
+
   [data-motion="magnetic"],
   [data-motion="tilt"] {
     transform: none !important;
@@ -997,7 +978,6 @@ body:has(.public-page--home) .site-header[data-scrolled="true"] .mobile-navigati
   .procurement-editorial__visual-geometry > span,
   .procurement-steps::before,
   .catalogue-card__media,
-  .catalogue-card__document,
   .catalogue-card__action,
   .procurement-panel--premium-cta::after {
     transform: none !important;

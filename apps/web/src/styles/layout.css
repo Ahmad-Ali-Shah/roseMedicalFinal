@@ -20,6 +20,8 @@
 .site-header__bar { min-height: 5rem; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--space-6); }
 .site-header__nav { justify-self: center; }
 .brand { color: var(--color-ink); font-family: var(--font-editorial); font-size: 1.65rem; line-height: 1; text-decoration: none; letter-spacing: 0.02em; }
+.brand--navigation { width: 4rem; height: 4rem; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; overflow: hidden; background: var(--color-paper); }
+.brand__image { width: 100%; height: 100%; display: block; object-fit: contain; }
 .nav-list { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-5); list-style: none; margin: 0; padding: 0; }
 .nav-link { color: var(--color-ink-soft); font-size: 0.9rem; font-weight: 600; text-decoration: none; }
 .nav-link:hover { color: var(--color-rosa-red); }
@@ -68,6 +70,7 @@
 }
 
 @media (max-width: 44rem) {
+  .brand--navigation { width: 3.5rem; height: 3.5rem; }
   .layout-grid--2, .layout-grid--3, .layout-grid--4 { grid-template-columns: 1fr; }
   .site-footer__grid { grid-template-columns: 1fr; }
   .admin-topbar__workspace { display: none; }

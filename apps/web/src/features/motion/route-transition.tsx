@@ -16,8 +16,8 @@ export function RouteTransition({ children }: PropsWithChildren): ReactElement {
     <motion.div
       key={pathname}
       data-motion="route-transition"
-      initial={{ opacity: 1, y: 8, filter: "blur(2px)" }}
-      animate={{ opacity: 1, y: 0, filter: "none" }}
+      initial={{ opacity: 0.985, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={transition}
     >
       {children}

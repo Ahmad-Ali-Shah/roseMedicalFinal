@@ -66,4 +66,17 @@ describe("F7 motion restraint and performance", () => {
     expect(styles).toContain('[data-motion="spotlight"]::before');
     expect(styles).not.toMatch(/animation\s*:[^;]*infinite/i);
   });
+
+  it("neutralizes refinement child transforms for touch and reduced motion", () => {
+    const styles = source("src/styles/f8-owner-refinement.css");
+    const coarse = styles.slice(styles.indexOf("@media (hover: none), (pointer: coarse)"));
+    const reduced = styles.slice(styles.indexOf("@media (prefers-reduced-motion: reduce)"));
+
+    expect(coarse).toContain(".catalogue-card:hover .catalogue-card__media");
+    expect(coarse).toContain(".catalogue-document-card:hover .catalogue-document-cover__media .media-frame__image");
+    expect(coarse).toContain(".public-family-index > li:hover a");
+    expect(reduced).toContain(".catalogue-card__media");
+    expect(reduced).toContain(".catalogue-document-cover__media .media-frame__image");
+    expect(reduced).toContain(".public-family-index > li a");
+  });
 });

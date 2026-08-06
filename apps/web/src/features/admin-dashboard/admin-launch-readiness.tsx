@@ -6,7 +6,7 @@ export function AdminLaunchReadiness({ items }: { items: readonly AdminReadiness
   return (
     <AdminSection
       title="Launch readiness"
-      description="Known content and operational dependencies that remain unresolved."
+      description="Current implementation status and the content or operational dependencies that still need owner action."
       className="admin-dashboard__readiness"
     >
       <ol className="admin-readiness-list">

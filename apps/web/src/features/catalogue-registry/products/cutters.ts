@@ -1,4 +1,7 @@
-import { CUTTERS_BATCH_01_MEDIA } from "@/features/catalogue-media";
+import {
+  CUTTERS_BATCH_01_MEDIA,
+  OWNER_CATALOGUE_PRODUCT_MEDIA
+} from "@/features/catalogue-media";
 import type { CatalogueProductRecord } from "../types";
 import { CUTTERS_BATCH_01_CONFIGURATIONS } from "./cutters-batch-01";
 
@@ -83,7 +86,8 @@ const ESTABLISHED_CUTTER_PRODUCTS: readonly CatalogueProductRecord[] = [
     directions: ["Straight"],
     primaryOption: "12.5 cm",
     catalogueReference: { family: "Cutters", page: "10" },
-    mediaLabel: "SC-01T placeholder"
+    mediaLabel: "SC-01T",
+    ...OWNER_CATALOGUE_PRODUCT_MEDIA.product_sc_01t
   }
 ];
 

@@ -33,4 +33,20 @@ describe("owner identity", () => {
       )
     ).toBe(false);
   });
+
+  it("fails closed when no owner identity is configured", () => {
+    expect(
+      isConfiguredOwner(
+        { id: "any-user", email: "ahmadaliofficial1155@gmail.com" },
+        {}
+      )
+    ).toBe(false);
+
+    expect(
+      isConfiguredOwner(
+        { id: "any-user", email: "owner@example.com" },
+        { ownerUserId: "  ", ownerEmail: "  " }
+      )
+    ).toBe(false);
+  });
 });

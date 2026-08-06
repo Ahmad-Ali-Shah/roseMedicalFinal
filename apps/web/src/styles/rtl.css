@@ -1,0 +1,45 @@
+html[dir="rtl"] body,
+[data-locale="ar"] {
+  font-family: var(--font-arabic), var(--font-interface), sans-serif;
+}
+
+html[dir="rtl"] .brand,
+html[dir="rtl"] .product-code,
+html[dir="rtl"] [dir="ltr"] {
+  font-family: var(--font-interface), sans-serif;
+}
+
+html[dir="rtl"] .site-header__bar,
+html[dir="rtl"] .site-footer__grid,
+html[dir="rtl"] .cluster,
+html[dir="rtl"] .family-product-card__actions,
+html[dir="rtl"] .search-live-results__header,
+html[dir="rtl"] .riyadh-map__heading {
+  direction: rtl;
+}
+
+html[dir="rtl"] :is(.premium-link, .text-link) span[aria-hidden="true"],
+html[dir="rtl"] .catalogue-card__action span,
+html[dir="rtl"] .search-family-shortcuts__arrow {
+  display: inline-block;
+  transform: scaleX(-1);
+}
+
+html[dir="rtl"] .language-switcher {
+  direction: ltr;
+}
+
+.language-switcher {
+  color: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+@media (max-width: 900px) {
+  .mobile-navigation__panel > .language-switcher {
+    display: inline-flex;
+    width: fit-content;
+    padding-block: var(--space-3);
+  }
+}

@@ -1,57 +1,54 @@
-import Link from "next/link";
 import type { ReactElement } from "react";
 import { Container, Section } from "@/components/layout";
 import { createFamilyListingData } from "./family-listing.data";
 import { FamilyHero } from "./family-hero";
-import { FamilyDiscoveryShell } from "./family-discovery-shell";
-import { FamilyFilterPreview } from "./family-filter-preview";
-import { FamilyProductGrid } from "./family-product-grid";
-import { FamilyLoadingState } from "./family-loading-state";
-import { FamilyNoResultsState } from "./family-no-results-state";
+import { FamilyProductDiscovery } from "./family-product-discovery";
 import { FamilySupportPanel } from "./family-support-panel";
+import type { PublicLocale } from "@/features/localization/locales";
+import { FAMILY_NAMES_AR } from "@/features/localization/public-copy";
+import { LocaleLink } from "@/features/localization/locale-link";
 
 export function FamilyListingPage({
-  familySlug
+  familySlug,
+  locale = "en"
 }: {
   familySlug: string;
+  locale?: PublicLocale;
 }): ReactElement | null {
   const data = createFamilyListingData(familySlug);
   if (!data) return null;
+  const ar = locale === "ar";
+  const family = ar ? {
+    ...data.family,
+    name: FAMILY_NAMES_AR[data.family.slug],
+    introduction: `أدوات ${FAMILY_NAMES_AR[data.family.slug]} منظمة حسب رمز المنتج والمقاس والخيارات المدرجة لتسهيل إعداد طلب عرض السعر.`,
+    catalogueLabel: `كتالوج ${FAMILY_NAMES_AR[data.family.slug]}`
+  } : data.family;
 
   return (
     <div className="public-page public-page--family">
       <Section tone="paper" spacing="compact" className="family-page-intro">
         <Container size="wide">
-          <nav className="public-breadcrumbs" aria-label="Breadcrumb">
-            <Link href="/products">Products</Link><span aria-hidden="true">/</span><span>{data.family.name}</span>
+          <nav className="public-breadcrumbs" aria-label={ar ? "مسار التنقل" : "Breadcrumb"}>
+            <LocaleLink href="/products">{ar ? "المنتجات" : "Products"}</LocaleLink><span aria-hidden="true">/</span><span>{family.name}</span>
           </nav>
-          <FamilyHero family={data.family} countLabel={data.countLabel} />
+          <FamilyHero family={family} countLabel={ar ? `${data.products.length} منتج` : data.countLabel} locale={locale} />
         </Container>
       </Section>
 
       <Section tone="paper" spacing="compact">
         <Container size="wide">
-          <FamilyDiscoveryShell searchLabel={data.searchLabel} countLabel={data.countLabel} />
-          <div className="family-results-layout">
-            <FamilyFilterPreview />
-            <FamilyProductGrid family={data.family} products={data.products} />
-          </div>
-        </Container>
-      </Section>
-
-      <Section tone="paper" className="family-review-states" aria-labelledby="family-states-title">
-        <Container size="wide">
-          <p className="public-eyebrow">Result states</p>
-          <h2 id="family-states-title">Loading and no-result behavior.</h2>
-          <div className="family-review-states__grid">
-            <FamilyLoadingState />
-            <FamilyNoResultsState />
-          </div>
+          <FamilyProductDiscovery
+            family={family}
+            products={data.products}
+            searchLabel={ar ? `ابحث ضمن ${family.name}` : data.searchLabel}
+            locale={locale}
+          />
         </Container>
       </Section>
 
       <Section tone="paper" className="family-support-section">
-        <Container size="wide"><FamilySupportPanel /></Container>
+        <Container size="wide"><FamilySupportPanel locale={locale} /></Container>
       </Section>
     </div>
   );

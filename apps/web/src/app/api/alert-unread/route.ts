@@ -22,6 +22,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const ownerEmail = process.env.ROSA_OWNER_EMAIL?.trim();
+    const resendApiKey = process.env.RESEND_API_KEY?.trim();
+    if (!ownerEmail || !resendApiKey) {
+      return NextResponse.json({ error: "Alert delivery is not configured" }, { status: 503 });
+    }
+
     const supabase = createAdminClient();
     const { data: unreadMessages, error: dbError } = await supabase
       .from("unread_after_20")
@@ -42,14 +48,14 @@ export async function POST(req: Request) {
       const resendRes = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+          Authorization: `Bearer ${resendApiKey}`,
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
           from: "RosaMedical Alerts <onboarding@resend.dev>",
-          to: ["ahmadaliofficial1155@gmail.com"],
+          to: [ownerEmail],
           subject: "⚠️ Unread Messages Archived - Action Required",
-          text: `Sir kindly view these messages or if you ignore these are delete in 5 days.\n\n${emailBody}`
+          text: `The following messages have remained unread for more than 20 days. Review them before scheduled retention cleanup.\n\n${emailBody}`
         })
       });
 

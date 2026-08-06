@@ -20,10 +20,11 @@ describe("F3C public compositions", () => {
     );
   });
 
-  it("renders five catalogues and no fake PDF link", () => {
+  it("renders five catalogues with owner-supplied PDF downloads", () => {
     const html = renderRoute("catalogues", "Technical catalogues");
     expect((html.match(/data-catalogue-document=/g) ?? [])).toHaveLength(5);
-    expect(html).toContain("PDF not available online");
+    expect((html.match(/download="rosa-/g) ?? [])).toHaveLength(5);
+    expect(html).not.toContain("PDF not available online");
     expect(html).not.toContain("[Month Year]");
   });
 

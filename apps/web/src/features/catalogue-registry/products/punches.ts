@@ -1,4 +1,7 @@
-import { PUNCHES_BATCH_01_MEDIA } from "@/features/catalogue-media";
+import {
+  OWNER_CATALOGUE_PRODUCT_MEDIA,
+  PUNCHES_BATCH_01_MEDIA
+} from "@/features/catalogue-media";
 import type { CatalogueProductRecord } from "../types";
 import { PUNCHES_BATCH_01_CONFIGURATIONS } from "./punches-batch-01";
 
@@ -73,7 +76,8 @@ const PRESERVED_PUNCH_PRODUCTS: readonly CatalogueProductRecord[] = [
     directions: [],
     primaryOption: "4 mm",
     catalogueReference: { family: "Punches" },
-    mediaLabel: "Biopsy Punch placeholder"
+    mediaLabel: "Biopsy Punch",
+    ...OWNER_CATALOGUE_PRODUCT_MEDIA.product_biopsy_punch
   }
 ];
 

@@ -41,9 +41,10 @@ describe("public quotation slice", () => {
     expect(route).not.toContain("Auth required");
   });
 
-  it("does not commit the temporary owner password", () => {
+  it("does not commit fallback owner credentials and fails closed", () => {
     const ownerIdentity = source("src/lib/supabase/owner-identity.ts");
-    expect(ownerIdentity).toContain("ahmadaliofficial1155@gmail.com");
+    expect(ownerIdentity).not.toContain("ahmadaliofficial1155@gmail.com");
     expect(ownerIdentity).not.toContain("Admin123");
+    expect(ownerIdentity).toContain("if (!ownerEmail) return false;");
   });
 });

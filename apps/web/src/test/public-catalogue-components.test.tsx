@@ -11,8 +11,15 @@ const family = {
   id: "family_knives",
   slug: "knives" as const,
   name: "Knives",
+  sequence: "01",
   description: "Precision cutting instruments organised for professional inquiry.",
-  imageLabel: "Knives instrument placeholder"
+  imageLabel: "Knives instruments",
+  media: {
+    src: "/media/families/knives-family.jpg",
+    alt: "A gloved hand holding a precision surgical blade",
+    focalPoint: "72% 50%",
+    fit: "cover" as const
+  }
 };
 
 const product = {

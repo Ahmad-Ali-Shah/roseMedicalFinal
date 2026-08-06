@@ -1,10 +1,8 @@
+import { renderToStaticMarkup } from "react-dom/server";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { Homepage } from "@/features/homepage/homepage";
-
-const source = (path: string) => readFileSync(join(process.cwd(), path), "utf8");
 
 describe("F7 homepage cinematic polish", () => {
   it("preserves the approved six-section homepage hierarchy", () => {
@@ -31,9 +29,10 @@ describe("F7 homepage cinematic polish", () => {
     expect(html).toContain('data-home-choreography="hero"');
     expect(html).toContain('data-motion="text-reveal"');
     expect(html).toContain('data-media-slot="homepage-hero"');
-    expect(html).toContain('data-media-state="placeholder"');
+    expect(html).toContain('data-media-state="ready"');
+    expect(html).toContain("home-hero-surgical-instruments.jpg");
     expect((html.match(/data-motion="magnetic"/g) ?? [])).toHaveLength(2);
-    expect(html).not.toContain("<img");
+    expect(html).toContain("<img");
   });
 
   it("keeps the homepage story ordered without structural motion decoration", () => {
@@ -52,7 +51,7 @@ describe("F7 homepage cinematic polish", () => {
 
     expect((html.match(/data-motion="stagger"/g) ?? []).length).toBeGreaterThanOrEqual(4);
     expect((html.match(/data-motion="stagger-item"/g) ?? []).length).toBeGreaterThanOrEqual(12);
-    expect((html.match(/data-motion="tilt"/g) ?? [])).toHaveLength(7);
+    expect((html.match(/data-motion="tilt"/g) ?? [])).toHaveLength(6);
     expect(html).toContain('data-motion="spotlight"');
     expect(html).toContain('data-motion="progressive-blur"');
   });
@@ -72,15 +71,30 @@ describe("F7 homepage cinematic polish", () => {
     }
   });
 
-  it("does not claim final cinematic assets before the asset branch arrives", () => {
-    const files = [
-      "src/features/homepage/sections/home-hero.tsx",
-      "src/features/homepage/sections/procurement-support.tsx",
-      "src/features/homepage/sections/catalogue-access.tsx",
-      "src/features/homepage/sections/quotation-cta.tsx"
-    ].map(source).join("\n");
+  it("uses the approved owner media in the hero, brand panel, families and catalogues", () => {
+    const html = renderToStaticMarkup(<Homepage />);
 
-    expect(files).not.toMatch(/\/media\/|\.webp|\.avif|\.jpe?g|\.png/i);
-    expect(files).toContain("MediaFrame");
+    for (const asset of [
+      "home-hero-surgical-instruments.jpg",
+      "rosa-primary-logo.jpeg",
+      "knives-family.jpg",
+      "scissors-family.jpg",
+      "cutters-family-clean.png",
+      "chisels-family.webp",
+      "punches-family.webp"
+    ]) {
+      expect(html).toContain(asset);
+    }
+    expect((html.match(/data-catalogue-family-media=/g) ?? [])).toHaveLength(5);
+  });
+
+  it("preserves the full cutter source canvas in the cleaned public derivative", () => {
+    const image = readFileSync(
+      join(process.cwd(), "public/media/families/cutters-family-clean.png")
+    );
+
+    expect(image.subarray(1, 4).toString("ascii")).toBe("PNG");
+    expect(image.readUInt32BE(16)).toBe(2412);
+    expect(image.readUInt32BE(20)).toBe(1096);
   });
 });

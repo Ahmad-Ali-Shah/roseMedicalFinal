@@ -1,7 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
+  INQUIRY_CHANGE_EVENT,
+  INQUIRY_MAX_QUANTITY,
   addInquiryItem,
   clearInquiry,
+  getInquiryLineCount,
   readInquiry,
   removeInquiryItem,
   updateInquiryItem,
@@ -59,11 +62,34 @@ describe("inquiry store", () => {
     expect(result[0]?.quantity).toBe(3);
   });
 
-  it("clamps quantities to at least one and persists notes", () => {
+  it("keeps one navigation line and adopts a newer non-empty line note", () => {
+    addInquiryItem(item);
+    const result = addInquiryItem({ ...item, quantity: 2, notes: "Sterile packing" });
+
+    expect(getInquiryLineCount(result)).toBe(1);
+    expect(result[0]).toMatchObject({ quantity: 3, notes: "Sterile packing" });
+  });
+
+  it("announces every persisted change to shell consumers", () => {
+    addInquiryItem(item);
+    updateInquiryItem(item.id, { quantity: 2 });
+    removeInquiryItem(item.id);
+    clearInquiry();
+
+    expect(window.dispatchEvent).toHaveBeenCalledTimes(4);
+    expect(window.dispatchEvent).toHaveBeenCalledWith(
+      expect.objectContaining({ type: INQUIRY_CHANGE_EVENT })
+    );
+  });
+
+  it("keeps quantities within supported bounds and persists notes", () => {
     addInquiryItem(item);
     const result = updateInquiryItem(item.id, { quantity: 0, notes: "Sterile packing" });
     expect(result[0]?.quantity).toBe(1);
     expect(result[0]?.notes).toBe("Sterile packing");
+
+    const bounded = updateInquiryItem(item.id, { quantity: INQUIRY_MAX_QUANTITY + 1 });
+    expect(bounded[0]?.quantity).toBe(INQUIRY_MAX_QUANTITY);
   });
 
   it("removes and clears inquiry lines", () => {

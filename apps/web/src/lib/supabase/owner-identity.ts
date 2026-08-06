@@ -1,5 +1,3 @@
-export const TEMPORARY_OWNER_EMAIL = "ahmadaliofficial1155@gmail.com";
-
 interface OwnerCandidate {
   id: string;
   email?: string | null;
@@ -17,8 +15,8 @@ export function isConfiguredOwner(
   const ownerUserId = configuration.ownerUserId?.trim();
   if (ownerUserId) return user.id === ownerUserId;
 
-  const ownerEmail = (configuration.ownerEmail || TEMPORARY_OWNER_EMAIL)
-    .trim()
-    .toLowerCase();
+  const ownerEmail = configuration.ownerEmail?.trim().toLowerCase();
+  if (!ownerEmail) return false;
+
   return user.email?.trim().toLowerCase() === ownerEmail;
 }

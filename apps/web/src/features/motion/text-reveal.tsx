@@ -17,11 +17,10 @@ interface TextRevealProps {
 }
 
 const wordVariants: Variants = {
-  hidden: { opacity: 1, y: "0.55em", filter: "blur(2px)" },
+  hidden: { opacity: 1, y: "0.92em" },
   visible: {
     opacity: 1,
     y: 0,
-    filter: "none",
     transition: {
       duration: MOTION_DURATION.section,
       ease: MOTION_EASING.emphasized

@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import {
@@ -20,9 +22,9 @@ describe("F7 motion primitives", () => {
     expect(html).toContain("Premium instruments");
     expect(html).toContain('data-motion="reveal"');
     expect(html).toContain('data-motion-direction="up"');
-    expect(html).toContain("filter:blur(3px)");
-    expect(html).toContain("transform:translateY(16px)");
-    expect(html).not.toMatch(/opacity:\s*0/);
+    expect(html).not.toContain("filter:blur(");
+    expect(html).toContain("transform:translateY(28px)");
+    expect(html).toContain("opacity:1");
   });
 
   it("assigns deterministic stagger order without changing child semantics", () => {
@@ -39,8 +41,22 @@ describe("F7 motion primitives", () => {
     expect(html).toContain("Scissors");
     expect(html).toContain("--motion-order:0");
     expect(html).toContain("--motion-order:1");
-    expect(html).toContain("filter:blur(2px)");
-    expect(html).toContain("transform:translateY(8px)");
-    expect(html).not.toMatch(/opacity:\s*0/);
+    expect(html).not.toContain("filter:blur(");
+    expect(html).toContain("transform:translateY(14px)");
+    expect(html).toContain("opacity:1");
+  });
+
+  it("observes stagger items independently so long grids cannot remain hidden", () => {
+    const source = readFileSync(join(process.cwd(), "src/features/motion/stagger.tsx"), "utf8");
+
+    const itemSource = source.slice(
+      source.indexOf("export function StaggerItem"),
+      source.indexOf("interface StaggerProps")
+    );
+    const containerSource = source.slice(source.indexOf("export function Stagger({"));
+
+    expect(itemSource).toMatch(/whileInView:\s*"visible"/);
+    expect(itemSource).toMatch(/viewport:/);
+    expect(containerSource).not.toMatch(/whileInView:\s*"visible"/);
   });
 });

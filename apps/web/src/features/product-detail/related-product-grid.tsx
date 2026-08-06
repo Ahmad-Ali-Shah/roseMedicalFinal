@@ -5,6 +5,7 @@ import type {
 } from "@/features/catalogue-registry";
 import { Stagger, StaggerItem } from "@/features/motion";
 import { ProductPreviewCard, type ProductPreviewModel } from "@/features/public-catalogue";
+import type { PublicLocale } from "@/features/localization/locales";
 
 function toProductPreview(
   family: CatalogueFamilyRecord,
@@ -25,15 +26,17 @@ function toProductPreview(
 
 export function RelatedProductGrid({
   family,
-  products
+  products,
+  locale = "en"
 }: {
   family: CatalogueFamilyRecord;
   products: readonly CatalogueProductRecord[];
+  locale?: PublicLocale;
 }): ReactElement {
   return (
     <section className="related-products" aria-labelledby="related-products-title">
-      <p className="public-eyebrow">Related products</p>
-      <h2 id="related-products-title">More from {family.name}.</h2>
+      <p className="public-eyebrow">{locale === "ar" ? "منتجات ذات صلة" : "Related products"}</p>
+      <h2 id="related-products-title">{locale === "ar" ? `المزيد من ${family.name}.` : `More from ${family.name}.`}</h2>
       <Stagger as="ul" className="related-product-grid" interval={0.06}>
         {products.map((product) => (
           <StaggerItem as="li" key={product.id}>

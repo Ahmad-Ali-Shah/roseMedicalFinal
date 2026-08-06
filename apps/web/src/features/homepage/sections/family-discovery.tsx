@@ -7,13 +7,16 @@ import {
   type FamilyCardModel
 } from "@/features/public-catalogue";
 import type { HomeFamilyIntroModel } from "../homepage.data";
+import type { PublicLocale } from "@/features/localization";
 
 export function FamilyDiscovery({
   intro,
-  families
+  families,
+  locale = "en"
 }: {
   intro: HomeFamilyIntroModel;
   families: readonly FamilyCardModel[];
+  locale?: PublicLocale;
 }): ReactElement {
   return (
     <Section
@@ -32,12 +35,12 @@ export function FamilyDiscovery({
         <Stagger
           as="ul"
           className="family-grid home-family-grid"
-          aria-label="Instrument families"
+          aria-label={locale === "ar" ? "عائلات الأدوات" : "Instrument families"}
           interval={0.065}
         >
           {families.map((family) => (
             <StaggerItem as="li" key={family.id}>
-              <FamilyCard family={family} />
+              <FamilyCard family={family} locale={locale} />
             </StaggerItem>
           ))}
         </Stagger>

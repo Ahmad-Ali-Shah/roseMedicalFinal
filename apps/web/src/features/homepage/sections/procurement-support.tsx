@@ -9,8 +9,17 @@ import {
 } from "@/features/motion";
 import { SectionHeading } from "@/features/public-catalogue";
 import type { HomeProcurementModel } from "../homepage.data";
+import { ROSA_LOGO_MEDIA } from "@/features/public-media";
+import { publicMediaAlt } from "@/features/public-media";
+import type { PublicLocale } from "@/features/localization";
 
-export function ProcurementSupport({ model }: { model: HomeProcurementModel }): ReactElement {
+export function ProcurementSupport({
+  model,
+  locale = "en"
+}: {
+  model: HomeProcurementModel;
+  locale?: PublicLocale;
+}): ReactElement {
   return (
     <Section
       tone="paper"
@@ -28,17 +37,16 @@ export function ProcurementSupport({ model }: { model: HomeProcurementModel }): 
         <div className="procurement-editorial">
           <Reveal direction="right" className="procurement-editorial__media-reveal">
             <MediaFrame
-              alt="Procurement review composition reserved for final imagery"
+              src={ROSA_LOGO_MEDIA.src}
+              alt={publicMediaAlt(ROSA_LOGO_MEDIA, locale)}
               aspect="portrait"
-              tone="mist"
-              overlay="soft"
+              focalPoint={ROSA_LOGO_MEDIA.focalPoint}
+              fit={ROSA_LOGO_MEDIA.fit}
+              tone="light"
               mediaSlot="homepage-procurement"
-              className="procurement-editorial__visual"
-            >
-              <div className="procurement-editorial__visual-geometry" aria-hidden="true">
-                <span /><span /><span /><span />
-              </div>
-            </MediaFrame>
+              className="procurement-editorial__visual procurement-editorial__brand"
+              sizes="(max-width: 768px) 100vw, 42vw"
+            />
           </Reveal>
           <Reveal direction="left" className="procurement-editorial__copy" delay={0.08}>
             <p className="public-eyebrow">{model.detailEyebrow}</p>

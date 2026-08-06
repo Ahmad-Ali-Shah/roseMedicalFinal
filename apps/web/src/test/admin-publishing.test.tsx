@@ -26,7 +26,9 @@ describe("F3E-D Publishing Centre", () => {
       "Explicit publish",
       "Revision history"
     ]);
-    expect(model.blockers).toBe(ADMIN_READINESS_ITEMS);
+    expect(model.blockers).toEqual(
+      ADMIN_READINESS_ITEMS.filter((item) => item.status !== "Implemented")
+    );
   });
 
   it("renders a truthful empty queue without operational metrics", () => {

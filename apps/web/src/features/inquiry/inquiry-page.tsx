@@ -1,21 +1,29 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Container, Section } from "@/components/layout";
 import { EmptyInquiryPage } from "@/features/inquiry-preview";
 import {
   clearInquiry,
+  INQUIRY_MAX_QUANTITY,
   readInquiry,
   removeInquiryItem,
   updateInquiryItem,
   type InquiryItem
 } from "./inquiry-store";
+import { FAMILY_NAMES_AR, LocaleLink, getLocaleFromPathname } from "@/features/localization";
+
+function familyLabel(slug: string, ar: boolean): string {
+  if (!ar || !(slug in FAMILY_NAMES_AR)) return slug;
+  return FAMILY_NAMES_AR[slug as keyof typeof FAMILY_NAMES_AR];
+}
 
 export function InquiryPage() {
   const [items, setItems] = useState<InquiryItem[] | null>(null);
   const reduceMotion = useReducedMotion() === true;
+  const ar = getLocaleFromPathname(usePathname()) === "ar";
   const pendingFocusTarget = useRef<string | null>(null);
   const removeButtonRefs = useRef(new Map<string, HTMLButtonElement>());
 
@@ -66,7 +74,7 @@ export function InquiryPage() {
   }
 
   if (items === null) {
-    return <Section tone="paper"><Container size="wide"><p>Loading inquiry…</p></Container></Section>;
+    return <Section tone="paper"><Container size="wide"><p>{ar ? "جارٍ تحميل الاستفسار…" : "Loading inquiry…"}</p></Container></Section>;
   }
   if (items.length === 0) return <EmptyInquiryPage />;
 
@@ -83,14 +91,14 @@ export function InquiryPage() {
             transition={{ duration: reduceMotion ? 0 : 0.34 }}
           >
             <div>
-              <p className="inquiry-preview-intro__eyebrow">Quotation inquiry</p>
-              <h1>Review your product inquiry.</h1>
-              <p>Adjust quantities and add requirement notes before submitting.</p>
+              <p className="inquiry-preview-intro__eyebrow">{ar ? "استفسار عرض السعر" : "Quotation inquiry"}</p>
+              <h1>{ar ? "راجع استفسار المنتجات." : "Review your product inquiry."}</h1>
+              <p>{ar ? "عدّل الكميات وأضف ملاحظات المتطلبات قبل الإرسال." : "Adjust quantities and add requirement notes before submitting."}</p>
               <strong aria-live="polite">
-                {items.length} unique products · {totalQuantity} total quantity
+                {ar ? `${items.length} منتج فريد · الكمية الإجمالية ${totalQuantity}` : `${items.length} unique products · ${totalQuantity} total quantity`}
               </strong>
             </div>
-            <Link href="/products" className="button button--secondary button--standard">Continue browsing</Link>
+            <LocaleLink href="/products" className="button button--secondary button--standard">{ar ? "متابعة الاستعراض" : "Continue browsing"}</LocaleLink>
           </motion.div>
         </Container>
       </Section>
@@ -112,16 +120,21 @@ export function InquiryPage() {
                     transition={{ duration: reduceMotion ? 0 : 0.24 }}
                   >
                     <div className="inquiry-preview-line__identity">
-                      <p className="inquiry-preview-line__family">{item.familySlug}</p>
+                      <p className="inquiry-preview-line__family">{familyLabel(item.familySlug, ar)}</p>
                       <h2>{item.name}</h2>
-                      <p className="inquiry-preview-line__code">Code {item.code}</p>
-                      <p className="inquiry-preview-line__options">Size: {item.size || "Not specified"} · Variant: {item.variant || "Not specified"}</p>
+                      <p className="inquiry-preview-line__code">{ar ? "الرمز" : "Code"} <bdi dir="ltr">{item.code}</bdi></p>
+                      <p className="inquiry-preview-line__options">{ar ? "المقاس" : "Size"}: {item.size || (ar ? "غير محدد" : "Not specified")} · {ar ? "الخيار" : "Variant"}: {item.variant || (ar ? "غير محدد" : "Not specified")}</p>
                     </div>
                     <div className="inquiry-preview-line__controls">
                       <div className="inquiry-preview-quantity">
-                        <span className="inquiry-preview-control-label">Quantity</span>
+                        <span className="inquiry-preview-control-label">{ar ? "الكمية" : "Quantity"}</span>
                         <div>
-                          <button type="button" aria-label={`Decrease ${item.name} quantity`} onClick={() => setItems(updateInquiryItem(item.id, { quantity: item.quantity - 1 }))}>−</button>
+                          <button
+                            type="button"
+                            aria-label={ar ? `تقليل كمية ${item.name}` : `Decrease ${item.name} quantity`}
+                            disabled={item.quantity <= 1}
+                            onClick={() => setItems(updateInquiryItem(item.id, { quantity: item.quantity - 1 }))}
+                          >−</button>
                           <motion.output
                             key={`${item.id}-${item.quantity}`}
                             className="conversion-value"
@@ -132,12 +145,17 @@ export function InquiryPage() {
                           >
                             {item.quantity}
                           </motion.output>
-                          <button type="button" aria-label={`Increase ${item.name} quantity`} onClick={() => setItems(updateInquiryItem(item.id, { quantity: item.quantity + 1 }))}>+</button>
+                          <button
+                            type="button"
+                            aria-label={ar ? `زيادة كمية ${item.name}` : `Increase ${item.name} quantity`}
+                            disabled={item.quantity >= INQUIRY_MAX_QUANTITY}
+                            onClick={() => setItems(updateInquiryItem(item.id, { quantity: item.quantity + 1 }))}
+                          >+</button>
                         </div>
                       </div>
                       <label className="inquiry-preview-note">
-                        <span className="inquiry-preview-control-label">Line note</span>
-                        <input value={item.notes} maxLength={500} placeholder="Optional requirement" onChange={(event) => setItems(updateInquiryItem(item.id, { notes: event.target.value }))} />
+                        <span className="inquiry-preview-control-label">{ar ? "ملاحظة البند" : "Line note"}</span>
+                        <input value={item.notes} maxLength={500} placeholder={ar ? "متطلب اختياري" : "Optional requirement"} onChange={(event) => setItems(updateInquiryItem(item.id, { notes: event.target.value }))} />
                       </label>
                       <button
                         type="button"
@@ -148,7 +166,7 @@ export function InquiryPage() {
                         }}
                         onClick={() => handleRemove(item.id)}
                       >
-                        Remove
+                        {ar ? "إزالة" : "Remove"}
                       </button>
                     </div>
                   </motion.article>
@@ -163,15 +181,15 @@ export function InquiryPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: reduceMotion ? 0 : 0.34, delay: reduceMotion ? 0 : 0.08 }}
             >
-              <p className="inquiry-preview-summary__eyebrow">Inquiry summary</p>
-              <h2 id="inquiry-summary-title">Ready to continue?</h2>
+              <p className="inquiry-preview-summary__eyebrow">{ar ? "ملخص الاستفسار" : "Inquiry summary"}</p>
+              <h2 id="inquiry-summary-title">{ar ? "هل أنت جاهز للمتابعة؟" : "Ready to continue?"}</h2>
               <dl>
-                <div><dt>Unique products</dt><dd><motion.output key={`products-${items.length}`} className="conversion-value" aria-live="polite" initial={reduceMotion ? false : { opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}>{items.length}</motion.output></dd></div>
-                <div><dt>Total quantity</dt><dd><motion.output key={`quantity-${totalQuantity}`} className="conversion-value" aria-live="polite" initial={reduceMotion ? false : { opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}>{totalQuantity}</motion.output></dd></div>
+                <div><dt>{ar ? "المنتجات الفريدة" : "Unique products"}</dt><dd><motion.output key={`products-${items.length}`} className="conversion-value" aria-live="polite" initial={reduceMotion ? false : { opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}>{items.length}</motion.output></dd></div>
+                <div><dt>{ar ? "الكمية الإجمالية" : "Total quantity"}</dt><dd><motion.output key={`quantity-${totalQuantity}`} className="conversion-value" aria-live="polite" initial={reduceMotion ? false : { opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}>{totalQuantity}</motion.output></dd></div>
               </dl>
-              <p>Rosa will review the selected products before preparing a quotation.</p>
-              <Link href="/request-quotation" className="button button--primary button--standard">Proceed to request</Link>
-              <button type="button" className="text-link" onClick={handleClear}>Clear inquiry</button>
+              <p>{ar ? "ستراجع روزا المنتجات المحددة قبل إعداد عرض السعر." : "Rosa will review the selected products before preparing a quotation."}</p>
+              <LocaleLink href="/request-quotation" className="button button--primary button--standard">{ar ? "متابعة الطلب" : "Proceed to request"}</LocaleLink>
+              <button type="button" className="text-link" onClick={handleClear}>{ar ? "مسح الاستفسار" : "Clear inquiry"}</button>
             </motion.aside>
           </div>
         </Container>

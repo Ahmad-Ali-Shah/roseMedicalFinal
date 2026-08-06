@@ -34,7 +34,9 @@ describe("F7 product discovery polish", () => {
     expect(html).toContain('href="/products/knives/scalpel-handle-no-3"');
     expect(html).toContain('data-motion="stagger"');
     expect(html).toContain('data-motion="tilt"');
-    expect(html).toContain("Loading and no-result behavior.");
+    expect(html).toContain("Product name or code");
+    expect(html).toContain("Filters (0)");
+    expect(html).not.toContain("Loading and no-result behavior.");
   });
 
   it("reveals product detail in content order without changing inquiry behavior", () => {
@@ -58,7 +60,7 @@ describe("F7 product discovery polish", () => {
 
     expect(button).toContain("AnimatePresence");
     expect(button).toContain("addInquiryItem(item)");
-    expect(button).toContain('href="/inquiry"');
+    expect(button).toContain('localizePath("/inquiry"');
     expect(button).toContain("Added · View inquiry");
   });
 

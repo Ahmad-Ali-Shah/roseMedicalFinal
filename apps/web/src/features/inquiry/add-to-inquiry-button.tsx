@@ -1,9 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { addInquiryItem, type InquiryItem } from "./inquiry-store";
+import { getLocaleFromPathname, localizePath } from "@/features/localization/locales";
+import type { Route } from "next";
 
 export function AddToInquiryButton({
   item,
@@ -12,13 +15,8 @@ export function AddToInquiryButton({
   item: InquiryItem;
   className?: string;
 }) {
-  const [ready, setReady] = useState(false);
   const [added, setAdded] = useState(false);
-
-  useEffect(() => {
-    const timeout = window.setTimeout(() => setReady(true), 0);
-    return () => window.clearTimeout(timeout);
-  }, []);
+  const arabic = getLocaleFromPathname(usePathname()) === "ar";
 
   return (
     <AnimatePresence initial={false} mode="wait">
@@ -31,8 +29,8 @@ export function AddToInquiryButton({
           exit={{ opacity: 0, y: -4 }}
           transition={{ duration: 0.18 }}
         >
-          <Link href="/inquiry" className={className}>
-            Added · View inquiry
+          <Link href={localizePath("/inquiry", arabic ? "ar" : "en") as Route<string>} className={className}>
+            {arabic ? "تمت الإضافة · عرض الاستفسار" : "Added · View inquiry"}
           </Link>
         </motion.span>
       ) : (
@@ -47,14 +45,12 @@ export function AddToInquiryButton({
           <button
             type="button"
             className={className}
-            disabled={!ready}
-            aria-busy={!ready}
             onClick={() => {
               addInquiryItem(item);
               setAdded(true);
             }}
           >
-            Add to inquiry
+            {arabic ? "أضف إلى الاستفسار" : "Add to inquiry"}
           </button>
         </motion.span>
       )}

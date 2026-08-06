@@ -1,10 +1,11 @@
-import Link from "next/link";
 import type { ReactElement } from "react";
 import type {
   CatalogueFamilyRecord,
   CatalogueProductRecord
 } from "@/features/catalogue-registry";
 import { TiltSurface } from "@/features/motion";
+import { AddToInquiryButton, createInquiryItemFromProduct } from "@/features/inquiry";
+import { LocaleLink, LocalizedText } from "@/features/localization";
 import {
   ProductMediaPlaceholder,
   productHref
@@ -39,12 +40,13 @@ export function FamilyProductCard({
             {` · ${sizeCount} ${sizeCount === 1 ? "size" : "sizes"}`}
           </p>
           <div className="family-product-card__actions">
-            <Link className="premium-link" href={productHref(product)}>
-              View details <span aria-hidden="true">→</span>
-            </Link>
-            <span className="disabled-text-action" aria-disabled="true">
-              Add to inquiry — available next phase
-            </span>
+            <LocaleLink className="premium-link" href={productHref(product)}>
+              <LocalizedText en="View details" ar="عرض التفاصيل" /> <span aria-hidden="true">→</span>
+            </LocaleLink>
+            <AddToInquiryButton
+              item={createInquiryItemFromProduct(product)}
+              className="family-card-add"
+            />
           </div>
         </div>
       </div>

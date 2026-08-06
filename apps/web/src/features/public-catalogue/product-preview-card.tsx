@@ -1,6 +1,6 @@
-import Link from "next/link";
 import type { ReactElement } from "react";
 import { TiltSurface } from "@/features/motion";
+import { LocaleLink } from "@/features/localization";
 import { productHref, type ProductPreviewModel } from "./models";
 import { ProductMediaPlaceholder } from "./product-media-placeholder";
 
@@ -14,8 +14,15 @@ export function ProductPreviewCard({
   const primaryOption = product.optionSummary[0];
   const card = (
     <article className="product-preview-card premium-surface" data-family={product.familySlug}>
-      <Link className="product-preview-card__link" href={productHref(product)}>
-        <ProductMediaPlaceholder label={product.imageLabel} decorative aspect="landscape" />
+      <LocaleLink className="product-preview-card__link" href={productHref(product)}>
+        <ProductMediaPlaceholder
+          label={product.imageLabel}
+          decorative
+          aspect="landscape"
+          src={product.mediaPath}
+          fallbackSrc={product.mediaFallbackPath}
+          spriteIndex={product.mediaIndex}
+        />
         <div className="product-preview-card__body">
           <p className="product-preview-card__family">{product.familyName}</p>
           <h3 className="product-preview-card__title">{product.name}</h3>
@@ -27,7 +34,7 @@ export function ProductPreviewCard({
             View details <span>→</span>
           </span>
         </div>
-      </Link>
+      </LocaleLink>
     </article>
   );
 

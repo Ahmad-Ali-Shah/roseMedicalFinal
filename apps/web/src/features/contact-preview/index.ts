@@ -8,3 +8,4 @@ export * from "./contact-loading-preview";
 export * from "./contact-failure-preview";
 export * from "./contact-success-preview";
 export * from "./contact-page";
+export * from "./riyadh-map";

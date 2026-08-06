@@ -1,98 +1,159 @@
 "use client";
-import { useState, useEffect } from "react";
-import { createClient } from "@/lib/supabase/client";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useState, type FormEvent } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { AdminOwnerAccessFrame } from "./admin-owner-access-frame";
+
+type RecoveryStatus = "idle" | "loading" | "success" | "error";
 
 export function AdminRecoveryPage() {
+  const [supabase] = useState(createClient);
   const [email, setEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [status, setStatus] = useState("idle");
-  const [errorMsg, setErrorMsg] = useState("");
+  const [status, setStatus] = useState<RecoveryStatus>("idle");
+  const [errorMessage, setErrorMessage] = useState("");
   const [isRecoverySession, setIsRecoverySession] = useState(false);
-  const supabase = createClient();
   const router = useRouter();
 
   useEffect(() => {
-    // Check if the user clicked a recovery link from their email
-    const checkSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      if (data.session) {
-        setIsRecoverySession(true);
-      }
+    let active = true;
+
+    void supabase.auth.getSession().then(({ data }) => {
+      if (active && data.session) setIsRecoverySession(true);
+    });
+
+    const { data: listener } = supabase.auth.onAuthStateChange((event) => {
+      if (active && event === "PASSWORD_RECOVERY") setIsRecoverySession(true);
+    });
+
+    return () => {
+      active = false;
+      listener.subscription.unsubscribe();
     };
-    checkSession();
   }, [supabase]);
 
-  const handleReset = async (e: React.FormEvent) => {
-    e.preventDefault();
+  async function handleReset(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
     setStatus("loading");
-    setErrorMsg("");
-    const redirectTo = window.location.origin + "/auth/callback";
-    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
-    if (error) {
-      setStatus("error");
-      setErrorMsg(error.message);
-    } else {
-      setStatus("success");
-    }
-  };
+    setErrorMessage("");
 
-  const handleUpdatePassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus("loading");
-    setErrorMsg("");
-    const { error } = await supabase.auth.updateUser({ password: newPassword });
-    if (error) {
+    try {
+      const callback = new URL("/auth/callback", window.location.origin);
+      callback.searchParams.set("type", "recovery");
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+        redirectTo: callback.toString()
+      });
+
+      if (error) {
+        setStatus("error");
+        setErrorMessage("Unable to request a recovery link. Confirm the email and try again.");
+        return;
+      }
+
+      setStatus("success");
+    } catch {
       setStatus("error");
-      setErrorMsg(error.message);
-    } else {
-      alert("Password updated successfully! Please log in.");
-      router.push("/admin/login");
+      setErrorMessage("Unable to reach the authentication service. Please try again.");
     }
-  };
+  }
+
+  async function handleUpdatePassword(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setStatus("loading");
+    setErrorMessage("");
+
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) {
+        setStatus("error");
+        setErrorMessage("Unable to update the password. Request a fresh recovery link and try again.");
+        return;
+      }
+
+      await supabase.auth.signOut();
+      router.replace("/admin/login");
+      router.refresh();
+    } catch {
+      setStatus("error");
+      setErrorMessage("Unable to reach the authentication service. Please try again.");
+    }
+  }
+
+  const title = isRecoverySession ? "Choose a new owner password." : "Recover owner access.";
+  const description = isRecoverySession
+    ? "Set a new password for the authenticated recovery session."
+    : "Request a secure, one-time recovery link for the configured owner account.";
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "80vh", padding: "1rem", background: "#0a0a0a" }}>
-      <div style={{ width: "100%", maxWidth: "400px", background: "#111", padding: "2rem", borderRadius: "0.5rem", border: "1px solid #333" }}>
-        <h1 style={{ color: "white", fontSize: "1.5rem", fontWeight: "bold", marginBottom: "1rem" }}>Recover owner access.</h1>
-        
-        {isRecoverySession ? (
-          <form onSubmit={handleUpdatePassword}>
-            <div style={{ marginBottom: "1rem" }}>
-              <label htmlFor="newPassword" style={{ display: "block", color: "#888", fontSize: "0.875rem", marginBottom: "0.25rem" }}>New Password</label>
-              <input id="newPassword" type="password" required value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="••••••••" style={{ width: "100%", padding: "0.75rem", borderRadius: "0.25rem", border: "1px solid #444", background: "#1a1a1a", color: "white", outline: "none" }} />
-            </div>
-            <button type="submit" disabled={status === "loading"} style={{ width: "100%", padding: "0.75rem", borderRadius: "0.25rem", border: "none", background: "#3b82f6", color: "white", fontWeight: "bold", cursor: "pointer", opacity: status === "loading" ? 0.5 : 1 }}>
-              {status === "loading" ? "Updating..." : "Update Password"}
+    <AdminOwnerAccessFrame
+      eyebrow="Secure access recovery"
+      title={title}
+      description={description}
+      footer={<Link href="/admin/login">Return to sign in</Link>}
+    >
+      {isRecoverySession ? (
+        <form className="admin-auth-form" onSubmit={handleUpdatePassword} aria-busy={status === "loading"}>
+          <fieldset className="admin-auth-fields" disabled={status === "loading"}>
+            <label className="admin-auth-field" htmlFor="admin-new-password">
+              <span>New password</span>
+              <input
+                id="admin-new-password"
+                name="newPassword"
+                type="password"
+                required
+                minLength={8}
+                autoComplete="new-password"
+                value={newPassword}
+                onChange={(event) => setNewPassword(event.target.value)}
+                placeholder="At least 8 characters"
+              />
+            </label>
+          </fieldset>
+          <div className="admin-auth-feedback" aria-live="polite">
+            {errorMessage ? <p className="alert alert--danger" role="alert">{errorMessage}</p> : null}
+          </div>
+          <div className="admin-auth-card__actions">
+            <button type="submit" className="button button--primary button--standard" disabled={status === "loading"}>
+              {status === "loading" ? "Updating…" : "Update password"}
             </button>
-            {status === "error" && <p style={{ color: "#f87171", marginTop: "1rem", fontSize: "0.875rem" }}>Error: {errorMsg}</p>}
-          </form>
-        ) : (
-          <>
-            {status === "success" ? (
-              <div style={{ padding: "1rem", background: "#0d1117", borderRadius: "0.25rem", border: "1px solid #2a4a2a", color: "#4ade80" }}>
-                Recovery link sent! Check your email inbox (and spam folder) for the reset link.
-              </div>
-            ) : (
-              <form onSubmit={handleReset}>
-                <div style={{ marginBottom: "1rem" }}>
-                  <label htmlFor="email" style={{ display: "block", color: "#888", fontSize: "0.875rem", marginBottom: "0.25rem" }}>Owner email</label>
-                  <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" style={{ width: "100%", padding: "0.75rem", borderRadius: "0.25rem", border: "1px solid #444", background: "#1a1a1a", color: "white", outline: "none" }} />
-                </div>
-                <button type="submit" disabled={status === "loading"} style={{ width: "100%", padding: "0.75rem", borderRadius: "0.25rem", border: "none", background: "#3b82f6", color: "white", fontWeight: "bold", cursor: "pointer", opacity: status === "loading" ? 0.5 : 1 }}>
-                  {status === "loading" ? "Sending..." : "Send recovery link"}
-                </button>
-                {status === "error" && <p style={{ color: "#f87171", marginTop: "1rem", fontSize: "0.875rem" }}>Error: {errorMsg}</p>}
-              </form>
-            )}
-          </>
-        )}
-
-        <div style={{ marginTop: "1.5rem", textAlign: "center" }}>
-          <Link href="/admin/login" style={{ color: "#888", fontSize: "0.875rem", textDecoration: "underline" }}>Return to sign in</Link>
+          </div>
+        </form>
+      ) : status === "success" ? (
+        <div className="admin-auth-feedback" aria-live="polite">
+          <p className="alert alert--success" role="status">
+            If this address matches the configured owner account, a recovery link is on its way. Check the inbox and spam folder.
+          </p>
         </div>
-      </div>
-    </div>
+      ) : (
+        <form className="admin-auth-form" onSubmit={handleReset} aria-busy={status === "loading"}>
+          <fieldset className="admin-auth-fields" disabled={status === "loading"}>
+            <label className="admin-auth-field" htmlFor="admin-recovery-email">
+              <span>Owner email</span>
+              <input
+                id="admin-recovery-email"
+                name="email"
+                type="email"
+                required
+                autoComplete="email"
+                inputMode="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder="you@example.com"
+              />
+            </label>
+          </fieldset>
+          <div className="admin-auth-feedback" aria-live="polite">
+            {errorMessage ? <p className="alert alert--danger" role="alert">{errorMessage}</p> : null}
+          </div>
+          <div className="admin-auth-card__actions">
+            <button type="submit" className="button button--primary button--standard" disabled={status === "loading"}>
+              {status === "loading" ? "Sending…" : "Send recovery link"}
+            </button>
+          </div>
+        </form>
+      )}
+    </AdminOwnerAccessFrame>
   );
 }

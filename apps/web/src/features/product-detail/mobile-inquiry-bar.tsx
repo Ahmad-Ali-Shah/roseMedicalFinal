@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { AddToInquiryButton, type InquiryItem } from "@/features/inquiry";
+import { LocalizedText } from "@/features/localization";
 
 export function MobileInquiryBar({ item }: { item: InquiryItem }): ReactElement {
   return (
@@ -8,7 +9,7 @@ export function MobileInquiryBar({ item }: { item: InquiryItem }): ReactElement 
       aria-label="Inquiry action"
       data-motion="mobile-inquiry-bar"
     >
-      <span>Quotation required</span>
+      <span><LocalizedText en="Quotation required" ar="يلزم عرض سعر" /></span>
       <AddToInquiryButton
         item={item}
         className="button button--primary button--standard"

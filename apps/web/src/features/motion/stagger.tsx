@@ -34,29 +34,34 @@ interface SemanticMotionProps {
 interface StaggerItemProps extends PropsWithChildren, SemanticMotionProps {
   as?: StaggerItemTag;
   order?: number;
+  interval?: number;
+  once?: boolean;
 }
 
-const itemVariants: Variants = {
-  hidden: {
-    opacity: 1,
-    filter: "blur(2px)",
-    y: MOTION_DISTANCE.mobile
-  },
-  visible: {
-    opacity: 1,
-    filter: "none",
-    y: 0,
-    transition: {
-      duration: MOTION_DURATION.section,
-      ease: MOTION_EASING.standard
+function itemVariants(order: number, interval: number): Variants {
+  return {
+    hidden: {
+      opacity: 1,
+      y: MOTION_DISTANCE.mobile
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: MOTION_DURATION.section,
+        delay: Math.min(order, 5) * interval,
+        ease: MOTION_EASING.standard
+      }
     }
-  }
-};
+  };
+}
 
 export function StaggerItem({
   as = "div",
   children,
   order = 0,
+  interval = 0.045,
+  once = true,
   className,
   id,
   role,
@@ -78,7 +83,10 @@ export function StaggerItem({
     ...(ariaDescribedby ? { "aria-describedby": ariaDescribedby } : {}),
     "data-motion": "stagger-item",
     style,
-    variants: itemVariants
+    initial: "hidden",
+    whileInView: "visible",
+    viewport: { once, amount: 0.15, margin: "0px 0px -5% 0px" },
+    variants: itemVariants(order, interval)
   } as const;
 
   switch (as) {
@@ -117,21 +125,8 @@ export function Stagger({
       return child;
     }
 
-    return cloneElement(child, { order: index });
+    return cloneElement(child, { order: index, interval, once });
   });
-
-  const containerVariants: Variants = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: Math.min(
-          interval,
-          0.24 / Math.max(1, Children.count(indexedChildren) - 1)
-        ),
-        delayChildren: 0.02
-      }
-    }
-  };
   const shared = {
     ...dataAttributes,
     ...(className ? { className } : {}),
@@ -141,11 +136,7 @@ export function Stagger({
     ...(ariaLabel ? { "aria-label": ariaLabel } : {}),
     ...(ariaLabelledby ? { "aria-labelledby": ariaLabelledby } : {}),
     ...(ariaDescribedby ? { "aria-describedby": ariaDescribedby } : {}),
-    "data-motion": "stagger",
-    initial: "hidden",
-    whileInView: "visible",
-    viewport: { once, amount: 0.12, margin: "0px 0px -6% 0px" },
-    variants: containerVariants
+    "data-motion": "stagger"
   } as const;
 
   switch (as) {

@@ -1,39 +1,45 @@
-import Link from "next/link";
 import type { ReactElement } from "react";
 import { Container, Section } from "@/components/layout";
-import { ButtonLink } from "@/components/ui";
-import { MediaFrame, Reveal, TextReveal } from "@/features/motion";
-import { ProductMediaPlaceholder } from "@/features/public-catalogue";
+import { LocaleLink, LocalizedButtonLink } from "@/features/localization";
+import { Reveal, TextReveal } from "@/features/motion";
 import { PUBLIC_CONTENT_VALUES } from "@/features/public-content-registry";
 import { ContactFormPreview } from "./contact-form-preview";
 import { ContactInformationPanel } from "./contact-information-panel";
+import { RiyadhMap } from "./riyadh-map";
+import type { PublicLocale } from "@/features/localization/locales";
 
-export function ContactPage(): ReactElement {
+export function ContactPage({ locale = "en" }: { locale?: PublicLocale }): ReactElement {
+  const ar = locale === "ar";
   const introduction = PUBLIC_CONTENT_VALUES.contactIntroduction;
+  const hero = ar ? {
+    eyebrow: "اتصل بروزا",
+    title: "أرسل رسالة أعمال عامة.",
+    copy: "استخدم هذه الصفحة لأسئلة الشركة أو الكتالوج أو الدعم. أما طلبات عروض الأسعار فتنتمي إلى مسار الاستفسار حتى تبقى تفاصيل المنتجات مرفقة."
+  } : introduction;
 
   return (
     <div className="contact-page">
       <Section tone="paper" spacing="compact" className="contact-hero">
         <Container size="wide">
           <Reveal direction="none" className="story-breadcrumb-reveal">
-            <nav className="public-breadcrumbs" aria-label="Breadcrumb">
-              <Link href="/">Home</Link>
+            <nav className="public-breadcrumbs" aria-label={ar ? "مسار التنقل" : "Breadcrumb"}>
+              <LocaleLink href="/">{ar ? "الرئيسية" : "Home"}</LocaleLink>
               <span aria-hidden="true">/</span>
-              <span aria-current="page">Contact</span>
+              <span aria-current="page">{ar ? "اتصل بنا" : "Contact"}</span>
             </nav>
           </Reveal>
           <div className="contact-hero__copy">
             <Reveal direction="up">
-              <p className="page-eyebrow">{introduction.eyebrow}</p>
+              <p className="page-eyebrow">{hero.eyebrow}</p>
             </Reveal>
-            <TextReveal as="h1" text={introduction.title} mode="words" delay={0.05} />
+            <TextReveal as="h1" text={hero.title} mode="words" delay={0.05} />
             <Reveal direction="up" delay={0.13}>
-              <p>{introduction.copy}</p>
+              <p>{hero.copy}</p>
             </Reveal>
             <Reveal direction="up" delay={0.18}>
-              <ButtonLink href="/inquiry" variant="secondary">
-                Open Product Inquiry
-              </ButtonLink>
+              <LocalizedButtonLink href="/inquiry" variant="secondary">
+                {ar ? "افتح استفسار المنتجات" : "Open Product Inquiry"}
+              </LocalizedButtonLink>
             </Reveal>
           </div>
         </Container>
@@ -43,14 +49,14 @@ export function ContactPage(): ReactElement {
         <Container size="wide">
           <div className="contact-main-layout">
             <Reveal direction="up" className="contact-information-reveal">
-              <ContactInformationPanel />
+              <ContactInformationPanel locale={locale} />
             </Reveal>
             <Reveal direction="up" delay={0.06} className="contact-form-reveal">
               <div className="contact-form-region">
                 <header className="f3d-section-heading">
-                  <p className="page-eyebrow">General contact form</p>
-                  <h2>Tell us how we can help.</h2>
-                  <p>For product quantities or quotation requests, use the product inquiry instead.</p>
+                  <p className="page-eyebrow">{ar ? "نموذج التواصل العام" : "General contact form"}</p>
+                  <h2>{ar ? "أخبرنا كيف يمكننا مساعدتك." : "Tell us how we can help."}</h2>
+                  <p>{ar ? "للكميات أو طلبات عروض الأسعار، استخدم استفسار المنتجات." : "For product quantities or quotation requests, use the product inquiry instead."}</p>
                 </header>
                 <ContactFormPreview />
               </div>
@@ -62,19 +68,7 @@ export function ContactPage(): ReactElement {
       <Section tone="paper" className="contact-location-section">
         <Container size="wide">
           <Reveal direction="up">
-            <MediaFrame
-              alt="Location awaiting client confirmation"
-              aspect="landscape"
-              tone="mist"
-              mediaSlot="contact-location"
-              className="contact-location-placeholder story-media-frame"
-            >
-              <ProductMediaPlaceholder
-                label="Location awaiting confirmation"
-                decorative
-                className="story-media-frame__placeholder"
-              />
-            </MediaFrame>
+            <RiyadhMap locale={locale} />
           </Reveal>
         </Container>
       </Section>
@@ -84,11 +78,11 @@ export function ContactPage(): ReactElement {
           <Reveal direction="up">
             <div className="f3d-final-cta">
               <div>
-                <p className="page-eyebrow">Product quotations</p>
-                <h2>Need a quotation for specific instruments?</h2>
-                <p>Use the product inquiry with codes, options and quantities instead of a general message.</p>
+                <p className="page-eyebrow">{ar ? "عروض أسعار المنتجات" : "Product quotations"}</p>
+                <h2>{ar ? "هل تحتاج عرض سعر لأدوات محددة؟" : "Need a quotation for specific instruments?"}</h2>
+                <p>{ar ? "استخدم استفسار المنتجات مع الرموز والخيارات والكميات بدلًا من رسالة عامة." : "Use the product inquiry with codes, options and quantities instead of a general message."}</p>
               </div>
-              <ButtonLink href="/inquiry">Open Product Inquiry</ButtonLink>
+              <LocalizedButtonLink href="/inquiry">{ar ? "افتح استفسار المنتجات" : "Open Product Inquiry"}</LocalizedButtonLink>
             </div>
           </Reveal>
         </Container>

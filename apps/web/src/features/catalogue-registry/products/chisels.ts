@@ -1,4 +1,7 @@
-import { CHISELS_BATCH_01_MEDIA } from "@/features/catalogue-media";
+import {
+  CHISELS_BATCH_01_MEDIA,
+  OWNER_CATALOGUE_PRODUCT_MEDIA
+} from "@/features/catalogue-media";
 import type { CatalogueProductRecord } from "../types";
 import { CHISELS_BATCH_01_CONFIGURATIONS } from "./chisels-batch-01";
 
@@ -83,7 +86,8 @@ const ESTABLISHED_CHISEL_PRODUCTS: readonly CatalogueProductRecord[] = [
     directions: ["Straight"],
     primaryOption: "28 cm",
     catalogueReference: { family: "Chisels", page: "5" },
-    mediaLabel: "Codman placeholder"
+    mediaLabel: "Codman",
+    ...OWNER_CATALOGUE_PRODUCT_MEDIA.product_codman
   },
   {
     id: "product_lambotte",
@@ -98,7 +102,8 @@ const ESTABLISHED_CHISEL_PRODUCTS: readonly CatalogueProductRecord[] = [
     directions: ["Straight"],
     primaryOption: "4 mm",
     catalogueReference: { family: "Chisels", page: "5" },
-    mediaLabel: "Lambotte placeholder"
+    mediaLabel: "Lambotte",
+    ...OWNER_CATALOGUE_PRODUCT_MEDIA.product_lambotte
   },
   {
     id: "product_mini_lambotte",
@@ -113,7 +118,8 @@ const ESTABLISHED_CHISEL_PRODUCTS: readonly CatalogueProductRecord[] = [
     directions: ["Straight"],
     primaryOption: "2 mm",
     catalogueReference: { family: "Chisels", page: "6" },
-    mediaLabel: "Mini Lambotte placeholder"
+    mediaLabel: "Mini Lambotte",
+    ...OWNER_CATALOGUE_PRODUCT_MEDIA.product_mini_lambotte
   },
   {
     id: "product_farabeuf",
@@ -128,7 +134,8 @@ const ESTABLISHED_CHISEL_PRODUCTS: readonly CatalogueProductRecord[] = [
     directions: ["Straight"],
     primaryOption: "15.0 cm",
     catalogueReference: { family: "Chisels", page: "10" },
-    mediaLabel: "Farabeuf placeholder"
+    mediaLabel: "Farabeuf",
+    ...OWNER_CATALOGUE_PRODUCT_MEDIA.product_farabeuf
   }
 ];
 

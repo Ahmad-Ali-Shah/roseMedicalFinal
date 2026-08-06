@@ -11,23 +11,23 @@ import {
 } from "@/features/contact-preview";
 
 describe("F3D contact normal state", () => {
-  it("keeps unconfirmed contact values explicit", () => {
+  it("centralizes complete example contact values", () => {
     expect(CONTACT_INFORMATION.map((row) => row.value)).toEqual([
       "Rosa Medical",
-      "Awaiting client confirmation",
-      "Awaiting client confirmation",
-      "Awaiting client confirmation",
-      "Awaiting client confirmation",
-      "Awaiting client confirmation",
-      "Awaiting client confirmation"
+      "King Fahd Road, Al Olaya, Riyadh 12214, Saudi Arabia",
+      "+966 11 555 0142",
+      "+966 50 555 0142",
+      "hello@example.com",
+      "Sunday–Thursday, 09:00–17:00 (AST)",
+      "@rosamedicalexample"
     ]);
   });
 
-  it("renders one heading, the connected form and no fake contact links", () => {
+  it("renders one heading, actionable details, the connected form, and Riyadh map", () => {
     const html = renderToStaticMarkup(<ContactPage />);
 
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
-    expect(html).toContain("General contact form preview");
+    expect(html).toContain("General contact form");
     expect(html).toContain('name="email"');
     expect(html).toContain('name="phone"');
     expect(html).toContain('name="message"');
@@ -36,7 +36,12 @@ describe("F3D contact normal state", () => {
     expect(html).toContain('aria-live="polite"');
     expect(html).toContain('data-contact-status="idle"');
     expect(html).not.toContain('readOnly=""');
-    expect(html).not.toMatch(/mailto:|tel:|wa\.me|contact@placeholder|\+966 XX/i);
+    expect(html).toContain('href="mailto:hello@example.com"');
+    expect(html).toContain('href="tel:+966115550142"');
+    expect(html).toContain('href="https://wa.me/966505550142"');
+    expect(html).toContain('title="Map showing Riyadh, Saudi Arabia"');
+    expect(html).toContain('loading="lazy"');
+    expect(html).not.toContain("Awaiting client confirmation");
     expect(html).not.toContain("MESSAGE SENT");
     expect(html).toContain('href="/inquiry"');
   });

@@ -25,8 +25,8 @@ test('layout primitives are present and use semantic elements', async () => {
 test('public shell contains the approved navigation and procurement actions', async () => {
   const shell = await read('components/layout/public-shell.tsx');
   for (const label of ['Products', 'Catalogues', 'About', 'Contact', 'Search', 'Inquiry']) assert.match(shell, new RegExp(label));
-  assert.match(shell, /aria-label="Primary navigation"/);
-  assert.match(shell, /aria-label="Footer navigation"/);
+  assert.match(shell, /aria-label="Primary navigation \/ التنقل الرئيسي"/);
+  assert.match(shell, /aria-label="Footer navigation \/ روابط التذييل"/);
   assert.match(shell, /Request a quote/);
 });
 
