@@ -1,8 +1,8 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
+import { SearchPage } from "@/features/search";
 import {
   SEARCH_PREVIEW_RESULTS,
-  SearchDefaultPage,
   SearchErrorPreview,
   SearchLoadingPreview,
   SearchMobileResultsPreview,
@@ -20,7 +20,9 @@ describe("F3D search default and preview data", () => {
   });
 
   it("renders discovery only on the normal search page", () => {
-    const html = renderToStaticMarkup(<SearchDefaultPage />);
+    const html = renderToStaticMarkup(
+      <SearchPage products={SEARCH_PREVIEW_RESULTS} />
+    );
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
     expect((html.match(/data-search-family-shortcut=/g) ?? [])).toHaveLength(5);
     expect((html.match(/data-motion="reveal"/g) ?? [])).toHaveLength(1);
@@ -32,6 +34,16 @@ describe("F3D search default and preview data", () => {
     expect(html).not.toContain("18-0644");
     expect(html).not.toContain("2 results");
     expect(html).not.toContain("Search could not be completed");
+  });
+
+  it("searches only the catalogue supplied by the server boundary", () => {
+    const html = renderToStaticMarkup(
+      <SearchPage products={[SEARCH_PREVIEW_RESULTS[1]!]} initialQuery="bard" />
+    );
+
+    expect((html.match(/data-search-result=/g) ?? [])).toHaveLength(1);
+    expect(html).toContain("18-0650");
+    expect(html).not.toContain("18-0644");
   });
 
   it("renders source-backed desktop and mobile search results", () => {
