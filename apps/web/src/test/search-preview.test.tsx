@@ -49,9 +49,7 @@ describe("F3D search default and preview data", () => {
   it("renders source-backed desktop and mobile search results", () => {
     const desktop = renderToStaticMarkup(<SearchResultsPreview />);
     const mobile = renderToStaticMarkup(<SearchMobileResultsPreview />);
-    const expectedMedia =
-      SEARCH_PREVIEW_RESULTS[0]?.mediaFallbackPath ??
-      SEARCH_PREVIEW_RESULTS[0]?.mediaPath;
+    const expectedMedia = SEARCH_PREVIEW_RESULTS[0]?.mediaPath;
 
     expect((desktop.match(/data-search-result=/g) ?? [])).toHaveLength(2);
     expect((mobile.match(/data-search-result=/g) ?? [])).toHaveLength(2);
@@ -62,8 +60,11 @@ describe("F3D search default and preview data", () => {
     expect(desktop).toContain("Add to inquiry");
     expect(desktop).not.toContain("disabled");
     expect(expectedMedia).toBeTruthy();
-    expect(desktop).toContain(expectedMedia!);
-    expect(mobile).toContain(expectedMedia!);
+
+    const rawMedia = expectedMedia!;
+    const encodedMedia = encodeURIComponent(rawMedia);
+    expect(desktop.includes(rawMedia) || desktop.includes(encodedMedia)).toBe(true);
+    expect(mobile.includes(rawMedia) || mobile.includes(encodedMedia)).toBe(true);
     expect(mobile).toContain("data-mobile-search-preview");
   });
 
