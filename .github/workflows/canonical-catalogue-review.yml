@@ -1,9 +1,10 @@
 name: Canonical Catalogue Review
 
 on:
-  push:
+  pull_request:
     branches:
-      - integration/canonical-catalogue-source-of-truth
+      - ahmadx67676767
+  workflow_dispatch:
 
 permissions:
   contents: read
