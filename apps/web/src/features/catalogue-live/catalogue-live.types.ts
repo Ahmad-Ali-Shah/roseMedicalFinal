@@ -1,0 +1,39 @@
+export interface LiveProductRow {
+  id: string;
+  category_id: string | null;
+  item_code: string | null;
+  name_en: string;
+  description_en: string | null;
+  is_active: boolean;
+  slug: string;
+  created_at: string;
+}
+
+export interface LiveCategoryRow {
+  id: string;
+  slug: string;
+  name_en: string;
+  is_active: boolean;
+  deleted_at: string | null;
+}
+
+export interface LiveVariantRow {
+  product_id: string;
+  sku: string | null;
+  size: string | null;
+  variant_type: string | null;
+  created_at: string;
+}
+
+export interface LiveImageRow {
+  product_id: string;
+  image_path: string;
+  sort_order: number;
+}
+
+export interface LiveCatalogueSnapshot {
+  products: readonly LiveProductRow[];
+  categories: readonly LiveCategoryRow[];
+  variants: readonly LiveVariantRow[];
+  images: readonly LiveImageRow[];
+}
