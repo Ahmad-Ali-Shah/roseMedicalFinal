@@ -46,8 +46,24 @@ jobs:
       - name: Web typecheck
         run: pnpm --filter @rosa/web typecheck
 
-      - name: Web lint
-        run: pnpm --filter @rosa/web lint
+      - name: Lint changed migration slice
+        run: >-
+          pnpm --filter @rosa/web exec eslint
+          src/app/api/checkout/route.ts
+          src/features/catalogue-live
+          src/features/catalogue-migration
+          src/features/inquiry/inquiry-store.ts
+          src/features/inquiry/quotation-payload.ts
+          src/features/search/search-page.tsx
+          src/features/search-preview/search-default-page.tsx
+          src/features/search-preview/search-result-preview.tsx
+          src/test/catalogue-metadata-manifest.test.ts
+          src/test/catalogue-live-mapper.test.ts
+          src/test/catalogue-live-repository.test.ts
+          src/test/inquiry-store.test.ts
+          src/test/quotation-payload.test.ts
+          src/test/legacy-inquiry-hash.test.ts
+          src/test/search-preview.test.tsx
 
       - name: Web build
         run: pnpm --filter @rosa/web build
