@@ -1,3 +1,4 @@
+import type { CatalogueProductRecord } from "@/features/catalogue-registry";
 import {
   FAMILY_SLUGS,
   familyNameBySlug,
@@ -8,6 +9,11 @@ import {
 } from "@/features/public-catalogue";
 import { HOME_CATALOGUE_MEDIA_BY_SLUG } from "@/features/public-media";
 import { PUBLIC_CONTENT_VALUES } from "@/features/public-content-registry";
+import {
+  FAMILY_NAMES_AR,
+  HOME_PAGE_MODEL_AR
+} from "@/features/localization/public-copy";
+import type { PublicLocale } from "@/features/localization/locales";
 import type { Route } from "next";
 
 const families = selectFamilyCards();
@@ -36,7 +42,6 @@ export const HOME_PAGE_MODEL = {
     title: "Representative products.",
     copy: "A concise preview. Full dimensions and options belong on the individual product page."
   },
-  products: selectFeaturedProducts(),
   catalogue: {
     eyebrow: "Catalogues",
     title: "Technical catalogues for structured browsing.",
@@ -56,6 +61,27 @@ export const HOME_PAGE_MODEL = {
     primary: { label: "Request a Quote", href: "/request-quotation" as const }
   }
 } as const;
+
+export function createHomePageModel(
+  products: readonly CatalogueProductRecord[],
+  locale: PublicLocale = "en"
+) {
+  const featured = selectFeaturedProducts(products);
+  if (locale === "ar") {
+    return {
+      ...HOME_PAGE_MODEL_AR,
+      products: featured.map((product) => ({
+        ...product,
+        familyName: FAMILY_NAMES_AR[product.familySlug]
+      }))
+    } as const;
+  }
+
+  return {
+    ...HOME_PAGE_MODEL,
+    products: featured
+  } as const;
+}
 
 export interface HomeHeroModel { eyebrow: string; title: string; copy: string; primary: { label: string; href: Route<string> }; secondary: { label: string; href: Route<string> } }
 export interface HomeFamilyIntroModel { eyebrow: string; title: string; copy: string }
