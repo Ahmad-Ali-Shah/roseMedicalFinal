@@ -132,7 +132,6 @@ export function createQuotationHash(payload: QuotationPayload): string {
     country: payload.country.toLowerCase(),
     notes: payload.notes,
     items: payload.items.map((item) => ({
-      id: item.id,
       familySlug: item.familySlug,
       slug: item.slug,
       name: item.name,
