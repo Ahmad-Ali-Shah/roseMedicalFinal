@@ -206,3 +206,39 @@ Fresh read-only production fingerprints after verification still matched the ini
 The derived public-route fingerprint also remained `0acd7d0c9941198cc818382a49027b92` across 113/113 distinct routes.
 
 **No production DDL, DML, RLS, function, trigger, index, bucket, or Storage-object mutation was performed by this implementation slice.**
+
+## Full public product-surface verification — 2026-08-07
+
+The second checkpoint moved the remaining public product-rendering surfaces onto the same canonical live read boundary used by Search:
+
+- family listings;
+- product detail;
+- related-product cards;
+- Products overview representative cards;
+- Homepage selected-product cards;
+- public product-route classification now uses the explicit migration manifest rather than the live TypeScript product registry as content authority.
+
+The five family presentation records remain source-controlled by design. Featured-product route selection also remains source-controlled, but every featured product's ID, code, name, description, options and primary image is now hydrated from the canonical product collection.
+
+Verification evidence from the final consolidated checkpoint:
+
+- **12 focused test files passed, 50/50 tests**.
+- The same checkpoint included the guarded **live read-only production Supabase parity test**, which passed across all 113 products.
+- Web TypeScript check passed after old test/admin preview call sites were made explicit instead of reintroducing a hidden static default into the public selector.
+- Focused ESLint over the changed public-product slice passed.
+- Production Next.js build passed successfully and generated all routes.
+- The temporary verification workflow was deleted after success and the draft PR remained closed/unmerged.
+
+One stale fixture discrepancy was intentionally removed from runtime product content during this cutover: the representative Mayo card now receives the canonical product code `04-0401` rather than the old fixture value `04-0402`. The fixture remains useful only as the source-controlled featured-route selection list.
+
+Fresh read-only production fingerprints after the complete public product cutover still match the original baseline exactly:
+
+| Dataset | Rows | Post-public-cutover fingerprint |
+| --- | ---: | --- |
+| `categories` | 5 | `653cd90456d3c31ac61455979f4e7442` |
+| `products` | 113 | `e06862f03551d86942dc87bf86bd5929` |
+| `product_variants` | 322 | `e79d48cccd26c4a9d10f9fdc903a5e2c` |
+| `product_images` | 113 | `393262a999597ea7d0963e5365a98da0` |
+| `site_settings` | 5 | `b0d5389b83e30c869990f1e6aec1bb2f` |
+
+**No production database, RLS, index, function, bucket, or Storage-object mutation was performed by the second public-product slice.**
