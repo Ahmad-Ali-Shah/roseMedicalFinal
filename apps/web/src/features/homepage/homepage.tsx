@@ -1,6 +1,7 @@
 import type { ReactElement } from "react";
-import { HOME_PAGE_MODEL } from "./homepage.data";
-import { HOME_PAGE_MODEL_AR, type PublicLocale } from "@/features/localization";
+import { getPublicCatalogueProducts } from "@/features/catalogue-live";
+import { createHomePageModel } from "./homepage.data";
+import type { PublicLocale } from "@/features/localization";
 import { HomeHero } from "./sections/home-hero";
 import { FamilyDiscovery } from "./sections/family-discovery";
 import { ProcurementSupport } from "./sections/procurement-support";
@@ -8,8 +9,9 @@ import { FeaturedInstruments } from "./sections/featured-instruments";
 import { CatalogueAccess } from "./sections/catalogue-access";
 import { QuotationCta } from "./sections/quotation-cta";
 
-export function Homepage({ locale = "en" }: { locale?: PublicLocale }): ReactElement {
-  const model = locale === "ar" ? HOME_PAGE_MODEL_AR : HOME_PAGE_MODEL;
+export async function Homepage({ locale = "en" }: { locale?: PublicLocale }): Promise<ReactElement> {
+  const products = await getPublicCatalogueProducts();
+  const model = createHomePageModel(products, locale);
   return (
     <div className="public-page public-page--home">
       <HomeHero model={model.hero} locale={locale} />
