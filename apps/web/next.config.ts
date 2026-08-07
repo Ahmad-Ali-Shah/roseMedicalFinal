@@ -1,6 +1,19 @@
 import type { NextConfig } from "next";
 import { resolve } from "node:path";
 
+function configuredSupabaseOrigin(): URL | null {
+  const value = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
+  if (!value) return null;
+
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" ? url : null;
+  } catch {
+    return null;
+  }
+}
+
+const supabaseOrigin = configuredSupabaseOrigin();
 const contentSecurityPolicy = [
   "default-src 'self'",
   "base-uri 'self'",
@@ -9,7 +22,7 @@ const contentSecurityPolicy = [
   "object-src 'none'",
   `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob:",
+  `img-src 'self' data: blob:${supabaseOrigin ? ` ${supabaseOrigin.origin}` : ""}`,
   "font-src 'self' data:",
   "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
   "frame-src https://www.openstreetmap.org"
@@ -18,7 +31,16 @@ const contentSecurityPolicy = [
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["127.0.0.1"],
   images: {
-    qualities: [75, 92]
+    qualities: [75, 92],
+    remotePatterns: supabaseOrigin
+      ? [
+          {
+            protocol: "https",
+            hostname: supabaseOrigin.hostname,
+            pathname: "/storage/v1/object/public/product-media/**"
+          }
+        ]
+      : []
   },
   turbopack: {
     root: resolve(__dirname, "../..")
