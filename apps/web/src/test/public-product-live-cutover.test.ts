@@ -1,0 +1,132 @@
+import { describe, expect, it } from "vitest";
+import type { CatalogueProductRecord } from "@/features/catalogue-registry";
+import { createFamilyListingData } from "@/features/family-listing/family-listing.data";
+import { createHomePageModel, HOME_PAGE_MODEL } from "@/features/homepage/homepage.data";
+import { createProductDetailData } from "@/features/product-detail/product-detail.data";
+import { selectFeaturedProducts } from "@/features/public-catalogue";
+import { createProductsPageModel } from "@/features/products/products.data";
+
+const products: readonly CatalogueProductRecord[] = [
+  {
+    id: "db-no3",
+    familySlug: "knives",
+    slug: "scalpel-handle-no-3",
+    name: "Scalpel Handle No. 3",
+    code: "18-0644",
+    description: "Live No. 3 description",
+    sizes: ["14.5 cm"],
+    variants: ["No. 3"],
+    directions: [],
+    primaryOption: "14.5 cm",
+    catalogueReference: { family: "Knives", page: "6" },
+    mediaLabel: "Live No. 3 media",
+    mediaPath: "/media/live-no3.avif"
+  },
+  {
+    id: "db-round",
+    familySlug: "knives",
+    slug: "round-straight",
+    name: "Round Scalpel Handle",
+    code: "18-0644",
+    description: "Round handle",
+    sizes: ["13.0 cm"],
+    variants: ["Round"],
+    directions: ["Straight"],
+    primaryOption: "13.0 cm",
+    catalogueReference: { family: "Knives", page: "4" },
+    mediaLabel: "Round handle",
+    mediaPath: "/media/round.avif"
+  },
+  {
+    id: "db-mayo",
+    familySlug: "scissors",
+    slug: "mayo-scissors",
+    name: "Mayo Scissors",
+    code: "04-0401",
+    description: "Live Mayo description",
+    sizes: ["14.5 cm", "17.0 cm"],
+    variants: ["Regular"],
+    directions: ["Straight"],
+    primaryOption: "Regular · Straight",
+    catalogueReference: { family: "Scissors", page: "4" },
+    mediaLabel: "Live Mayo media",
+    mediaPath: "/media/live-mayo.avif"
+  },
+  {
+    id: "db-biopsy",
+    familySlug: "punches",
+    slug: "biopsy-punch",
+    name: "Biopsy Punch",
+    code: "23-1204",
+    description: "Live Biopsy description",
+    sizes: ["4 mm"],
+    variants: ["Biopsy"],
+    directions: [],
+    primaryOption: "4 mm",
+    catalogueReference: { family: "Punches", page: "5" },
+    mediaLabel: "Live Biopsy media",
+    mediaPath: "/media/live-biopsy.avif"
+  }
+];
+
+describe("public product live cutover models", () => {
+  it("builds a family listing only from the injected canonical catalogue", () => {
+    const data = createFamilyListingData("knives", products);
+    expect(data?.products.map((product) => product.id)).toEqual([
+      "db-no3",
+      "db-round"
+    ]);
+    expect(data?.countLabel).toBe("2 products");
+  });
+
+  it("builds product detail and related products from public route identity", () => {
+    const data = createProductDetailData(
+      "knives",
+      "scalpel-handle-no-3",
+      products
+    );
+
+    expect(data?.product.id).toBe("db-no3");
+    expect(data?.related.map((product) => product.id)).toEqual(["db-round"]);
+    expect(data?.specifications).toContainEqual([
+      "Catalogue reference",
+      "Knives · Page 6"
+    ]);
+    expect(data?.specifications).toContainEqual(["Listed options", "No. 3"]);
+  });
+
+  it("hydrates featured selections from canonical contents instead of stale fixture fields", () => {
+    const featured = selectFeaturedProducts(products);
+    const mayo = featured.find((product) => product.slug === "mayo-scissors");
+
+    expect(featured.map((product) => product.id)).toEqual([
+      "db-no3",
+      "db-mayo",
+      "db-biopsy"
+    ]);
+    expect(mayo).toMatchObject({
+      code: "04-0401",
+      description: "Live Mayo description",
+      imageLabel: "Live Mayo media",
+      mediaPath: "/media/live-mayo.avif",
+      optionSummary: ["14.5 cm", "Regular"]
+    });
+  });
+
+  it("uses the same canonical featured cards on Products overview and Homepage models", () => {
+    const productsModel = createProductsPageModel(products, "en");
+    const homeModel = createHomePageModel(products, "en");
+    const homeAr = createHomePageModel(products, "ar");
+
+    expect(productsModel.products.map((product) => product.id)).toEqual([
+      "db-no3",
+      "db-mayo",
+      "db-biopsy"
+    ]);
+    expect(homeModel.products.map((product) => product.id)).toEqual(
+      productsModel.products.map((product) => product.id)
+    );
+    expect(homeModel.hero).toEqual(HOME_PAGE_MODEL.hero);
+    expect(homeAr.products[0]?.familyName).toBe("المشارط والسكاكين الجراحية");
+  });
+});
