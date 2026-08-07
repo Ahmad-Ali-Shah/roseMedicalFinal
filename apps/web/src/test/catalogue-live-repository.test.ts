@@ -13,6 +13,7 @@ const manifest: readonly CatalogueMetadataManifestEntry[] = [
     dbSlug: "cutters-liston",
     expectedCode: "36-5101",
     expectedName: "Liston",
+    expectedCatalogueCodes: [{ code: "36-5101", size: "14.0 cm" }],
     metadata: {
       sizes: ["14.0 cm"],
       variants: [],
