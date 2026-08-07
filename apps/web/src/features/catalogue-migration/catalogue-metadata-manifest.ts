@@ -16,6 +16,7 @@ export interface CatalogueMetadataManifestEntry {
   dbSlug: string;
   expectedCode: string;
   expectedName: string;
+  expectedCatalogueCodes: readonly { code: string; size: string }[] | null;
   metadata: CatalogueMetadataPayload;
 }
 
@@ -26,6 +27,9 @@ export const CATALOGUE_METADATA_MANIFEST: readonly CatalogueMetadataManifestEntr
     dbSlug: `${product.familySlug}-${product.slug}`,
     expectedCode: product.code,
     expectedName: product.name,
+    expectedCatalogueCodes: product.catalogueCodes
+      ? product.catalogueCodes.map(({ code, size }) => ({ code, size }))
+      : null,
     metadata: {
       sizes: [...product.sizes],
       variants: [...product.variants],
