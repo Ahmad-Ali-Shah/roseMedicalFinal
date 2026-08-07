@@ -1,9 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
   createLegacyQuotationHash,
+  createQuotationHash,
   type QuotationPayload
 } from "@/features/inquiry/quotation-payload";
-import { createLegacyStaticQuotationHash } from "@/features/catalogue-migration/legacy-inquiry-hash";
+import {
+  createLegacyStaticQuotationHash,
+  createQuotationHashCandidates
+} from "@/features/catalogue-migration/legacy-inquiry-hash";
 
 const livePayload: QuotationPayload = {
   name: "Buyer",
@@ -42,6 +46,15 @@ describe("legacy inquiry hash migration compatibility", () => {
     expect(createLegacyStaticQuotationHash(livePayload)).toBe(
       createLegacyQuotationHash(expected)
     );
+  });
+
+  it("returns both stable and legacy hashes while old quote rows may exist", () => {
+    const legacy = createLegacyStaticQuotationHash(livePayload);
+    expect(legacy).toBeTruthy();
+    expect(createQuotationHashCandidates(livePayload)).toEqual([
+      createQuotationHash(livePayload),
+      legacy
+    ]);
   });
 
   it("returns null if an inquiry item has no approved legacy route mapping", () => {
