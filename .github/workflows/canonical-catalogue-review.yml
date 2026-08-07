@@ -49,8 +49,8 @@ jobs:
           src/test/catalogue-live-supabase.integration.test.ts
         env:
           RUN_LIVE_CATALOGUE_PARITY: "1"
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: https://hzwabrbrgcxodkqilgdi.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: sb_publishable_eAsFSK6AJfZk2SFzecCDnA_HeSxG-I1
 
       - name: Web typecheck
         run: pnpm --filter @rosa/web typecheck
