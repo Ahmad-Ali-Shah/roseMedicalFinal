@@ -1,7 +1,5 @@
 import {
   CATALOGUE_FAMILIES,
-  CATALOGUE_PRODUCTS,
-  getProductDetailModel,
   type CatalogueFamilyRecord,
   type CatalogueProductRecord
 } from "@/features/catalogue-registry";
@@ -20,6 +18,7 @@ export interface AdminProductRow {
   optionSummary: readonly string[];
   catalogueReference: string;
   mediaLabel: string;
+  mediaPath?: string;
   publicHref: ReturnType<typeof productHref>;
   familyHref: ReturnType<typeof familyHref>;
   adminHref: ReturnType<typeof adminProductHref>;
@@ -74,7 +73,7 @@ export function getDocumentedOptionSummary(
 function formatCatalogueReference(product: CatalogueProductRecord): string {
   const page = product.catalogueReference.page?.trim();
   return page
-    ? `${product.catalogueReference.family} · ${page}`
+    ? `${product.catalogueReference.family} · Page ${page}`
     : product.catalogueReference.family;
 }
 
@@ -106,16 +105,20 @@ function completenessFor(
     },
     { key: "catalogue", label: "Catalogue reference", state: "Present" },
     { key: "arabic", label: "Arabic content", state: "Not supplied" },
-    { key: "media", label: "Managed media", state: "Not registered" }
+    {
+      key: "media",
+      label: "Primary product media",
+      state: product.mediaPath ? "Present" : "Not registered"
+    }
   ];
 }
 
-export function getAdminProductRows(): readonly AdminProductRow[] {
-  return CATALOGUE_PRODUCTS.map((product): AdminProductRow => {
+export function getAdminProductRows(
+  products: readonly CatalogueProductRecord[]
+): readonly AdminProductRow[] {
+  return products.map((product): AdminProductRow => {
     const family = familyBySlug.get(product.familySlug);
-    if (!family) {
-      throw new Error(`Unknown catalogue family: ${product.familySlug}`);
-    }
+    if (!family) throw new Error(`Unknown catalogue family: ${product.familySlug}`);
 
     return {
       id: product.id,
@@ -126,6 +129,7 @@ export function getAdminProductRows(): readonly AdminProductRow[] {
       optionSummary: getDocumentedOptionSummary(product),
       catalogueReference: formatCatalogueReference(product),
       mediaLabel: product.mediaLabel,
+      ...(product.mediaPath ? { mediaPath: product.mediaPath } : {}),
       publicHref: productHref(product),
       familyHref: familyHref(product.familySlug),
       adminHref: adminProductHref(product)
@@ -134,13 +138,11 @@ export function getAdminProductRows(): readonly AdminProductRow[] {
 }
 
 export function getAdminProductEditor(
-  familySlug: string,
-  productSlug: string
+  product: CatalogueProductRecord
 ): AdminProductEditorModel | undefined {
-  const result = getProductDetailModel(familySlug, productSlug);
-  if (result.kind !== "product") return undefined;
+  const family = familyBySlug.get(product.familySlug);
+  if (!family) return undefined;
 
-  const { family, product } = result;
   return {
     family,
     product,
