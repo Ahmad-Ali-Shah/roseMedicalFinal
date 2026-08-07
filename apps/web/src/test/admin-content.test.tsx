@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import { CATALOGUE_FAMILIES } from "@/features/catalogue-registry";
+import { CATALOGUE_FAMILIES, CATALOGUE_PRODUCTS } from "@/features/catalogue-registry";
 import {
   AdminContentPage,
   getAdminContentBlocks,
@@ -25,7 +25,7 @@ describe("F3E-D Admin Content", () => {
     expect(getAdminContentBlocks()).toHaveLength(6);
     const composition = getAdminHomepageComposition();
     expect(composition.families).toHaveLength(CATALOGUE_FAMILIES.length);
-    expect(composition.products).toEqual(selectFeaturedProducts());
+    expect(composition.products).toEqual(selectFeaturedProducts(CATALOGUE_PRODUCTS));
   });
 
   it("renders approved content blocks through the live settings boundary", async () => {
