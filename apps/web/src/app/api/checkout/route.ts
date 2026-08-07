@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createQuotationHashCandidates } from "@/features/catalogue-migration/legacy-inquiry-hash";
 import {
   createQuotationHash,
   formatQuotationMessage,
@@ -16,12 +17,14 @@ export async function POST(req: NextRequest) {
 
     const payload = result.value;
     const cartHash = createQuotationHash(payload);
+    const hashCandidates = createQuotationHashCandidates(payload);
     const supabase = createAdminClient();
 
     const { data: existing, error: lookupError } = await supabase
       .from("quote_requests")
       .select("id")
-      .eq("cart_hash", cartHash)
+      .in("cart_hash", hashCandidates)
+      .limit(1)
       .maybeSingle();
 
     if (lookupError) {
