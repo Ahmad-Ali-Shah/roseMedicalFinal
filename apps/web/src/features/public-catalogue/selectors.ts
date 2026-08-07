@@ -1,4 +1,5 @@
 import { familyFixtures, productFixtures } from "@rosa/contracts/fixtures";
+import type { CatalogueProductRecord } from "@/features/catalogue-registry";
 import {
   FAMILY_CARD_DISPLAY_ORDER,
   FAMILY_SLUGS,
@@ -7,10 +8,18 @@ import {
   type ProductPreviewModel
 } from "./models";
 import { FAMILY_MEDIA_BY_SLUG } from "@/features/public-media";
-import { CATALOGUE_PRODUCTS } from "@/features/catalogue-registry/products";
 
 function isFamilySlug(value: string): value is FamilySlug {
   return FAMILY_SLUGS.some((slug) => slug === value);
+}
+
+function uniqueNonEmpty(values: readonly (string | undefined)[]): readonly string[] {
+  const result: string[] = [];
+  for (const value of values) {
+    const normalized = value?.trim();
+    if (normalized && !result.includes(normalized)) result.push(normalized);
+  }
+  return result;
 }
 
 export function familyNameBySlug(slug: FamilySlug): string {
@@ -37,41 +46,47 @@ export function selectFamilyCards(): readonly FamilyCardModel[] {
   });
 }
 
-export function selectFeaturedProducts(): readonly ProductPreviewModel[] {
-  return productFixtures.map((product): ProductPreviewModel => {
-    if (!isFamilySlug(product.familySlug)) {
-      throw new Error(`Unknown Rosa family slug: ${product.familySlug}`);
+export function selectFeaturedProducts(
+  products: readonly CatalogueProductRecord[]
+): readonly ProductPreviewModel[] {
+  return productFixtures.map((selection): ProductPreviewModel => {
+    if (!isFamilySlug(selection.familySlug)) {
+      throw new Error(`Unknown Rosa family slug: ${selection.familySlug}`);
     }
-    const description = product.shortDescription.en;
-    const canonicalProduct = CATALOGUE_PRODUCTS.find(
+
+    const product = products.find(
       (candidate) =>
-        candidate.id === product.id ||
-        (candidate.familySlug === product.familySlug &&
-          candidate.slug === product.slug)
+        candidate.familySlug === selection.familySlug &&
+        candidate.slug === selection.slug
     );
 
-    if (!canonicalProduct) {
-      throw new Error(`Missing catalogue product for featured fixture: ${product.id}`);
+    if (!product) {
+      throw new Error(
+        `Missing canonical catalogue product for featured route: ${selection.familySlug}/${selection.slug}`
+      );
     }
+
+    const optionSummary = uniqueNonEmpty([
+      product.sizes[0],
+      product.variants[0] ?? product.directions[0]
+    ]);
 
     return {
       id: product.id,
       slug: product.slug,
       familySlug: product.familySlug,
       familyName: familyNameBySlug(product.familySlug),
-      name: product.name.en,
+      name: product.name,
       code: product.code,
-      optionSummary: product.optionSummary,
-      ...(description ? { description } : {}),
-      imageLabel: canonicalProduct.mediaLabel,
-      ...(canonicalProduct.mediaPath
-        ? { mediaPath: canonicalProduct.mediaPath }
+      optionSummary,
+      ...(product.description ? { description: product.description } : {}),
+      imageLabel: product.mediaLabel,
+      ...(product.mediaPath ? { mediaPath: product.mediaPath } : {}),
+      ...(product.mediaFallbackPath
+        ? { mediaFallbackPath: product.mediaFallbackPath }
         : {}),
-      ...(canonicalProduct.mediaFallbackPath
-        ? { mediaFallbackPath: canonicalProduct.mediaFallbackPath }
-        : {}),
-      ...(typeof canonicalProduct.mediaIndex === "number"
-        ? { mediaIndex: canonicalProduct.mediaIndex }
+      ...(typeof product.mediaIndex === "number"
+        ? { mediaIndex: product.mediaIndex }
         : {})
     };
   });
