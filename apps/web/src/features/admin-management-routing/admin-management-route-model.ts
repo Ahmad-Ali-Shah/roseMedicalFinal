@@ -1,9 +1,9 @@
 import {
   getFamilyListingModel,
-  getProductDetailModel,
   type CatalogueFamilyRecord,
   type CatalogueProductRecord
 } from "@/features/catalogue-registry";
+import { CATALOGUE_METADATA_MANIFEST } from "@/features/catalogue-migration/catalogue-metadata-manifest";
 import {
   getCatalogueDocument,
   type CatalogueDocument
@@ -20,7 +20,7 @@ export type AdminManagementRoot = (typeof ADMIN_MANAGEMENT_ROOTS)[number];
 
 export type AdminManagementRouteResult =
   | { kind: "products" }
-  | { kind: "product"; family: CatalogueFamilyRecord; product: CatalogueProductRecord }
+  | { kind: "product"; familySlug: string; productSlug: string }
   | { kind: "families" }
   | { kind: "family"; family: CatalogueFamilyRecord; products: readonly CatalogueProductRecord[] }
   | { kind: "catalogues" }
@@ -32,6 +32,13 @@ export function isAdminManagementRoot(value: string): value is AdminManagementRo
   return (ADMIN_MANAGEMENT_ROOTS as readonly string[]).includes(value);
 }
 
+function isKnownProductRoute(familySlug: string, productSlug: string): boolean {
+  return CATALOGUE_METADATA_MANIFEST.some(
+    (entry) =>
+      entry.familySlug === familySlug && entry.publicSlug === productSlug
+  );
+}
+
 export function resolveAdminManagementRoute(
   segments: readonly string[]
 ): AdminManagementRouteResult {
@@ -40,9 +47,10 @@ export function resolveAdminManagementRoute(
   }
 
   if (segments.length === 3 && segments[0] === "products") {
-    const result = getProductDetailModel(segments[1] ?? "", segments[2] ?? "");
-    return result.kind === "product"
-      ? { kind: "product", family: result.family, product: result.product }
+    const familySlug = segments[1] ?? "";
+    const productSlug = segments[2] ?? "";
+    return isKnownProductRoute(familySlug, productSlug)
+      ? { kind: "product", familySlug, productSlug }
       : { kind: "not-found" };
   }
 
