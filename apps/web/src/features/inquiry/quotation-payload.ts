@@ -123,14 +123,24 @@ export function formatQuotationMessage(payload: QuotationPayload): string {
   ].filter((line): line is string => line !== null).join("\n");
 }
 
-export function createQuotationHash(payload: QuotationPayload): string {
-  const exactRequest = {
+function hashExactRequest(exactRequest: unknown): string {
+  return createHash("sha256").update(JSON.stringify(exactRequest)).digest("hex");
+}
+
+function normalizedHashEnvelope(payload: QuotationPayload) {
+  return {
     name: payload.name.toLowerCase(),
     company: payload.company.toLowerCase(),
     email: payload.email.toLowerCase(),
     phone: payload.phone,
     country: payload.country.toLowerCase(),
-    notes: payload.notes,
+    notes: payload.notes
+  };
+}
+
+export function createQuotationHash(payload: QuotationPayload): string {
+  return hashExactRequest({
+    ...normalizedHashEnvelope(payload),
     items: payload.items.map((item) => ({
       familySlug: item.familySlug,
       slug: item.slug,
@@ -141,7 +151,27 @@ export function createQuotationHash(payload: QuotationPayload): string {
       quantity: item.quantity,
       notes: item.notes
     }))
-  };
+  });
+}
 
-  return createHash("sha256").update(JSON.stringify(exactRequest)).digest("hex");
+/**
+ * Reproduces the pre-catalogue-cutover hash format, which included the
+ * implementation-specific product id. Keep only while old quote rows may carry
+ * that historical hash.
+ */
+export function createLegacyQuotationHash(payload: QuotationPayload): string {
+  return hashExactRequest({
+    ...normalizedHashEnvelope(payload),
+    items: payload.items.map((item) => ({
+      id: item.id,
+      familySlug: item.familySlug,
+      slug: item.slug,
+      name: item.name,
+      code: item.code,
+      size: item.size,
+      variant: item.variant,
+      quantity: item.quantity,
+      notes: item.notes
+    }))
+  });
 }
