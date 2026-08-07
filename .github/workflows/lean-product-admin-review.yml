@@ -1,0 +1,90 @@
+name: Lean Product Admin Review
+
+on:
+  pull_request:
+    branches:
+      - ahmadx67676767
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8
+      - run: pnpm install --frozen-lockfile
+
+      - name: Focused canonical and admin tests
+        run: >-
+          pnpm --filter @rosa/web test --
+          src/test/catalogue-metadata-manifest.test.ts
+          src/test/catalogue-live-mapper.test.ts
+          src/test/catalogue-live-repository.test.ts
+          src/test/catalogue-live-selectors.test.ts
+          src/test/catalogue-live-supabase.integration.test.ts
+          src/test/search-catalogue.test.ts
+          src/test/search-preview.test.tsx
+          src/test/inquiry-store.test.ts
+          src/test/quotation-payload.test.ts
+          src/test/legacy-inquiry-hash.test.ts
+          src/test/public-product-live-cutover.test.ts
+          src/test/public-product-route-classification.test.ts
+          src/test/admin-product-security.test.ts
+          src/test/admin-product-canonical.test.ts
+          src/test/admin-product-media-write.test.ts
+          src/test/admin-product-editor-scope.test.ts
+        env:
+          RUN_LIVE_CATALOGUE_PARITY: "1"
+          NEXT_PUBLIC_SUPABASE_URL: https://hzwabrbrgcxodkqilgdi.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: sb_publishable_eAsFSK6AJfZk2SFzecCDnA_HeSxG-I1
+
+      - name: Web typecheck
+        run: pnpm --filter @rosa/web typecheck
+
+      - name: Focused lint
+        run: >-
+          pnpm --filter @rosa/web exec eslint
+          src/lib/supabase/admin.ts
+          src/lib/supabase/admin-auth.ts
+          src/lib/supabase/admin-security.ts
+          src/features/admin-products
+          src/features/admin-management-routing/admin-management-route-model.ts
+          src/features/admin-management-routing/admin-management-route-view.tsx
+          src/features/catalogue-live
+          src/features/catalogue-migration
+          src/features/family-listing/family-listing.data.ts
+          src/features/family-listing/family-listing-page.tsx
+          src/features/homepage/homepage.data.ts
+          src/features/homepage/homepage.tsx
+          src/features/product-detail/product-detail.data.ts
+          src/features/product-detail/product-detail-page.tsx
+          src/features/products/products.data.ts
+          src/features/products/products-overview.tsx
+          src/features/public-catalogue/selectors.ts
+          src/features/public-routing/resolve-public-page.tsx
+          src/features/search
+          src/features/search-preview/search-default-page.tsx
+          src/features/search-preview/search-result-preview.tsx
+          src/features/inquiry/inquiry-store.ts
+          src/features/inquiry/quotation-payload.ts
+          src/app/api/checkout/route.ts
+          src/test/admin-product-security.test.ts
+          src/test/admin-product-canonical.test.ts
+          src/test/admin-product-media-write.test.ts
+          src/test/admin-product-editor-scope.test.ts
+
+      - name: Web build
+        run: pnpm --filter @rosa/web build
+        env:
+          NEXT_PUBLIC_SITE_NAME: ROSA
+          NEXT_PUBLIC_SUPABASE_URL: https://hzwabrbrgcxodkqilgdi.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: sb_publishable_eAsFSK6AJfZk2SFzecCDnA_HeSxG-I1
+          SUPABASE_SERVICE_ROLE_KEY: test-service-role
