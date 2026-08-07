@@ -2,7 +2,9 @@ import { NextResponse, type NextRequest } from "next/server";
 import { shouldRenderPublicNotFound } from "@/features/public-routing/public-route-policy";
 import { updateSession } from "@/lib/supabase/middleware";
 
-export async function proxy(request: NextRequest) {
+export const runtime = "experimental-edge";
+
+export async function middleware(request: NextRequest) {
   if (shouldRenderPublicNotFound(request.nextUrl.pathname)) {
     const notFoundUrl = request.nextUrl.clone();
     notFoundUrl.pathname = "/__rosa-not-found";

@@ -26,13 +26,15 @@ export function AdminProductEditorPage({
   dbSlug,
   productId,
   categories,
-  currentCategoryId
+  currentCategoryId,
+  imageUrl
 }: {
   model: AdminProductEditorModel;
   dbSlug?: string;
   productId?: string | null;
   categories?: AdminCategoryOption[];
   currentCategoryId?: string | null;
+  imageUrl?: string | null;
 }) {
   const { family, product } = model;
 
@@ -145,7 +147,7 @@ export function AdminProductEditorPage({
         description="The source contains a presentation requirement label, not a managed upload."
       >
         <div className="admin-media-requirement-panel">
-          <ProductMediaPlaceholder label={product.mediaLabel} aspect="landscape" />
+          <ProductMediaPlaceholder label={product.mediaLabel} aspect="landscape" src={imageUrl ?? undefined} />
           <div>
             <p className="page-eyebrow">Source media label</p>
             <h3>{product.mediaLabel}</h3>

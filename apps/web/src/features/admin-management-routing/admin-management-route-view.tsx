@@ -44,12 +44,24 @@ export async function AdminManagementRouteView({
           .eq("slug", dbSlug)
           .maybeSingle()
       ]);
+      const productId = productRes.data?.id ?? null;
+      let imageUrl: string | null = null;
+      if (productId) {
+        const { data: imageRow } = await supabase
+          .from("product_images")
+          .select("image_path")
+          .eq("product_id", productId)
+          .eq("sort_order", 0)
+          .maybeSingle();
+        imageUrl = imageRow?.image_path ?? null;
+      }
 
       return (
         <AdminProductEditorPage
           model={model}
           dbSlug={dbSlug}
-          productId={productRes.data?.id ?? null}
+          productId={productId}
+          imageUrl={imageUrl}
           categories={categoriesRes.data ?? []}
           currentCategoryId={productRes.data?.category_id ?? null}
         />
