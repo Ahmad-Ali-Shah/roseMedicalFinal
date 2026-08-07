@@ -13,87 +13,37 @@ import { ProductMediaPlaceholder } from "@/features/public-catalogue";
 import type { AdminProductEditorModel } from "./admin-product-model";
 import { AdminProductCompleteness } from "./admin-product-completeness";
 import { AdminProductOptions } from "./admin-product-options";
-import { updateProductCategory, uploadProductMedia } from "./actions";
-
-interface AdminCategoryOption {
-  id: string;
-  name_en: string;
-  slug: string;
-}
+import { uploadProductMedia } from "./actions";
 
 export function AdminProductEditorPage({
-  model,
-  dbSlug,
-  productId,
-  categories,
-  currentCategoryId,
-  imageUrl
+  model
 }: {
   model: AdminProductEditorModel;
-  dbSlug?: string;
-  productId?: string | null;
-  categories?: AdminCategoryOption[];
-  currentCategoryId?: string | null;
-  imageUrl?: string | null;
 }) {
   const { family, product } = model;
 
   return (
     <div className="admin-product-editor">
       <AdminPageHeader
-        eyebrow="Product source record"
+        eyebrow="Live product record"
         title={product.name}
-        description="Read-only catalogue data derived from the current frontend registry."
+        description="This page reads the same canonical Supabase product record used by the public catalogue."
         actions={
           <>
-            <AdminStatusBadge tone="neutral">Source record</AdminStatusBadge>
+            <AdminStatusBadge tone="success">Live record</AdminStatusBadge>
             <ButtonLink href={model.publicHref} variant="secondary">View public product</ButtonLink>
             <ButtonLink href={model.publicFamilyHref} variant="quiet">View public family</ButtonLink>
           </>
         }
       />
 
-      <AdminAlert tone="warning" title="Static source registry">
-        This editor does not save, review, publish, archive, delete or upload content.
+      <AdminAlert tone="neutral" title="Protected catalogue identity">
+        Product identity, family, codes and documented options stay read-only while the source-of-truth migration is being verified. Primary product media is the supported operational edit on this page.
       </AdminAlert>
-
-      {dbSlug && categories && categories.length > 0 && (
-        <AdminFormSection
-          title="Category assignment"
-          description="This writes directly to the live Supabase products table via the admin/service-role client."
-        >
-          <form action={updateProductCategory} className="admin-editor-grid">
-            <input type="hidden" name="slug" value={dbSlug} />
-            <div>
-              <label htmlFor={`admin-product-${product.id}-category`} className="admin-field-label">
-                Live category
-              </label>
-              <select
-                id={`admin-product-${product.id}-category`}
-                name="category_id"
-                defaultValue={currentCategoryId ?? ""}
-                className="admin-select"
-              >
-                <option value="" disabled>
-                  Select a category
-                </option>
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name_en}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="admin-card-actions">
-              <Button type="submit">Save category</Button>
-            </div>
-          </form>
-        </AdminFormSection>
-      )}
 
       <AdminFormSection
         title="Identity"
-        description="English values come from the source registry. Arabic values have not been supplied."
+        description="These values come from the live canonical product record. Arabic product copy has not been verified for admin editing."
       >
         <div className="admin-editor-grid">
           <AdminLocaleFieldPair
@@ -130,7 +80,7 @@ export function AdminProductEditorPage({
 
       <AdminSection
         title="Catalogue reference"
-        description="Reference data is shown exactly as supplied by the current registry."
+        description="The product keeps its verified catalogue family and page reference during migration."
       >
         <dl className="admin-definition-grid">
           <div><dt>Catalogue family</dt><dd>{product.catalogueReference.family}</dd></div>
@@ -143,39 +93,41 @@ export function AdminProductEditorPage({
       </AdminSection>
 
       <AdminSection
-        title="Media requirement"
-        description="The source contains a presentation requirement label, not a managed upload."
+        title="Primary product image"
+        description="Replacing this image updates the canonical product media relationship used by public product surfaces."
       >
         <div className="admin-media-requirement-panel">
-          <ProductMediaPlaceholder label={product.mediaLabel} aspect="landscape" src={imageUrl ?? undefined} />
+          <ProductMediaPlaceholder
+            label={product.mediaLabel}
+            aspect="landscape"
+            src={product.mediaPath}
+            fallbackSrc={product.mediaFallbackPath}
+            spriteIndex={product.mediaIndex}
+          />
           <div>
-            <p className="page-eyebrow">Source media label</p>
+            <p className="page-eyebrow">Current media</p>
             <h3>{product.mediaLabel}</h3>
-            {productId && dbSlug ? (
-              <form action={uploadProductMedia} className="admin-media-upload-form">
-                <input type="hidden" name="product_id" value={productId} />
-                <input type="hidden" name="slug" value={dbSlug} />
-                <input type="file" name="file" accept="image/*" required />
-                <div className="admin-management-actions">
-                  <Button type="submit">Upload media</Button>
-                </div>
-              </form>
-            ) : (
-              <>
-                <p>No managed media file is registered.</p>
-                <div className="admin-management-actions">
-                  <Button disabled>Upload media</Button>
-                  <Button variant="secondary" disabled>Replace media</Button>
-                </div>
-              </>
-            )}
+            <form action={uploadProductMedia} className="admin-media-upload-form">
+              <input type="hidden" name="product_id" value={product.id} />
+              <input type="hidden" name="family_slug" value={product.familySlug} />
+              <input type="hidden" name="product_slug" value={product.slug} />
+              <input
+                type="file"
+                name="file"
+                accept="image/jpeg,image/png,image/webp,image/avif"
+                required
+              />
+              <div className="admin-management-actions">
+                <Button type="submit">Replace primary image</Button>
+              </div>
+            </form>
           </div>
         </div>
       </AdminSection>
 
       <AdminSection
         title="Public context"
-        description="These links show the current source-backed public composition, not an unpublished draft preview."
+        description="These links show the same live product record in its public catalogue context."
       >
         <div className="admin-card-actions">
           <ButtonLink href={model.publicHref}>Open current product page</ButtonLink>
@@ -184,19 +136,6 @@ export function AdminProductEditorPage({
       </AdminSection>
 
       <AdminProductCompleteness items={model.completeness} />
-
-      <AdminSection
-        title="Future workflow actions"
-        description="These actions remain unavailable until owner authentication, persistence and publishing workflows exist."
-      >
-        <div className="admin-management-actions">
-          <Button disabled>Save draft</Button>
-          <Button variant="secondary" disabled>Submit for review</Button>
-          <Button variant="secondary" disabled>Publish</Button>
-          <Button variant="quiet" disabled>Archive</Button>
-          <Button variant="danger" disabled>Delete</Button>
-        </div>
-      </AdminSection>
     </div>
   );
 }
