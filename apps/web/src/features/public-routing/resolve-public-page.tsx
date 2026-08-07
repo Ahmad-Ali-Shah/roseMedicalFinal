@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { AboutPage } from "@/features/about";
 import { CataloguesPage } from "@/features/catalogues";
-import { resolveCataloguePath } from "@/features/catalogue-registry";
+import { CATALOGUE_METADATA_MANIFEST } from "@/features/catalogue-migration/catalogue-metadata-manifest";
 import { ContactPage } from "@/features/contact-preview";
 import { FamilyListingPage } from "@/features/family-listing/family-listing-page";
 import { Homepage } from "@/features/homepage/homepage";
@@ -12,6 +12,7 @@ import {
   TERMS_DOCUMENT
 } from "@/features/legal-pages";
 import { ProductDetailPage } from "@/features/product-detail/product-detail-page";
+import { FAMILY_SLUGS } from "@/features/public-catalogue";
 import { ProductsOverview } from "@/features/products/products-overview";
 import { ProcurementSupportPage } from "@/features/procurement-support";
 import { SearchDefaultPage } from "@/features/search-preview";
@@ -33,6 +34,21 @@ export type PublicPageKind =
   | "product"
   | "not-found";
 
+function isKnownFamilyRoute(slug: string | undefined): boolean {
+  return Boolean(slug && (FAMILY_SLUGS as readonly string[]).includes(slug));
+}
+
+function isKnownProductRoute(
+  familySlug: string | undefined,
+  productSlug: string | undefined
+): boolean {
+  if (!familySlug || !productSlug) return false;
+  return CATALOGUE_METADATA_MANIFEST.some(
+    (entry) =>
+      entry.familySlug === familySlug && entry.publicSlug === productSlug
+  );
+}
+
 export function resolvePublicPageKind(key: string): PublicPageKind {
   if (key === "") return "homepage";
   if (key === "products") return "products";
@@ -48,10 +64,13 @@ export function resolvePublicPageKind(key: string): PublicPageKind {
 
   const segments = key.split("/").filter(Boolean);
   if (segments[0] !== "products") return "not-found";
-
-  const catalogueResult = resolveCataloguePath(segments);
-  if (catalogueResult.kind === "family") return "family";
-  if (catalogueResult.kind === "product") return "product";
+  if (segments.length === 2 && isKnownFamilyRoute(segments[1])) return "family";
+  if (
+    segments.length === 3 &&
+    isKnownProductRoute(segments[1], segments[2])
+  ) {
+    return "product";
+  }
   return "not-found";
 }
 
