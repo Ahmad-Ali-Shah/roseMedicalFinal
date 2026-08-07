@@ -68,4 +68,16 @@ describe("quotation payload", () => {
       createQuotationHash({ ...first.value, items: [{ ...first.value.items[0]!, quantity: 3 }] })
     );
   });
+
+  it("does not change an exact request hash when only the internal product id changes", () => {
+    const first = normalizeQuotationPayload(validPayload);
+    const second = normalizeQuotationPayload({
+      ...validPayload,
+      items: [{ ...validPayload.items[0]!, id: "live-db-uuid" }]
+    });
+
+    expect(first.ok && second.ok).toBe(true);
+    if (!first.ok || !second.ok) return;
+    expect(createQuotationHash(first.value)).toBe(createQuotationHash(second.value));
+  });
 });
