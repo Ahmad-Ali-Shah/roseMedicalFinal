@@ -37,6 +37,10 @@ describe("F3D search default and preview data", () => {
   it("renders source-backed desktop and mobile search results", () => {
     const desktop = renderToStaticMarkup(<SearchResultsPreview />);
     const mobile = renderToStaticMarkup(<SearchMobileResultsPreview />);
+    const expectedMedia =
+      SEARCH_PREVIEW_RESULTS[0]?.mediaFallbackPath ??
+      SEARCH_PREVIEW_RESULTS[0]?.mediaPath;
+
     expect((desktop.match(/data-search-result=/g) ?? [])).toHaveLength(2);
     expect((mobile.match(/data-search-result=/g) ?? [])).toHaveLength(2);
     expect(desktop).toContain('href="/products/knives/scalpel-handle-no-3"');
@@ -45,6 +49,9 @@ describe("F3D search default and preview data", () => {
     expect(desktop).toContain("18-0650");
     expect(desktop).toContain("Add to inquiry");
     expect(desktop).not.toContain("disabled");
+    expect(expectedMedia).toBeTruthy();
+    expect(desktop).toContain(expectedMedia!);
+    expect(mobile).toContain(expectedMedia!);
     expect(mobile).toContain("data-mobile-search-preview");
   });
 
