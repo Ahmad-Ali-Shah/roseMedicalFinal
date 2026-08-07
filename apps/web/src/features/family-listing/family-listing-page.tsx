@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { Container, Section } from "@/components/layout";
+import { getPublicCatalogueProducts } from "@/features/catalogue-live";
 import { createFamilyListingData } from "./family-listing.data";
 import { FamilyHero } from "./family-hero";
 import { FamilyProductDiscovery } from "./family-product-discovery";
@@ -8,14 +9,15 @@ import type { PublicLocale } from "@/features/localization/locales";
 import { FAMILY_NAMES_AR } from "@/features/localization/public-copy";
 import { LocaleLink } from "@/features/localization/locale-link";
 
-export function FamilyListingPage({
+export async function FamilyListingPage({
   familySlug,
   locale = "en"
 }: {
   familySlug: string;
   locale?: PublicLocale;
-}): ReactElement | null {
-  const data = createFamilyListingData(familySlug);
+}): Promise<ReactElement | null> {
+  const products = await getPublicCatalogueProducts();
+  const data = createFamilyListingData(familySlug, products);
   if (!data) return null;
   const ar = locale === "ar";
   const family = ar ? {
