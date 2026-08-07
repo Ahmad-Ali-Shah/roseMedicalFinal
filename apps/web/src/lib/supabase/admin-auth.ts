@@ -1,13 +1,6 @@
 import "server-only";
+import { isAdminProfile } from "./admin-security";
 import { createClient } from "./server";
-
-export interface AdminProfileLike {
-  role?: string | null;
-}
-
-export function isAdminProfile(profile: AdminProfileLike | null | undefined): boolean {
-  return profile?.role === "admin";
-}
 
 export async function requireAdminUser(): Promise<{ userId: string }> {
   const supabase = await createClient();
