@@ -28,7 +28,7 @@ describe("owner catalogue downloads and complete product media", () => {
   });
 
   it("resolves real registry media into every representative product card", () => {
-    const featured = selectFeaturedProducts();
+    const featured = selectFeaturedProducts(CATALOGUE_PRODUCTS);
 
     expect(featured).toHaveLength(3);
     for (const product of featured) {
