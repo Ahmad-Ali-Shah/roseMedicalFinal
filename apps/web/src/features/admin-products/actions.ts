@@ -1,63 +1,136 @@
 "use server";
 
-import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
+import { requireAdminUser } from "@/lib/supabase/admin-auth";
+import { createAdminClient } from "@/lib/supabase/admin";
+import {
+  replacePrimaryProductImage,
+  type ProductMediaStorage,
+  type ProductMediaWriteRepository
+} from "./product-media-write";
 
-export async function updateProductCategory(formData: FormData) {
-  const slug = formData.get("slug") as string;
-  const categoryId = formData.get("category_id") as string;
-
-  if (!slug || !categoryId) return;
-
-  const admin = createAdminClient();
-
-  await admin
-    .from("products")
-    .update({ category_id: categoryId })
-    .eq("slug", slug);
-
-  revalidatePath("/admin/products");
-  revalidatePath("/admin/families");
+function formString(formData: FormData, key: string): string {
+  const value = formData.get(key);
+  return typeof value === "string" ? value.trim() : "";
 }
 
 export async function uploadProductMedia(formData: FormData) {
-  const productId = formData.get("product_id") as string;
-  const slug = formData.get("slug") as string;
-  const file = formData.get("file") as File;
+  const productId = formString(formData, "product_id");
+  const familySlug = formString(formData, "family_slug");
+  const productSlug = formString(formData, "product_slug");
+  const fileValue = formData.get("file");
 
-  if (!productId || !slug || !file || file.size === 0) return;
-
-  const admin = createAdminClient();
-  const ext = file.name.split(".").pop() || "jpg";
-  const path = `${slug}/${Date.now()}.${ext}`;
-
-  const { error: uploadError } = await admin.storage
-    .from("product-media")
-    .upload(path, file, { upsert: true, contentType: file.type });
-
-  if (uploadError) return;
-
-  const { data: publicUrlData } = admin.storage
-    .from("product-media")
-    .getPublicUrl(path);
-
-  const { data: existing } = await admin
-    .from("product_images")
-    .select("id")
-    .eq("product_id", productId)
-    .eq("sort_order", 0)
-    .maybeSingle();
-
-  if (existing) {
-    await admin
-      .from("product_images")
-      .update({ image_path: publicUrlData.publicUrl })
-      .eq("id", existing.id);
-  } else {
-    await admin
-      .from("product_images")
-      .insert({ product_id: productId, image_path: publicUrlData.publicUrl, sort_order: 0 });
+  if (!(fileValue instanceof File)) {
+    throw new Error("Choose a valid product image.");
   }
 
+  await requireAdminUser();
+  const admin = createAdminClient();
+
+  const repository: ProductMediaWriteRepository = {
+    async findProductIdentity(id) {
+      const { data: product, error: productError } = await admin
+        .from("products")
+        .select("id,slug,is_active,category_id")
+        .eq("id", id)
+        .maybeSingle();
+
+      if (productError) {
+        throw new Error(`Product identity lookup failed: ${productError.message}`);
+      }
+      if (!product || !product.category_id) return null;
+
+      const { data: category, error: categoryError } = await admin
+        .from("categories")
+        .select("slug")
+        .eq("id", product.category_id)
+        .maybeSingle();
+
+      if (categoryError) {
+        throw new Error(`Product family lookup failed: ${categoryError.message}`);
+      }
+      if (!category) return null;
+
+      return {
+        id: product.id,
+        dbSlug: product.slug,
+        familySlug: category.slug,
+        isActive: product.is_active
+      };
+    },
+
+    async findPrimaryImages(id) {
+      const { data, error } = await admin
+        .from("product_images")
+        .select("id,image_path")
+        .eq("product_id", id)
+        .eq("sort_order", 0);
+
+      if (error) {
+        throw new Error(`Primary image lookup failed: ${error.message}`);
+      }
+
+      return (data ?? []).map((row) => ({
+        id: row.id,
+        imagePath: row.image_path
+      }));
+    },
+
+    async updatePrimaryImage({ imageId, productId: id, imagePath }) {
+      const { data, error } = await admin
+        .from("product_images")
+        .update({ image_path: imagePath })
+        .eq("id", imageId)
+        .eq("product_id", id)
+        .eq("sort_order", 0)
+        .select("id");
+
+      if (error) {
+        throw new Error(`Primary image update failed: ${error.message}`);
+      }
+      if (!data || data.length !== 1) {
+        throw new Error("Primary image update did not affect exactly one row.");
+      }
+    }
+  };
+
+  const storage: ProductMediaStorage = {
+    async upload({ path, file, contentType }) {
+      const bucket = admin.storage.from("product-media");
+      const { error } = await bucket.upload(path, file, {
+        upsert: false,
+        contentType,
+        cacheControl: "3600"
+      });
+      if (error) {
+        throw new Error(`Product image upload failed: ${error.message}`);
+      }
+
+      const { data } = bucket.getPublicUrl(path);
+      if (!data.publicUrl) {
+        throw new Error("Product image upload did not produce a public URL.");
+      }
+      return { publicUrl: data.publicUrl };
+    },
+
+    async remove(path) {
+      const { error } = await admin.storage.from("product-media").remove([path]);
+      if (error) {
+        throw new Error(`Product image cleanup failed: ${error.message}`);
+      }
+    }
+  };
+
+  await replacePrimaryProductImage(
+    { productId, familySlug, productSlug, file: fileValue },
+    { repository, storage }
+  );
+
+  revalidatePath("/");
+  revalidatePath("/products");
+  revalidatePath("/search");
+  revalidatePath(`/products/${familySlug}`);
+  revalidatePath(`/products/${familySlug}/${productSlug}`);
   revalidatePath("/admin/products");
+  revalidatePath(`/admin/products/${familySlug}/${productSlug}`);
 }
