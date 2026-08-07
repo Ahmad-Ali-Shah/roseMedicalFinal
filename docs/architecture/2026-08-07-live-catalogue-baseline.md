@@ -173,3 +173,36 @@ public consumers migrated one bounded slice at a time
 ```
 
 Static catalogue data remains a temporary verification/fallback source until the full 113-product acceptance gate passes. It is not permission to overwrite live records blindly.
+
+## Search/read foundation verification — 2026-08-07
+
+The first live-read cutover checkpoint was verified on the isolated `integration/canonical-catalogue-source-of-truth` branch before any production mutation.
+
+Verification evidence:
+
+- 8 focused catalogue/search/inquiry test files passed: **40/40 tests**.
+- A guarded integration test queried the live production Supabase project with browser-safe public read credentials only and hydrated all **113** approved products through the same application mapper used by the Search repository.
+- Live family counts passed exactly: Knives 22, Scissors 42, Punches 15, Chisels 20, Cutters 14.
+- Every hydrated product had its required primary media relationship.
+- Both products with code `18-0644` remained separate.
+- Missing structured display metadata such as SC-01T `Fine point` and catalogue page `10` survived through the explicitly temporary validated metadata bridge.
+- Web TypeScript check passed.
+- Focused ESLint over every changed migration file passed.
+- Production web build passed.
+- A full-project lint attempt remains independently blocked by a pre-existing unchanged `require()` import lint error in `src/test/admin-publishing.test.tsx`; this migration intentionally did not alter that unrelated Publishing Centre area, which is outside the newly approved admin scope.
+- The temporary verification pull request was closed without merge after evidence was collected.
+- The temporary verification workflow was deleted after the successful checkpoint so it cannot continue consuming GitHub Actions runs.
+
+Fresh read-only production fingerprints after verification still matched the initial baseline exactly:
+
+| Dataset | Rows | Post-verification fingerprint |
+| --- | ---: | --- |
+| `categories` | 5 | `653cd90456d3c31ac61455979f4e7442` |
+| `products` | 113 | `e06862f03551d86942dc87bf86bd5929` |
+| `product_variants` | 322 | `e79d48cccd26c4a9d10f9fdc903a5e2c` |
+| `product_images` | 113 | `393262a999597ea7d0963e5365a98da0` |
+| `site_settings` | 5 | `b0d5389b83e30c869990f1e6aec1bb2f` |
+
+The derived public-route fingerprint also remained `0acd7d0c9941198cc818382a49027b92` across 113/113 distinct routes.
+
+**No production DDL, DML, RLS, function, trigger, index, bucket, or Storage-object mutation was performed by this implementation slice.**
