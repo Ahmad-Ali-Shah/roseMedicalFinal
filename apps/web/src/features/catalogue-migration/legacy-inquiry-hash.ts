@@ -1,6 +1,7 @@
 import { CATALOGUE_PRODUCTS } from "@/features/catalogue-registry";
 import {
   createLegacyQuotationHash,
+  createQuotationHash,
   type QuotationPayload
 } from "@/features/inquiry/quotation-payload";
 
@@ -27,4 +28,12 @@ export function createLegacyStaticQuotationHash(
     ...payload,
     items: items as QuotationPayload["items"]
   });
+}
+
+export function createQuotationHashCandidates(
+  payload: QuotationPayload
+): readonly string[] {
+  const current = createQuotationHash(payload);
+  const legacy = createLegacyStaticQuotationHash(payload);
+  return [...new Set(legacy ? [current, legacy] : [current])];
 }
