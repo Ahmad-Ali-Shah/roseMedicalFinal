@@ -1,4 +1,4 @@
-import { selectFamilyCards, selectFeaturedProducts } from "@/features/public-catalogue";
+import { selectFamilyCards } from "@/features/public-catalogue";
 
 export const FAMILY_NAMES_AR = {
   knives: "المشارط والسكاكين الجراحية",
@@ -42,7 +42,6 @@ export const HOME_PAGE_MODEL_AR = {
     title: "نماذج من المنتجات.",
     copy: "معاينة موجزة؛ تظهر الأبعاد والخيارات الكاملة في صفحة كل منتج."
   },
-  products: selectFeaturedProducts().map((product) => ({ ...product, familyName: FAMILY_NAMES_AR[product.familySlug] })),
   catalogue: {
     eyebrow: "الكتالوجات",
     title: "كتالوجات تقنية لاستعراض منظم.",
