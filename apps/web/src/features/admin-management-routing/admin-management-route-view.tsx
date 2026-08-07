@@ -9,13 +9,16 @@ import {
   AdminFamilyEditorPage,
   getAdminFamilyEditor
 } from "@/features/admin-families";
+import {
+  getLiveCatalogueProducts,
+  getProductByPublicRoute
+} from "@/features/catalogue-live";
 import { AdminMediaPage } from "@/features/admin-media";
 import {
   AdminProductEditorPage,
   AdminProductsListPage,
   getAdminProductEditor
 } from "@/features/admin-products";
-import { createClient } from "@/lib/supabase/server";
 import type { AdminManagementRouteResult } from "./admin-management-route-model";
 
 export async function AdminManagementRouteView({
@@ -27,45 +30,17 @@ export async function AdminManagementRouteView({
     case "products":
       return <AdminProductsListPage />;
     case "product": {
-      const model = getAdminProductEditor(result.family.slug, result.product.slug);
-      if (!model) notFound();
-
-      const dbSlug = `${result.family.slug}-${result.product.slug}`;
-      const supabase = await createClient();
-      const [categoriesRes, productRes] = await Promise.all([
-        supabase
-          .from("categories")
-          .select("id, name_en, slug")
-          .is("deleted_at", null)
-          .order("sort_order", { ascending: true }),
-        supabase
-          .from("products")
-          .select("id, category_id")
-          .eq("slug", dbSlug)
-          .maybeSingle()
-      ]);
-      const productId = productRes.data?.id ?? null;
-      let imageUrl: string | null = null;
-      if (productId) {
-        const { data: imageRow } = await supabase
-          .from("product_images")
-          .select("image_path")
-          .eq("product_id", productId)
-          .eq("sort_order", 0)
-          .maybeSingle();
-        imageUrl = imageRow?.image_path ?? null;
-      }
-
-      return (
-        <AdminProductEditorPage
-          model={model}
-          dbSlug={dbSlug}
-          productId={productId}
-          imageUrl={imageUrl}
-          categories={categoriesRes.data ?? []}
-          currentCategoryId={productRes.data?.category_id ?? null}
-        />
+      const products = await getLiveCatalogueProducts();
+      const product = getProductByPublicRoute(
+        products,
+        result.familySlug,
+        result.productSlug
       );
+      if (!product) notFound();
+
+      const model = getAdminProductEditor(product);
+      if (!model) notFound();
+      return <AdminProductEditorPage model={model} />;
     }
     case "families":
       return <AdminFamiliesPage />;
