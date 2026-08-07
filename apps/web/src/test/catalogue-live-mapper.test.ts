@@ -10,6 +10,10 @@ const manifest: readonly CatalogueMetadataManifestEntry[] = [
     dbSlug: "cutters-liston",
     expectedCode: "36-5101",
     expectedName: "Liston",
+    expectedCatalogueCodes: [
+      { code: "36-5101", size: "14.0 cm" },
+      { code: "36-5102", size: "17.0 cm" }
+    ],
     metadata: {
       sizes: ["14.0 cm", "17.0 cm"],
       variants: [],
@@ -25,6 +29,7 @@ const manifest: readonly CatalogueMetadataManifestEntry[] = [
     dbSlug: "cutters-sc-01t",
     expectedCode: "SC-01T",
     expectedName: "SC-01T",
+    expectedCatalogueCodes: null,
     metadata: {
       sizes: ["12.5 cm"],
       variants: ["Fine point"],
@@ -151,6 +156,13 @@ describe("live catalogue mapper", () => {
     expect(() => mapLiveCatalogue(changed, manifest)).toThrow(/identity mismatch/i);
   });
 
+  it("fails closed when exact live code options drift from the approved source", () => {
+    const changed = snapshot();
+    changed.variants[0]!.size = "99.0 cm";
+
+    expect(() => mapLiveCatalogue(changed, manifest)).toThrow(/code option mismatch/i);
+  });
+
   it("fails closed when the live and manifest product sets differ", () => {
     const changed = snapshot();
     changed.products = changed.products.slice(0, 1);
@@ -167,6 +179,7 @@ describe("live catalogue mapper", () => {
         dbSlug: "knives-round-straight",
         expectedCode: "18-0644",
         expectedName: "Round Scalpel Handle",
+        expectedCatalogueCodes: null,
         metadata: { ...manifest[0]!.metadata, mediaLabel: "Round Scalpel Handle" }
       },
       {
@@ -176,6 +189,7 @@ describe("live catalogue mapper", () => {
         dbSlug: "knives-scalpel-handle-no-3",
         expectedCode: "18-0644",
         expectedName: "Scalpel Handle No. 3",
+        expectedCatalogueCodes: null,
         metadata: { ...manifest[1]!.metadata, mediaLabel: "Scalpel Handle No. 3" }
       }
     ];
