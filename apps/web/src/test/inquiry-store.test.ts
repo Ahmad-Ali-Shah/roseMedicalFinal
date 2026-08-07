@@ -62,6 +62,31 @@ describe("inquiry store", () => {
     expect(result[0]?.quantity).toBe(3);
   });
 
+  it("merges the same public product across static and live internal IDs", () => {
+    addInquiryItem(item);
+    const result = addInquiryItem({ ...item, id: "live-db-uuid", quantity: 2 });
+
+    expect(result).toHaveLength(1);
+    expect(result[0]).toMatchObject({
+      id: item.id,
+      familySlug: "knives",
+      slug: "scalpel-handle-no-3",
+      quantity: 3
+    });
+  });
+
+  it("keeps different public routes separate even when the catalogue code matches", () => {
+    addInquiryItem(item);
+    const result = addInquiryItem({
+      ...item,
+      id: "other-db-uuid",
+      slug: "round-straight",
+      code: item.code
+    });
+
+    expect(result).toHaveLength(2);
+  });
+
   it("keeps one navigation line and adopts a newer non-empty line note", () => {
     addInquiryItem(item);
     const result = addInquiryItem({ ...item, quantity: 2, notes: "Sterile packing" });
