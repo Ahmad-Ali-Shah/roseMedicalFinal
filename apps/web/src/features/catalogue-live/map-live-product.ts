@@ -9,6 +9,8 @@ import type {
   LiveVariantRow
 } from "./catalogue-live.types";
 
+type CatalogueCodeOption = { code: string; size: string };
+
 function isFamilySlug(value: string): value is FamilySlug {
   return (FAMILY_SLUGS as readonly string[]).includes(value);
 }
@@ -65,10 +67,10 @@ function primaryImageFor(
   return primary?.image_path.trim() || undefined;
 }
 
-function catalogueCodesFor(
+function liveCatalogueCodesFor(
   productId: string,
   variants: readonly LiveVariantRow[]
-): readonly { code: string; size: string }[] {
+): readonly CatalogueCodeOption[] {
   return variants
     .filter((variant) => variant.product_id === productId)
     .slice()
@@ -78,6 +80,41 @@ function catalogueCodesFor(
       const size = variant.size?.trim();
       return code && size ? [{ code, size }] : [];
     });
+}
+
+function normalizedCodeOptions(
+  options: readonly CatalogueCodeOption[]
+): readonly string[] {
+  return options
+    .map(({ code, size }) => `${code}\u0000${size}`)
+    .slice()
+    .sort();
+}
+
+function codeOptionsMatch(
+  live: readonly CatalogueCodeOption[],
+  expected: readonly CatalogueCodeOption[]
+): boolean {
+  const left = normalizedCodeOptions(live);
+  const right = normalizedCodeOptions(expected);
+  return left.length === right.length && left.every((value, index) => value === right[index]);
+}
+
+function catalogueCodesFor(
+  product: LiveProductRow,
+  variants: readonly LiveVariantRow[],
+  manifest: CatalogueMetadataManifestEntry
+): readonly CatalogueCodeOption[] {
+  const live = liveCatalogueCodesFor(product.id, variants);
+  const expected = manifest.expectedCatalogueCodes;
+
+  if (expected && !codeOptionsMatch(live, expected)) {
+    throw new Error(
+      `[catalogue-migration] code option mismatch for ${manifest.dbSlug}`
+    );
+  }
+
+  return expected ?? live;
 }
 
 export function mapLiveCatalogue(
@@ -122,7 +159,7 @@ export function mapLiveCatalogue(
 
     const description = product.description_en?.trim();
     const mediaPath = primaryImageFor(product.id, snapshot.images);
-    const catalogueCodes = catalogueCodesFor(product.id, snapshot.variants);
+    const catalogueCodes = catalogueCodesFor(product, snapshot.variants, entry);
 
     return {
       id: product.id,
