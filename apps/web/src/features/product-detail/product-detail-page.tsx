@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { Container, Section } from "@/components/layout";
+import { getPublicCatalogueProducts } from "@/features/catalogue-live";
 import type { InquiryItem } from "@/features/inquiry";
 import { Reveal } from "@/features/motion";
 import { ProcurementPanel } from "@/features/public-catalogue";
@@ -14,7 +15,7 @@ import { MobileInquiryBar } from "./mobile-inquiry-bar";
 import type { PublicLocale } from "@/features/localization/locales";
 import { FAMILY_NAMES_AR } from "@/features/localization/public-copy";
 
-export function ProductDetailPage({
+export async function ProductDetailPage({
   familySlug,
   productSlug,
   locale = "en"
@@ -22,8 +23,9 @@ export function ProductDetailPage({
   familySlug: string;
   productSlug: string;
   locale?: PublicLocale;
-}): ReactElement | null {
-  const data = createProductDetailData(familySlug, productSlug);
+}): Promise<ReactElement | null> {
+  const products = await getPublicCatalogueProducts();
+  const data = createProductDetailData(familySlug, productSlug, products);
   if (!data) return null;
   const ar = locale === "ar";
   const family = ar ? { ...data.family, name: FAMILY_NAMES_AR[data.family.slug] } : data.family;
