@@ -1,15 +1,24 @@
-import { getProductDetailModel } from "@/features/catalogue-registry";
+import type { CatalogueProductRecord } from "@/features/catalogue-registry";
+import { CATALOGUE_FAMILIES } from "@/features/catalogue-registry/families";
+import {
+  getProductByPublicRoute,
+  getRelatedProductsFromCatalogue
+} from "@/features/catalogue-live";
 
 export type ProductSpecificationRow = readonly [label: string, value: string];
 
 export function createProductDetailData(
   familySlug: string,
-  productSlug: string
+  productSlug: string,
+  products: readonly CatalogueProductRecord[]
 ) {
-  const result = getProductDetailModel(familySlug, productSlug);
-  if (result.kind !== "product") return null;
+  const family = CATALOGUE_FAMILIES.find(
+    (candidate) => candidate.slug === familySlug
+  );
+  const product = getProductByPublicRoute(products, familySlug, productSlug);
+  if (!family || !product) return null;
 
-  const { family, product, related } = result;
+  const related = getRelatedProductsFromCatalogue(products, product, 3);
   const catalogueReference = `${product.catalogueReference.family}${
     product.catalogueReference.page
       ? ` · Page ${product.catalogueReference.page}`
