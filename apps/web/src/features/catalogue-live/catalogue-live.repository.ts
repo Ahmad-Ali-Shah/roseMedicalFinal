@@ -141,7 +141,7 @@ export async function getLiveCatalogueProducts(): Promise<
   return loadCatalogueProducts(supabaseCatalogueReader);
 }
 
-export async function getSearchCatalogueProducts(): Promise<
+export async function getPublicCatalogueProducts(): Promise<
   readonly CatalogueProductRecord[]
 > {
   try {
@@ -162,4 +162,10 @@ export async function getSearchCatalogueProducts(): Promise<
     );
     return CATALOGUE_PRODUCTS;
   }
+}
+
+export async function getSearchCatalogueProducts(): Promise<
+  readonly CatalogueProductRecord[]
+> {
+  return getPublicCatalogueProducts();
 }
