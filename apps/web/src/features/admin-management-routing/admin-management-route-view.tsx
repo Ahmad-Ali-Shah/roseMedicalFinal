@@ -15,9 +15,10 @@ import {
   AdminProductsListPage,
   getAdminProductEditor
 } from "@/features/admin-products";
+import { createClient } from "@/lib/supabase/server";
 import type { AdminManagementRouteResult } from "./admin-management-route-model";
 
-export function AdminManagementRouteView({
+export async function AdminManagementRouteView({
   result
 }: {
   result: AdminManagementRouteResult;
@@ -28,12 +29,36 @@ export function AdminManagementRouteView({
     case "product": {
       const model = getAdminProductEditor(result.family.slug, result.product.slug);
       if (!model) notFound();
-      return <AdminProductEditorPage model={model} />;
+
+      const dbSlug = `${result.family.slug}-${result.product.slug}`;
+      const supabase = await createClient();
+      const [categoriesRes, productRes] = await Promise.all([
+        supabase
+          .from("categories")
+          .select("id, name_en, slug")
+          .is("deleted_at", null)
+          .order("sort_order", { ascending: true }),
+        supabase
+          .from("products")
+          .select("id, category_id")
+          .eq("slug", dbSlug)
+          .maybeSingle()
+      ]);
+
+      return (
+        <AdminProductEditorPage
+          model={model}
+          dbSlug={dbSlug}
+          productId={productRes.data?.id ?? null}
+          categories={categoriesRes.data ?? []}
+          currentCategoryId={productRes.data?.category_id ?? null}
+        />
+      );
     }
     case "families":
       return <AdminFamiliesPage />;
     case "family": {
-      const model = getAdminFamilyEditor(result.family.slug);
+      const model = await getAdminFamilyEditor(result.family.slug);
       if (!model) notFound();
       return <AdminFamilyEditorPage model={model} />;
     }

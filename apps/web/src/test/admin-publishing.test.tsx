@@ -1,4 +1,4 @@
-import { renderToStaticMarkup } from "react-dom/server";
+import { renderServerComponent } from "@/test/render-server-component";
 import { describe, expect, it } from "vitest";
 import { ADMIN_READINESS_ITEMS } from "@/features/admin-governance-source";
 import {
@@ -31,16 +31,17 @@ describe("F3E-D Publishing Centre", () => {
     );
   });
 
-  it("renders a truthful empty queue without operational metrics", () => {
-    const html = renderToStaticMarkup(<AdminPublishingPage />);
+  it("renders the connected publishing centre with workflow", async () => {
+    const html = await renderServerComponent(<AdminPublishingPage />);
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
-    expect(html).toContain("No publishing queue is connected.");
-    expect(html).toContain("View current public site");
+    expect(html).toContain("Review every public change.");
+    expect(html).toContain("Open live site preview");
+    expect(html).toContain("Publish changes live");
     expect(html).not.toContain("data-preview-only");
-    expect(html).not.toMatch(/Recently published|Open queue|Published \d|Drafts:\s*\d|Needs review:\s*\d/i);
   });
 
   it("keeps eight publishing examples preview-only", () => {
+    const { renderToStaticMarkup } = require("react-dom/server");
     const html = renderToStaticMarkup(<>
       <AdminPublishingPopulatedQueuePreview />
       <AdminPublishingValidationFailuresPreview />

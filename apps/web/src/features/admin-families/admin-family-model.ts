@@ -1,16 +1,16 @@
-import {
-  CATALOGUE_FAMILIES,
-  CATALOGUE_PRODUCTS,
-  getFamilyListingModel,
-  type CatalogueFamilyRecord,
-  type CatalogueProductRecord
-} from "@/features/catalogue-registry";
-import { getCatalogueDocument } from "@/features/catalogues";
-import { familyHref } from "@/features/public-catalogue";
+import { createClient } from "@/lib/supabase/server";
+import { familyHref, type FamilySlug } from "@/features/public-catalogue";
 import {
   adminCatalogueHref,
   adminFamilyHref
 } from "@/features/admin-management-routing/admin-management-hrefs";
+import { getCatalogueDocument } from "@/features/catalogues";
+import { isFamilySlug, toFamilySlug } from "@/lib/family-slug";
+import {
+  CATALOGUE_FAMILIES,
+  CATALOGUE_PRODUCTS,
+  type CatalogueFamilyRecord
+} from "@/features/catalogue-registry";
 
 export interface AdminFamilyRow {
   slug: CatalogueFamilyRecord["slug"];
@@ -21,15 +21,6 @@ export interface AdminFamilyRow {
   productCount: number;
   publicHref: ReturnType<typeof familyHref>;
   adminHref: ReturnType<typeof adminFamilyHref>;
-}
-
-export interface AdminFamilyEditorModel {
-  family: CatalogueFamilyRecord;
-  products: readonly CatalogueProductRecord[];
-  productCount: number;
-  publicHref: ReturnType<typeof familyHref>;
-  adminCatalogueHref: ReturnType<typeof adminCatalogueHref>;
-  pdfAvailability: "Public PDF path registered" | "Awaiting publication";
 }
 
 export function getAdminFamilyRows(): readonly AdminFamilyRow[] {
@@ -47,21 +38,85 @@ export function getAdminFamilyRows(): readonly AdminFamilyRow[] {
   }));
 }
 
-export function getAdminFamilyEditor(
-  familySlug: string
-): AdminFamilyEditorModel | undefined {
-  const result = getFamilyListingModel(familySlug);
-  const document = getCatalogueDocument(familySlug);
-  if (result.kind !== "family" || !document) return undefined;
+export interface AdminFamilyEditorProduct {
+  id: string;
+  name: string;
+  code: string;
+  familySlug: FamilySlug;
+  slug: string;
+}
+
+export interface AdminFamilyEditorModel {
+  slug: FamilySlug;
+  name: string;
+  introduction: string;
+  catalogueLabel: string;
+  imagePath: string | null;
+  products: readonly AdminFamilyEditorProduct[];
+  productCount: number;
+  publicHref: ReturnType<typeof familyHref>;
+  adminCatalogueHref: ReturnType<typeof adminCatalogueHref>;
+  pdfAvailability: "Public PDF path registered" | "Awaiting publication";
+}
+
+export async function getAdminFamilyEditor(
+  familySlugParam: string
+): Promise<AdminFamilyEditorModel | undefined> {
+  if (!isFamilySlug(familySlugParam)) return undefined;
+  const slug = toFamilySlug(familySlugParam);
+
+  const supabase = await createClient();
+  const { data: category } = await supabase
+    .from("categories")
+    .select("*")
+    .eq("slug", slug)
+    .is("deleted_at", null)
+    .maybeSingle();
+
+  const fallbackFamily = CATALOGUE_FAMILIES.find((f) => f.slug === slug);
+  if (!category && !fallbackFamily) return undefined;
+
+  const categoryName = category?.name_en || fallbackFamily?.name || slug;
+  const categoryImage = category?.image_path || null;
+
+  let products: AdminFamilyEditorProduct[] = [];
+
+  if (category?.id) {
+    const { data: productRows } = await supabase
+      .from("products")
+      .select("id, name_en, item_code, slug")
+      .eq("category_id", category.id)
+      .order("name_en", { ascending: true });
+
+    products = (productRows || []).map((p) => ({
+      id: p.id,
+      name: p.name_en,
+      code: p.item_code || "",
+      familySlug: slug,
+      slug: p.slug
+    }));
+  } else {
+    products = CATALOGUE_PRODUCTS.filter((p) => p.familySlug === slug).map((p) => ({
+      id: p.id,
+      name: p.name,
+      code: p.code,
+      familySlug: slug,
+      slug: p.slug
+    }));
+  }
+
+  const document = getCatalogueDocument(slug);
 
   return {
-    family: result.family,
-    products: result.products,
-    productCount: result.products.length,
-    publicHref: familyHref(result.family.slug),
-    adminCatalogueHref: adminCatalogueHref(result.family.slug),
-    pdfAvailability: document.pdfPath
-      ? "Public PDF path registered"
-      : "Awaiting publication"
+    slug,
+    name: categoryName,
+    introduction: fallbackFamily?.introduction || "Live category managed from Supabase.",
+    catalogueLabel: `${categoryName} catalogue`,
+    imagePath: categoryImage,
+    products,
+    productCount: products.length,
+    publicHref: familyHref(slug),
+    adminCatalogueHref: adminCatalogueHref(slug),
+    pdfAvailability: document?.pdfPath ? "Public PDF path registered" : "Awaiting publication"
   };
 }

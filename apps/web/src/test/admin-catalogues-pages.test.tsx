@@ -24,14 +24,13 @@ describe("F3E-B catalogue pages", () => {
     expect(html).not.toContain("data-preview-only");
   });
 
-  it("renders a truthful catalogue detail", () => {
+  it("renders a truthful catalogue detail with upload form", () => {
     const model = getAdminCatalogueEditor("knives")!;
     const html = renderToStaticMarkup(<AdminCatalogueDetailPage model={model} />);
     expect(html).toContain(model.document.name);
     expect(html).toContain(model.availability);
-    expect(html).toContain("No upload or replacement operation is active");
-    expect(html).not.toContain("<form");
-    expect((html.match(/disabled/g) ?? []).length).toBeGreaterThanOrEqual(5);
+    expect(html).toContain("Upload / Replace catalogue PDF");
+    expect(html).toContain("<form");
   });
 
   it("keeps upload and replacement states isolated", () => {

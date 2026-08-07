@@ -17,8 +17,11 @@ export const ROSA_LOGO_MEDIA = {
 } as const satisfies PublicMediaModel;
 
 export const ROSA_HEADER_LOGO_MEDIA = {
-  ...ROSA_LOGO_MEDIA,
-  src: "/media/brand/rosa-header-logo.png"
+  src: "/media/brand/rosa-header-logo.png",
+  alt: ROSA_LOGO_MEDIA.alt,
+  altAr: ROSA_LOGO_MEDIA.altAr,
+  focalPoint: ROSA_LOGO_MEDIA.focalPoint,
+  fit: ROSA_LOGO_MEDIA.fit
 } as const satisfies PublicMediaModel;
 
 export const HOME_HERO_MEDIA = {

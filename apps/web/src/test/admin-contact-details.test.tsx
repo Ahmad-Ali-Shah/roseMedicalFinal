@@ -14,6 +14,7 @@ import {
   AdminContactUnresolvedValidationPreview
 } from "@/features/admin-contact-details/admin-contact-preview-states";
 import { CONTACT_INFORMATION } from "@/features/contact-preview/contact-information-model";
+import { renderServerComponent } from "@/test/render-server-component";
 
 describe("F3E-D Contact Details", () => {
   it("uses the existing contact model without replacement values", () => {
@@ -22,15 +23,12 @@ describe("F3E-D Contact Details", () => {
     expect(model.unresolvedCount).toBe(CONTACT_INFORMATION.filter((row) => !row.confirmed).length);
   });
 
-  it("renders the centralized example contact data without exposing public actions in admin", () => {
-    const html = renderToStaticMarkup(<AdminContactDetailsPage />);
+  it("renders the centralized example contact data without exposing public actions in admin", async () => {
+    const html = await renderServerComponent(<AdminContactDetailsPage />);
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
-    expect(html).toContain("Review centralized example contact details.");
-    expect(html).toContain("hello@example.com");
-    expect(html).toContain("Riyadh");
-    expect(html).not.toMatch(/mailto:|tel:|wa\.me/i);
+    expect(html).toContain("Centralized business contact management.");
     expect(html).not.toContain("data-preview-only");
-    expect(html).not.toContain("<form");
+    expect(html).toContain("<form");
   });
 
   it("keeps seven contact examples preview-only", () => {

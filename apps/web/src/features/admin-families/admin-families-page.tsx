@@ -6,6 +6,8 @@ import {
 } from "@/features/admin-primitives";
 import { createClient } from "@/lib/supabase/server";
 import type { Category, Product } from "@/lib/supabase/types";
+import { adminFamilyHref } from "@/features/admin-management-routing/admin-management-hrefs";
+import { toFamilySlug } from "@/lib/family-slug";
 
 interface LiveFamilyRow {
   slug: string;
@@ -33,7 +35,7 @@ export async function AdminFamiliesPage() {
     const count = products.filter((product) => product.category_id === cat.id).length;
     const seq = String(index + 1).padStart(2, "0");
     const publicHref = `/products?category=${cat.slug}` as Route<string>;
-    const adminHref = "/admin/families" as Route<string>;
+    const adminHref = adminFamilyHref(toFamilySlug(cat.slug));
 
     return {
       slug: cat.slug,

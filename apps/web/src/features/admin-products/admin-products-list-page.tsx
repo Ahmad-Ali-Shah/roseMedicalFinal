@@ -97,7 +97,7 @@ export async function AdminProductsListPage() {
   const supabase = await createClient();
   const [productsRes, categoriesRes] = await Promise.all([
     supabase.from("products").select("*").order("created_at", { ascending: false }),
-    supabase.from("categories").select("*").eq("deleted_at", null)
+    supabase.from("categories").select("*").is("deleted_at", null)
   ]);
 
   const products = (productsRes.data || []) as Product[];
@@ -108,7 +108,11 @@ export async function AdminProductsListPage() {
     const category = categories.find((candidate) => candidate.id === product.category_id);
     const familyHref = (category ? `/products?category=${category.slug}` : "/products") as Route<string>;
     const publicHref = `/products?category=${category?.slug || ""}` as Route<string>;
-    const adminHref = "/admin/products" as Route<string>;
+    const registrySlug =
+      category && product.slug.startsWith(`${category.slug}-`)
+        ? product.slug.slice(category.slug.length + 1)
+        : product.slug;
+    const adminHref = (category ? `/admin/products/${category.slug}/${registrySlug}` : "/admin/products") as Route<string>;
 
     return {
       id: product.id,

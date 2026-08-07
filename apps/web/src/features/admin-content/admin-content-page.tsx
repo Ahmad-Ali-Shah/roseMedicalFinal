@@ -37,6 +37,8 @@ const PROTECTED_LAYOUT_ITEMS = [
 
 const safeId = (value: string) => value.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
 
+import { saveSiteContent } from "./actions";
+
 export async function AdminContentPage() {
   const supabase = await createClient();
   const { data: settingsData } = await supabase.from("site_settings").select("*");
@@ -44,6 +46,7 @@ export async function AdminContentPage() {
   
   // Helper to get setting value by key
   const getSetting = (key: string) => settings.find(s => s.key === key)?.value_en || "";
+  const getSettingAr = (key: string) => settings.find(s => s.key === key)?.value_ar || "";
 
   const blocks = getAdminContentBlocks();
   const composition = getAdminHomepageComposition();
@@ -54,7 +57,7 @@ export async function AdminContentPage() {
         eyebrow="Website Content"
         title="Edit approved content, not the design."
         description="This composition reflects live content from the Supabase database."
-        actions={<Button disabled>Save draft</Button>}
+        actions={<ButtonLink href="/" variant="secondary">View live public site</ButtonLink>}
       />
 
       <AdminAlert tone="info" title="Live Database Connection">
@@ -70,7 +73,7 @@ export async function AdminContentPage() {
       <AdminSection
         eyebrow="Source-backed records"
         title="Approved textual blocks"
-        description="English values are live from the database. Arabic values have not been supplied."
+        description="English values are live from the database. Arabic values can be supplied below."
       >
         <div className="admin-content-blocks">
           {blocks.map((block) => (
@@ -86,40 +89,53 @@ export async function AdminContentPage() {
 
               <div className="admin-content-block__fields">
                 {block.fields.map((field) => {
-                  const id = `${safeId(block.blockKey)}-${safeId(field.fieldKey)}`;
-                  
-                  // Try to get live value from Supabase using the fieldKey
-                  const liveValue = getSetting(field.fieldKey) || field.englishValue;
-                  
-                  const common = {
-                    id,
-                    label: `${field.label} — English`,
-                    value: liveValue,
-                    hint: field.characterGuidance
-                  };
+                  const liveValueEn = getSetting(field.fieldKey) || field.englishValue;
+                  const liveValueAr = getSettingAr(field.fieldKey) || getSetting(`${field.fieldKey}_ar`) || "";
+
                   return (
-                    <div className="admin-content-field-pair" key={field.fieldKey}>
+                    <form action={saveSiteContent} className="admin-content-field-pair" key={field.fieldKey} style={{ marginBottom: "1rem" }}>
+                      <input type="hidden" name="key" value={field.fieldKey} />
+                      
                       {field.fieldType === "long-text" ? (
-                        <AdminTextareaPreview {...common} />
+                        <div style={{ width: "100%", marginBottom: "0.5rem" }}>
+                          <label style={{ display: "block", fontSize: "0.875rem", color: "#aaa", marginBottom: "0.25rem" }}>{field.label} — English</label>
+                          <textarea
+                            name="value_en"
+                            defaultValue={liveValueEn}
+                            rows={3}
+                            style={{ width: "100%", padding: "0.5rem", borderRadius: "0.375rem", background: "#111", border: "1px solid #333", color: "white", fontFamily: "inherit" }}
+                          />
+                        </div>
                       ) : (
-                        <AdminFieldPreview {...common} />
+                        <div style={{ width: "100%", marginBottom: "0.5rem" }}>
+                          <label style={{ display: "block", fontSize: "0.875rem", color: "#aaa", marginBottom: "0.25rem" }}>{field.label} — English</label>
+                          <input
+                            type="text"
+                            name="value_en"
+                            defaultValue={liveValueEn}
+                            style={{ width: "100%", padding: "0.5rem", borderRadius: "0.375rem", background: "#111", border: "1px solid #333", color: "white", fontFamily: "inherit" }}
+                          />
+                        </div>
                       )}
-                      <AdminFieldPreview
-                        id={`${id}-ar`}
-                        label={`${field.label} — Arabic`}
-                        value={getSetting(`${field.fieldKey}_ar`) || "Not supplied"}
-                        direction="rtl"
-                      />
-                    </div>
+
+                      <div style={{ width: "100%", marginBottom: "0.5rem" }}>
+                        <label style={{ display: "block", fontSize: "0.875rem", color: "#aaa", marginBottom: "0.25rem" }}>{field.label} — Arabic</label>
+                        <input
+                          type="text"
+                          name="value_ar"
+                          defaultValue={liveValueAr}
+                          placeholder="Arabic translation"
+                          dir="rtl"
+                          style={{ width: "100%", padding: "0.5rem", borderRadius: "0.375rem", background: "#111", border: "1px solid #333", color: "white", fontFamily: "inherit" }}
+                        />
+                      </div>
+
+                      <div className="admin-management-actions" style={{ marginTop: "0.5rem" }}>
+                        <Button size="small" type="submit">Save block content</Button>
+                      </div>
+                    </form>
                   );
                 })}
-              </div>
-
-              <div className="admin-management-actions">
-                <Button size="small" variant="secondary" disabled>Edit</Button>
-                <Button size="small" variant="secondary" disabled>Save draft</Button>
-                <Button size="small" variant="secondary" disabled>Preview changes</Button>
-                <Button size="small" disabled>Submit for review</Button>
               </div>
             </article>
           ))}

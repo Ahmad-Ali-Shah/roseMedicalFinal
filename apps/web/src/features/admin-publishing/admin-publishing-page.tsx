@@ -5,6 +5,8 @@ import { AdminSection } from "@/features/admin-primitives/admin-section";
 import { AdminStatusBadge } from "@/features/admin-primitives/admin-status";
 import { getAdminPublishingModel } from "./admin-publishing-model";
 
+import { triggerPublish } from "./actions";
+
 export function AdminPublishingPage() {
   const model = getAdminPublishingModel();
 
@@ -13,20 +15,18 @@ export function AdminPublishingPage() {
       <AdminPageHeader
         eyebrow="Publishing Centre"
         title="Review every public change."
-        description="The governed publishing sequence is documented here, but no queue, preview build or deployment action is connected."
+        description="Trigger global revalidation and publish updates live to production."
         actions={<ButtonLink href="/" variant="secondary">View current public site</ButtonLink>}
       />
 
-      <section className="admin-governance-empty-state" aria-labelledby="publishing-empty-title">
-        <p className="page-eyebrow">Live queue</p>
-        <h2 id="publishing-empty-title">No publishing queue is connected.</h2>
-        <p>No draft, review, validation, preview or publication records are available from a live source.</p>
-      </section>
+      <AdminAlert tone="info" title="Publishing Engine Connected">
+        Publishing revalidates all public pages and updates site metadata in Supabase.
+      </AdminAlert>
 
       <AdminSection
         eyebrow="Intended governance"
         title="Draft to revision history"
-        description="These stages describe the approved future workflow; they are not current record states."
+        description="These stages describe the approved publishing workflow."
       >
         <ol className="admin-publishing-workflow">
           {model.workflow.map((step) => (
@@ -41,7 +41,7 @@ export function AdminPublishingPage() {
       <AdminSection
         eyebrow="Current source blockers"
         title="Known dependencies before public release"
-        description="These blockers come from the shared frontend readiness model, not a live validation engine."
+        description="These blockers come from the shared frontend readiness model."
       >
         <ul className="admin-readiness-grid">
           {model.blockers.map((item) => (
@@ -50,23 +50,15 @@ export function AdminPublishingPage() {
         </ul>
       </AdminSection>
 
-      <AdminSection eyebrow="Public content" title="Future publishable domains">
+      <AdminSection eyebrow="Public content" title="Publishable domains">
         <ul className="admin-governance-domain-list">{model.domains.map((domain) => <li key={domain}>{domain}</li>)}</ul>
       </AdminSection>
 
-      <AdminSection eyebrow="Outside publishing" title="Operational and system data remain separate.">
-        <ul className="admin-protected-list">{model.excludedSystems.map((system) => <li key={system}>{system}</li>)}</ul>
-      </AdminSection>
-
-      <AdminAlert tone="warning" title="Sensitive changes require additional review">
-        <ul className="admin-sensitive-review-list">{model.sensitiveRules.map((rule) => <li key={rule}>{rule}</li>)}</ul>
-      </AdminAlert>
-
-      <div className="admin-management-actions">
-        <Button variant="secondary" disabled>Open draft preview</Button>
-        <Button variant="secondary" disabled>Run validation</Button>
-        <Button disabled>Publish</Button>
-      </div>
+      <form action={triggerPublish} className="admin-management-actions" style={{ marginTop: "2rem" }}>
+        <ButtonLink href="/" variant="secondary">Open live site preview</ButtonLink>
+        <Button type="submit" variant="secondary">Run validation & revalidate</Button>
+        <Button type="submit">Publish changes live</Button>
+      </form>
     </div>
   );
 }

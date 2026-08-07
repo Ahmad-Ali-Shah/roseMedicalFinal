@@ -8,6 +8,8 @@ import {
 } from "@/features/admin-primitives";
 import type { AdminCatalogueEditorModel } from "./admin-catalogue-model";
 
+import { uploadCataloguePdf } from "./actions";
+
 export function AdminCatalogueDetailPage({
   model
 }: {
@@ -21,7 +23,7 @@ export function AdminCatalogueDetailPage({
       <AdminPageHeader
         eyebrow="Catalogue source record"
         title={document.name}
-        description="Read-only technical document metadata derived from the current catalogue registry."
+        description="Technical document metadata and PDF asset management."
         actions={
           <>
             <AdminStatusBadge tone={hasPdf ? "neutral" : "warning"}>{model.availability}</AdminStatusBadge>
@@ -31,8 +33,8 @@ export function AdminCatalogueDetailPage({
         }
       />
 
-      <AdminAlert tone="warning" title="Static file-management composition">
-        No upload or replacement operation is active in this static composition.
+      <AdminAlert tone={hasPdf ? "info" : "warning"} title={hasPdf ? "Live Catalogue Asset Connected" : "Catalogue PDF Upload Required"}>
+        {hasPdf ? "Public PDF is available and downloadable." : "Upload a PDF file to link it with this catalogue."}
       </AdminAlert>
 
       <AdminSection title="Document metadata">
@@ -53,19 +55,18 @@ export function AdminCatalogueDetailPage({
         </div>
       </AdminSection>
 
-      <AdminSection title="PDF availability">
+      <AdminSection title="PDF availability & Upload">
         <div className="admin-file-management-panel">
           <AdminStatusBadge tone={hasPdf ? "neutral" : "warning"}>{model.availability}</AdminStatusBadge>
           <p>{hasPdf ? "A public PDF path is registered." : "No public PDF path is registered."}</p>
-          <p>No upload or replacement operation is active in this static composition.</p>
-          <p>Future safe replacement must retain the last verified public file until a replacement succeeds.</p>
-          <div className="admin-management-actions">
-            <Button disabled>Upload catalogue</Button>
-            <Button variant="secondary" disabled>Replace catalogue</Button>
-            <Button variant="quiet" disabled>Remove catalogue</Button>
-            <Button variant="secondary" disabled>Publish catalogue</Button>
-            <Button variant="secondary" disabled>Begin safe replacement</Button>
-          </div>
+
+          <form action={uploadCataloguePdf} style={{ marginTop: "1rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
+            <input type="hidden" name="slug" value={family.slug} />
+            <input type="file" name="file" accept="application/pdf" required style={{ color: "white" }} />
+            <div className="admin-management-actions">
+              <Button type="submit">Upload / Replace catalogue PDF</Button>
+            </div>
+          </form>
         </div>
       </AdminSection>
     </div>

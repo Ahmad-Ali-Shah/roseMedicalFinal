@@ -13,11 +13,26 @@ import { ProductMediaPlaceholder } from "@/features/public-catalogue";
 import type { AdminProductEditorModel } from "./admin-product-model";
 import { AdminProductCompleteness } from "./admin-product-completeness";
 import { AdminProductOptions } from "./admin-product-options";
+import { updateProductCategory, uploadProductMedia } from "./actions";
+
+interface AdminCategoryOption {
+  id: string;
+  name_en: string;
+  slug: string;
+}
 
 export function AdminProductEditorPage({
-  model
+  model,
+  dbSlug,
+  productId,
+  categories,
+  currentCategoryId
 }: {
   model: AdminProductEditorModel;
+  dbSlug?: string;
+  productId?: string | null;
+  categories?: AdminCategoryOption[];
+  currentCategoryId?: string | null;
 }) {
   const { family, product } = model;
 
@@ -39,6 +54,40 @@ export function AdminProductEditorPage({
       <AdminAlert tone="warning" title="Static source registry">
         This editor does not save, review, publish, archive, delete or upload content.
       </AdminAlert>
+
+      {dbSlug && categories && categories.length > 0 && (
+        <AdminFormSection
+          title="Category assignment"
+          description="This writes directly to the live Supabase products table via the admin/service-role client."
+        >
+          <form action={updateProductCategory} className="admin-editor-grid">
+            <input type="hidden" name="slug" value={dbSlug} />
+            <div>
+              <label htmlFor={`admin-product-${product.id}-category`} className="admin-field-label">
+                Live category
+              </label>
+              <select
+                id={`admin-product-${product.id}-category`}
+                name="category_id"
+                defaultValue={currentCategoryId ?? ""}
+                className="admin-select"
+              >
+                <option value="" disabled>
+                  Select a category
+                </option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name_en}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="admin-card-actions">
+              <Button type="submit">Save category</Button>
+            </div>
+          </form>
+        </AdminFormSection>
+      )}
 
       <AdminFormSection
         title="Identity"
@@ -100,11 +149,24 @@ export function AdminProductEditorPage({
           <div>
             <p className="page-eyebrow">Source media label</p>
             <h3>{product.mediaLabel}</h3>
-            <p>No managed media file is registered.</p>
-            <div className="admin-management-actions">
-              <Button disabled>Upload media</Button>
-              <Button variant="secondary" disabled>Replace media</Button>
-            </div>
+            {productId && dbSlug ? (
+              <form action={uploadProductMedia} className="admin-media-upload-form">
+                <input type="hidden" name="product_id" value={productId} />
+                <input type="hidden" name="slug" value={dbSlug} />
+                <input type="file" name="file" accept="image/*" required />
+                <div className="admin-management-actions">
+                  <Button type="submit">Upload media</Button>
+                </div>
+              </form>
+            ) : (
+              <>
+                <p>No managed media file is registered.</p>
+                <div className="admin-management-actions">
+                  <Button disabled>Upload media</Button>
+                  <Button variant="secondary" disabled>Replace media</Button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </AdminSection>

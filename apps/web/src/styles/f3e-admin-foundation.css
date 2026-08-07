@@ -752,3 +752,53 @@
     transition: none !important;
   }
 }
+
+.admin-field-label {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.admin-select {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  padding: 0.75rem 0.85rem;
+  appearance: none;
+}
+.admin-select:focus-visible {
+  outline: 2px solid var(--color-rosa-red);
+  outline-offset: 1px;
+}
+.admin-editor-grid {
+  display: grid;
+  gap: var(--space-5);
+  max-width: 28rem;
+}
+.admin-media-upload-form {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+.admin-media-upload-form input[type="file"] {
+  width: 100%;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-mist);
+  color: var(--color-ink);
+  padding: 0.75rem 0.85rem;
+  font-size: 0.85rem;
+}
+.admin-media-upload-form input[type="file"]::file-selector-button {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  padding: 0.4rem 0.75rem;
+  margin-right: var(--space-3);
+  font: inherit;
+  cursor: pointer;
+}

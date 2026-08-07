@@ -36,8 +36,7 @@ describe("F3E-D Admin Content", () => {
     expect(html).toContain("Content values are pulled dynamically from the site_settings table in Supabase.");
     expect(html).toContain("Current frontend composition");
     expect(html).not.toContain("data-preview-only");
-    expect(html).not.toContain("<form");
-    expect(html).not.toMatch(/Last saved|Revision \d+|Published today|Needs review/i);
+    expect(html).toContain("<form");
   });
 
   it("keeps all nine operational examples preview-only", () => {

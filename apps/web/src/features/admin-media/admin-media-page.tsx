@@ -9,16 +9,36 @@ import {
   AdminToolbar
 } from "@/features/admin-primitives";
 import { createClient } from "@/lib/supabase/server";
-import type { Product, Category } from "@/lib/supabase/types";
+import type { Category } from "@/lib/supabase/types";
+import {
+  adminProductHref,
+  adminCatalogueHref,
+  adminFamilyHref
+} from "@/features/admin-management-routing/admin-management-hrefs";
+import { toFamilySlug } from "@/lib/family-slug";
+
+import { uploadMediaAsset } from "./actions";
+
+interface MediaProductRow {
+  id: string;
+  name_en: string;
+  slug: string;
+  categories: { slug: string } | null;
+}
+
+const adminProductsHrefFallback = "/admin/products" as const;
 
 export async function AdminMediaPage() {
   const supabase = await createClient();
   const [prodRes, catRes] = await Promise.all([
-    supabase.from("products").select("id, name_en, slug").order("name_en", { ascending: true }),
+    supabase
+      .from("products")
+      .select("id, name_en, slug, categories(slug)")
+      .order("name_en", { ascending: true }),
     supabase.from("categories").select("id, name_en, slug").is("deleted_at", null).order("sort_order", { ascending: true })
   ]);
 
-  const products = (prodRes.data || []) as Product[];
+  const products = (prodRes.data || []) as unknown as MediaProductRow[];
   const categories = (catRes.data || []) as Category[];
 
   return (
@@ -26,13 +46,19 @@ export async function AdminMediaPage() {
       <AdminPageHeader
         eyebrow="Media library"
         title="Purpose-led media requirements."
-        description="The workspace records where managed assets will be needed without fabricating files or upload history."
-        actions={<Button disabled>Upload media</Button>}
+        description="Upload and manage brand, catalogue, product and family media assets."
       />
 
       <AdminAlert tone="info" title="Live Database Connection">
         Media requirements are dynamically generated from the {products.length} live products and {categories.length} live categories in Supabase.
       </AdminAlert>
+
+      <AdminSection title="Upload Media Asset" description="Upload images or documents to Supabase Storage.">
+        <form action={uploadMediaAsset} style={{ display: "flex", gap: "1rem", alignItems: "center", padding: "1rem", background: "#111", borderRadius: "0.5rem", border: "1px solid #333" }}>
+          <input type="file" name="file" required style={{ color: "white" }} />
+          <Button type="submit">Upload asset to Supabase Storage</Button>
+        </form>
+      </AdminSection>
 
       <AdminToolbar label="Media collection controls">
         <AdminSearchPreview label="Search media" placeholder="Requirement or usage location" />
@@ -51,7 +77,13 @@ export async function AdminMediaPage() {
               <h3>{item.name_en} product media requirement</h3>
               <p>{item.name_en} placeholder</p>
               <AdminStatusBadge tone="warning">Awaiting managed asset</AdminStatusBadge>
-              <ButtonLink href="/admin/products" variant="quiet" size="small">Open related record</ButtonLink>
+              <ButtonLink
+                href={item.categories ? adminProductHref({ familySlug: toFamilySlug(item.categories.slug), slug: item.slug }) : adminProductsHrefFallback}
+                variant="quiet"
+                size="small"
+              >
+                Open related record
+              </ButtonLink>
             </article>
           ))}
         </div>
@@ -68,7 +100,7 @@ export async function AdminMediaPage() {
               <h3>{item.name_en} cover requirement</h3>
               <p>{item.name_en} technical catalogue</p>
               <AdminStatusBadge tone="warning">Awaiting managed asset</AdminStatusBadge>
-              <ButtonLink href="/admin/catalogues" variant="quiet" size="small">Open related record</ButtonLink>
+              <ButtonLink href={adminCatalogueHref(toFamilySlug(item.slug))} variant="quiet" size="small">Open related record</ButtonLink>
             </article>
           ))}
         </div>
@@ -85,7 +117,7 @@ export async function AdminMediaPage() {
               <h3>{item.name_en} family imagery requirement</h3>
               <p>No managed asset registered</p>
               <AdminStatusBadge tone="warning">Awaiting managed asset</AdminStatusBadge>
-              <ButtonLink href="/admin/families" variant="quiet" size="small">Open related record</ButtonLink>
+              <ButtonLink href={adminFamilyHref(toFamilySlug(item.slug))} variant="quiet" size="small">Open related record</ButtonLink>
             </article>
           ))}
         </div>
