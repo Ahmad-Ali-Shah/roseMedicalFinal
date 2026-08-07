@@ -1,13 +1,22 @@
-import { getFamilyListingModel } from "@/features/catalogue-registry";
+import type { CatalogueProductRecord } from "@/features/catalogue-registry";
+import { CATALOGUE_FAMILIES } from "@/features/catalogue-registry/families";
+import { getFamilyProducts } from "@/features/catalogue-live";
 
-export function createFamilyListingData(familySlug: string) {
-  const result = getFamilyListingModel(familySlug);
-  if (result.kind !== "family") return null;
+export function createFamilyListingData(
+  familySlug: string,
+  products: readonly CatalogueProductRecord[]
+) {
+  const family = CATALOGUE_FAMILIES.find(
+    (candidate) => candidate.slug === familySlug
+  );
+  if (!family) return null;
+
+  const familyProducts = getFamilyProducts(products, familySlug);
 
   return {
-    family: result.family,
-    products: result.products,
-    countLabel: `${result.products.length} products`,
-    searchLabel: `Search within ${result.family.name}`
+    family,
+    products: familyProducts,
+    countLabel: `${familyProducts.length} products`,
+    searchLabel: `Search within ${family.name}`
   } as const;
 }
