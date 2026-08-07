@@ -58,13 +58,26 @@ function validateIdentity(
 }
 
 function primaryImageFor(
-  productId: string,
+  product: LiveProductRow,
   images: readonly LiveImageRow[]
-): string | undefined {
-  const primary = images.find(
-    (image) => image.product_id === productId && image.sort_order === 0
+): string {
+  const primaryImages = images.filter(
+    (image) => image.product_id === product.id && image.sort_order === 0
   );
-  return primary?.image_path.trim() || undefined;
+
+  if (primaryImages.length !== 1) {
+    throw new Error(
+      `[catalogue-migration] primary image mismatch for ${product.slug}: expected exactly one, found ${primaryImages.length}`
+    );
+  }
+
+  const path = primaryImages[0]!.image_path.trim();
+  if (!path) {
+    throw new Error(
+      `[catalogue-migration] primary image mismatch for ${product.slug}: empty image path`
+    );
+  }
+  return path;
 }
 
 function liveCatalogueCodesFor(
@@ -158,7 +171,7 @@ export function mapLiveCatalogue(
     validateIdentity(product, category, entry);
 
     const description = product.description_en?.trim();
-    const mediaPath = primaryImageFor(product.id, snapshot.images);
+    const mediaPath = primaryImageFor(product, snapshot.images);
     const catalogueCodes = catalogueCodesFor(product, snapshot.variants, entry);
 
     return {
@@ -182,7 +195,7 @@ export function mapLiveCatalogue(
       },
       mediaLabel: entry.metadata.mediaLabel,
       ...(catalogueCodes.length ? { catalogueCodes } : {}),
-      ...(mediaPath ? { mediaPath } : {})
+      mediaPath
     };
   });
 }
