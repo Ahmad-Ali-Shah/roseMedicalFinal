@@ -14,6 +14,14 @@ This design makes Supabase the sole live source of editable operational data aft
 
 The admin is intentionally reduced from a broad website CMS to a lean operational catalogue manager. Marketing presentation, homepage hero content, family hero content, branding, navigation, layout, typography, and other design-controlled website content remain source-controlled in code.
 
+### 1.1 Coordination decision supersession
+
+This user-approved 2026-08-07 scope intentionally supersedes the earlier project requirement that broadly editable website content must pass through Draft -> Review -> Public Preview -> Explicit Publish with general revision history. That workflow is no longer required because marketing/site presentation content is no longer admin-editable.
+
+The product, catalogue, contact, inquiry, and message areas remain operational admin concerns. Their writes use direct validated persistence appropriate to each operational domain rather than a general website CMS publishing engine.
+
+The root `README.md` remains the mandatory coordination source and must be updated during implementation so future sessions do not revive the retired Publishing Centre, Revision History, or broad Website Content editing scope.
+
 ## 2. Verified live project identity
 
 The connected Supabase project is the correct Rosa Medical project.
