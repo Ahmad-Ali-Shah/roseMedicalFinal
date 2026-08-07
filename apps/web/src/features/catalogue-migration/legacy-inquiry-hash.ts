@@ -5,7 +5,7 @@ import {
   type QuotationPayload
 } from "@/features/inquiry/quotation-payload";
 
-const LEGACY_PRODUCT_ID_BY_ROUTE = new Map(
+const LEGACY_PRODUCT_ID_BY_ROUTE: ReadonlyMap<string, string> = new Map(
   CATALOGUE_PRODUCTS.map((product) => [
     `${product.familySlug}/${product.slug}`,
     product.id
