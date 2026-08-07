@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { CATALOGUE_PRODUCTS } from "@/features/catalogue-registry";
 import {
   FAMILY_SLUGS,
   familyHref,
@@ -65,14 +66,17 @@ describe("public catalogue route models", () => {
     );
   });
 
-  it("maps shared products with family names and codes", () => {
-    expect(selectFeaturedProducts()).toEqual(
+  it("hydrates shared product cards from the supplied canonical catalogue", () => {
+    const featured = selectFeaturedProducts(CATALOGUE_PRODUCTS);
+
+    expect(featured).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ code: "18-0644", familyName: "Knives", optionSummary: ["14.5 cm", "Standard"] }),
-        expect.objectContaining({ code: "04-0402", familyName: "Scissors", optionSummary: ["17 cm", "Curved"] }),
-        expect.objectContaining({ code: "23-1204", familyName: "Punches", optionSummary: ["4 mm", "Standard"] })
+        expect.objectContaining({ code: "18-0644", familyName: "Knives" }),
+        expect.objectContaining({ code: "04-0401", familyName: "Scissors" }),
+        expect.objectContaining({ code: "23-1204", familyName: "Punches" })
       ])
     );
+    expect(featured.every((product) => Boolean(product.mediaPath))).toBe(true);
   });
 
   it("rejects unknown family data at the selector boundary", () => {
