@@ -39,6 +39,10 @@ function normalizeItem(item: InquiryItem): InquiryItem {
   };
 }
 
+function isSameInquiryProduct(a: InquiryItem, b: InquiryItem): boolean {
+  return a.familySlug === b.familySlug && a.slug === b.slug;
+}
+
 function storage(): Storage | null {
   return typeof window === "undefined" ? null : window.localStorage;
 }
@@ -80,7 +84,9 @@ export function getInquiryLineCount(items: readonly InquiryItem[] = readInquiry(
 export function addInquiryItem(item: InquiryItem): InquiryItem[] {
   const normalized = normalizeItem(item);
   const items = readInquiry();
-  const existingIndex = items.findIndex((candidate) => candidate.id === normalized.id);
+  const existingIndex = items.findIndex((candidate) =>
+    isSameInquiryProduct(candidate, normalized)
+  );
 
   if (existingIndex === -1) return writeInquiry([...items, normalized]);
 
