@@ -163,6 +163,15 @@ describe("live catalogue mapper", () => {
     expect(() => mapLiveCatalogue(changed, manifest)).toThrow(/code option mismatch/i);
   });
 
+  it("fails closed when a live product loses its single primary image relationship", () => {
+    const changed = snapshot();
+    changed.images = changed.images.filter(
+      (image) => !(image.product_id === "uuid-liston" && image.sort_order === 0)
+    );
+
+    expect(() => mapLiveCatalogue(changed, manifest)).toThrow(/primary image mismatch/i);
+  });
+
   it("fails closed when the live and manifest product sets differ", () => {
     const changed = snapshot();
     changed.products = changed.products.slice(0, 1);
