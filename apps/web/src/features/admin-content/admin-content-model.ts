@@ -1,5 +1,6 @@
 import {
   CATALOGUE_FAMILIES,
+  CATALOGUE_PRODUCTS,
   type CatalogueFamilyRecord
 } from "@/features/catalogue-registry";
 import {
@@ -25,6 +26,6 @@ export function getAdminContentBlocks(): readonly AdminContentBlockModel[] {
 export function getAdminHomepageComposition(): AdminHomepageCompositionModel {
   return {
     families: CATALOGUE_FAMILIES,
-    products: selectFeaturedProducts()
+    products: selectFeaturedProducts(CATALOGUE_PRODUCTS)
   };
 }
