@@ -43,6 +43,15 @@ jobs:
           src/test/quotation-payload.test.ts
           src/test/legacy-inquiry-hash.test.ts
 
+      - name: Live read-only Supabase parity
+        run: >-
+          pnpm --filter @rosa/web test --
+          src/test/catalogue-live-supabase.integration.test.ts
+        env:
+          RUN_LIVE_CATALOGUE_PARITY: "1"
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
       - name: Web typecheck
         run: pnpm --filter @rosa/web typecheck
 
@@ -60,6 +69,7 @@ jobs:
           src/test/catalogue-metadata-manifest.test.ts
           src/test/catalogue-live-mapper.test.ts
           src/test/catalogue-live-repository.test.ts
+          src/test/catalogue-live-supabase.integration.test.ts
           src/test/inquiry-store.test.ts
           src/test/quotation-payload.test.ts
           src/test/legacy-inquiry-hash.test.ts
