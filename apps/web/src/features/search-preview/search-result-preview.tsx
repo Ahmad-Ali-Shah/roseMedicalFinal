@@ -16,7 +16,14 @@ export function SearchResultPreview({
 
   return (
     <article className="search-result-preview" data-search-result={product.id}>
-      <ProductMediaPlaceholder label={product.mediaLabel} decorative aspect="square" />
+      <ProductMediaPlaceholder
+        label={product.mediaLabel}
+        decorative
+        aspect="square"
+        src={product.mediaPath}
+        fallbackSrc={product.mediaFallbackPath}
+        spriteIndex={product.mediaIndex}
+      />
       <div className="search-result-preview__identity">
         <p className="page-eyebrow">{ar ? FAMILY_NAMES_AR[product.familySlug] : product.familySlug}</p>
         <h2>{product.name}</h2>
