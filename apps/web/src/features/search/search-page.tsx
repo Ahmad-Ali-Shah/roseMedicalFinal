@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState, type ReactElement } from "react";
 import { Container, Section } from "@/components/layout";
-import { CATALOGUE_PRODUCTS } from "@/features/catalogue-registry";
+import type { CatalogueProductRecord } from "@/features/catalogue-registry";
 import { Reveal, Stagger, StaggerItem } from "@/features/motion";
 import { SearchFamilyShortcuts } from "@/features/search-preview/search-family-shortcuts";
 import { SearchResultPreview } from "@/features/search-preview/search-result-preview";
@@ -11,13 +11,21 @@ import { searchCatalogue } from "./search-catalogue";
 import type { PublicLocale } from "@/features/localization/locales";
 import { localizePath } from "@/features/localization/locales";
 
-export function SearchPage({ initialQuery = "", locale = "en" }: { initialQuery?: string; locale?: PublicLocale }): ReactElement {
+export function SearchPage({
+  products,
+  initialQuery = "",
+  locale = "en"
+}: {
+  products: readonly CatalogueProductRecord[];
+  initialQuery?: string;
+  locale?: PublicLocale;
+}): ReactElement {
   const ar = locale === "ar";
   const [query, setQuery] = useState(initialQuery);
   const trimmedQuery = query.trim();
   const results = useMemo(
-    () => searchCatalogue(CATALOGUE_PRODUCTS, trimmedQuery),
-    [trimmedQuery]
+    () => searchCatalogue(products, trimmedQuery),
+    [products, trimmedQuery]
   );
 
   return (
