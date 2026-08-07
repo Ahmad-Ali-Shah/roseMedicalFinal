@@ -25,6 +25,13 @@ export class CatalogueLiveReadError extends Error {
   }
 }
 
+export class CatalogueLiveParityError extends Error {
+  constructor(message: string, options?: ErrorOptions) {
+    super(`[catalogue-live:parity] ${message}`, options);
+    this.name = "CatalogueLiveParityError";
+  }
+}
+
 export interface CatalogueSnapshotReader {
   read(): Promise<LiveCatalogueSnapshot>;
 }
@@ -65,7 +72,7 @@ export async function loadCatalogueProducts(
   try {
     return mapLiveCatalogue(snapshot, manifest);
   } catch (error) {
-    throw new CatalogueLiveReadError("mapping", messageFrom(error), { cause: error });
+    throw new CatalogueLiveParityError(messageFrom(error), { cause: error });
   }
 }
 
@@ -140,10 +147,17 @@ export async function getSearchCatalogueProducts(): Promise<
   try {
     return await getLiveCatalogueProducts();
   } catch (error) {
+    if (error instanceof CatalogueLiveParityError) {
+      console.error(
+        "[catalogue-migration] live catalogue parity check failed; refusing stale fallback",
+        error
+      );
+      throw error;
+    }
     if (!(error instanceof CatalogueLiveReadError)) throw error;
 
     console.warn(
-      "[catalogue-migration] validated live product read failed; using temporary static fallback",
+      "[catalogue-migration] live product read unavailable; using temporary static fallback",
       error
     );
     return CATALOGUE_PRODUCTS;
