@@ -1,6 +1,10 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
+import {
+  clearCatalogueProjectionCache,
+  getCachedCatalogueProjection
+} from "@/features/catalogue-live/catalogue-live.cache";
 import * as repository from "@/features/catalogue-live/catalogue-live.repository";
 
 function source(path: string): string {
@@ -8,6 +12,8 @@ function source(path: string): string {
 }
 
 describe("scoped public catalogue projections", () => {
+  beforeEach(() => clearCatalogueProjectionCache());
+
   it("exposes page-scoped public read APIs", () => {
     expect(repository).toHaveProperty("getFeaturedCatalogueProducts");
     expect(repository).toHaveProperty("getFamilyCatalogueProducts");
@@ -28,6 +34,60 @@ describe("scoped public catalogue projections", () => {
     expect(cache).toContain("60_000");
     expect(cache).toContain("MAX_ENTRIES");
     expect(cache).toContain("pending");
+  });
+
+  it("reuses a warm projection inside its TTL", async () => {
+    let loads = 0;
+    let now = 1_000;
+    const loader = async () => {
+      loads += 1;
+      return `load-${loads}`;
+    };
+
+    expect(
+      await getCachedCatalogueProjection("warm", loader, { now: () => now })
+    ).toBe("load-1");
+    now = 59_000;
+    expect(
+      await getCachedCatalogueProjection("warm", loader, { now: () => now })
+    ).toBe("load-1");
+    expect(loads).toBe(1);
+  });
+
+  it("reloads a projection after 60 seconds", async () => {
+    let loads = 0;
+    let now = 1_000;
+    const loader = async () => {
+      loads += 1;
+      return loads;
+    };
+
+    expect(
+      await getCachedCatalogueProjection("ttl", loader, { now: () => now })
+    ).toBe(1);
+    now = 61_001;
+    expect(
+      await getCachedCatalogueProjection("ttl", loader, { now: () => now })
+    ).toBe(2);
+  });
+
+  it("shares one pending load across concurrent requests", async () => {
+    let loads = 0;
+    let release!: (value: string) => void;
+    const pending = new Promise<string>((resolvePending) => {
+      release = resolvePending;
+    });
+    const loader = async () => {
+      loads += 1;
+      return pending;
+    };
+
+    const first = getCachedCatalogueProjection("pending", loader);
+    const second = getCachedCatalogueProjection("pending", loader);
+    expect(loads).toBe(1);
+    release("ready");
+    await expect(first).resolves.toBe("ready");
+    await expect(second).resolves.toBe("ready");
   });
 
   it("keeps whole-catalogue loading out of ordinary public page components", () => {
