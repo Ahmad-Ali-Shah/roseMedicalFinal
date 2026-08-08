@@ -1,16 +1,16 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { ProductsOverview } from "@/features/products/products-overview";
 import { FamilyListingPage } from "@/features/family-listing/family-listing-page";
 import { ProductDetailPage } from "@/features/product-detail/product-detail-page";
+import { renderServerComponent } from "@/test/render-server-component";
 
 const source = (path: string) => readFileSync(join(process.cwd(), path), "utf8");
 
 describe("F7 product discovery polish", () => {
-  it("stages the products overview while preserving discovery behavior", () => {
-    const html = renderToStaticMarkup(<ProductsOverview />);
+  it("stages the products overview while preserving discovery behavior", async () => {
+    const html = await renderServerComponent(<ProductsOverview />);
     const productGrid = html.slice(
       html.indexOf('data-section="product-preview-grid"'),
       html.indexOf('data-section="catalogue-support"')
@@ -26,8 +26,8 @@ describe("F7 product discovery polish", () => {
     expect((productGrid.match(/data-motion="tilt"/g) ?? [])).toHaveLength(1);
   });
 
-  it("keeps family results and product paths intact while adding spatial choreography", () => {
-    const html = renderToStaticMarkup(<FamilyListingPage familySlug="knives" />);
+  it("keeps family results and product paths intact while adding spatial choreography", async () => {
+    const html = await renderServerComponent(<FamilyListingPage familySlug="knives" />);
 
     expect(html).toContain("Knives");
     expect(html).toContain("Scalpel Handle No. 3");
@@ -39,8 +39,8 @@ describe("F7 product discovery polish", () => {
     expect(html).not.toContain("Loading and no-result behavior.");
   });
 
-  it("reveals product detail in content order without changing inquiry behavior", () => {
-    const html = renderToStaticMarkup(
+  it("reveals product detail in content order without changing inquiry behavior", async () => {
+    const html = await renderServerComponent(
       <ProductDetailPage familySlug="knives" productSlug="scalpel-handle-no-3" />
     );
 
