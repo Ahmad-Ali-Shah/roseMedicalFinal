@@ -71,8 +71,13 @@ describe("public performance policy", () => {
     for (const media of Object.values(SUPPORTED_BUYER_MEDIA)) expectLocalMedia(media.src);
   });
 
-  it("uses the right-sized versioned local header logo", () => {
+  it("uses right-sized versioned local presentation assets for the heavy sources", () => {
     expect(ROSA_HEADER_LOGO_MEDIA.src).toBe("/media/brand/rosa-header-logo-v1.webp");
+    expect(PROCUREMENT_SUPPORT_MEDIA.src).toBe("/media/optimized/v1/procurement-support.webp");
+    expect(FAMILY_MEDIA_BY_SLUG.cutters.src).toBe("/media/optimized/v1/cutters-family.webp");
+    expect(SUPPORTED_BUYER_MEDIA.hospitals.src).toBe("/media/optimized/v1/about-hospitals.webp");
+    expect(SUPPORTED_BUYER_MEDIA.procurement.src).toBe("/media/optimized/v1/about-procurement.webp");
+    expect(SUPPORTED_BUYER_MEDIA.distributors.src).toBe("/media/optimized/v1/about-distributors.webp");
   });
 
   it("ships Cloudflare static cache headers", () => {
@@ -80,6 +85,7 @@ describe("public performance policy", () => {
     expect(headers).toContain("/_next/static/*");
     expect(headers).toContain("max-age=31536000,immutable");
     expect(headers).toContain("/media/*");
+    expect(headers).toContain("/media/optimized/v1/*");
   });
 
   it("makes versioned Supabase product uploads long-cacheable and invalidates catalogue cache", () => {
