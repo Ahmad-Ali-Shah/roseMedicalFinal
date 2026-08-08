@@ -11,7 +11,7 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -22,29 +22,14 @@ jobs:
           version: 8
       - run: pnpm install --frozen-lockfile
 
-      - name: Focused canonical, admin, and performance tests
-        run: >-
-          pnpm --filter @rosa/web test --
-          src/test/public-performance-policy.test.ts
-          src/test/catalogue-live-projections.test.ts
-          src/test/catalogue-metadata-manifest.test.ts
-          src/test/catalogue-live-mapper.test.ts
-          src/test/catalogue-live-repository.test.ts
-          src/test/catalogue-live-selectors.test.ts
-          src/test/catalogue-live-supabase.integration.test.ts
-          src/test/search-catalogue.test.ts
-          src/test/search-preview.test.tsx
-          src/test/inquiry-store.test.ts
-          src/test/quotation-payload.test.ts
-          src/test/legacy-inquiry-hash.test.ts
-          src/test/public-product-live-cutover.test.ts
-          src/test/public-product-route-classification.test.ts
-          src/test/admin-product-security.test.ts
-          src/test/admin-product-canonical.test.ts
-          src/test/admin-product-model.test.ts
-          src/test/admin-products-pages.test.tsx
-          src/test/admin-product-media-write.test.ts
-          src/test/admin-product-editor-scope.test.ts
+      - name: Full web test suite
+        run: pnpm --filter @rosa/web test
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://hzwabrbrgcxodkqilgdi.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: sb_publishable_eAsFSK6AJfZk2SFzecCDnA_HeSxG-I1
+
+      - name: Live read-only catalogue parity
+        run: pnpm --filter @rosa/web test -- src/test/catalogue-live-supabase.integration.test.ts
         env:
           RUN_LIVE_CATALOGUE_PARITY: "1"
           NEXT_PUBLIC_SUPABASE_URL: https://hzwabrbrgcxodkqilgdi.supabase.co
@@ -98,16 +83,6 @@ jobs:
           src/test/admin-products-pages.test.tsx
           src/test/admin-product-media-write.test.ts
           src/test/admin-product-editor-scope.test.ts
-
-      - name: Static media audit
-        working-directory: apps/web
-        run: |
-          echo "Largest source-controlled media assets (bytes):"
-          find public/media -type f -printf '%s\t%p\n' | sort -nr | head -30
-          echo "Optimized presentation derivatives:"
-          find public/media/optimized/v1 -type f -printf '%s\t%p\n' | sort -nr
-          echo "Header logo derivative:"
-          stat -c '%s bytes %n' public/media/brand/rosa-header-logo-v1.webp
 
       - name: Web build
         run: pnpm --filter @rosa/web build
