@@ -26,3 +26,11 @@ test("390x844 keeps message CTA and image inside a compact integrated hero", asy
   expect(hero).not.toBeNull();
   expect(hero!.height).toBeLessThan(760);
 });
+
+test("hero dot click selects the requested slide", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile");
+  await page.goto("/");
+  await expect(page.locator("[data-section='home-hero']")).toHaveAttribute("data-active-slide", "precision-instruments");
+  await page.locator(".home-hero-carousel__dot").nth(1).click();
+  await expect(page.locator("[data-section='home-hero']")).toHaveAttribute("data-active-slide", "clinical-instrument-context");
+});

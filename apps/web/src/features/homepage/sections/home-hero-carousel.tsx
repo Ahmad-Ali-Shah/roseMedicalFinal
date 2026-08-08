@@ -118,6 +118,7 @@ export function HomeHeroCarousel({
 
   const handlePointerDown = (event: PointerEvent<HTMLElement>) => {
     if (event.pointerType === "mouse" && event.button !== 0) return;
+    if ((event.target as Element).closest("button, a")) return;
     pointerStartX.current = event.clientX;
     setDragging(true);
     event.currentTarget.setPointerCapture?.(event.pointerId);

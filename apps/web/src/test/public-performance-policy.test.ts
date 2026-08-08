@@ -11,6 +11,7 @@ import {
   SUPPORTED_BUYER_MEDIA
 } from "@/features/public-media";
 import { requiresSupabaseSession } from "@/lib/supabase/session-route-policy";
+import { HOME_HERO_SLIDES } from "@/features/homepage/home-hero-slides";
 
 function source(path: string): string {
   return readFileSync(resolve(process.cwd(), path), "utf8");
@@ -69,6 +70,10 @@ describe("public performance policy", () => {
     expectLocalMedia(ROSA_HEADER_LOGO_MEDIA.src);
     expectLocalMedia(HOME_HERO_MEDIA.src);
     expectLocalMedia(PROCUREMENT_SUPPORT_MEDIA.src);
+    for (const slide of HOME_HERO_SLIDES) {
+      expectLocalMedia(slide.image.desktopSrc);
+      expectLocalMedia(slide.image.mobileSrc);
+    }
 
     for (const media of Object.values(FAMILY_MEDIA_BY_SLUG)) expectLocalMedia(media.src);
     for (const media of Object.values(HOME_CATALOGUE_MEDIA_BY_SLUG)) expectLocalMedia(media.src);
