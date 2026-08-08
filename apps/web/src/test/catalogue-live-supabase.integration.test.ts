@@ -1,5 +1,13 @@
 import { createClient } from "@supabase/supabase-js";
 import { describe, expect, it } from "vitest";
+import { CATALOGUE_PRODUCTS } from "@/features/catalogue-registry";
+import { clearCatalogueProjectionCache } from "@/features/catalogue-live/catalogue-live.cache";
+import {
+  getFamilyCatalogueProducts,
+  getFeaturedCatalogueProducts,
+  getProductCatalogueContext,
+  getSearchCatalogueProducts
+} from "@/features/catalogue-live/catalogue-live.repository";
 import { CATALOGUE_METADATA_MANIFEST } from "@/features/catalogue-migration/catalogue-metadata-manifest";
 import { mapLiveCatalogue } from "@/features/catalogue-live/map-live-product";
 import type {
@@ -10,6 +18,20 @@ import type {
 } from "@/features/catalogue-live/catalogue-live.types";
 
 const runLiveParity = process.env.RUN_LIVE_CATALOGUE_PARITY === "1";
+
+function expectLiveDatabaseIdentities(
+  products: readonly { id: string; familySlug: string; slug: string }[]
+): void {
+  for (const product of products) {
+    const staticRecord = CATALOGUE_PRODUCTS.find(
+      (candidate) =>
+        candidate.familySlug === product.familySlug &&
+        candidate.slug === product.slug
+    );
+    expect(staticRecord).toBeDefined();
+    expect(product.id).not.toBe(staticRecord!.id);
+  }
+}
 
 describe.runIf(runLiveParity)("live Supabase catalogue parity", () => {
   it("hydrates all 113 approved products from the production read API without parity loss", async () => {
@@ -94,5 +116,26 @@ describe.runIf(runLiveParity)("live Supabase catalogue parity", () => {
       directions: ["Straight"],
       catalogueReference: { page: "10" }
     });
+  });
+
+  it("serves real live rows through the bounded public projection APIs", async () => {
+    clearCatalogueProjectionCache();
+
+    const featured = await getFeaturedCatalogueProducts();
+    const scissors = await getFamilyCatalogueProducts("scissors");
+    const detailContext = await getProductCatalogueContext(
+      "scissors",
+      "mayo-regular-straight"
+    );
+    const search = await getSearchCatalogueProducts();
+
+    expect(featured.length).toBeGreaterThan(0);
+    expect(scissors).toHaveLength(42);
+    expect(detailContext).toHaveLength(42);
+    expect(search).toHaveLength(113);
+
+    expectLiveDatabaseIdentities(featured);
+    expectLiveDatabaseIdentities(scissors);
+    expectLiveDatabaseIdentities(search);
   });
 });
