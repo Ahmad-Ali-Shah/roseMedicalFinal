@@ -25,6 +25,7 @@ export function PublicNavigationLink({
     <Link
       className="nav-link"
       href={localizePath(href, locale) as Route<string>}
+      prefetch={false}
       aria-current={active ? "page" : undefined}
       data-navigation-state={active ? "active" : "idle"}
     >
