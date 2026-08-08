@@ -120,12 +120,16 @@ describe.runIf(runLiveParity)("live Supabase catalogue parity", () => {
 
   it("serves real live rows through the bounded public projection APIs", async () => {
     clearCatalogueProjectionCache();
+    const scissorsRoute = CATALOGUE_METADATA_MANIFEST.find(
+      (entry) => entry.familySlug === "scissors"
+    );
+    expect(scissorsRoute).toBeDefined();
 
     const featured = await getFeaturedCatalogueProducts();
     const scissors = await getFamilyCatalogueProducts("scissors");
     const detailContext = await getProductCatalogueContext(
       "scissors",
-      "mayo-regular-straight"
+      scissorsRoute!.publicSlug
     );
     const search = await getSearchCatalogueProducts();
 
