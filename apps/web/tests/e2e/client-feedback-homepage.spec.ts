@@ -142,3 +142,19 @@ test("1366x768 keeps the remaining homepage sections within compact density boun
   expect(metrics.catalogueCard.minHeight).toBeLessThanOrEqual(224);
   expect(metrics.quotationPanel.paddingTop).toBeLessThanOrEqual(52);
 });
+
+test("shared social links render safely in the footer and dedicated Contact section", async ({ page }) => {
+  await page.goto("/");
+  const footerSocials = page.locator(".site-footer [data-social-links] a");
+  await expect(footerSocials).toHaveCount(4);
+  for (const link of await footerSocials.all()) {
+    await expect(link).toHaveAttribute("href", /^https:\/\//);
+    await expect(link).toHaveAttribute("target", "_blank");
+    await expect(link).toHaveAttribute("rel", /noopener/);
+    await expect(link).toHaveAttribute("rel", /noreferrer/);
+  }
+
+  await page.goto("/contact");
+  await expect(page.locator(".contact-social-section [data-social-links] a")).toHaveCount(4);
+  await expect(page.locator("body")).not.toContainText("@rosamedicalexample");
+});

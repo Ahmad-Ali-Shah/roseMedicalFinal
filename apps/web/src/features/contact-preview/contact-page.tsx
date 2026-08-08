@@ -3,6 +3,7 @@ import { Container, Section } from "@/components/layout";
 import { LocaleLink, LocalizedButtonLink } from "@/features/localization";
 import { Reveal, TextReveal } from "@/features/motion";
 import { PUBLIC_CONTENT_VALUES } from "@/features/public-content-registry";
+import { SocialLinksRow } from "@/features/social-links";
 import { ContactFormPreview } from "./contact-form-preview";
 import { ContactInformationPanel } from "./contact-information-panel";
 import { RiyadhMap } from "./riyadh-map";
@@ -62,6 +63,20 @@ export function ContactPage({ locale = "en" }: { locale?: PublicLocale }): React
               </div>
             </Reveal>
           </div>
+        </Container>
+      </Section>
+
+      <Section tone="paper" spacing="compact" className="contact-social-section">
+        <Container size="wide">
+          <Reveal direction="up">
+            <div className="contact-social-panel">
+              <div>
+                <p className="page-eyebrow">{ar ? "تابع روزا" : "Follow Rosa"}</p>
+                <h2>{ar ? "ابق على اتصال." : "Stay connected."}</h2>
+              </div>
+              <SocialLinksRow locale={locale} className="contact-social-links" />
+            </div>
+          </Reveal>
         </Container>
       </Section>
 

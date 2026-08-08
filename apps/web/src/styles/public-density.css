@@ -378,3 +378,55 @@
     min-height: 13.5rem;
   }
 }
+
+/* Shared public social links: compact in the footer, explicit on Contact. */
+.social-links-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.8rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.social-links-row a {
+  min-height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  color: inherit;
+  font-size: 0.82rem;
+  font-weight: 650;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.social-links-row a:hover,
+.social-links-row a:focus-visible {
+  border-bottom-color: currentColor;
+}
+
+.site-footer__social-links {
+  margin-top: 0.25rem;
+}
+
+.contact-social-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: end;
+}
+
+.contact-social-panel h2 {
+  margin: 0;
+  font-family: var(--font-editorial);
+  font-size: var(--public-density-section-title);
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+@media (max-width: 40rem) {
+  .contact-social-panel {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+}

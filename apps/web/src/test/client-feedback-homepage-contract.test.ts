@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { HOME_HERO_SLIDES } from "@/features/homepage/home-hero-slides";
+import { SOCIAL_LINKS } from "@/features/social-links";
 
 function source(path: string): string {
   return readFileSync(resolve(process.cwd(), path), "utf8");
@@ -41,6 +42,15 @@ describe("client-feedback responsive homepage contract", () => {
 
     const carouselSource = source("src/features/homepage/sections/home-hero-carousel.tsx");
     expect(carouselSource.match(/priority=\{activeIndex === 0\}/g)).toHaveLength(1);
+  });
+
+  it("centralizes exactly four valid social placeholders", () => {
+    expect(SOCIAL_LINKS.map((item) => item.platform)).toEqual(["instagram", "facebook", "linkedin", "x"]);
+    expect(SOCIAL_LINKS).toHaveLength(4);
+    for (const item of SOCIAL_LINKS) {
+      expect(item.href).toMatch(/^https:\/\//);
+      expect(item.href).not.toBe("#");
+    }
   });
 
   it("uses a dedicated five-family homepage gallery instead of FamilyCard collage", () => {

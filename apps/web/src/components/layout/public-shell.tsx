@@ -1,6 +1,7 @@
 import { RouteTransition, ScrollHeaderController } from "@/features/motion";
 import { PUBLIC_CONTENT_VALUES } from "@/features/public-content-registry";
 import { InquiryCountLabel } from "@/features/inquiry";
+import { SocialLinksRow } from "@/features/social-links";
 import {
   LanguageSwitcher,
   LocaleDocumentController,
@@ -73,6 +74,7 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
             <LocalizedButtonLink href="/request-quotation" size="small">
               <LocalizedText en="Request a quote" ar="اطلب عرض سعر" />
             </LocalizedButtonLink>
+            <SocialLinksRow className="site-footer__social-links" />
           </div>
           <MobileNavigation primaryLinks={primaryLinks} utilityLinks={utilityLinks} />
         </Container>
@@ -88,6 +90,7 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
             <LocalizedButtonLink href="/request-quotation" size="small">
               <LocalizedText en="Request a quote" ar="اطلب عرض سعر" />
             </LocalizedButtonLink>
+            <SocialLinksRow className="site-footer__social-links" />
           </div>
           <nav aria-label="Product families / عائلات المنتجات">
             <p className="site-footer__title"><LocalizedText en="Products" ar="المنتجات" /></p>
