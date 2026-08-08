@@ -11,7 +11,7 @@ function embeddedCategory(
   value: LiveProductProjectionRow["category"]
 ): LiveCategoryRow | null {
   if (Array.isArray(value)) return value[0] ?? null;
-  return value;
+  return value as LiveCategoryRow | null;
 }
 
 export function projectionRowsToSnapshot(
