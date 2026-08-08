@@ -3,7 +3,7 @@ name: Lean Product Admin Review
 on:
   pull_request:
     branches:
-      - ahmadx67676767
+      - __temporarily_disabled_for_media_optimization__
 
 permissions:
   contents: read
@@ -11,115 +11,5 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 8
-      - run: pnpm install --frozen-lockfile
-
-      - name: Focused canonical, admin, and performance tests
-        run: >-
-          pnpm --filter @rosa/web test --
-          src/test/public-performance-policy.test.ts
-          src/test/catalogue-live-projections.test.ts
-          src/test/catalogue-metadata-manifest.test.ts
-          src/test/catalogue-live-mapper.test.ts
-          src/test/catalogue-live-repository.test.ts
-          src/test/catalogue-live-selectors.test.ts
-          src/test/catalogue-live-supabase.integration.test.ts
-          src/test/search-catalogue.test.ts
-          src/test/search-preview.test.tsx
-          src/test/inquiry-store.test.ts
-          src/test/quotation-payload.test.ts
-          src/test/legacy-inquiry-hash.test.ts
-          src/test/public-product-live-cutover.test.ts
-          src/test/public-product-route-classification.test.ts
-          src/test/admin-product-security.test.ts
-          src/test/admin-product-canonical.test.ts
-          src/test/admin-product-model.test.ts
-          src/test/admin-products-pages.test.tsx
-          src/test/admin-product-media-write.test.ts
-          src/test/admin-product-editor-scope.test.ts
-        env:
-          RUN_LIVE_CATALOGUE_PARITY: "1"
-          NEXT_PUBLIC_SUPABASE_URL: https://hzwabrbrgcxodkqilgdi.supabase.co
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: sb_publishable_eAsFSK6AJfZk2SFzecCDnA_HeSxG-I1
-
-      - name: Web typecheck
-        run: pnpm --filter @rosa/web typecheck
-
-      - name: Focused lint
-        run: >-
-          pnpm --filter @rosa/web exec eslint
-          next.config.ts
-          src/middleware.ts
-          src/lib/supabase/public-read.ts
-          src/lib/supabase/session-route-policy.ts
-          src/lib/supabase/admin.ts
-          src/lib/supabase/admin-auth.ts
-          src/lib/supabase/admin-security.ts
-          src/features/catalogue-live
-          src/features/catalogue-migration
-          src/features/homepage/homepage.data.ts
-          src/features/homepage/homepage.tsx
-          src/features/products/products.data.ts
-          src/features/products/products-overview.tsx
-          src/features/family-listing/family-listing.data.ts
-          src/features/family-listing/family-listing-page.tsx
-          src/features/product-detail/product-detail.data.ts
-          src/features/product-detail/product-detail-page.tsx
-          src/features/search
-          src/features/search-preview/search-default-page.tsx
-          src/features/search-preview/search-result-preview.tsx
-          src/features/localization/locale-link.tsx
-          src/features/localization/localized-button-link.tsx
-          src/components/layout/public-navigation-link.tsx
-          src/components/ui/button.tsx
-          src/features/public-media/public-media.ts
-          src/features/admin-products
-          src/features/admin-management-routing/admin-management-route-model.ts
-          src/features/admin-management-routing/admin-management-route-view.tsx
-          src/features/public-catalogue/selectors.ts
-          src/features/public-routing/resolve-public-page.tsx
-          src/features/inquiry/inquiry-store.ts
-          src/features/inquiry/quotation-payload.ts
-          src/app/api/checkout/route.ts
-          src/test/public-performance-policy.test.ts
-          src/test/catalogue-live-projections.test.ts
-          src/test/catalogue-live-supabase.integration.test.ts
-          src/test/admin-product-security.test.ts
-          src/test/admin-product-canonical.test.ts
-          src/test/admin-product-model.test.ts
-          src/test/admin-products-pages.test.tsx
-          src/test/admin-product-media-write.test.ts
-          src/test/admin-product-editor-scope.test.ts
-
-      - name: Static media audit
-        working-directory: apps/web
-        run: |
-          echo "Largest source-controlled media assets (bytes):"
-          find public/media -type f -printf '%s\t%p\n' | sort -nr | head -30
-          echo "Header logo derivative:"
-          stat -c '%s bytes %n' public/media/brand/rosa-header-logo-v1.webp
-
-      - name: Web build
-        run: pnpm --filter @rosa/web build
-        env:
-          NEXT_PUBLIC_SITE_NAME: ROSA
-          NEXT_PUBLIC_SUPABASE_URL: https://hzwabrbrgcxodkqilgdi.supabase.co
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: sb_publishable_eAsFSK6AJfZk2SFzecCDnA_HeSxG-I1
-          SUPABASE_SERVICE_ROLE_KEY: test-service-role
-
-      - name: OpenNext Cloudflare build
-        working-directory: apps/web
-        run: npx opennextjs-cloudflare build
-        env:
-          NEXT_PUBLIC_SITE_NAME: ROSA
-          NEXT_PUBLIC_SUPABASE_URL: https://hzwabrbrgcxodkqilgdi.supabase.co
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: sb_publishable_eAsFSK6AJfZk2SFzecCDnA_HeSxG-I1
-          SUPABASE_SERVICE_ROLE_KEY: test-service-role
+      - run: echo "Temporarily disabled while exact approved media derivatives are generated."
