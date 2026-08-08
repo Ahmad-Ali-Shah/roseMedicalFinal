@@ -1,0 +1,31 @@
+:root {
+  --public-density-gutter: clamp(1.1rem, 3.25vw, 4rem);
+  --public-density-header-block: clamp(4.25rem, 6.2vh, 4.75rem);
+  --public-density-section-block: clamp(3.25rem, 6.2vw, 5.75rem);
+  --public-density-section-block-compact: clamp(2.5rem, 4.5vw, 4.25rem);
+  --public-density-hero-title: clamp(2.45rem, 4.2vw, 3.85rem);
+  --public-density-section-title: clamp(2rem, 3.1vw, 2.75rem);
+  --public-density-body: clamp(1rem, 0.3vw + 0.94rem, 1.06rem);
+  --public-density-family-block: clamp(19rem, 33vw, 26rem);
+}
+
+.public-page--home .section { padding-block: var(--public-density-section-block); }
+.public-page--home .section--compact { padding-block: var(--public-density-section-block-compact); }
+.site-header__bar { min-height: var(--public-density-header-block); }
+
+@media (max-height: 800px) and (min-width: 64.001rem) {
+  :root {
+    --public-density-section-block: clamp(2.75rem, 5.4vh, 4rem);
+    --public-density-section-block-compact: clamp(2.2rem, 4.3vh, 3.25rem);
+    --public-density-family-block: clamp(18rem, 42vh, 22rem);
+  }
+}
+
+@media (max-width: 40rem) {
+  :root {
+    --public-density-gutter: clamp(1rem, 4.8vw, 1.35rem);
+    --public-density-section-block: clamp(2.75rem, 10vw, 3.75rem);
+    --public-density-hero-title: clamp(2.25rem, 10.7vw, 2.9rem);
+    --public-density-section-title: clamp(1.9rem, 8.5vw, 2.4rem);
+  }
+}
