@@ -1,5 +1,8 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
+import { CATALOGUE_PRODUCTS } from "@/features/catalogue-registry";
 import {
   AdminProductArchiveConfirmationPreview,
   AdminProductDuplicateCodePreview,
@@ -9,66 +12,75 @@ import {
   AdminProductNoMatchesPreview,
   AdminProductPublishConfirmationPreview,
   AdminProductSensitiveClaimPreview,
-  AdminProductsListPage,
   AdminProductsLoadFailurePreview,
   AdminProductTitleWarningPreview,
   getAdminProductEditor
 } from "@/features/admin-products";
-import { renderServerComponent } from "@/test/render-server-component";
+
+function source(path: string): string {
+  return readFileSync(resolve(process.cwd(), path), "utf8");
+}
+
+function scalpelHandleModel() {
+  const product = CATALOGUE_PRODUCTS.find(
+    (candidate) =>
+      candidate.familySlug === "knives" &&
+      candidate.slug === "scalpel-handle-no-3"
+  );
+  expect(product).toBeDefined();
+  const model = getAdminProductEditor(product!);
+  expect(model).toBeDefined();
+  return model!;
+}
 
 describe("F3E-B product pages", () => {
-  it("renders the live product collection boundary without fabricated records", async () => {
-    const html = await renderServerComponent(<AdminProductsListPage />);
+  it("renders the collection from the canonical live catalogue boundary", () => {
+    const listPage = source("src/features/admin-products/admin-products-list-page.tsx");
+    expect(listPage).toContain("getLiveCatalogueProducts");
+    expect(listPage).toContain("getAdminProductRows(products)");
+    expect(listPage).toContain("src={row.mediaPath}");
+    expect(listPage).not.toContain('from("products")');
+    expect(listPage).not.toContain("stock_status");
+    expect(listPage).not.toContain("sell_mode");
+    expect(listPage).not.toContain("?category=");
+  });
+
+  it("keeps product creation disabled until the canonical create workflow exists", () => {
+    const listPage = source("src/features/admin-products/admin-products-list-page.tsx");
+    expect(listPage).toContain("<Button disabled>Add product</Button>");
+    expect(listPage).toContain("Live canonical catalogue");
+  });
+
+  it("renders a canonical product editor with one supported media operation", () => {
+    const model = scalpelHandleModel();
+    const html = renderToStaticMarkup(<AdminProductEditorPage model={model} />);
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
-    expect(html).toContain("Manage the instrument catalogue.");
-    expect(html.replaceAll("<!-- -->", "")).toContain("Showing 0 live products from Supabase.");
-    expect(html.replaceAll("<!-- -->", "")).toContain("0 live products");
+    expect(html).toContain(model.product.name);
+    expect(html).toContain(model.product.code);
+    expect(html).toContain("Protected catalogue identity");
+    expect(html).toContain("Primary product image");
+    expect(html).toContain("Replace primary image");
+    expect(html).toContain("<form");
     expect(html).not.toContain("data-preview-only");
   });
 
-  it("keeps unimplemented collection mutations disabled", async () => {
-    const html = await renderServerComponent(<AdminProductsListPage />);
-    expect(html).not.toContain("<form");
-    expect(html).toContain("readonly");
-    expect((html.match(/disabled/g) ?? []).length).toBeGreaterThanOrEqual(4);
-    expect(html).not.toContain("data-preview-only");
-    expect(html).not.toMatch(/126 products|Duplicate Code Record|Blocking error|Today|Yesterday|Featured:/i);
-  });
-
-  it("renders a source-backed product editor without mutation behavior", () => {
-    const model = getAdminProductEditor("knives", "scalpel-handle-no-3");
-    expect(model).toBeDefined();
-    const html = renderToStaticMarkup(<AdminProductEditorPage model={model!} />);
-    expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
-    expect(html).toContain(model!.product.name);
-    expect(html).toContain(model!.product.code);
-    expect(html).toContain("Not supplied");
-    expect(html).toContain("No managed media file is registered");
-    expect(html).toContain("current source-backed public composition");
-    expect(html).not.toContain("<form");
-    expect(html).not.toContain("data-preview-only");
-    expect(html).not.toMatch(/Last saved|Draft differs|Needs review|Publishable|Approved|Complete record/i);
-  });
-
-  it("disables every future product mutation", () => {
-    const model = getAdminProductEditor("knives", "scalpel-handle-no-3")!;
+  it("does not expose the removed draft/review/publish workflow", () => {
+    const model = scalpelHandleModel();
     const html = renderToStaticMarkup(<AdminProductEditorPage model={model} />);
     for (const label of [
       "Save draft",
       "Submit for review",
       "Publish",
       "Archive",
-      "Delete",
-      "Add option",
-      "Upload media",
-      "Replace media"
+      "Delete product",
+      "Add option"
     ]) {
-      expect(html).toContain(label);
+      expect(html).not.toContain(label);
     }
-    expect((html.match(/disabled/g) ?? []).length).toBeGreaterThanOrEqual(8);
+    expect(html).toContain("Replace primary image");
   });
 
-  it("marks every product operational state as preview-only and truthful", () => {
+  it("marks legacy demonstration states as preview-only and truthful", () => {
     const html = renderToStaticMarkup(
       <>
         <AdminProductListLoadingPreview />
