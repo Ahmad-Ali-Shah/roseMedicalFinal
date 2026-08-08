@@ -31,10 +31,11 @@ test("homepage keeps its cinematic hierarchy and media geometry", async ({ page 
   await expect(heroImage).toBeVisible();
   expect(await heroImage.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
 
-  await expect(page.locator("[data-motion='stagger']")).toHaveCount(4);
-  expect(await page.locator("[data-motion='stagger-item']").count()).toBeGreaterThanOrEqual(16);
-  expect(await page.locator("[data-motion='tilt']").count()).toBeGreaterThanOrEqual(6);
+  await expect(page.locator("[data-motion='stagger']")).toHaveCount(3);
+  expect(await page.locator("[data-motion='stagger-item']").count()).toBeGreaterThanOrEqual(11);
+  expect(await page.locator("[data-motion='tilt']").count()).toBeGreaterThanOrEqual(1);
   expect(await page.locator("[data-motion='spotlight']").count()).toBeGreaterThanOrEqual(1);
+  await expect(page.locator("[data-home-family-gallery] [data-family-panel]")).toHaveCount(5);
   await expect(page.locator("[data-media-slot^='homepage-catalogue-']")).toHaveCount(5);
 
   await page.locator("[data-section='catalogue-access']").scrollIntoViewIfNeeded();

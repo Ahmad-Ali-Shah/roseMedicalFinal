@@ -328,3 +328,53 @@
     transform: none !important;
   }
 }
+
+/* Homepage density pass: preserve section identities while reducing oversized rhythm. */
+.public-page--home .public-section-heading {
+  margin-bottom: clamp(1.75rem, 4vw, 3rem);
+}
+
+.public-page--home .public-section-heading__title,
+.public-page--home .procurement-panel__title,
+.public-page--home .procurement-editorial__title {
+  font-size: var(--public-density-section-title);
+}
+
+.public-page--home .public-section-heading__copy,
+.public-page--home .procurement-editorial__body,
+.public-page--home .procurement-panel__copy {
+  font-size: var(--public-density-body);
+}
+
+.public-page--home .procurement-editorial,
+.public-page--home .product-preview-grid {
+  gap: clamp(1.25rem, 3vw, 2.25rem);
+}
+
+.public-page--home .procurement-editorial__media-reveal,
+.public-page--home .procurement-editorial__visual {
+  min-height: clamp(20rem, 34vw, 28rem);
+}
+
+.public-page--home .product-preview-card__body {
+  min-height: clamp(8.5rem, 14vw, 10.5rem);
+}
+
+.public-page--home .catalogue-card {
+  min-height: clamp(14rem, 22vw, 17rem);
+}
+
+.public-page--home .procurement-panel {
+  padding: clamp(2rem, 4vw, 3.25rem);
+}
+
+@media (max-height: 800px) and (min-width: 64.001rem) {
+  .public-page--home .procurement-editorial__media-reveal,
+  .public-page--home .procurement-editorial__visual {
+    min-height: 20rem;
+  }
+
+  .public-page--home .catalogue-card {
+    min-height: 13.5rem;
+  }
+}

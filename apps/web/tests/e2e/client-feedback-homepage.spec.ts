@@ -90,3 +90,55 @@ test("coarse pointer keeps the family rail even at wide width", async ({ page },
   await gallery.scrollIntoViewIfNeeded();
   expect(await gallery.evaluate((node) => getComputedStyle(node).overflowX)).toBe("auto");
 });
+
+
+test("homepage preserves all six sections and five catalogue media cards", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop");
+  await page.goto("/");
+  const sections = [
+    "home-hero",
+    "family-discovery",
+    "procurement-support",
+    "featured-instruments",
+    "catalogue-access",
+    "quotation-cta"
+  ];
+  for (const section of sections) {
+    await expect(page.locator(`[data-section='${section}']`)).toHaveCount(1);
+  }
+  await expect(page.locator("[data-section='catalogue-access'] [data-media-slot^='homepage-catalogue-']")).toHaveCount(5);
+});
+
+test("1366x768 keeps the remaining homepage sections within compact density bounds", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop");
+  await page.setViewportSize({ width: 1366, height: 768 });
+  await page.goto("/");
+  await page.locator("[data-section='procurement-support']").scrollIntoViewIfNeeded();
+
+  const metrics = await page.evaluate(() => {
+    const css = (selector: string) => {
+      const node = document.querySelector<HTMLElement>(selector);
+      if (!node) throw new Error(`Missing ${selector}`);
+      const style = getComputedStyle(node);
+      return {
+        fontSize: Number.parseFloat(style.fontSize),
+        paddingTop: Number.parseFloat(style.paddingTop),
+        minHeight: Number.parseFloat(style.minHeight),
+        height: node.getBoundingClientRect().height
+      };
+    };
+    return {
+      sectionTitle: css("[data-section='procurement-support'] .public-section-heading__title"),
+      procurementMedia: css(".procurement-editorial__visual"),
+      productBody: css(".product-preview-card__body"),
+      catalogueCard: css(".catalogue-card"),
+      quotationPanel: css(".procurement-panel--premium-cta")
+    };
+  });
+
+  expect(metrics.sectionTitle.fontSize).toBeLessThanOrEqual(44);
+  expect(metrics.procurementMedia.height).toBeLessThanOrEqual(448);
+  expect(metrics.productBody.minHeight).toBeLessThanOrEqual(168);
+  expect(metrics.catalogueCard.minHeight).toBeLessThanOrEqual(224);
+  expect(metrics.quotationPanel.paddingTop).toBeLessThanOrEqual(52);
+});
