@@ -15,8 +15,9 @@ describe("owner media refinement", () => {
   it("renders an unframed full-bleed homepage hero", async () => {
     const html = await renderServerComponent(<Homepage />);
 
-    expect(html).toContain("home-hero__visual--fullbleed");
-    expect(html).toContain("home-hero__media-fade");
+    expect(html).toContain("home-hero-carousel__media");
+    expect(html).toContain("home-hero-carousel__overlay");
+    expect(html).toContain("home-hero-01-desktop.webp");
     expect(html).not.toContain("home-hero__visual-surface");
     expect(html).not.toContain("home-hero__visual-tilt");
   });
@@ -26,7 +27,7 @@ describe("owner media refinement", () => {
 
     expect((html.match(/data-catalogue-family-media=/g) ?? [])).toHaveLength(5);
     expect(html).not.toContain("catalogue-card__document");
-    expect((html.match(/data-media-quality="92"/g) ?? []).length).toBeGreaterThanOrEqual(11);
+    expect((html.match(/data-media-quality="92"/g) ?? []).length).toBeGreaterThanOrEqual(10);
   });
 
   it("keeps portrait catalogue media separate from family-card crops", () => {

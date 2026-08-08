@@ -26,12 +26,12 @@ describe("F7 homepage cinematic polish", () => {
   it("uses one editorial hero choreography and a stable cinematic media slot", async () => {
     const html = await renderServerComponent(<Homepage />);
 
-    expect(html).toContain('data-home-choreography="hero"');
-    expect(html).toContain('data-motion="text-reveal"');
-    expect(html).toContain('data-media-slot="homepage-hero"');
+    expect(html).toContain('data-home-choreography="carousel"');
+    expect((html.match(/class="home-hero-carousel__dot"/g) ?? [])).toHaveLength(4);
+    expect(html).toContain('data-media-slot="homepage-hero-active"');
     expect(html).toContain('data-media-state="ready"');
-    expect(html).toContain("home-hero-surgical-instruments.jpg");
-    expect((html.match(/data-motion="magnetic"/g) ?? [])).toHaveLength(2);
+    expect(html).toContain("home-hero-01-desktop.webp");
+    expect((html.match(/data-motion="magnetic"/g) ?? [])).toHaveLength(1);
     expect(html).toContain("<img");
   });
 
@@ -42,16 +42,17 @@ describe("F7 homepage cinematic polish", () => {
     expect(html).not.toContain("home-section-index");
     expect(html).not.toContain("home-hero__stage-caption");
     expect(html).not.toContain("Precision steel study");
-    expect(html).toContain('data-home-choreography="hero"');
-    expect(html).toContain('data-media-slot="homepage-hero"');
+    expect(html).toContain('data-home-choreography="carousel"');
+    expect(html).toContain('data-media-slot="homepage-hero-active"');
   });
 
   it("stages family, product, process and catalogue groups through shared motion", async () => {
     const html = await renderServerComponent(<Homepage />);
 
-    expect((html.match(/data-motion="stagger"/g) ?? []).length).toBeGreaterThanOrEqual(4);
-    expect((html.match(/data-motion="stagger-item"/g) ?? []).length).toBeGreaterThanOrEqual(12);
-    expect((html.match(/data-motion="tilt"/g) ?? [])).toHaveLength(6);
+    expect((html.match(/data-motion="stagger"/g) ?? [])).toHaveLength(3);
+    expect((html.match(/data-motion="stagger-item"/g) ?? []).length).toBeGreaterThanOrEqual(11);
+    expect((html.match(/data-motion="tilt"/g) ?? [])).toHaveLength(1);
+    expect((html.match(/data-family-panel/g) ?? [])).toHaveLength(5);
     expect(html).toContain('data-motion="spotlight"');
     expect(html).toContain('data-motion="progressive-blur"');
   });
@@ -75,7 +76,7 @@ describe("F7 homepage cinematic polish", () => {
     const html = await renderServerComponent(<Homepage />);
 
     for (const asset of [
-      "home-hero-surgical-instruments.jpg",
+      "home-hero-01-desktop.webp",
       "rosa-primary-logo.jpeg",
       "knives-family.jpg",
       "scissors-family.jpg",

@@ -28,7 +28,8 @@ describe("public localization", () => {
   it("renders a genuinely localized Arabic homepage model", async () => {
     const html = await renderServerComponent(<Homepage locale="ar" />);
     expect(html).toContain("أدوات دقيقة. ومشتريات أكثر وضوحًا.");
-    expect(html).toContain("عائلات المنتجات");
+    expect(html).toContain("منتجاتنا");
+    expect(html).toContain("استكشف مجموعة أدوات روزا.");
     expect(html).toContain("اطلب عرض سعر");
     expect(html).toContain('alt="أدوات جراحية مرتبة على سطح أزرق معقم"');
     expect(html).toContain('alt="يد مرتدية قفازًا تمسك بشفرة جراحية دقيقة"');

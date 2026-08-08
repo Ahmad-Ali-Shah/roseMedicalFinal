@@ -18,8 +18,7 @@ describe("F3D contact normal state", () => {
       "+966 11 555 0142",
       "+966 50 555 0142",
       "hello@example.com",
-      "Sunday–Thursday, 09:00–17:00 (AST)",
-      "@rosamedicalexample"
+      "Sunday–Thursday, 09:00–17:00 (AST)"
     ]);
   });
 
@@ -44,6 +43,9 @@ describe("F3D contact normal state", () => {
     expect(html).not.toContain("Awaiting client confirmation");
     expect(html).not.toContain("MESSAGE SENT");
     expect(html).toContain('href="/inquiry"');
+    expect(html).toContain("Follow Rosa");
+    expect((html.match(/target="_blank" rel="noopener noreferrer"/g) ?? [])).toHaveLength(4);
+    expect(html).not.toContain("@rosamedicalexample");
   });
 });
 
