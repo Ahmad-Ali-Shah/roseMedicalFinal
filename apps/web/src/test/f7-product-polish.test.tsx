@@ -35,7 +35,7 @@ describe("F7 product discovery polish", () => {
     expect(html).toContain('data-motion="stagger"');
     expect(html).toContain('data-motion="tilt"');
     expect(html).toContain("Product name or code");
-    expect(html).toContain("Filters (0)");
+    expect(html).toMatch(/Filters(?:<!-- -->)? \((?:<!-- -->)?0(?:<!-- -->)?\)/);
     expect(html).not.toContain("Loading and no-result behavior.");
   });
 
