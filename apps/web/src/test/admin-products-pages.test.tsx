@@ -72,12 +72,12 @@ describe("F3E-B product pages", () => {
       "Submit for review",
       "Publish",
       "Archive",
-      "Delete product",
-      "Add option"
+      "Delete product"
     ]) {
       expect(html).not.toContain(label);
     }
     expect(html).toContain("Replace primary image");
+    expect(html).toMatch(/<button[^>]*disabled[^>]*><span class="button__label">Add option<\/span><\/button>/);
   });
 
   it("marks legacy demonstration states as preview-only and truthful", () => {
