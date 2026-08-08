@@ -49,6 +49,11 @@ describe("public performance policy", () => {
     expect(middleware).toContain("if (!requiresSupabaseSession(request.nextUrl.pathname))");
   });
 
+  it("keeps static AVIF/PDF/font requests out of middleware", () => {
+    const middleware = source("src/middleware.ts");
+    expect(middleware).toContain("webp|avif|ico|pdf|woff2?");
+  });
+
   it("does not depend on unavailable runtime image transformation", () => {
     const config = source("next.config.ts");
     expect(config).toMatch(/images:\s*\{[\s\S]*unoptimized:\s*true/);
