@@ -181,3 +181,82 @@ test("Arabic homepage keeps RTL typography and the same physical hero compositio
   await expect(page.locator("[data-home-family-gallery]")).toBeVisible();
   await expect(page.locator(".site-footer [data-social-links] a")).toHaveCount(4);
 });
+
+test("hero dot keyboard navigation wraps and keeps roving focus", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop");
+  await page.goto("/");
+  const dots = page.locator(".home-hero-carousel__dot");
+  await dots.first().focus();
+  await page.keyboard.press("ArrowLeft");
+  await expect(page.locator("[data-section='home-hero']")).toHaveAttribute("data-active-slide", "catalogue-to-quotation");
+  await expect(dots.nth(3)).toBeFocused();
+  await page.keyboard.press("ArrowRight");
+  await expect(page.locator("[data-section='home-hero']")).toHaveAttribute("data-active-slide", "precision-instruments");
+  await expect(dots.first()).toBeFocused();
+});
+
+test("hero autoplay advances while idle and pauses during focus and hover", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop");
+  await page.goto("/");
+  const hero = page.locator("[data-section='home-hero']");
+  await expect(hero).toHaveAttribute("data-active-slide", "precision-instruments");
+  await page.waitForTimeout(5_200);
+  await expect(hero).toHaveAttribute("data-active-slide", "clinical-instrument-context");
+
+  await page.locator(".home-hero-carousel__dot").nth(1).focus();
+  await page.waitForTimeout(5_200);
+  await expect(hero).toHaveAttribute("data-active-slide", "clinical-instrument-context");
+
+  await page.locator("body").focus();
+  await hero.hover();
+  await page.waitForTimeout(5_200);
+  await expect(hero).toHaveAttribute("data-active-slide", "clinical-instrument-context");
+});
+
+test("reduced motion disables hero autoplay", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  const hero = page.locator("[data-section='home-hero']");
+  await expect(hero).toHaveAttribute("data-active-slide", "precision-instruments");
+  await page.waitForTimeout(5_200);
+  await expect(hero).toHaveAttribute("data-active-slide", "precision-instruments");
+});
+
+test("mobile horizontal swipe advances exactly one slide", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile");
+  await page.goto("/");
+  const hero = page.locator("[data-section='home-hero']");
+  await hero.dispatchEvent("pointerdown", { pointerType: "touch", pointerId: 7, isPrimary: true, button: 0, clientX: 310, clientY: 320 });
+  await hero.dispatchEvent("pointerup", { pointerType: "touch", pointerId: 7, isPrimary: true, button: 0, clientX: 220, clientY: 326 });
+  await expect(hero).toHaveAttribute("data-active-slide", "clinical-instrument-context");
+});
+
+test("mostly vertical mobile gesture does not change hero slide", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile");
+  await page.goto("/");
+  const hero = page.locator("[data-section='home-hero']");
+  await hero.dispatchEvent("pointerdown", { pointerType: "touch", pointerId: 8, isPrimary: true, button: 0, clientX: 300, clientY: 240 });
+  await hero.dispatchEvent("pointerup", { pointerType: "touch", pointerId: 8, isPrimary: true, button: 0, clientX: 240, clientY: 400 });
+  await expect(hero).toHaveAttribute("data-active-slide", "precision-instruments");
+});
+
+test("hero exposes dots only with 44px targets and visible keyboard focus", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop");
+  await page.goto("/");
+  const hero = page.locator("[data-section='home-hero']");
+  await expect(hero.locator("button:not(.home-hero-carousel__dot)")).toHaveCount(0);
+  const dots = hero.locator(".home-hero-carousel__dot");
+  await expect(dots).toHaveCount(4);
+  for (const box of await dots.evaluateAll((nodes) => nodes.map((node) => node.getBoundingClientRect().toJSON()))) {
+    expect(box.width).toBeGreaterThanOrEqual(44);
+    expect(box.height).toBeGreaterThanOrEqual(44);
+  }
+
+  const cta = hero.getByRole("link", { name: "Explore Products" });
+  await cta.focus();
+  expect(await cta.evaluate((node) => getComputedStyle(node).outlineStyle)).not.toBe("none");
+  const family = page.locator("[data-home-family-gallery] [data-family-panel]").first().getByRole("link");
+  await family.focus();
+  expect(await family.evaluate((node) => getComputedStyle(node).outlineStyle)).not.toBe("none");
+});

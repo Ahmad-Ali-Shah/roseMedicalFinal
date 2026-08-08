@@ -51,6 +51,7 @@ export function HomeHeroCarousel({
   const [hidden, setHidden] = useState(false);
   const [manualEpoch, setManualEpoch] = useState(0);
   const pointerStartX = useRef<number | null>(null);
+  const pointerStartY = useRef<number | null>(null);
   const preloadRequest = useRef(0);
   const dotRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
@@ -120,22 +121,27 @@ export function HomeHeroCarousel({
     if (event.pointerType === "mouse" && event.button !== 0) return;
     if ((event.target as Element).closest("button, a")) return;
     pointerStartX.current = event.clientX;
+    pointerStartY.current = event.clientY;
     setDragging(true);
     event.currentTarget.setPointerCapture?.(event.pointerId);
   };
 
   const finishPointer = (event: PointerEvent<HTMLElement>) => {
-    const start = pointerStartX.current;
+    const startX = pointerStartX.current;
+    const startY = pointerStartY.current;
     pointerStartX.current = null;
+    pointerStartY.current = null;
     setDragging(false);
     if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId);
     }
-    if (start === null) return;
-    const delta = event.clientX - start;
-    if (Math.abs(delta) < DRAG_THRESHOLD_PX) return;
+    if (startX === null || startY === null) return;
+    const deltaX = event.clientX - startX;
+    const deltaY = event.clientY - startY;
+    if (Math.abs(deltaY) > Math.abs(deltaX)) return;
+    if (Math.abs(deltaX) < DRAG_THRESHOLD_PX) return;
     activateWhenReady(
-      delta < 0
+      deltaX < 0
         ? nextHeroSlideIndex(activeIndex, slides.length)
         : previousHeroSlideIndex(activeIndex, slides.length),
       true
@@ -166,6 +172,7 @@ export function HomeHeroCarousel({
       onPointerUp={finishPointer}
       onPointerCancel={() => {
         pointerStartX.current = null;
+        pointerStartY.current = null;
         setDragging(false);
       }}
     >
