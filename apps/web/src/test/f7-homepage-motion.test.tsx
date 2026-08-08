@@ -1,12 +1,12 @@
-import { renderToStaticMarkup } from "react-dom/server";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { Homepage } from "@/features/homepage/homepage";
+import { renderServerComponent } from "@/test/render-server-component";
 
 describe("F7 homepage cinematic polish", () => {
-  it("preserves the approved six-section homepage hierarchy", () => {
-    const html = renderToStaticMarkup(<Homepage />);
+  it("preserves the approved six-section homepage hierarchy", async () => {
+    const html = await renderServerComponent(<Homepage />);
 
     for (const section of [
       "home-hero",
@@ -23,8 +23,8 @@ describe("F7 homepage cinematic polish", () => {
     expect(html).toContain("Request a Quote");
   });
 
-  it("uses one editorial hero choreography and a stable cinematic media slot", () => {
-    const html = renderToStaticMarkup(<Homepage />);
+  it("uses one editorial hero choreography and a stable cinematic media slot", async () => {
+    const html = await renderServerComponent(<Homepage />);
 
     expect(html).toContain('data-home-choreography="hero"');
     expect(html).toContain('data-motion="text-reveal"');
@@ -35,8 +35,8 @@ describe("F7 homepage cinematic polish", () => {
     expect(html).toContain("<img");
   });
 
-  it("keeps the homepage story ordered without structural motion decoration", () => {
-    const html = renderToStaticMarkup(<Homepage />);
+  it("keeps the homepage story ordered without structural motion decoration", async () => {
+    const html = await renderServerComponent(<Homepage />);
 
     expect(html).not.toContain("data-home-index");
     expect(html).not.toContain("home-section-index");
@@ -46,8 +46,8 @@ describe("F7 homepage cinematic polish", () => {
     expect(html).toContain('data-media-slot="homepage-hero"');
   });
 
-  it("stages family, product, process and catalogue groups through shared motion", () => {
-    const html = renderToStaticMarkup(<Homepage />);
+  it("stages family, product, process and catalogue groups through shared motion", async () => {
+    const html = await renderServerComponent(<Homepage />);
 
     expect((html.match(/data-motion="stagger"/g) ?? []).length).toBeGreaterThanOrEqual(4);
     expect((html.match(/data-motion="stagger-item"/g) ?? []).length).toBeGreaterThanOrEqual(12);
@@ -56,8 +56,8 @@ describe("F7 homepage cinematic polish", () => {
     expect(html).toContain('data-motion="progressive-blur"');
   });
 
-  it("keeps every current family and product link intact", () => {
-    const html = renderToStaticMarkup(<Homepage />);
+  it("keeps every current family and product link intact", async () => {
+    const html = await renderServerComponent(<Homepage />);
 
     for (const path of [
       "/products/knives",
@@ -71,15 +71,15 @@ describe("F7 homepage cinematic polish", () => {
     }
   });
 
-  it("uses the approved owner media in the hero, brand panel, families and catalogues", () => {
-    const html = renderToStaticMarkup(<Homepage />);
+  it("uses the approved owner media in the hero, brand panel, families and catalogues", async () => {
+    const html = await renderServerComponent(<Homepage />);
 
     for (const asset of [
       "home-hero-surgical-instruments.jpg",
       "rosa-primary-logo.jpeg",
       "knives-family.jpg",
       "scissors-family.jpg",
-      "cutters-family-clean.png",
+      "cutters-family.webp",
       "chisels-family.webp",
       "punches-family.webp"
     ]) {
