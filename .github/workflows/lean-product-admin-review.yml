@@ -11,7 +11,7 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -54,33 +54,42 @@ jobs:
       - name: Focused lint
         run: >-
           pnpm --filter @rosa/web exec eslint
+          next.config.ts
           src/middleware.ts
+          src/lib/supabase/public-read.ts
+          src/lib/supabase/session-route-policy.ts
           src/lib/supabase/admin.ts
           src/lib/supabase/admin-auth.ts
           src/lib/supabase/admin-security.ts
-          src/features/admin-products
-          src/features/admin-management-routing/admin-management-route-model.ts
-          src/features/admin-management-routing/admin-management-route-view.tsx
           src/features/catalogue-live
           src/features/catalogue-migration
-          src/features/family-listing/family-listing.data.ts
-          src/features/family-listing/family-listing-page.tsx
           src/features/homepage/homepage.data.ts
           src/features/homepage/homepage.tsx
-          src/features/product-detail/product-detail.data.ts
-          src/features/product-detail/product-detail-page.tsx
           src/features/products/products.data.ts
           src/features/products/products-overview.tsx
-          src/features/public-catalogue/selectors.ts
-          src/features/public-routing/resolve-public-page.tsx
+          src/features/family-listing/family-listing.data.ts
+          src/features/family-listing/family-listing-page.tsx
+          src/features/product-detail/product-detail.data.ts
+          src/features/product-detail/product-detail-page.tsx
           src/features/search
           src/features/search-preview/search-default-page.tsx
           src/features/search-preview/search-result-preview.tsx
+          src/features/localization/locale-link.tsx
+          src/features/localization/localized-button-link.tsx
+          src/components/layout/public-navigation-link.tsx
+          src/components/ui/button.tsx
+          src/features/public-media/public-media.ts
+          src/features/admin-products
+          src/features/admin-management-routing/admin-management-route-model.ts
+          src/features/admin-management-routing/admin-management-route-view.tsx
+          src/features/public-catalogue/selectors.ts
+          src/features/public-routing/resolve-public-page.tsx
           src/features/inquiry/inquiry-store.ts
           src/features/inquiry/quotation-payload.ts
           src/app/api/checkout/route.ts
           src/test/public-performance-policy.test.ts
           src/test/catalogue-live-projections.test.ts
+          src/test/catalogue-live-supabase.integration.test.ts
           src/test/admin-product-security.test.ts
           src/test/admin-product-canonical.test.ts
           src/test/admin-product-media-write.test.ts
@@ -88,6 +97,15 @@ jobs:
 
       - name: Web build
         run: pnpm --filter @rosa/web build
+        env:
+          NEXT_PUBLIC_SITE_NAME: ROSA
+          NEXT_PUBLIC_SUPABASE_URL: https://hzwabrbrgcxodkqilgdi.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: sb_publishable_eAsFSK6AJfZk2SFzecCDnA_HeSxG-I1
+          SUPABASE_SERVICE_ROLE_KEY: test-service-role
+
+      - name: OpenNext Cloudflare build
+        working-directory: apps/web
+        run: npx opennextjs-cloudflare build
         env:
           NEXT_PUBLIC_SITE_NAME: ROSA
           NEXT_PUBLIC_SUPABASE_URL: https://hzwabrbrgcxodkqilgdi.supabase.co
