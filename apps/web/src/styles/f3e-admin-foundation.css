@@ -806,17 +806,30 @@
 .admin-image-crop-tool {
   display: grid;
   gap: var(--space-3);
+  animation: admin-crop-fade-in 0.2s ease;
+}
+@keyframes admin-crop-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 .admin-image-crop-stage {
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
-  max-width: 22rem;
+  max-width: 26rem;
+  margin-inline: auto;
   overflow: hidden;
+  border-radius: 0.75rem;
   border: 1px solid var(--color-border);
-  background: var(--color-ink);
-  touch-action: none;
-  cursor: move;
+  background-color: var(--color-ink);
+  background-image:
+    linear-gradient(45deg, rgba(255,255,255,0.04) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255,255,255,0.04) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.04) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.04) 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 .admin-image-crop-preview {
   position: absolute;
@@ -826,17 +839,66 @@
   object-fit: contain;
   pointer-events: none;
   user-select: none;
+  transition: transform 0.25s ease;
 }
 .admin-image-crop-box {
   position: absolute;
   border: 2px solid var(--color-rosa-red);
-  box-shadow: 0 0 0 999px rgba(0, 0, 0, 0.45);
+  border-radius: 0.375rem;
+  box-shadow:
+    0 0 0 999px rgba(0, 0, 0, 0.55),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+  cursor: grab;
+  touch-action: none;
+}
+.admin-image-crop-box:active {
+  cursor: grabbing;
+}
+.admin-image-crop-grid {
+  position: absolute;
+  inset: 0;
   pointer-events: none;
+}
+.admin-image-crop-grid::before,
+.admin-image-crop-grid::after {
+  content: "";
+  position: absolute;
+  background: rgba(255, 255, 255, 0.3);
+}
+.admin-image-crop-grid::before {
+  left: 33.333%;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  box-shadow: 33.333% 0 0 rgba(255, 255, 255, 0.3);
+}
+.admin-image-crop-grid::after {
+  top: 33.333%;
+  left: 0;
+  height: 1px;
+  width: 100%;
+  box-shadow: 0 33.333% 0 rgba(255, 255, 255, 0.3);
+}
+.admin-image-crop-handle {
+  position: absolute;
+  right: -8px;
+  bottom: -8px;
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  background: var(--color-rosa-red);
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  cursor: nwse-resize;
+  touch-action: none;
 }
 .admin-image-crop-controls {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
+}
+.admin-image-crop-controls > * {
+  min-width: 8.5rem;
 }
 .admin-image-crop-error {
   margin: 0;
@@ -847,4 +909,5 @@
   margin: 0;
   color: var(--color-ink);
   font-size: 0.85rem;
+  font-weight: 600;
 }
