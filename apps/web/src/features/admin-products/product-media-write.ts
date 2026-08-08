@@ -12,6 +12,14 @@ const IMAGE_EXTENSION_BY_MIME = {
   "image/avif": "avif"
 } as const;
 
+const MIME_BY_FILE_EXTENSION: Record<string, SupportedImageMime> = {
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  png: "image/png",
+  webp: "image/webp",
+  avif: "image/avif"
+};
+
 type SupportedImageMime = keyof typeof IMAGE_EXTENSION_BY_MIME;
 
 export interface ProductIdentityForMediaWrite {
@@ -61,6 +69,18 @@ function isFamilySlug(value: string): value is FamilySlug {
   return (FAMILY_SLUGS as readonly string[]).includes(value);
 }
 
+function resolveContentType(file: File): SupportedImageMime | null {
+  const reportedType = file.type as SupportedImageMime;
+  if (IMAGE_EXTENSION_BY_MIME[reportedType]) {
+    return reportedType;
+  }
+  const nameExtension = file.name.split(".").pop()?.toLowerCase();
+  if (nameExtension && MIME_BY_FILE_EXTENSION[nameExtension]) {
+    return MIME_BY_FILE_EXTENSION[nameExtension];
+  }
+  return null;
+}
+
 function validateInput(input: ReplacePrimaryProductImageInput): {
   familySlug: FamilySlug;
   productSlug: string;
@@ -83,11 +103,11 @@ function validateInput(input: ReplacePrimaryProductImageInput): {
     throw new Error("Product images must be 3 MiB or smaller.");
   }
 
-  const contentType = input.file.type as SupportedImageMime;
-  const extension = IMAGE_EXTENSION_BY_MIME[contentType];
-  if (!extension) {
+  const contentType = resolveContentType(input.file);
+  if (!contentType) {
     throw new Error("Unsupported product image type.");
   }
+  const extension = IMAGE_EXTENSION_BY_MIME[contentType];
 
   return {
     familySlug: input.familySlug,
@@ -136,16 +156,13 @@ export async function replacePrimaryProductImage(
     contentType: validated.contentType
   });
 
-  let linkedImagesUpdated = 0;
+  let linkedImagesUpdated: number;
   try {
     const result = await dependencies.repository.updateImagePathEverywhere({
       oldImagePath: primaryImage.imagePath,
       newImagePath: uploaded.publicUrl
     });
     linkedImagesUpdated = result.updatedCount;
-    if (linkedImagesUpdated < 1) {
-      throw new Error("Image path update did not affect any rows.");
-    }
   } catch (error) {
     try {
       await dependencies.storage.remove(storagePath);
