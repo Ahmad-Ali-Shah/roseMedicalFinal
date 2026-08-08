@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { FAMILY_SLUGS, type FamilySlug } from "@/features/public-catalogue";
 
-const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
+const MAX_IMAGE_BYTES = 3 * 1024 * 1024;
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const PUBLIC_SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
@@ -81,7 +81,7 @@ function validateInput(input: ReplacePrimaryProductImageInput): {
     throw new Error("Choose a non-empty product image.");
   }
   if (input.file.size > MAX_IMAGE_BYTES) {
-    throw new Error("Product images must be 8 MiB or smaller.");
+    throw new Error("Product images must be 3 MiB or smaller.");
   }
 
   const contentType = input.file.type as SupportedImageMime;
