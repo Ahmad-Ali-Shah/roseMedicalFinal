@@ -1,4 +1,3 @@
-import type { Route } from "next";
 import { Button, ButtonLink } from "@/components/ui";
 import {
   AdminAlert,
@@ -12,25 +11,15 @@ import {
   AdminToolbar,
   type AdminDataTableColumn
 } from "@/features/admin-primitives";
+import { getLiveCatalogueProducts } from "@/features/catalogue-live";
 import { ProductMediaPlaceholder } from "@/features/public-catalogue";
 import { getAdminFamilyRows } from "@/features/admin-families";
-import { createClient } from "@/lib/supabase/server";
-import type { Product, Category } from "@/lib/supabase/types";
+import {
+  getAdminProductRows,
+  type AdminProductRow
+} from "./admin-product-model";
 
-interface LiveProductRow {
-  id: string;
-  name: string;
-  code: string;
-  familyName: string;
-  familyHref: Route<string>;
-  optionSummary: string[];
-  catalogueReference: string;
-  mediaLabel: string;
-  publicHref: Route<string>;
-  adminHref: Route<string>;
-}
-
-const columns: readonly AdminDataTableColumn<LiveProductRow>[] = [
+const columns: readonly AdminDataTableColumn<AdminProductRow>[] = [
   {
     key: "product",
     header: "Product",
@@ -40,6 +29,7 @@ const columns: readonly AdminDataTableColumn<LiveProductRow>[] = [
           label={row.mediaLabel}
           aspect="square"
           className="admin-product-cell__media"
+          src={row.mediaPath}
         />
         <div>
           <strong>{row.name}</strong>
@@ -69,13 +59,13 @@ const columns: readonly AdminDataTableColumn<LiveProductRow>[] = [
   },
   {
     key: "media",
-    header: "Media requirement",
+    header: "Media",
     render: (row) => row.mediaLabel
   },
   {
     key: "record",
     header: "Record",
-    render: () => <AdminStatusBadge tone="neutral">Live DB Record</AdminStatusBadge>
+    render: () => <AdminStatusBadge tone="success">Live canonical record</AdminStatusBadge>
   },
   {
     key: "actions",
@@ -94,50 +84,20 @@ const columns: readonly AdminDataTableColumn<LiveProductRow>[] = [
 ];
 
 export async function AdminProductsListPage() {
-  const supabase = await createClient();
-  const [productsRes, categoriesRes] = await Promise.all([
-    supabase.from("products").select("*").order("created_at", { ascending: false }),
-    supabase.from("categories").select("*").is("deleted_at", null)
-  ]);
-
-  const products = (productsRes.data || []) as Product[];
-  const categories = (categoriesRes.data || []) as Category[];
+  const products = await getLiveCatalogueProducts();
+  const rows = getAdminProductRows(products);
   const families = getAdminFamilyRows();
-
-  const rows: LiveProductRow[] = products.map((product) => {
-    const category = categories.find((candidate) => candidate.id === product.category_id);
-    const familyHref = (category ? `/products?category=${category.slug}` : "/products") as Route<string>;
-    const publicHref = `/products?category=${category?.slug || ""}` as Route<string>;
-    const registrySlug =
-      category && product.slug.startsWith(`${category.slug}-`)
-        ? product.slug.slice(category.slug.length + 1)
-        : product.slug;
-    const adminHref = (category ? `/admin/products/${category.slug}/${registrySlug}` : "/admin/products") as Route<string>;
-
-    return {
-      id: product.id,
-      name: product.name_en,
-      code: product.item_code || "N/A",
-      familyName: category?.name_en || "Uncategorized",
-      familyHref,
-      optionSummary: [product.stock_status, product.sell_mode].filter(Boolean),
-      catalogueReference: category?.name_en || "N/A",
-      mediaLabel: "Image required",
-      publicHref,
-      adminHref
-    };
-  });
 
   return (
     <div className="admin-products-page">
       <AdminPageHeader
         eyebrow="Products"
         title="Manage the instrument catalogue."
-        description="This composition reflects live backend records from Supabase."
+        description="This collection reads the same canonical Supabase product records used by the public catalogue."
         actions={<Button disabled>Add product</Button>}
       />
 
-      <AdminAlert tone="info" title="Live Database Connection">
+      <AdminAlert tone="info" title="Live canonical catalogue">
         Showing {rows.length} live products from Supabase.
       </AdminAlert>
 
@@ -153,7 +113,7 @@ export async function AdminProductsListPage() {
       <p className="admin-collection-count">{rows.length} live products</p>
 
       <AdminDataTable
-        caption="Live product records"
+        caption="Live canonical product records"
         captionVisibility="screen-reader"
         rows={rows}
         columns={columns}
@@ -165,14 +125,14 @@ export async function AdminProductsListPage() {
       <AdminSection
         title="Instrument families"
         eyebrow="Family summary"
-        description="Counts are derived from the live database."
+        description="The five family identities and presentation remain source-controlled while product records are canonical in Supabase."
       >
         <div className="admin-family-grid admin-family-grid--summary">
           {families.map((family) => (
             <article className="admin-family-card" data-admin-family-card="true" key={family.slug}>
               <p className="page-eyebrow">{family.sequence}</p>
               <h3>{family.name}</h3>
-              <p>{family.productCount} source products</p>
+              <p>{family.productCount} catalogue products</p>
               <div className="admin-card-actions">
                 <ButtonLink href={family.publicHref} variant="quiet" size="small">
                   View public
