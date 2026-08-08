@@ -41,8 +41,8 @@ describe("F3E-B management routing", () => {
     expect(isAdminManagementRoot("inquiries")).toBe(false);
   });
 
-  it("renders normal routes without preview-only states", async () => {
-    const result = resolveAdminManagementRoute(["products"]);
+  it("renders a normal static management route without preview-only states", async () => {
+    const result = resolveAdminManagementRoute(["families"]);
     const html = await renderServerComponent(<AdminManagementRouteView result={result} />);
     expect(html).not.toContain("data-preview-only");
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
