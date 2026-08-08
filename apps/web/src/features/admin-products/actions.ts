@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { clearCatalogueProjectionCache } from "@/features/catalogue-live/catalogue-live.cache";
 import { requireAdminUser } from "@/lib/supabase/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
@@ -100,7 +101,7 @@ export async function uploadProductMedia(formData: FormData) {
       const { error } = await bucket.upload(path, file, {
         upsert: false,
         contentType,
-        cacheControl: "3600"
+        cacheControl: "31536000"
       });
       if (error) {
         throw new Error(`Product image upload failed: ${error.message}`);
@@ -126,6 +127,7 @@ export async function uploadProductMedia(formData: FormData) {
     { repository, storage }
   );
 
+  clearCatalogueProjectionCache();
   revalidatePath("/");
   revalidatePath("/products");
   revalidatePath("/search");
