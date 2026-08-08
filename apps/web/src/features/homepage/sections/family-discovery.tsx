@@ -1,13 +1,11 @@
 import type { ReactElement } from "react";
 import { Container, Section } from "@/components/layout";
-import { Stagger, StaggerItem } from "@/features/motion";
-import {
-  FamilyCard,
-  SectionHeading,
-  type FamilyCardModel
-} from "@/features/public-catalogue";
+import { SectionHeading } from "@/features/public-catalogue";
 import type { HomeFamilyIntroModel } from "../homepage.data";
 import type { PublicLocale } from "@/features/localization";
+import { HomeFamilyGallery } from "./home-family-gallery";
+
+type FamilyGalleryFamilies = Parameters<typeof HomeFamilyGallery>[0]["families"];
 
 export function FamilyDiscovery({
   intro,
@@ -15,7 +13,7 @@ export function FamilyDiscovery({
   locale = "en"
 }: {
   intro: HomeFamilyIntroModel;
-  families: readonly FamilyCardModel[];
+  families: FamilyGalleryFamilies;
   locale?: PublicLocale;
 }): ReactElement {
   return (
@@ -30,20 +28,8 @@ export function FamilyDiscovery({
           level={2}
           eyebrow={intro.eyebrow}
           title={intro.title}
-          copy={intro.copy}
         />
-        <Stagger
-          as="ul"
-          className="family-grid home-family-grid"
-          aria-label={locale === "ar" ? "عائلات الأدوات" : "Instrument families"}
-          interval={0.065}
-        >
-          {families.map((family) => (
-            <StaggerItem as="li" key={family.id}>
-              <FamilyCard family={family} locale={locale} />
-            </StaggerItem>
-          ))}
-        </Stagger>
+        <HomeFamilyGallery families={families} locale={locale} />
       </Container>
     </Section>
   );

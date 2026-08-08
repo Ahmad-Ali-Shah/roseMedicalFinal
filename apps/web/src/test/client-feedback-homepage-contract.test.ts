@@ -42,4 +42,13 @@ describe("client-feedback responsive homepage contract", () => {
     const carouselSource = source("src/features/homepage/sections/home-hero-carousel.tsx");
     expect(carouselSource.match(/priority=\{activeIndex === 0\}/g)).toHaveLength(1);
   });
+
+  it("uses a dedicated five-family homepage gallery instead of FamilyCard collage", () => {
+    const discovery = source("src/features/homepage/sections/family-discovery.tsx");
+    const gallery = source("src/features/homepage/sections/home-family-gallery.tsx");
+    expect(discovery).toContain("HomeFamilyGallery");
+    expect(discovery).not.toContain("FamilyCard");
+    expect(gallery).toContain("data-home-family-gallery");
+    expect(gallery).not.toContain("Explore collection");
+  });
 });
