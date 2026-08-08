@@ -1,0 +1,94 @@
+name: Optimize Static Media Once
+
+on:
+  pull_request:
+    branches:
+      - ahmadx67676767
+
+permissions:
+  contents: write
+
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: integration/canonical-catalogue-source-of-truth
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Generate exact approved image derivatives
+        run: |
+          set -euo pipefail
+          mkdir -p apps/web/public/media/optimized/v1
+          SHARP_PATH="$(find node_modules/.pnpm -type d -path '*/node_modules/sharp' | head -1)"
+          test -n "$SHARP_PATH"
+          export SHARP_PATH
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const sharp = require(process.env.SHARP_PATH);
+
+          const targets = [
+            ['apps/web/public/media/editorial/about-distributors.jpg', 'apps/web/public/media/optimized/v1/about-distributors.webp', 1400, 80],
+            ['apps/web/public/media/editorial/about-hospitals.jpg', 'apps/web/public/media/optimized/v1/about-hospitals.webp', 1400, 80],
+            ['apps/web/public/media/editorial/procurement-support.jpg', 'apps/web/public/media/optimized/v1/procurement-support.webp', 1600, 82],
+            ['apps/web/public/media/editorial/about-procurement.jpg', 'apps/web/public/media/optimized/v1/about-procurement.webp', 1400, 80],
+            ['apps/web/public/media/editorial/home-hero-surgical-instruments.jpg', 'apps/web/public/media/optimized/v1/home-hero-surgical-instruments.webp', 1920, 82],
+            ['apps/web/public/media/families/cutters-family-clean.png', 'apps/web/public/media/optimized/v1/cutters-family.webp', 1200, 84]
+          ];
+
+          (async () => {
+            for (const [src, dst, width, quality] of targets) {
+              const before = fs.statSync(src).size;
+              const metadata = await sharp(src).metadata();
+              await sharp(src)
+                .rotate()
+                .resize({ width, withoutEnlargement: true })
+                .webp({ quality, effort: 6, smartSubsample: true })
+                .toFile(dst);
+              const after = fs.statSync(dst).size;
+              const outMeta = await sharp(dst).metadata();
+              if (after >= before) throw new Error(`${dst} did not reduce bytes`);
+              console.log(`${src}: ${metadata.width}x${metadata.height}, ${before} -> ${dst}: ${outMeta.width}x${outMeta.height}, ${after}`);
+            }
+          })().catch((error) => {
+            console.error(error);
+            process.exit(1);
+          });
+          NODE
+
+      - name: Enforce delivery byte ceilings
+        run: |
+          set -euo pipefail
+          test "$(stat -c %s apps/web/public/media/optimized/v1/about-distributors.webp)" -lt 450000
+          test "$(stat -c %s apps/web/public/media/optimized/v1/about-hospitals.webp)" -lt 450000
+          test "$(stat -c %s apps/web/public/media/optimized/v1/procurement-support.webp)" -lt 350000
+          test "$(stat -c %s apps/web/public/media/optimized/v1/about-procurement.webp)" -lt 300000
+          test "$(stat -c %s apps/web/public/media/optimized/v1/home-hero-surgical-instruments.webp)" -lt 350000
+          test "$(stat -c %s apps/web/public/media/optimized/v1/cutters-family.webp)" -lt 300000
+          find apps/web/public/media/optimized/v1 -type f -printf '%s\t%p\n' | sort -nr
+
+      - name: Commit generated derivatives to feature branch
+        run: |
+          set -euo pipefail
+          git config user.name "rosa-performance-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add apps/web/public/media/optimized/v1
+          if git diff --cached --quiet; then
+            echo "No derivative changes to commit."
+            exit 0
+          fi
+          git commit -m "perf(media): add optimized approved derivatives [skip ci]"
+          git push origin HEAD:integration/canonical-catalogue-source-of-truth
