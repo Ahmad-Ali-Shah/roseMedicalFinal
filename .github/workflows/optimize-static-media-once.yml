@@ -44,7 +44,6 @@ jobs:
             ['apps/web/public/media/editorial/about-hospitals.jpg', 'apps/web/public/media/optimized/v1/about-hospitals.webp', 1400, 80],
             ['apps/web/public/media/editorial/procurement-support.jpg', 'apps/web/public/media/optimized/v1/procurement-support.webp', 1600, 82],
             ['apps/web/public/media/editorial/about-procurement.jpg', 'apps/web/public/media/optimized/v1/about-procurement.webp', 1400, 80],
-            ['apps/web/public/media/editorial/home-hero-surgical-instruments.jpg', 'apps/web/public/media/optimized/v1/home-hero-surgical-instruments.webp', 1920, 82],
             ['apps/web/public/media/families/cutters-family-clean.png', 'apps/web/public/media/optimized/v1/cutters-family.webp', 1200, 84]
           ];
 
@@ -75,7 +74,6 @@ jobs:
           test "$(stat -c %s apps/web/public/media/optimized/v1/about-hospitals.webp)" -lt 450000
           test "$(stat -c %s apps/web/public/media/optimized/v1/procurement-support.webp)" -lt 350000
           test "$(stat -c %s apps/web/public/media/optimized/v1/about-procurement.webp)" -lt 300000
-          test "$(stat -c %s apps/web/public/media/optimized/v1/home-hero-surgical-instruments.webp)" -lt 350000
           test "$(stat -c %s apps/web/public/media/optimized/v1/cutters-family.webp)" -lt 300000
           find apps/web/public/media/optimized/v1 -type f -printf '%s\t%p\n' | sort -nr
 
