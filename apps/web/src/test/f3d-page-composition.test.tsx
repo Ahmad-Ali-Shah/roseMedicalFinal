@@ -1,6 +1,6 @@
-import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { resolvePublicPage } from "@/features/public-routing/resolve-public-page";
+import { renderServerComponent } from "@/test/render-server-component";
 
 describe("F3D public page composition", () => {
   it.each([
@@ -10,8 +10,8 @@ describe("F3D public page composition", () => {
     ["search", "Find an instrument."],
     ["privacy", "Privacy Policy"],
     ["terms", "Terms of Website Use"]
-  ] as const)("renders %s with one heading", (key, heading) => {
-    const html = renderToStaticMarkup(
+  ] as const)("renders %s with one heading", async (key, heading) => {
+    const html = await renderServerComponent(
       resolvePublicPage({ key, path: `/${key}`, title: heading })
     );
 
@@ -20,11 +20,11 @@ describe("F3D public page composition", () => {
     expect(html).not.toContain("Route scaffold");
   });
 
-  it("keeps normal contact and search routes separate from preview-only states", () => {
-    const contact = renderToStaticMarkup(
+  it("keeps normal contact and search routes separate from preview-only states", async () => {
+    const contact = await renderServerComponent(
       resolvePublicPage({ key: "contact", path: "/contact", title: "Contact" })
     );
-    const search = renderToStaticMarkup(
+    const search = await renderServerComponent(
       resolvePublicPage({ key: "search", path: "/search", title: "Search" })
     );
 
