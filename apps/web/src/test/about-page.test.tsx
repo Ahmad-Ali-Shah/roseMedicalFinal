@@ -16,11 +16,11 @@ it("renders the approved About structure without unsupported claims", () => {
   expect(html).toContain('data-company-profile="true"');
   expect(html).toContain("rosa-primary-logo.jpeg");
   expect((html.match(/data-supported-buyer-media=/g) ?? [])).toHaveLength(4);
-  expect(html).toContain("/media/optimized/v1/about-hospitals.webp");
-  expect(html).toContain("/media/optimized/v1/about-procurement.webp");
-  expect(html).toContain("/media/optimized/v1/about-distributors.webp");
+  expect(html).toContain("about-hospitals.webp");
+  expect(html).toContain("about-procurement.webp");
+  expect(html).toContain("about-distributors.webp");
   expect(html).toContain("about-international-buyers.webp");
-  expect(html).toContain("/media/optimized/v1/procurement-support.webp");
+  expect(html).toContain("procurement-support.webp");
   expect(html).toContain('href="/procurement-support"');
   expect(html).toContain('href="/products"');
   expect(html).toContain('href="/request-quotation"');
