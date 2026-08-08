@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { CATALOGUE_PRODUCTS } from "@/features/catalogue-registry";
+import {
+  CATALOGUE_PRODUCTS,
+  type CatalogueProductRecord
+} from "@/features/catalogue-registry";
 import {
   getAdminProductEditor,
   getAdminProductRows,
@@ -7,17 +10,17 @@ import {
 } from "@/features/admin-products";
 
 describe("F3E-B product selectors", () => {
-  it("derives exactly one row for every source product", () => {
-    const rows = getAdminProductRows();
+  it("derives exactly one row for every supplied source product", () => {
+    const rows = getAdminProductRows(CATALOGUE_PRODUCTS);
     expect(rows).toHaveLength(CATALOGUE_PRODUCTS.length);
     expect(rows.map((row) => row.id)).toEqual(
       CATALOGUE_PRODUCTS.map((product) => product.id)
     );
   });
 
-  it("preserves source identity and uses real route helpers", () => {
+  it("preserves supplied identity and uses real route helpers", () => {
     const source = CATALOGUE_PRODUCTS[0]!;
-    const row = getAdminProductRows().at(0);
+    const row = getAdminProductRows(CATALOGUE_PRODUCTS).at(0);
     expect(row).toBeDefined();
     expect(row!).toMatchObject({
       id: source.id,
@@ -30,12 +33,17 @@ describe("F3E-B product selectors", () => {
     expect(row!.adminHref).toBe(`/admin/products/${source.familySlug}/${source.slug}`);
   });
 
-  it("resolves every known editor and rejects mismatched families", () => {
+  it("builds every known editor from the supplied canonical product", () => {
     for (const product of CATALOGUE_PRODUCTS) {
-      expect(getAdminProductEditor(product.familySlug, product.slug)?.product.id).toBe(product.id);
+      expect(getAdminProductEditor(product)?.product.id).toBe(product.id);
     }
+
     const product = CATALOGUE_PRODUCTS[0]!;
-    expect(getAdminProductEditor("scissors", product.slug)).toBeUndefined();
+    const invalid = {
+      ...product,
+      familySlug: "not-a-family"
+    } as unknown as CatalogueProductRecord;
+    expect(getAdminProductEditor(invalid)).toBeUndefined();
   });
 
   it("deduplicates documented options and provides an explicit fallback", () => {
@@ -57,7 +65,7 @@ describe("F3E-B product selectors", () => {
   });
 
   it("does not introduce unsupported workflow fields", () => {
-    const serialized = JSON.stringify(getAdminProductRows());
+    const serialized = JSON.stringify(getAdminProductRows(CATALOGUE_PRODUCTS));
     expect(serialized).not.toMatch(/published|draft|review|visible|featured|updatedAt|arabicComplete/i);
   });
 });
