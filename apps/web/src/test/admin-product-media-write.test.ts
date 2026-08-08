@@ -138,11 +138,11 @@ describe("safe product primary-media replacement", () => {
           productId,
           familySlug: "cutters",
           productSlug: "liston",
-          file: imageFile("image/jpeg", 8 * 1024 * 1024 + 1)
+          file: imageFile("image/jpeg", 3 * 1024 * 1024 + 1)
         },
         { ...deps, createObjectId: () => "new-object" }
       )
-    ).rejects.toThrow(/8 mib/i);
+    ).rejects.toThrow(/3 mib/i);
   });
 
   it("removes only the newly uploaded object when the database update fails", async () => {
