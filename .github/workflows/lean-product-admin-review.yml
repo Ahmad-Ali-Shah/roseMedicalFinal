@@ -41,6 +41,8 @@ jobs:
           src/test/public-product-route-classification.test.ts
           src/test/admin-product-security.test.ts
           src/test/admin-product-canonical.test.ts
+          src/test/admin-product-model.test.ts
+          src/test/admin-products-pages.test.tsx
           src/test/admin-product-media-write.test.ts
           src/test/admin-product-editor-scope.test.ts
         env:
@@ -92,6 +94,8 @@ jobs:
           src/test/catalogue-live-supabase.integration.test.ts
           src/test/admin-product-security.test.ts
           src/test/admin-product-canonical.test.ts
+          src/test/admin-product-model.test.ts
+          src/test/admin-products-pages.test.tsx
           src/test/admin-product-media-write.test.ts
           src/test/admin-product-editor-scope.test.ts
 
