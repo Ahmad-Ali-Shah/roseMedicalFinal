@@ -101,6 +101,21 @@ function familyManifest(
   );
 }
 
+function productContextManifest(
+  familySlug: FamilySlug,
+  productSlug: string
+): readonly CatalogueMetadataManifestEntry[] {
+  const family = familyManifest(familySlug);
+  const product = family.find((entry) => entry.publicSlug === productSlug);
+  if (!product) return [];
+
+  const related = family
+    .filter((entry) => entry.publicSlug !== productSlug)
+    .slice(0, 3);
+
+  return [product, ...related];
+}
+
 const FEATURED_MANIFEST: readonly CatalogueMetadataManifestEntry[] =
   productFixtures.map((selection) => {
     const entry = CATALOGUE_METADATA_MANIFEST.find(
@@ -324,8 +339,42 @@ export async function getProductCatalogueContext(
   familySlug: string,
   productSlug: string
 ): Promise<readonly CatalogueProductRecord[]> {
-  if (!productSlug.trim()) return [];
-  return getFamilyCatalogueProducts(familySlug);
+  if (!isFamilySlug(familySlug) || !productSlug.trim()) return [];
+  const manifest = productContextManifest(familySlug, productSlug);
+  if (manifest.length === 0) return [];
+
+  return withInfrastructureFallback(
+    `product ${familySlug}/${productSlug}`,
+    () =>
+      getCachedCatalogueProjection(
+        `catalogue:product:${familySlug}:${productSlug}`,
+        async () => {
+          const supabase = createPublicReadClient();
+          return loadProjectedCatalogue(
+            `product ${familySlug}/${productSlug}`,
+            async () => {
+              const { data, error } = await supabase
+                .from("products")
+                .select(PUBLIC_PRODUCT_SELECT)
+                .eq("is_active", true)
+                .eq("category.is_active", true)
+                .is("category.deleted_at", null)
+                .eq("category.slug", familySlug)
+                .in(
+                  "slug",
+                  manifest.map((entry) => entry.dbSlug)
+                );
+              return {
+                data: data as unknown as readonly LiveProductProjectionRow[] | null,
+                error
+              };
+            },
+            manifest
+          );
+        }
+      ),
+    staticProductsForManifest(manifest)
+  );
 }
 
 export async function getSearchCatalogueProducts(): Promise<
