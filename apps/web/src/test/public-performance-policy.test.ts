@@ -10,6 +10,7 @@ import {
   ROSA_HEADER_LOGO_MEDIA,
   SUPPORTED_BUYER_MEDIA
 } from "@/features/public-media";
+import { requiresSupabaseSession } from "@/lib/supabase/session-route-policy";
 
 function source(path: string): string {
   return readFileSync(resolve(process.cwd(), path), "utf8");
@@ -21,7 +22,28 @@ function expectLocalMedia(src: string): void {
 }
 
 describe("public performance policy", () => {
-  it("gates Supabase session refresh behind an explicit protected-route policy", () => {
+  it.each([
+    "/",
+    "/products",
+    "/products/knives",
+    "/products/knives/number-3",
+    "/search",
+    "/catalogues",
+    "/about",
+    "/contact",
+    "/request-quotation"
+  ])("does not refresh a Supabase session for public route %s", (pathname) => {
+    expect(requiresSupabaseSession(pathname)).toBe(false);
+  });
+
+  it.each(["/admin", "/admin/products", "/admin/products/knives/number-3"])(
+    "keeps Supabase session refresh for protected route %s",
+    (pathname) => {
+      expect(requiresSupabaseSession(pathname)).toBe(true);
+    }
+  );
+
+  it("gates Supabase session refresh behind the protected-route policy", () => {
     const middleware = source("src/middleware.ts");
     expect(middleware).toContain("requiresSupabaseSession");
     expect(middleware).toContain("if (!requiresSupabaseSession(request.nextUrl.pathname))");
@@ -35,6 +57,7 @@ describe("public performance policy", () => {
   it("defaults localized public links to no automatic prefetch", () => {
     expect(source("src/features/localization/locale-link.tsx")).toContain("prefetch = false");
     expect(source("src/features/localization/localized-button-link.tsx")).toContain("prefetch = false");
+    expect(source("src/components/layout/public-navigation-link.tsx")).toContain("prefetch={false}");
   });
 
   it("keeps all non-product media local", () => {
@@ -57,5 +80,11 @@ describe("public performance policy", () => {
     expect(headers).toContain("/_next/static/*");
     expect(headers).toContain("max-age=31536000,immutable");
     expect(headers).toContain("/media/*");
+  });
+
+  it("makes versioned Supabase product uploads long-cacheable and invalidates catalogue cache", () => {
+    const actions = source("src/features/admin-products/actions.ts");
+    expect(actions).toContain('cacheControl: "31536000"');
+    expect(actions).toContain("clearCatalogueProjectionCache();");
   });
 });
