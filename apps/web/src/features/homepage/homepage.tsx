@@ -2,7 +2,7 @@ import type { ReactElement } from "react";
 import { getFeaturedCatalogueProducts } from "@/features/catalogue-live";
 import { createHomePageModel } from "./homepage.data";
 import type { PublicLocale } from "@/features/localization";
-import { HomeHero } from "./sections/home-hero";
+import { HomeHeroCarousel } from "./sections/home-hero-carousel";
 import { FamilyDiscovery } from "./sections/family-discovery";
 import { ProcurementSupport } from "./sections/procurement-support";
 import { FeaturedInstruments } from "./sections/featured-instruments";
@@ -14,7 +14,7 @@ export async function Homepage({ locale = "en" }: { locale?: PublicLocale }): Pr
   const model = createHomePageModel(products, locale);
   return (
     <div className="public-page public-page--home">
-      <HomeHero model={model.hero} locale={locale} />
+      <HomeHeroCarousel locale={locale} />
       <FamilyDiscovery intro={model.familyIntro} families={model.families} locale={locale} />
       <ProcurementSupport model={model.procurement} locale={locale} />
       <FeaturedInstruments intro={model.productsIntro} products={model.products} />

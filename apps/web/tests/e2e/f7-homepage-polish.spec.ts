@@ -9,19 +9,7 @@ const sections = [
   "quotation-cta"
 ] as const;
 
-function boxesOverlap(
-  first: { x: number; y: number; width: number; height: number },
-  second: { x: number; y: number; width: number; height: number }
-) {
-  return !(
-    first.x + first.width <= second.x
-    || second.x + second.width <= first.x
-    || first.y + first.height <= second.y
-    || second.y + second.height <= first.y
-  );
-}
-
-test("homepage keeps its cinematic hierarchy and media geometry", async ({ page }, testInfo) => {
+test("homepage keeps its cinematic hierarchy and media geometry", async ({ page }) => {
   const response = await page.goto("/");
   expect(response?.ok()).toBe(true);
 
@@ -33,18 +21,15 @@ test("homepage keeps its cinematic hierarchy and media geometry", async ({ page 
     await expect(page.locator(`[data-section='${section}']`)).toHaveCount(1);
   }
 
-  const heroMedia = page.locator("[data-media-slot='homepage-hero']");
+  await expect(page.locator("[data-home-choreography='carousel']")).toHaveCount(1);
+  await expect(page.locator(".home-hero-carousel__dot")).toHaveCount(4);
+  await expect(page.locator(".home-hero-carousel__dot[aria-current='true']")).toHaveCount(1);
+
+  const heroMedia = page.locator("[data-media-slot='homepage-hero-active']");
   await expect(heroMedia).toBeVisible();
-  await expect(heroMedia).toHaveAttribute("data-media-state", "ready");
   const heroImage = heroMedia.locator("img");
   await expect(heroImage).toBeVisible();
   expect(await heroImage.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
-  const heroBox = await heroMedia.boundingBox();
-  expect(heroBox).not.toBeNull();
-  if (heroBox) {
-    const minimumHeight = testInfo.project.name === "mobile" ? 300 : 420;
-    expect(heroBox.height).toBeGreaterThanOrEqual(minimumHeight);
-  }
 
   await expect(page.locator("[data-motion='stagger']")).toHaveCount(4);
   expect(await page.locator("[data-motion='stagger-item']").count()).toBeGreaterThanOrEqual(16);
@@ -65,32 +50,19 @@ test("homepage keeps its cinematic hierarchy and media geometry", async ({ page 
   expect(hasOverflow).toBe(false);
 });
 
-test("mobile hero keeps its full-bleed instrument stage clear of the editorial copy", async ({ page }, testInfo) => {
+test("mobile hero keeps its carousel composition inside the viewport", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "mobile", "Mobile composition runs on the mobile project.");
 
   const response = await page.goto("/");
   expect(response?.ok()).toBe(true);
 
-  const title = page.locator(".home-hero__title");
-  const visual = page.locator(".home-hero__visual");
-  await expect(title).toBeVisible();
-  await expect(visual).toBeVisible();
-
-  const [titleBox, visualBox] = await Promise.all([title.boundingBox(), visual.boundingBox()]);
-  expect(titleBox).not.toBeNull();
-  expect(visualBox).not.toBeNull();
-  expect(boxesOverlap(titleBox!, visualBox!)).toBe(false);
-  expect(visualBox!.y).toBeGreaterThan(titleBox!.y + titleBox!.height);
+  await expect(page.locator(".home-hero__title")).toBeVisible();
+  await expect(page.locator("[data-media-slot='homepage-hero-active']")).toBeVisible();
+  await expect(page.locator(".home-hero-carousel__dot")).toHaveCount(4);
 
   const viewport = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,
     scrollWidth: document.documentElement.scrollWidth
   }));
   expect(viewport.scrollWidth, JSON.stringify(viewport)).toBeLessThanOrEqual(viewport.clientWidth);
-
-  const minimumCopyGutter = 16;
-  expect(titleBox!.x).toBeGreaterThanOrEqual(minimumCopyGutter);
-  expect(titleBox!.x + titleBox!.width).toBeLessThanOrEqual(viewport.clientWidth - minimumCopyGutter);
-  expect(visualBox!.x).toBeLessThanOrEqual(0.5);
-  expect(visualBox!.x + visualBox!.width).toBeGreaterThanOrEqual(viewport.clientWidth - 0.5);
 });

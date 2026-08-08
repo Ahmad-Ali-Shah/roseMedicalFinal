@@ -19,11 +19,6 @@ import type { Route } from "next";
 const families = selectFamilyCards();
 
 export const HOME_PAGE_MODEL = {
-  hero: {
-    ...PUBLIC_CONTENT_VALUES.homeHero,
-    primary: { label: "Explore Products", href: "/products" as const },
-    secondary: { label: "Request a Quote", href: "/request-quotation" as const }
-  },
   familyIntro: {
     eyebrow: "Our products",
     title: "Explore the ROSA instrument collection.",
@@ -83,7 +78,6 @@ export function createHomePageModel(
   } as const;
 }
 
-export interface HomeHeroModel { eyebrow: string; title: string; copy: string; primary: { label: string; href: Route<string> }; secondary: { label: string; href: Route<string> } }
 export interface HomeFamilyIntroModel { eyebrow: string; title: string; copy: string }
 export interface HomeProcurementModel { eyebrow: string; title: string; copy: string; detailEyebrow: string; detailTitle: string; detailCopy: string; steps: readonly string[] }
 export interface HomeProductsIntroModel { eyebrow: string; title: string; copy: string }

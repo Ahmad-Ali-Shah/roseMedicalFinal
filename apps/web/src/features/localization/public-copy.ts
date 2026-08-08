@@ -15,13 +15,6 @@ const families = selectFamilyCards().map((family) => ({
 }));
 
 export const HOME_PAGE_MODEL_AR = {
-  hero: {
-    eyebrow: "مورّد أدوات طبية",
-    title: "أدوات دقيقة. ومشتريات أكثر وضوحًا.",
-    copy: "تجربة منظمة لاستعراض الكتالوجات وطلب عروض الأسعار للمستشفيات والموزعين وفرق المشتريات.",
-    primary: { label: "استعرض المنتجات", href: "/products" as const },
-    secondary: { label: "اطلب عرض سعر", href: "/request-quotation" as const }
-  },
   familyIntro: {
     eyebrow: "منتجاتنا",
     title: "استكشف مجموعة أدوات روزا.",

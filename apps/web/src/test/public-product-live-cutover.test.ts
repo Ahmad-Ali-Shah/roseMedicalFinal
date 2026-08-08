@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { CatalogueProductRecord } from "@/features/catalogue-registry";
 import { createFamilyListingData } from "@/features/family-listing/family-listing.data";
-import { createHomePageModel, HOME_PAGE_MODEL } from "@/features/homepage/homepage.data";
+import { createHomePageModel } from "@/features/homepage/homepage.data";
 import { createProductDetailData } from "@/features/product-detail/product-detail.data";
 import { selectFeaturedProducts } from "@/features/public-catalogue";
 import { createProductsPageModel } from "@/features/products/products.data";
@@ -126,7 +126,6 @@ describe("public product live cutover models", () => {
     expect(homeModel.products.map((product) => product.id)).toEqual(
       productsModel.products.map((product) => product.id)
     );
-    expect(homeModel.hero).toEqual(HOME_PAGE_MODEL.hero);
     expect(homeAr.products[0]?.familyName).toBe("المشارط والسكاكين الجراحية");
   });
 });
