@@ -32,12 +32,11 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p apps/web/public/media/optimized/v1
-          SHARP_PATH="$(find node_modules/.pnpm -type d -path '*/node_modules/sharp' | head -1)"
+          SHARP_PATH="$(realpath "$(find node_modules/.pnpm -type d -path '*/node_modules/sharp' | head -1)")"
           test -n "$SHARP_PATH"
           export SHARP_PATH
           node <<'NODE'
           const fs = require('node:fs');
-          const path = require('node:path');
           const sharp = require(process.env.SHARP_PATH);
 
           const targets = [
