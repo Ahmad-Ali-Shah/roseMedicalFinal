@@ -6,12 +6,21 @@ describe("Supabase admin client configuration", () => {
     vi.unstubAllEnvs();
   });
 
-  it("fails closed with an integration-owned error when service credentials are absent", () => {
+  it("fails closed when the Supabase URL is absent", () => {
     vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "");
+    vi.stubEnv("SUPABASE_SERVICE_ROLE_KEY", "test-service-role");
+
+    expect(() => createAdminClient()).toThrowError(
+      "NEXT_PUBLIC_SUPABASE_URL is not configured."
+    );
+  });
+
+  it("fails closed when privileged service credentials are absent", () => {
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://example.supabase.co");
     vi.stubEnv("SUPABASE_SERVICE_ROLE_KEY", "");
 
     expect(() => createAdminClient()).toThrowError(
-      "Supabase admin client is not configured.",
+      "SUPABASE_SERVICE_ROLE_KEY is required for privileged server operations."
     );
   });
 });
