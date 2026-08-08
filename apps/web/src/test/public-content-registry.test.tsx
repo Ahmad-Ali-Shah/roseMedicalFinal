@@ -10,6 +10,7 @@ import {
   PUBLIC_CONTENT_VALUES,
   getPublicContentBlock
 } from "@/features/public-content-registry";
+import { renderServerComponent } from "@/test/render-server-component";
 
 describe("F3E-D public content registry", () => {
   it("contains exactly the six approved blocks", () => {
@@ -23,8 +24,8 @@ describe("F3E-D public content registry", () => {
     ]);
   });
 
-  it("preserves every shared value in public renderers", () => {
-    const homepage = renderToStaticMarkup(<Homepage />);
+  it("preserves every shared value in public renderers", async () => {
+    const homepage = await renderServerComponent(<Homepage />);
     expect(homepage).toContain(PUBLIC_CONTENT_VALUES.homeHero.title);
     expect(homepage).toContain(PUBLIC_CONTENT_VALUES.homeSupport.title);
     expect(renderToStaticMarkup(<AboutPage />)).toContain(PUBLIC_CONTENT_VALUES.aboutIntroduction.title);
