@@ -9,10 +9,11 @@ import {
   CATALOGUE_MEDIA_BY_SLUG,
   FAMILY_MEDIA_BY_SLUG
 } from "@/features/public-media";
+import { renderServerComponent } from "@/test/render-server-component";
 
 describe("owner media refinement", () => {
-  it("renders an unframed full-bleed homepage hero", () => {
-    const html = renderToStaticMarkup(<Homepage />);
+  it("renders an unframed full-bleed homepage hero", async () => {
+    const html = await renderServerComponent(<Homepage />);
 
     expect(html).toContain("home-hero__visual--fullbleed");
     expect(html).toContain("home-hero__media-fade");
@@ -20,8 +21,8 @@ describe("owner media refinement", () => {
     expect(html).not.toContain("home-hero__visual-tilt");
   });
 
-  it("uses real high-quality product imagery without a fake document layer", () => {
-    const html = renderToStaticMarkup(<Homepage />);
+  it("uses real high-quality product imagery without a fake document layer", async () => {
+    const html = await renderServerComponent(<Homepage />);
 
     expect((html.match(/data-catalogue-family-media=/g) ?? [])).toHaveLength(5);
     expect(html).not.toContain("catalogue-card__document");
@@ -52,13 +53,13 @@ describe("owner media refinement", () => {
     expect(html).toContain("cutters-k-wire.jpg");
   });
 
-  it("renders real family media in every family-page hero", () => {
+  it("renders real family media in every family-page hero", async () => {
     for (const slug of FAMILY_SLUGS) {
-      const html = renderToStaticMarkup(<FamilyListingPage familySlug={slug} />);
+      const html = await renderServerComponent(<FamilyListingPage familySlug={slug} />);
 
       expect(html).toContain(`data-media-slot="family-${slug}-hero"`);
       expect(html).toContain("data-media-state=\"ready\"");
-      expect(html).toContain(encodeURIComponent(FAMILY_MEDIA_BY_SLUG[slug].src));
+      expect(html).toContain(FAMILY_MEDIA_BY_SLUG[slug].src);
       expect(html).not.toContain(`${slug} family placeholder`);
     }
   });
