@@ -135,11 +135,13 @@ describe.runIf(runLiveParity)("live Supabase catalogue parity", () => {
 
     expect(featured.length).toBeGreaterThan(0);
     expect(scissors).toHaveLength(42);
-    expect(detailContext).toHaveLength(42);
+    expect(detailContext).toHaveLength(4);
+    expect(detailContext.some((product) => product.slug === scissorsRoute!.publicSlug)).toBe(true);
     expect(search).toHaveLength(113);
 
     expectLiveDatabaseIdentities(featured);
     expectLiveDatabaseIdentities(scissors);
+    expectLiveDatabaseIdentities(detailContext);
     expectLiveDatabaseIdentities(search);
   });
 });
