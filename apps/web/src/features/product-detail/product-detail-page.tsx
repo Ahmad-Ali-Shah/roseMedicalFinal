@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
 import { Container, Section } from "@/components/layout";
-import { getPublicCatalogueProducts } from "@/features/catalogue-live";
+import { getProductCatalogueContext } from "@/features/catalogue-live";
 import type { InquiryItem } from "@/features/inquiry";
 import { Reveal } from "@/features/motion";
 import { ProcurementPanel } from "@/features/public-catalogue";
@@ -24,7 +24,7 @@ export async function ProductDetailPage({
   productSlug: string;
   locale?: PublicLocale;
 }): Promise<ReactElement | null> {
-  const products = await getPublicCatalogueProducts();
+  const products = await getProductCatalogueContext(familySlug, productSlug);
   const data = createProductDetailData(familySlug, productSlug, products);
   if (!data) return null;
   const ar = locale === "ar";
