@@ -31,6 +31,12 @@ export interface LiveImageRow {
   sort_order: number;
 }
 
+export interface LiveProductProjectionRow extends LiveProductRow {
+  category: LiveCategoryRow | readonly LiveCategoryRow[] | null;
+  variants: readonly LiveVariantRow[] | null;
+  images: readonly LiveImageRow[] | null;
+}
+
 export interface LiveCatalogueSnapshot {
   products: readonly LiveProductRow[];
   categories: readonly LiveCategoryRow[];
