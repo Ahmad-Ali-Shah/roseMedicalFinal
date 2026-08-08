@@ -59,7 +59,7 @@ describe("owner media refinement", () => {
 
       expect(html).toContain(`data-media-slot="family-${slug}-hero"`);
       expect(html).toContain("data-media-state=\"ready\"");
-      expect(html).toContain(FAMILY_MEDIA_BY_SLUG[slug].src);
+      expect(html).toContain(encodeURIComponent(FAMILY_MEDIA_BY_SLUG[slug].src));
       expect(html).not.toContain(`${slug} family placeholder`);
     }
   });
