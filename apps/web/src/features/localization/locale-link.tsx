@@ -8,7 +8,17 @@ import { getLocaleFromPathname, localizePath } from "./locales";
 
 type LocaleLinkProps = Omit<ComponentProps<typeof Link>, "href"> & { href: string };
 
-export function LocaleLink({ href, ...props }: LocaleLinkProps): ReactElement {
+export function LocaleLink({
+  href,
+  prefetch = false,
+  ...props
+}: LocaleLinkProps): ReactElement {
   const locale = getLocaleFromPathname(usePathname());
-  return <Link href={localizePath(href, locale) as Route<string>} {...props} />;
+  return (
+    <Link
+      href={localizePath(href, locale) as Route<string>}
+      prefetch={prefetch}
+      {...props}
+    />
+  );
 }
