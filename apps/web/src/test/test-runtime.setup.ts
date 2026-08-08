@@ -9,6 +9,7 @@ function createQueryBuilder() {
     is: () => builder,
     or: () => builder,
     gt: () => builder,
+    in: () => builder,
     limit: () => builder,
     insert: () => builder,
     update: () => builder,
@@ -16,6 +17,32 @@ function createQueryBuilder() {
     maybeSingle: async () => ({ data: null, error: null }),
     single: async () => ({ data: null, error: null }),
     then: result.then.bind(result)
+  };
+  return builder;
+}
+
+function createUnavailableQueryBuilder() {
+  const rejection = () =>
+    Promise.reject(
+      new Error(
+        "mock query builder: public catalogue source intentionally unavailable in tests, triggering the app's static fallback"
+      )
+    );
+  const builder = {
+    select: () => builder,
+    order: () => builder,
+    eq: () => builder,
+    is: () => builder,
+    or: () => builder,
+    gt: () => builder,
+    in: () => builder,
+    limit: () => builder,
+    insert: () => builder,
+    update: () => builder,
+    upsert: () => builder,
+    maybeSingle: rejection,
+    single: rejection,
+    then: (onFulfilled: any, onRejected: any) => rejection().then(onFulfilled, onRejected)
   };
   return builder;
 }
@@ -52,6 +79,13 @@ vi.mock("@/lib/supabase/client", () => ({
 vi.mock("@/lib/supabase/server", () => ({
   createClient: async () => ({
     from: () => createQueryBuilder(),
+    auth
+  })
+}));
+
+vi.mock("@/lib/supabase/public-read", () => ({
+  createPublicReadClient: () => ({
+    from: () => createUnavailableQueryBuilder(),
     auth
   })
 }));

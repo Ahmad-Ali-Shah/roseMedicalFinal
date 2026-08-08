@@ -32,8 +32,9 @@ function dependencies(overrides?: {
         { id: "image-row-1", imagePath: "/media/old-liston.avif" }
       ]
     ),
-    updatePrimaryImage: vi.fn(async () => {
+    updateImagePathEverywhere: vi.fn(async () => {
       if (overrides?.updateError) throw overrides.updateError;
+      return { updatedCount: 1 };
     })
   };
 
@@ -67,13 +68,13 @@ describe("safe product primary-media replacement", () => {
       file: expect.any(File),
       contentType: "image/png"
     });
-    expect(deps.repository.updatePrimaryImage).toHaveBeenCalledWith({
-      imageId: "image-row-1",
-      productId,
-      imagePath: result.publicUrl
+    expect(deps.repository.updateImagePathEverywhere).toHaveBeenCalledWith({
+      oldImagePath: "/media/old-liston.avif",
+      newImagePath: result.publicUrl
     });
     expect(deps.storage.remove).not.toHaveBeenCalled();
     expect(result.previousImagePath).toBe("/media/old-liston.avif");
+    expect(result.linkedImagesUpdated).toBe(1);
   });
 
   it("rejects an identity mismatch before touching storage", async () => {

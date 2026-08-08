@@ -77,21 +77,18 @@ export async function uploadProductMedia(formData: FormData) {
       }));
     },
 
-    async updatePrimaryImage({ imageId, productId: id, imagePath }) {
+    async updateImagePathEverywhere({ oldImagePath, newImagePath }) {
       const { data, error } = await admin
         .from("product_images")
-        .update({ image_path: imagePath })
-        .eq("id", imageId)
-        .eq("product_id", id)
-        .eq("sort_order", 0)
+        .update({ image_path: newImagePath })
+        .eq("image_path", oldImagePath)
         .select("id");
 
       if (error) {
-        throw new Error(`Primary image update failed: ${error.message}`);
+        throw new Error(`Linked image update failed: ${error.message}`);
       }
-      if (!data || data.length !== 1) {
-        throw new Error("Primary image update did not affect exactly one row.");
-      }
+
+      return { updatedCount: data?.length ?? 0 };
     }
   };
 

@@ -29,11 +29,10 @@ export interface PrimaryProductImageRow {
 export interface ProductMediaWriteRepository {
   findProductIdentity(productId: string): Promise<ProductIdentityForMediaWrite | null>;
   findPrimaryImages(productId: string): Promise<readonly PrimaryProductImageRow[]>;
-  updatePrimaryImage(input: {
-    imageId: string;
-    productId: string;
-    imagePath: string;
-  }): Promise<void>;
+  updateImagePathEverywhere(input: {
+    oldImagePath: string;
+    newImagePath: string;
+  }): Promise<{ updatedCount: number }>;
 }
 
 export interface ProductMediaStorage {
@@ -105,6 +104,7 @@ export async function replacePrimaryProductImage(
   publicUrl: string;
   storagePath: string;
   previousImagePath: string;
+  linkedImagesUpdated: number;
 }> {
   const validated = validateInput(input);
   const identity = await dependencies.repository.findProductIdentity(input.productId);
@@ -136,12 +136,16 @@ export async function replacePrimaryProductImage(
     contentType: validated.contentType
   });
 
+  let linkedImagesUpdated = 0;
   try {
-    await dependencies.repository.updatePrimaryImage({
-      imageId: primaryImage.id,
-      productId: input.productId,
-      imagePath: uploaded.publicUrl
+    const result = await dependencies.repository.updateImagePathEverywhere({
+      oldImagePath: primaryImage.imagePath,
+      newImagePath: uploaded.publicUrl
     });
+    linkedImagesUpdated = result.updatedCount;
+    if (linkedImagesUpdated < 1) {
+      throw new Error("Image path update did not affect any rows.");
+    }
   } catch (error) {
     try {
       await dependencies.storage.remove(storagePath);
@@ -157,6 +161,7 @@ export async function replacePrimaryProductImage(
   return {
     publicUrl: uploaded.publicUrl,
     storagePath,
-    previousImagePath: primaryImage.imagePath
+    previousImagePath: primaryImage.imagePath,
+    linkedImagesUpdated
   };
 }
