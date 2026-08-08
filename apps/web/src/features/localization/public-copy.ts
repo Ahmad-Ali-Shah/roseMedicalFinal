@@ -23,9 +23,9 @@ export const HOME_PAGE_MODEL_AR = {
     secondary: { label: "اطلب عرض سعر", href: "/request-quotation" as const }
   },
   familyIntro: {
-    eyebrow: "عائلات المنتجات",
-    title: "استعرض حسب عائلة الأدوات.",
-    copy: "خمسة كتالوجات متخصصة ومنظمة لتسهيل اكتشاف المنتجات وإعداد الاستفسار."
+    eyebrow: "منتجاتنا",
+    title: "استكشف مجموعة أدوات روزا.",
+    copy: "خمس مجموعات مركزة من الأدوات، مقدمة بوضوح لاستعراض المنتجات."
   },
   families,
   procurement: {

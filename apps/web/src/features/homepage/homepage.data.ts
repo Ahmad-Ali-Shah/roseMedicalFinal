@@ -25,9 +25,9 @@ export const HOME_PAGE_MODEL = {
     secondary: { label: "Request a Quote", href: "/request-quotation" as const }
   },
   familyIntro: {
-    eyebrow: "Product families",
-    title: "Browse by instrument family.",
-    copy: "Five focused catalogues, organised for professional product discovery and inquiry."
+    eyebrow: "Our products",
+    title: "Explore the ROSA instrument collection.",
+    copy: "Five focused instrument collections, presented clearly for product browsing."
   },
   families,
   procurement: {
