@@ -13,7 +13,7 @@ import { ProductMediaPlaceholder } from "@/features/public-catalogue";
 import type { AdminProductEditorModel } from "./admin-product-model";
 import { AdminProductCompleteness } from "./admin-product-completeness";
 import { AdminProductOptions } from "./admin-product-options";
-import { uploadProductMedia } from "./actions";
+import { ProductImageUploadForm } from "./product-image-upload-form";
 
 export function AdminProductEditorPage({
   model
@@ -107,20 +107,11 @@ export function AdminProductEditorPage({
           <div>
             <p className="page-eyebrow">Current media</p>
             <h3>{product.mediaLabel}</h3>
-            <form action={uploadProductMedia} className="admin-media-upload-form">
-              <input type="hidden" name="product_id" value={product.id} />
-              <input type="hidden" name="family_slug" value={product.familySlug} />
-              <input type="hidden" name="product_slug" value={product.slug} />
-              <input
-                type="file"
-                name="file"
-                accept="image/jpeg,image/png,image/webp,image/avif"
-                required
-              />
-              <div className="admin-management-actions">
-                <Button type="submit">Replace primary image</Button>
-              </div>
-            </form>
+            <ProductImageUploadForm
+              productId={product.id}
+              familySlug={product.familySlug}
+              productSlug={product.slug}
+            />
           </div>
         </div>
       </AdminSection>
