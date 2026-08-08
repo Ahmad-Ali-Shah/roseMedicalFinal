@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import { getPublicCatalogueProducts } from "@/features/catalogue-live";
+import { getFeaturedCatalogueProducts } from "@/features/catalogue-live";
 import { createHomePageModel } from "./homepage.data";
 import type { PublicLocale } from "@/features/localization";
 import { HomeHero } from "./sections/home-hero";
@@ -10,7 +10,7 @@ import { CatalogueAccess } from "./sections/catalogue-access";
 import { QuotationCta } from "./sections/quotation-cta";
 
 export async function Homepage({ locale = "en" }: { locale?: PublicLocale }): Promise<ReactElement> {
-  const products = await getPublicCatalogueProducts();
+  const products = await getFeaturedCatalogueProducts();
   const model = createHomePageModel(products, locale);
   return (
     <div className="public-page public-page--home">
