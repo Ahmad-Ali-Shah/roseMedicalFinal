@@ -68,7 +68,7 @@ export function ButtonLink<T extends string>({
       className={`button button--${variant} button--${size} ${className}`.trim()}
       data-button="true"
       href={href}
-      prefetch={prefetch}
+      {...(prefetch === undefined ? {} : { prefetch })}
       {...(onClick ? { onClick } : {})}
       {...(target ? { target } : {})}
       {...(rel ? { rel } : {})}
