@@ -5,6 +5,7 @@ import { AboutPage } from "@/features/about";
 import { ProcurementSupportPage } from "@/features/procurement-support";
 import { ContactInformationPanel } from "@/features/contact-preview";
 import { localizePath, parseLocaleSegments } from "@/features/localization/locales";
+import { renderServerComponent } from "@/test/render-server-component";
 
 describe("public localization", () => {
   it("parses Arabic route prefixes without changing catalogue segments", () => {
@@ -24,8 +25,8 @@ describe("public localization", () => {
     expect(localizePath("/", "ar")).toBe("/ar");
   });
 
-  it("renders a genuinely localized Arabic homepage model", () => {
-    const html = renderToStaticMarkup(<Homepage locale="ar" />);
+  it("renders a genuinely localized Arabic homepage model", async () => {
+    const html = await renderServerComponent(<Homepage locale="ar" />);
     expect(html).toContain("أدوات دقيقة. ومشتريات أكثر وضوحًا.");
     expect(html).toContain("عائلات المنتجات");
     expect(html).toContain("اطلب عرض سعر");
