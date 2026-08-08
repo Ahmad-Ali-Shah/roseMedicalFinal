@@ -4,5 +4,8 @@
 /media/*
   Cache-Control: public,max-age=86400,stale-while-revalidate=604800
 
+/media/optimized/v1/*
+  Cache-Control: public,max-age=31536000,immutable
+
 /media/brand/rosa-header-logo-v1.webp
   Cache-Control: public,max-age=31536000,immutable
