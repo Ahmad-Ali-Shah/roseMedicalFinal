@@ -43,6 +43,7 @@ export type ButtonLinkProps<T extends string> = PropsWithChildren<{
   onClick?: MouseEventHandler<HTMLAnchorElement>;
   target?: "_self" | "_blank" | "_parent" | "_top";
   rel?: string;
+  prefetch?: boolean | null;
   "aria-label"?: string;
   "aria-describedby"?: string;
   "aria-current"?: AriaAttributes["aria-current"];
@@ -57,6 +58,7 @@ export function ButtonLink<T extends string>({
   onClick,
   target,
   rel,
+  prefetch,
   "aria-label": ariaLabel,
   "aria-describedby": ariaDescribedby,
   "aria-current": ariaCurrent
@@ -66,6 +68,7 @@ export function ButtonLink<T extends string>({
       className={`button button--${variant} button--${size} ${className}`.trim()}
       data-button="true"
       href={href}
+      prefetch={prefetch}
       {...(onClick ? { onClick } : {})}
       {...(target ? { target } : {})}
       {...(rel ? { rel } : {})}
