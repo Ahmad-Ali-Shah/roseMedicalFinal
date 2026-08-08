@@ -1,18 +1,34 @@
+import { productFixtures } from "@rosa/contracts/fixtures";
 import type { CatalogueProductRecord } from "@/features/catalogue-registry";
 import { CATALOGUE_PRODUCTS } from "@/features/catalogue-registry";
 import {
   CATALOGUE_METADATA_MANIFEST,
   type CatalogueMetadataManifestEntry
 } from "@/features/catalogue-migration/catalogue-metadata-manifest";
+import {
+  FAMILY_SLUGS,
+  type FamilySlug
+} from "@/features/public-catalogue/models";
 import { createClient } from "@/lib/supabase/server";
+import { createPublicReadClient } from "@/lib/supabase/public-read";
+import { getCachedCatalogueProjection } from "./catalogue-live.cache";
+import { projectionRowsToSnapshot } from "./catalogue-live.projections";
 import { mapLiveCatalogue } from "./map-live-product";
 import type {
   LiveCatalogueSnapshot,
   LiveCategoryRow,
   LiveImageRow,
+  LiveProductProjectionRow,
   LiveProductRow,
   LiveVariantRow
 } from "./catalogue-live.types";
+
+const PUBLIC_PRODUCT_SELECT = `
+  id,category_id,item_code,name_en,description_en,is_active,slug,created_at,
+  category:categories!inner(id,slug,name_en,is_active,deleted_at),
+  variants:product_variants(product_id,sku,size,variant_type,created_at),
+  images:product_images(product_id,image_path,sort_order)
+`;
 
 export class CatalogueLiveReadError extends Error {
   constructor(
@@ -36,9 +52,18 @@ export interface CatalogueSnapshotReader {
   read(): Promise<LiveCatalogueSnapshot>;
 }
 
+interface ProjectionReadResult {
+  data: readonly LiveProductProjectionRow[] | null;
+  error: { message?: string } | null;
+}
+
 function messageFrom(error: unknown): string {
   if (error instanceof Error) return error.message;
   return String(error);
+}
+
+function isFamilySlug(value: string): value is FamilySlug {
+  return (FAMILY_SLUGS as readonly string[]).includes(value);
 }
 
 function requireSuccessfulRead<T>(
@@ -57,6 +82,40 @@ function requireSuccessfulRead<T>(
   return result.data;
 }
 
+function staticProductsForManifest(
+  manifest: readonly CatalogueMetadataManifestEntry[]
+): readonly CatalogueProductRecord[] {
+  const routes = new Set(
+    manifest.map((entry) => `${entry.familySlug}/${entry.publicSlug}`)
+  );
+  return CATALOGUE_PRODUCTS.filter((product) =>
+    routes.has(`${product.familySlug}/${product.slug}`)
+  );
+}
+
+function familyManifest(
+  familySlug: FamilySlug
+): readonly CatalogueMetadataManifestEntry[] {
+  return CATALOGUE_METADATA_MANIFEST.filter(
+    (entry) => entry.familySlug === familySlug
+  );
+}
+
+const FEATURED_MANIFEST: readonly CatalogueMetadataManifestEntry[] =
+  productFixtures.map((selection) => {
+    const entry = CATALOGUE_METADATA_MANIFEST.find(
+      (candidate) =>
+        candidate.familySlug === selection.familySlug &&
+        candidate.publicSlug === selection.slug
+    );
+    if (!entry) {
+      throw new Error(
+        `[catalogue-migration] featured route missing from manifest: ${selection.familySlug}/${selection.slug}`
+      );
+    }
+    return entry;
+  });
+
 export async function loadCatalogueProducts(
   reader: CatalogueSnapshotReader,
   manifest: readonly CatalogueMetadataManifestEntry[] = CATALOGUE_METADATA_MANIFEST
@@ -73,6 +132,60 @@ export async function loadCatalogueProducts(
     return mapLiveCatalogue(snapshot, manifest);
   } catch (error) {
     throw new CatalogueLiveParityError(messageFrom(error), { cause: error });
+  }
+}
+
+async function loadProjectedCatalogue(
+  source: string,
+  read: () => Promise<ProjectionReadResult>,
+  manifest: readonly CatalogueMetadataManifestEntry[]
+): Promise<readonly CatalogueProductRecord[]> {
+  let result: ProjectionReadResult;
+  try {
+    result = await read();
+  } catch (error) {
+    throw new CatalogueLiveReadError(source, messageFrom(error), { cause: error });
+  }
+
+  if (result.error) {
+    throw new CatalogueLiveReadError(
+      source,
+      result.error.message || "Supabase read failed"
+    );
+  }
+  if (!result.data) {
+    throw new CatalogueLiveReadError(source, "Supabase returned no data payload");
+  }
+
+  try {
+    return mapLiveCatalogue(projectionRowsToSnapshot(result.data), manifest);
+  } catch (error) {
+    throw new CatalogueLiveParityError(messageFrom(error), { cause: error });
+  }
+}
+
+async function withInfrastructureFallback(
+  source: string,
+  live: () => Promise<readonly CatalogueProductRecord[]>,
+  fallback: readonly CatalogueProductRecord[]
+): Promise<readonly CatalogueProductRecord[]> {
+  try {
+    return await live();
+  } catch (error) {
+    if (error instanceof CatalogueLiveParityError) {
+      console.error(
+        `[catalogue-migration] ${source} parity check failed; refusing stale fallback`,
+        error
+      );
+      throw error;
+    }
+    if (!(error instanceof CatalogueLiveReadError)) throw error;
+
+    console.warn(
+      `[catalogue-migration] ${source} unavailable; using temporary static fallback`,
+      error
+    );
+    return fallback;
   }
 }
 
@@ -141,31 +254,111 @@ export async function getLiveCatalogueProducts(): Promise<
   return loadCatalogueProducts(supabaseCatalogueReader);
 }
 
-export async function getPublicCatalogueProducts(): Promise<
+export async function getFeaturedCatalogueProducts(): Promise<
   readonly CatalogueProductRecord[]
 > {
-  try {
-    return await getLiveCatalogueProducts();
-  } catch (error) {
-    if (error instanceof CatalogueLiveParityError) {
-      console.error(
-        "[catalogue-migration] live catalogue parity check failed; refusing stale fallback",
-        error
-      );
-      throw error;
-    }
-    if (!(error instanceof CatalogueLiveReadError)) throw error;
+  return withInfrastructureFallback(
+    "featured products",
+    () =>
+      getCachedCatalogueProjection("catalogue:featured", async () => {
+        const supabase = createPublicReadClient();
+        return loadProjectedCatalogue(
+          "featured products",
+          async () => {
+            const { data, error } = await supabase
+              .from("products")
+              .select(PUBLIC_PRODUCT_SELECT)
+              .eq("is_active", true)
+              .eq("category.is_active", true)
+              .is("category.deleted_at", null)
+              .in(
+                "slug",
+                FEATURED_MANIFEST.map((entry) => entry.dbSlug)
+              );
+            return {
+              data: data as unknown as readonly LiveProductProjectionRow[] | null,
+              error
+            };
+          },
+          FEATURED_MANIFEST
+        );
+      }),
+    staticProductsForManifest(FEATURED_MANIFEST)
+  );
+}
 
-    console.warn(
-      "[catalogue-migration] live product read unavailable; using temporary static fallback",
-      error
-    );
-    return CATALOGUE_PRODUCTS;
-  }
+export async function getFamilyCatalogueProducts(
+  familySlug: string
+): Promise<readonly CatalogueProductRecord[]> {
+  if (!isFamilySlug(familySlug)) return [];
+  const manifest = familyManifest(familySlug);
+
+  return withInfrastructureFallback(
+    `family ${familySlug}`,
+    () =>
+      getCachedCatalogueProjection(`catalogue:family:${familySlug}`, async () => {
+        const supabase = createPublicReadClient();
+        return loadProjectedCatalogue(
+          `family ${familySlug}`,
+          async () => {
+            const { data, error } = await supabase
+              .from("products")
+              .select(PUBLIC_PRODUCT_SELECT)
+              .eq("is_active", true)
+              .eq("category.is_active", true)
+              .is("category.deleted_at", null)
+              .eq("category.slug", familySlug);
+            return {
+              data: data as unknown as readonly LiveProductProjectionRow[] | null,
+              error
+            };
+          },
+          manifest
+        );
+      }),
+    staticProductsForManifest(manifest)
+  );
+}
+
+export async function getProductCatalogueContext(
+  familySlug: string,
+  productSlug: string
+): Promise<readonly CatalogueProductRecord[]> {
+  if (!productSlug.trim()) return [];
+  return getFamilyCatalogueProducts(familySlug);
 }
 
 export async function getSearchCatalogueProducts(): Promise<
   readonly CatalogueProductRecord[]
 > {
-  return getPublicCatalogueProducts();
+  return withInfrastructureFallback(
+    "search catalogue",
+    () =>
+      getCachedCatalogueProjection("catalogue:search", async () => {
+        const supabase = createPublicReadClient();
+        return loadProjectedCatalogue(
+          "search catalogue",
+          async () => {
+            const { data, error } = await supabase
+              .from("products")
+              .select(PUBLIC_PRODUCT_SELECT)
+              .eq("is_active", true)
+              .eq("category.is_active", true)
+              .is("category.deleted_at", null);
+            return {
+              data: data as unknown as readonly LiveProductProjectionRow[] | null,
+              error
+            };
+          },
+          CATALOGUE_METADATA_MANIFEST
+        );
+      }),
+    CATALOGUE_PRODUCTS
+  );
+}
+
+export async function getPublicCatalogueProducts(): Promise<
+  readonly CatalogueProductRecord[]
+> {
+  return getSearchCatalogueProducts();
 }
