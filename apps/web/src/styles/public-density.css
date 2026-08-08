@@ -29,3 +29,182 @@
     --public-density-section-title: clamp(1.9rem, 8.5vw, 2.4rem);
   }
 }
+
+/* Client-feedback homepage hero: viewport-aware, image-led, and content-safe. */
+.home-hero.home-hero-carousel {
+  position: relative;
+  min-height: clamp(
+    34rem,
+    calc(100svh - var(--public-density-header-block) - 9svh),
+    54rem
+  );
+  height: auto;
+  padding-block: 0;
+  display: grid;
+  align-items: stretch;
+  isolation: isolate;
+  overflow: clip;
+  background: #0e0e0d;
+  color: var(--color-paper);
+  touch-action: pan-y;
+}
+
+.home-hero-carousel__slide {
+  position: relative;
+  min-height: inherit;
+  display: grid;
+  align-items: center;
+  overflow: clip;
+}
+
+.home-hero-carousel__media {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.home-hero-carousel__media picture,
+.home-hero-carousel__media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.home-hero-carousel__media img {
+  object-fit: cover;
+  object-position: var(--hero-desktop-focal, 50% 50%);
+}
+
+.home-hero-carousel__overlay {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgb(8 12 14 / 0.84) 0%, rgb(8 12 14 / 0.6) 31%, rgb(8 12 14 / 0.12) 68%, rgb(8 12 14 / 0.08) 100%),
+    linear-gradient(0deg, rgb(6 8 9 / 0.42) 0%, transparent 45%);
+}
+
+.home-hero-carousel__slide[data-copy-side="right"] .home-hero-carousel__overlay {
+  background:
+    linear-gradient(270deg, rgb(8 12 14 / 0.84) 0%, rgb(8 12 14 / 0.6) 31%, rgb(8 12 14 / 0.12) 68%, rgb(8 12 14 / 0.08) 100%),
+    linear-gradient(0deg, rgb(6 8 9 / 0.42) 0%, transparent 45%);
+}
+
+.home-hero-carousel__content {
+  position: relative;
+  z-index: 3;
+  width: min(calc(100% - (2 * var(--public-density-gutter))), var(--container-wide));
+  min-height: inherit;
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+}
+
+.home-hero-carousel__copy {
+  width: min(100%, 38rem);
+  padding-block: clamp(2rem, 5vh, 4rem);
+}
+
+.home-hero-carousel__slide[data-copy-side="right"] .home-hero-carousel__copy {
+  grid-column: 2;
+  justify-self: end;
+}
+
+.home-hero-carousel .home-hero__title {
+  max-width: 12ch;
+  font-size: var(--public-density-hero-title);
+  line-height: 1.08;
+}
+
+.home-hero-carousel .home-hero__copy-text {
+  max-width: 39rem;
+  font-size: var(--public-density-body);
+}
+
+.home-hero-carousel__dots {
+  position: absolute;
+  z-index: 5;
+  inset: auto var(--public-density-gutter) clamp(1rem, 2.5vh, 1.6rem) auto;
+  display: flex;
+  gap: 0.35rem;
+}
+
+.home-hero-carousel__dot {
+  width: 2.75rem;
+  min-height: 2.75rem;
+  display: grid;
+  place-items: center;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.home-hero-carousel__dot::before {
+  content: "";
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.48);
+  transition: width 180ms ease, background-color 180ms ease;
+}
+
+.home-hero-carousel__dot[aria-current="true"]::before {
+  width: 1.45rem;
+  border-radius: 999px;
+  background: var(--color-paper);
+}
+
+@media (max-width: 40rem) {
+  .home-hero.home-hero-carousel {
+    min-height: clamp(
+      34rem,
+      calc(100svh - var(--public-density-header-block) - 4svh),
+      42rem
+    );
+  }
+
+  .home-hero-carousel__content {
+    min-height: inherit;
+    grid-template-columns: 1fr;
+    align-items: end;
+    padding-bottom: clamp(4.25rem, 11vh, 6rem);
+  }
+
+  .home-hero-carousel__copy,
+  .home-hero-carousel__slide[data-copy-side="right"] .home-hero-carousel__copy {
+    grid-column: 1;
+    justify-self: start;
+    width: min(100%, 29rem);
+    padding-block: 0;
+  }
+
+  .home-hero-carousel__media img {
+    object-position: var(--hero-mobile-focal, 50% 50%);
+  }
+
+  .home-hero-carousel__overlay,
+  .home-hero-carousel__slide[data-copy-side="right"] .home-hero-carousel__overlay {
+    background:
+      linear-gradient(0deg, rgb(7 10 11 / 0.93) 0%, rgb(7 10 11 / 0.66) 43%, rgb(7 10 11 / 0.12) 76%, rgb(7 10 11 / 0.08) 100%);
+  }
+
+  .home-hero-carousel__dots {
+    inset-inline: var(--public-density-gutter) auto;
+    bottom: 0.65rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-hero-carousel__slide,
+  .home-hero-carousel__media img,
+  .home-hero-carousel__dot::before {
+    transition: none !important;
+    transform: none !important;
+  }
+}
