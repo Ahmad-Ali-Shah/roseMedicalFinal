@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
 import { Container, Section } from "@/components/layout";
-import { getPublicCatalogueProducts } from "@/features/catalogue-live";
+import { getFamilyCatalogueProducts } from "@/features/catalogue-live";
 import { createFamilyListingData } from "./family-listing.data";
 import { FamilyHero } from "./family-hero";
 import { FamilyProductDiscovery } from "./family-product-discovery";
@@ -16,7 +16,7 @@ export async function FamilyListingPage({
   familySlug: string;
   locale?: PublicLocale;
 }): Promise<ReactElement | null> {
-  const products = await getPublicCatalogueProducts();
+  const products = await getFamilyCatalogueProducts(familySlug);
   const data = createFamilyListingData(familySlug, products);
   if (!data) return null;
   const ar = locale === "ar";
