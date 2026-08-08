@@ -305,7 +305,7 @@ Autoplay behavior:
 - manual dot selection resets the timing window;
 - no transition may replace a slide before its selected image is ready to display.
 
-Dots are the only persistent navigation controls. There are no permanent previous/next arrows. The interaction-based pause behavior is the pause mechanism for this phase; no separate prominent pause button is introduced unless accessibility verification proves the interaction contract insufficient.
+Dots are the only persistent carousel controls. There are no previous/next arrows and no separate play/pause button in this design. The required pause mechanism is the interaction contract above: keyboard focus, pointer hover, touch/drag interaction, and document visibility pause rotation; reduced-motion disables autoplay entirely.
 
 ### 8.7 Dots and keyboard behavior
 
@@ -316,8 +316,10 @@ Requirements:
 - four dots, one per slide;
 - active state exposed programmatically (`aria-current` or equivalent);
 - each dot has an accessible label such as “Show slide 2 of 4”;
-- keyboard users can Tab to the dot control group and activate a slide with Enter/Space;
-- Left/Right arrow behavior inside the dot group is supported when implemented as a roving/tablist-style control;
+- the dot group uses roving keyboard focus;
+- Tab enters the dot group;
+- Left/Right arrow keys move between dots;
+- Enter/Space selects the focused slide;
 - focus is always visible;
 - slide position is exposed to assistive technology without announcing every autoplay transition in an intrusive live region.
 
@@ -327,9 +329,9 @@ On touch/coarse-pointer devices, the hero supports restrained horizontal drag/sw
 
 ### 8.9 Transition character
 
-Use the existing Motion system rather than adding a generic slider dependency. Preferred transition language is a restrained editorial crossfade with minimal image drift/scale and coordinated copy reveal. It should feel like an extension of F7 motion, not a Swiper/Bootstrap carousel.
+Use the existing Motion system rather than adding a generic slider dependency. The transition language is a restrained editorial crossfade with minimal image drift/scale and coordinated copy reveal. It should feel like an extension of F7 motion, not a Swiper/Bootstrap carousel.
 
-The implementation should not add React Bits, Swiper, or another carousel package merely to switch four images.
+Do not add React Bits, Swiper, or another carousel package merely to switch four images.
 
 ### 8.10 Reduced motion
 
@@ -361,7 +363,7 @@ For each final supplied image:
 Practical byte targets are approximately:
 
 - first desktop hero asset: ideally ~250–350 KB or less;
-- mobile hero derivative: ideally ~120–220 KB or less;
+- mobile hero derivative: ideally ~120–220 KB or less.
 
 These are quality-aware targets, not permission to damage surgical/medical detail merely to hit a number.
 
@@ -387,7 +389,7 @@ with the approved simpler product-led direction:
 - **Eyebrow:** “Our products”
 - **Title:** “Explore the ROSA instrument collection.”
 
-Supporting copy may be concise or omitted during visual refinement, but must stay simple, product-led, and free from unsupported manufacturing claims.
+The first implementation omits the existing supporting paragraph in this section. The heading and imagery carry the section, matching the approved simple product-led direction and improving density. Unsupported manufacturing claims remain prohibited.
 
 ### 10.2 Desktop/fine-pointer accordion gallery
 
@@ -395,7 +397,7 @@ The current asymmetric five-card collage is replaced on sufficiently wide fine-p
 
 https://reactbits.dev/components/accordion-gallery
 
-React Bits is a behavior reference, not a visual theme and not a required runtime dependency. The preferred implementation recreates the interaction locally with existing React, CSS, and Motion primitives.
+React Bits is a behavior reference only. This phase will recreate the interaction locally with the existing React, CSS, and Motion stack and will not add React Bits as a runtime/package dependency or copy its visual styling.
 
 All five family panels remain visible simultaneously:
 
@@ -405,7 +407,7 @@ All five family panels remain visible simultaneously:
 4. Chisels
 5. Cutters
 
-The deterministic initial active panel is **Knives**, matching source order and SSR output. Hover or keyboard focus makes another panel active. Clicking/tapping the family link navigates to the existing family route.
+The deterministic initial active panel is **Knives**, matching source order and SSR output. Hover or keyboard focus makes another panel active. Clicking the family link navigates to the existing family route.
 
 Panel content is intentionally minimal:
 
@@ -420,11 +422,10 @@ Interaction geometry:
 - inactive panels compress but remain visibly identifiable;
 - all five stay inside the same horizontal composition;
 - panel labels remain readable in both states;
-- the gallery height is height-aware and capped so it does not recreate the oversized-card problem.
+- the gallery height is height-aware and capped so it does not recreate the oversized-card problem;
+- the design operating height remains within roughly 19–26rem, contracting toward the lower end on short desktop viewports.
 
-A reasonable operating block size is roughly 19–26rem, contracted on short desktop viewports.
-
-The home-only accordion should replace the old `TiltSurface` emphasis because animated width plus tilt would compete visually. Other family-card usages outside the homepage remain unchanged.
+The home-only accordion replaces the old `TiltSurface` emphasis because animated width plus tilt would compete visually. Other family-card usages outside the homepage remain unchanged.
 
 ### 10.3 Structural switch: accordion vs swipe rail
 
@@ -432,16 +433,18 @@ This is a component-composition decision, not simply “desktop versus mobile.�
 
 Use the accordion only when:
 
-- the family-gallery container has approximately **56rem or more usable width**; and
+- the family-gallery container has **56rem or more usable width**; and
 - a fine pointer / hover-capable interaction model is available.
 
 Otherwise use the swipe rail.
 
-Expected matrix behavior:
+Expected matrix behavior on normal desktop-pointer test projects:
 
 - 768×1024: swipe rail;
-- 1024×768: accordion when normal page gutters still leave sufficient gallery width;
-- coarse-pointer devices: swipe rail even if physically wide.
+- 1024×768: accordion;
+- 1280×720 and wider desktop viewports: accordion.
+
+A coarse-pointer environment always uses the swipe rail, including on a physically wide touch device.
 
 This prevents awkward accordion behavior on touch tablets and narrow landscape layouts.
 
@@ -821,7 +824,7 @@ Browser tests should verify:
 - next-section continuation target on normal desktop/laptop sizes;
 - family accordion keeps all five panels visible and focusable;
 - 768×1024 uses swipe rail;
-- 1024×768 uses accordion when container width is sufficient;
+- 1024×768 uses accordion on a fine-pointer project;
 - coarse pointer uses swipe mode;
 - catalogue section is still present and visually separate;
 - footer socials on public pages;
