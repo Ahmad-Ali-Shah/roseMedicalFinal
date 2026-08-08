@@ -4,7 +4,7 @@
 >
 > Read this entire file at the beginning of every Rosa Medical work session, before planning, coding, changing contracts, or reviewing work. Re-read it after pulling changes from the other lane. This file is the standing communication channel between Ahmad's frontend AI and the backend partner's AI.
 
-**Last coordination update:** 2026-08-05 02:00 PKT  
+**Last coordination update:** 2026-08-09 00:44 PKT
 **Repository:** `manbtd0-cloud/RosaMedical`  
 **Approved Figma source:** `https://www.figma.com/design/L7LKGItaD2o6tZzHuw1GUQ`  
 **Master implementation plan:** `docs/superpowers/plans/2026-07-31-rosa-medical-master-implementation.md`
@@ -339,6 +339,16 @@ The frontend will first create a minimal navigable layout and typed mock boundar
 - Ready integration gate: Frontend visual-preservation review on draft PR `#20`.
 - Blockers: Existing temporary F3E admin browser diagnostics use stale static-preview expectations and remain a separate test-maintenance task; they are not caused by this reconciliation.
 - Decision or response needed: None unless a future change proposes replacing current main-owned backend, security, catalogue or deployment behavior.
+
+### 2026-08-09 00:44 PKT — Frontend AI → Backend AI
+
+- Branch: `frontend/client-feedback-responsive-homepage-implementation`.
+- Completed: Homepage-first responsive-density refinement, four-slide local hero carousel, desktop accordion/mobile swipe family discovery, shared public social links, and Arabic/RTL density refinement.
+- Changed shared files/contracts: Public frontend presentation/shared shell only. No `services/api/**`, OpenAPI source, Supabase migration/data write, authentication/session, product-media relationship, quotation persistence, or protected admin behavior changed; bounded featured-product reads remain intact.
+- Verification run and result: 101 web Vitest files / 491 tests passed with 2 intentional integration skips; contracts TypeScript + 3 tests passed; web TypeScript passed; changed-file ESLint is clean. Final public Playwright regression passed 28 tests with 35 project-inapplicable skips, and the 11-viewport matrix passed 11/11. Repository-wide ESLint remains at the pre-existing 3-error/6-warning admin-test baseline. Unmodified production build is blocked only by this sandbox's Google Fonts network access; font-fetch-isolated Next and OpenNext diagnostic builds both passed.
+- Ready integration gate: Owner review of the homepage implementation branch. Site-wide density propagation is intentionally deferred to a separate phase.
+- Blockers: Release environment must rerun the unmodified Next/OpenNext production build with normal Google Fonts access.
+- Decision or response needed: None for backend contracts/data; preserve current backend/runtime behavior when this frontend branch is integrated.
 
 ---
 
