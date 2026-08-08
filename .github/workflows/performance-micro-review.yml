@@ -11,7 +11,7 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -21,12 +21,44 @@ jobs:
         with:
           version: 8
       - run: pnpm install --frozen-lockfile
-      - name: Performance regression tests
-        run: >-
-          pnpm --filter @rosa/web test --
-          src/test/public-performance-policy.test.ts
-          src/test/catalogue-live-supabase.integration.test.ts
+
+      - name: Full web test suite
+        run: pnpm --filter @rosa/web test
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://hzwabrbrgcxodkqilgdi.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: sb_publishable_eAsFSK6AJfZk2SFzecCDnA_HeSxG-I1
+
+      - name: Live read-only catalogue parity and bounded projections
+        run: pnpm --filter @rosa/web test -- src/test/catalogue-live-supabase.integration.test.ts
         env:
           RUN_LIVE_CATALOGUE_PARITY: "1"
           NEXT_PUBLIC_SUPABASE_URL: https://hzwabrbrgcxodkqilgdi.supabase.co
           NEXT_PUBLIC_SUPABASE_ANON_KEY: sb_publishable_eAsFSK6AJfZk2SFzecCDnA_HeSxG-I1
+
+      - name: Web typecheck
+        run: pnpm --filter @rosa/web typecheck
+
+      - name: Performance-focused lint
+        run: >-
+          pnpm --filter @rosa/web exec eslint
+          src/middleware.ts
+          src/features/catalogue-live
+          src/test/public-performance-policy.test.ts
+          src/test/catalogue-live-supabase.integration.test.ts
+
+      - name: Web build
+        run: pnpm --filter @rosa/web build
+        env:
+          NEXT_PUBLIC_SITE_NAME: ROSA
+          NEXT_PUBLIC_SUPABASE_URL: https://hzwabrbrgcxodkqilgdi.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: sb_publishable_eAsFSK6AJfZk2SFzecCDnA_HeSxG-I1
+          SUPABASE_SERVICE_ROLE_KEY: test-service-role
+
+      - name: OpenNext Cloudflare build
+        working-directory: apps/web
+        run: npx opennextjs-cloudflare build
+        env:
+          NEXT_PUBLIC_SITE_NAME: ROSA
+          NEXT_PUBLIC_SUPABASE_URL: https://hzwabrbrgcxodkqilgdi.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: sb_publishable_eAsFSK6AJfZk2SFzecCDnA_HeSxG-I1
+          SUPABASE_SERVICE_ROLE_KEY: test-service-role
