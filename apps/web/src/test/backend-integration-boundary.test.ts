@@ -13,7 +13,7 @@ describe("main-first backend integration boundary", () => {
       "src/lib/supabase/server.ts",
       "src/lib/supabase/middleware.ts",
       "src/lib/supabase/auth-guard.ts",
-      "src/proxy.ts",
+      "src/middleware.ts",
       "src/app/admin/(auth)/login/action.ts",
       "src/app/admin/(workspace)/logout-action.ts"
     ]) {
