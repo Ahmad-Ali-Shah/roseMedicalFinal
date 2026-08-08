@@ -31,6 +31,7 @@ const contentSecurityPolicy = [
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["127.0.0.1"],
   images: {
+    unoptimized: true,
     qualities: [75, 92],
     remotePatterns: supabaseOrigin
       ? [
