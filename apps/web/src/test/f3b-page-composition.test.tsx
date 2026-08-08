@@ -1,8 +1,8 @@
-import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { CATALOGUE_PRODUCTS } from "@/features/catalogue-registry";
 import { FamilyListingPage } from "@/features/family-listing/family-listing-page";
 import { ProductDetailPage } from "@/features/product-detail/product-detail-page";
+import { renderServerComponent } from "@/test/render-server-component";
 
 const FAMILY_SLUGS = [
   "knives",
@@ -15,8 +15,8 @@ const FAMILY_SLUGS = [
 describe("F3B family composition", () => {
   it.each(FAMILY_SLUGS)(
     "renders the complete %s family inventory with one h1",
-    (familySlug) => {
-      const html = renderToStaticMarkup(<FamilyListingPage familySlug={familySlug} />);
+    async (familySlug) => {
+      const html = await renderServerComponent(<FamilyListingPage familySlug={familySlug} />);
       const expectedCount = CATALOGUE_PRODUCTS.filter(
         (product) => product.familySlug === familySlug
       ).length;
@@ -30,8 +30,8 @@ describe("F3B family composition", () => {
 });
 
 describe("F3B product composition", () => {
-  it("renders specifications and related products without false success", () => {
-    const html = renderToStaticMarkup(
+  it("renders specifications and related products without false success", async () => {
+    const html = await renderServerComponent(
       <ProductDetailPage familySlug="knives" productSlug="scalpel-handle-no-3" />
     );
     expect((html.match(/<h1/g) || [])).toHaveLength(1);
@@ -41,14 +41,16 @@ describe("F3B product composition", () => {
     expect(html).not.toContain("Added to your inquiry");
   });
 
-  it("omits unsupported specification rows", () => {
-    const html = renderToStaticMarkup(
+  it("omits unsupported specification rows", async () => {
+    const html = await renderServerComponent(
       <ProductDetailPage familySlug="cutters" productSlug="cleveland" />
     );
     expect(html).not.toContain("Direction / shape</th><td></td>");
   });
 
-  it("returns null for invalid combinations", () => {
-    expect(ProductDetailPage({ familySlug: "scissors", productSlug: "scalpel-handle-no-3" })).toBeNull();
+  it("returns null for invalid combinations", async () => {
+    await expect(
+      ProductDetailPage({ familySlug: "scissors", productSlug: "scalpel-handle-no-3" })
+    ).resolves.toBeNull();
   });
 });
