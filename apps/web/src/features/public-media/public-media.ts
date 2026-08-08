@@ -33,7 +33,7 @@ export const HOME_HERO_MEDIA = {
 } as const satisfies PublicMediaModel;
 
 export const PROCUREMENT_SUPPORT_MEDIA = {
-  src: "/media/editorial/procurement-support.jpg",
+  src: "/media/optimized/v1/procurement-support.webp",
   alt: "A procurement team reviewing information together",
   altAr: "فريق مشتريات يراجع المعلومات معًا",
   focalPoint: "52% 46%",
@@ -70,7 +70,7 @@ export const FAMILY_MEDIA_BY_SLUG = {
     fit: "contain"
   },
   cutters: {
-    src: "/media/families/cutters-family-clean.png",
+    src: "/media/optimized/v1/cutters-family.webp",
     alt: "A precision surgical cutter",
     altAr: "أداة قطع جراحية دقيقة",
     focalPoint: "50% 50%",
@@ -152,21 +152,21 @@ export const CATALOGUE_MEDIA_BY_SLUG = {
 
 export const SUPPORTED_BUYER_MEDIA = {
   hospitals: {
-    src: "/media/editorial/about-hospitals.jpg",
+    src: "/media/optimized/v1/about-hospitals.webp",
     alt: "A surgical team passing an instrument in theatre",
     altAr: "فريق جراحي يمرر أداة داخل غرفة العمليات",
     focalPoint: "56% 52%",
     fit: "cover"
   },
   procurement: {
-    src: "/media/editorial/about-procurement.jpg",
+    src: "/media/optimized/v1/about-procurement.webp",
     alt: "A trolley carrying organised procurement packages",
     altAr: "عربة تحمل طرود مشتريات منظمة",
     focalPoint: "54% 58%",
     fit: "cover"
   },
   distributors: {
-    src: "/media/editorial/about-distributors.jpg",
+    src: "/media/optimized/v1/about-distributors.webp",
     alt: "Organised cartons in a distribution warehouse",
     altAr: "صناديق منظمة داخل مستودع توزيع",
     focalPoint: "52% 58%",
