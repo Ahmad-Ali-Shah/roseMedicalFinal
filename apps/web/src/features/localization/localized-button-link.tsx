@@ -8,7 +8,17 @@ import { getLocaleFromPathname, localizePath } from "./locales";
 
 type Props = Omit<ButtonLinkProps<string>, "href"> & { href: string };
 
-export function LocalizedButtonLink({ href, ...props }: Props): ReactElement {
+export function LocalizedButtonLink({
+  href,
+  prefetch = false,
+  ...props
+}: Props): ReactElement {
   const locale = getLocaleFromPathname(usePathname());
-  return <ButtonLink href={localizePath(href, locale) as Route<string>} {...props} />;
+  return (
+    <ButtonLink
+      href={localizePath(href, locale) as Route<string>}
+      prefetch={prefetch}
+      {...props}
+    />
+  );
 }
