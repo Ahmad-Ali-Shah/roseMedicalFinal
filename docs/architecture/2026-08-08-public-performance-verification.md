@@ -8,10 +8,10 @@ No production database DDL/DML or Supabase Storage write was performed during th
 
 ## Verified source
 
-- Feature head exercised by the final gate: `ad8148d37363b812c3367d29be57854dd5e2f047`
-- Verification PR merge commit: `a6e30f359e7896250574dcbce244f2a784cbd04a`
-- GitHub Actions run: `31255391482`
-- Verification job: `93097893772`
+- Feature head exercised by the final gate: `ae1500c8054d4106b4fac617aa1907b8a2439891`
+- Verification PR merge commit: `b934fcae064dd44d59a5d8fb2861d3159c57235c`
+- GitHub Actions run: `31255804925`
+- Verification job: `93098859248`
 
 The draft PR was verification-only and was not merged.
 
@@ -20,16 +20,19 @@ The draft PR was verification-only and was not merged.
 The final run completed successfully with:
 
 - Full web Vitest suite: **99 test files passed, 1 skipped**.
-- Full web Vitest assertions: **476 passed, 2 skipped**.
+- Full web Vitest assertions: **477 passed, 2 skipped**.
 - Guarded production read-only catalogue integration: **2/2 passed**.
   - hydrated all **113** approved active products without parity loss;
-  - exercised the bounded public projection APIs against live rows.
+  - exercised the bounded public projection APIs against live rows;
+  - confirmed the product-detail context contains the requested product plus only **3 related products** rather than the entire family.
 - TypeScript: `tsc --noEmit` passed.
-- Focused ESLint over the changed catalogue/performance/admin boundaries passed.
+- Performance-focused ESLint passed.
 - Next.js 16.2.11 production build passed.
 - OpenNext Cloudflare 1.20.2 build passed and emitted `.open-next/worker.js`.
 
 The build still reports the existing Next.js middleware-to-proxy deprecation warning and the OpenNext Wrangler compatibility-date advisory. Neither warning blocked compilation or the Cloudflare bundle and neither was changed as part of this performance slice.
+
+The isolated Vitest renderer also emits Next Image quality warnings because it does not load the project image-quality configuration. The actual production `next.config.ts` contains the required qualities and both production builds passed.
 
 ## Request-path changes verified
 
@@ -45,7 +48,11 @@ public request
 
 Protected admin routes still pass through the existing Supabase session machinery.
 
-The public catalogue projection layer uses a cookie-free Supabase read client, a bounded 60-second in-process projection cache, concurrent-request sharing, error eviction, and page-specific read APIs for featured products, one family, one product context, and search.
+The public catalogue projection layer uses a cookie-free Supabase read client, a bounded 60-second in-process projection cache, concurrent-request sharing, error eviction, and page-specific read APIs for featured products, one family, one product-plus-related context, and search.
+
+The product-detail projection is now explicitly bounded to **4 live rows maximum** for the current detail composition: the requested product plus three related products. It no longer reuses the whole-family result merely to render one product page.
+
+The middleware matcher also excludes common static asset formats including WebP, AVIF, PDF, ICO and WOFF/WOFF2 so those local asset requests do not enter application middleware unnecessarily.
 
 ## Static-media delivery
 
