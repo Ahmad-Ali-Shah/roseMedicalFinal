@@ -99,6 +99,14 @@ jobs:
           src/test/admin-product-media-write.test.ts
           src/test/admin-product-editor-scope.test.ts
 
+      - name: Static media audit
+        working-directory: apps/web
+        run: |
+          echo "Largest source-controlled media assets (bytes):"
+          find public/media -type f -printf '%s\t%p\n' | sort -nr | head -30
+          echo "Header logo derivative:"
+          stat -c '%s bytes %n' public/media/brand/rosa-header-logo-v1.webp
+
       - name: Web build
         run: pnpm --filter @rosa/web build
         env:
