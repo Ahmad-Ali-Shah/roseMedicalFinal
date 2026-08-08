@@ -158,3 +158,26 @@ test("shared social links render safely in the footer and dedicated Contact sect
   await expect(page.locator(".contact-social-section [data-social-links] a")).toHaveCount(4);
   await expect(page.locator("body")).not.toContainText("@rosamedicalexample");
 });
+
+test("Arabic homepage keeps RTL typography and the same physical hero composition", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop" && testInfo.project.name !== "mobile");
+  await page.goto("/");
+  const englishHero = page.locator(".home-hero-carousel__slide");
+  const englishSide = await englishHero.getAttribute("data-copy-side");
+  const englishSlide = await page.locator("[data-section='home-hero']").getAttribute("data-active-slide");
+
+  await page.goto("/ar");
+  await expect(page.locator("html")).toHaveAttribute("lang", "ar");
+  await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
+  await expect(page.locator("[data-section='home-hero']")).toHaveAttribute("data-active-slide", englishSlide!);
+  await expect(page.locator(".home-hero-carousel__slide")).toHaveAttribute("data-copy-side", englishSide!);
+
+  const computed = await page.locator(".public-page--home").evaluate((node) => ({
+    fontFamily: getComputedStyle(node).fontFamily,
+    overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth
+  }));
+  expect(computed.fontFamily).toContain("Noto Sans Arabic");
+  expect(computed.overflow).toBe(false);
+  await expect(page.locator("[data-home-family-gallery]")).toBeVisible();
+  await expect(page.locator(".site-footer [data-social-links] a")).toHaveCount(4);
+});

@@ -430,3 +430,51 @@
     align-items: start;
   }
 }
+
+/* Arabic density: keep Noto Sans Arabic and tune rhythm without mirroring image composition. */
+html[dir="rtl"] .public-page--home,
+html[dir="rtl"] .site-footer,
+html[dir="rtl"] .contact-social-panel {
+  font-family: var(--font-arabic), var(--font-interface), sans-serif;
+}
+
+html[dir="rtl"] .home-hero-carousel,
+html[dir="rtl"] .home-family-gallery,
+html[dir="rtl"] .contact-social-panel {
+  text-align: start;
+}
+
+html[dir="rtl"] .home-hero__title,
+html[dir="rtl"] .public-page--home .public-section-heading__title,
+html[dir="rtl"] .home-family-gallery__title,
+html[dir="rtl"] .contact-social-panel h2 {
+  font-family: var(--font-arabic), var(--font-interface), sans-serif;
+  font-weight: 600;
+  line-height: 1.32;
+  letter-spacing: 0;
+}
+
+html[dir="rtl"] .home-hero__title {
+  font-size: clamp(2.25rem, 3.8vw, 3.45rem);
+}
+
+html[dir="rtl"] .home-hero__copy-text,
+html[dir="rtl"] .public-page--home .public-section-heading__copy {
+  font-weight: 400;
+  line-height: 1.72;
+}
+
+html[dir="rtl"] .public-eyebrow,
+html[dir="rtl"] .page-eyebrow,
+html[dir="rtl"] .site-footer__title {
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+@media (max-width: 40rem) {
+  html[dir="rtl"] .home-hero__title {
+    font-size: clamp(2.1rem, 9.8vw, 2.65rem);
+    line-height: 1.36;
+  }
+}

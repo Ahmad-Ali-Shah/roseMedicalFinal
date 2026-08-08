@@ -44,6 +44,14 @@ describe("client-feedback responsive homepage contract", () => {
     expect(carouselSource.match(/priority=\{activeIndex === 0\}/g)).toHaveLength(1);
   });
 
+  it("keeps Noto Sans Arabic and adds dedicated Arabic density rules", () => {
+    const layout = source("src/app/layout.tsx");
+    const density = source("src/styles/public-density.css");
+    expect(layout).toContain("Noto_Sans_Arabic");
+    expect(density).toContain('html[dir="rtl"] .home-hero-carousel');
+    expect(density).toContain("font-family: var(--font-arabic)");
+  });
+
   it("centralizes exactly four valid social placeholders", () => {
     expect(SOCIAL_LINKS.map((item) => item.platform)).toEqual(["instagram", "facebook", "linkedin", "x"]);
     expect(SOCIAL_LINKS).toHaveLength(4);
