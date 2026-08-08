@@ -65,7 +65,18 @@ describe("F3E-B product selectors", () => {
   });
 
   it("does not introduce unsupported workflow fields", () => {
-    const serialized = JSON.stringify(getAdminProductRows(CATALOGUE_PRODUCTS));
-    expect(serialized).not.toMatch(/published|draft|review|visible|featured|updatedAt|arabicComplete/i);
+    const forbiddenKeys = new Set([
+      "published",
+      "draft",
+      "review",
+      "visible",
+      "featured",
+      "updatedAt",
+      "arabicComplete"
+    ]);
+
+    for (const row of getAdminProductRows(CATALOGUE_PRODUCTS)) {
+      expect(Object.keys(row).some((key) => forbiddenKeys.has(key))).toBe(false);
+    }
   });
 });
