@@ -3,15 +3,17 @@ export interface AdminSupabaseCredentials {
   serviceRoleKey: string;
 }
 
+export interface AdminSupabaseEnvironment {
+  NEXT_PUBLIC_SUPABASE_URL?: string | undefined;
+  SUPABASE_SERVICE_ROLE_KEY?: string | undefined;
+}
+
 export interface AdminProfileLike {
   role?: string | null;
 }
 
 export function resolveAdminSupabaseCredentials(
-  env: Pick<
-    NodeJS.ProcessEnv,
-    "NEXT_PUBLIC_SUPABASE_URL" | "SUPABASE_SERVICE_ROLE_KEY"
-  >
+  env: AdminSupabaseEnvironment
 ): AdminSupabaseCredentials {
   const url = env.NEXT_PUBLIC_SUPABASE_URL?.trim();
   const serviceRoleKey = env.SUPABASE_SERVICE_ROLE_KEY?.trim();
