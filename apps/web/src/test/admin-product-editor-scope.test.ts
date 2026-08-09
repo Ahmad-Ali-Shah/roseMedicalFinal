@@ -10,6 +10,7 @@ describe("lean Product Admin scope", () => {
   it("keeps product identity/workflow mutations out of the editor", () => {
     const editor = source("src/features/admin-products/admin-product-editor-page.tsx");
     const actions = source("src/features/admin-products/actions.ts");
+    const mediaUpload = source("src/features/admin-products/product-image-upload-form.tsx");
 
     expect(editor).not.toContain("updateProductCategory");
     expect(editor).not.toContain("Save draft");
@@ -18,7 +19,8 @@ describe("lean Product Admin scope", () => {
     expect(editor).not.toContain("Archive");
     expect(editor).not.toContain("Delete product");
     expect(actions).not.toContain("export async function updateProductCategory");
-    expect(editor).toContain("Replace primary image");
+    expect(editor).toContain("ProductImageUploadForm");
+    expect(mediaUpload).toContain("Replace primary image");
   });
 
   it("allows only the configured Supabase product-media path for remote product images", () => {

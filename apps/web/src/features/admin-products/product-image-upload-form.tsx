@@ -3,6 +3,15 @@
 import { useCallback, useEffect, useRef, useState, type ChangeEvent, type PointerEvent } from "react";
 import { Button } from "@/components/ui";
 import { uploadProductMedia } from "./actions";
+import {
+  centeredCrop,
+  clampCrop,
+  createCropGeometry,
+  cropToDisplayRect,
+  cropToSourceRect,
+  type CropGeometry,
+  type CropRect
+} from "./product-image-crop";
 
 interface ProductImageUploadFormProps {
   productId: string;
@@ -10,41 +19,7 @@ interface ProductImageUploadFormProps {
   productSlug: string;
 }
 
-interface CropRect {
-  x: number;
-  y: number;
-  size: number;
-}
-
-interface DisplayRect {
-  width: number;
-  height: number;
-  offsetX: number;
-  offsetY: number;
-}
-
 const OUTPUT_SIZE = 1200;
-const MIN_CROP_SIZE = 0.1;
-
-function clampCrop(next: CropRect): CropRect {
-  const size = Math.min(Math.max(next.size, MIN_CROP_SIZE), 1);
-  const x = Math.min(Math.max(next.x, 0), 1 - size);
-  const y = Math.min(Math.max(next.y, 0), 1 - size);
-  return { x, y, size };
-}
-
-function computeDisplayRect(naturalW: number, naturalH: number, rotated90: boolean): DisplayRect {
-  const w0 = naturalW >= naturalH ? 1 : naturalW / naturalH;
-  const h0 = naturalW >= naturalH ? naturalH / naturalW : 1;
-  const width = rotated90 ? h0 : w0;
-  const height = rotated90 ? w0 : h0;
-  return {
-    width,
-    height,
-    offsetX: (1 - width) / 2,
-    offsetY: (1 - height) / 2
-  };
-}
 
 export function ProductImageUploadForm({
   productId,
@@ -54,7 +29,7 @@ export function ProductImageUploadForm({
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [rotation, setRotation] = useState(0);
   const [crop, setCrop] = useState<CropRect>({ x: 0.1, y: 0.1, size: 0.8 });
-  const [display, setDisplay] = useState<DisplayRect>({ width: 1, height: 1, offsetX: 0, offsetY: 0 });
+  const [geometry, setGeometry] = useState<CropGeometry>(() => createCropGeometry(1, 1, 0));
   const [dragMode, setDragMode] = useState<"move" | "resize" | null>(null);
   const [dragOrigin, setDragOrigin] = useState<{ startX: number; startY: number; orig: CropRect } | null>(null);
   const [saving, setSaving] = useState(false);
@@ -65,17 +40,17 @@ export function ProductImageUploadForm({
   const stageRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const rotated90 = rotation === 90 || rotation === 270;
-
-  const recomputeDisplay = useCallback(() => {
+  const recomputeGeometry = useCallback(() => {
     const img = imgRef.current;
     if (!img || !img.naturalWidth || !img.naturalHeight) return;
-    setDisplay(computeDisplayRect(img.naturalWidth, img.naturalHeight, rotated90));
-  }, [rotated90]);
+    const nextGeometry = createCropGeometry(img.naturalWidth, img.naturalHeight, rotation);
+    setGeometry(nextGeometry);
+    setCrop(centeredCrop(nextGeometry));
+  }, [rotation]);
 
   useEffect(() => {
-    recomputeDisplay();
-  }, [recomputeDisplay]);
+    recomputeGeometry();
+  }, [recomputeGeometry]);
 
   function resetTool() {
     setRotation(0);
@@ -94,7 +69,7 @@ export function ProductImageUploadForm({
   }
 
   function handleImageLoad() {
-    recomputeDisplay();
+    recomputeGeometry();
   }
 
   function handleMoveStart(event: PointerEvent<HTMLDivElement>) {
@@ -114,14 +89,17 @@ export function ProductImageUploadForm({
   function handlePointerMove(event: PointerEvent<HTMLDivElement>) {
     if (!dragOrigin || !dragMode || !stageRef.current) return;
     const rect = stageRef.current.getBoundingClientRect();
-    const dxImg = (event.clientX - dragOrigin.startX) / (rect.width * display.width);
-    const dyImg = (event.clientY - dragOrigin.startY) / (rect.height * display.height);
+    const dxImg = (event.clientX - dragOrigin.startX) / (rect.width * geometry.display.width);
+    const dyImg = (event.clientY - dragOrigin.startY) / (rect.height * geometry.display.height);
 
     if (dragMode === "move") {
-      setCrop(clampCrop({ x: dragOrigin.orig.x + dxImg, y: dragOrigin.orig.y + dyImg, size: dragOrigin.orig.size }));
+      setCrop(clampCrop({ x: dragOrigin.orig.x + dxImg, y: dragOrigin.orig.y + dyImg, size: dragOrigin.orig.size }, geometry));
     } else {
-      const delta = Math.max(dxImg, dyImg);
-      setCrop(clampCrop({ x: dragOrigin.orig.x, y: dragOrigin.orig.y, size: dragOrigin.orig.size + delta }));
+      const shortestDisplaySide = Math.min(geometry.display.width, geometry.display.height);
+      const dxSize = (event.clientX - dragOrigin.startX) / (rect.width * shortestDisplaySide);
+      const dySize = (event.clientY - dragOrigin.startY) / (rect.height * shortestDisplaySide);
+      const delta = Math.abs(dxSize) >= Math.abs(dySize) ? dxSize : dySize;
+      setCrop(clampCrop({ x: dragOrigin.orig.x, y: dragOrigin.orig.y, size: dragOrigin.orig.size + delta }, geometry));
     }
   }
 
@@ -131,12 +109,11 @@ export function ProductImageUploadForm({
   }
 
   function adjustZoom(delta: number) {
-    setCrop((prev) => clampCrop({ ...prev, size: prev.size + delta }));
+    setCrop((prev) => clampCrop({ ...prev, size: prev.size + delta }, geometry));
   }
 
   function rotateBy(deltaDeg: number) {
     setRotation((prev) => (prev + deltaDeg + 360) % 360);
-    setCrop({ x: 0.1, y: 0.1, size: 0.8 });
   }
 
   function handleCancel() {
@@ -156,8 +133,9 @@ export function ProductImageUploadForm({
     try {
       const naturalW = img.naturalWidth;
       const naturalH = img.naturalHeight;
-      const sourceW = rotated90 ? naturalH : naturalW;
-      const sourceH = rotated90 ? naturalW : naturalH;
+      const exportGeometry = createCropGeometry(naturalW, naturalH, rotation);
+      const sourceW = exportGeometry.sourceWidth;
+      const sourceH = exportGeometry.sourceHeight;
 
       const rotatedCanvas = document.createElement("canvas");
       rotatedCanvas.width = sourceW;
@@ -168,9 +146,7 @@ export function ProductImageUploadForm({
       rotatedCtx.rotate((rotation * Math.PI) / 180);
       rotatedCtx.drawImage(img, -naturalW / 2, -naturalH / 2);
 
-      const cropSizePx = crop.size * Math.min(sourceW, sourceH);
-      const cropXPx = crop.x * sourceW;
-      const cropYPx = crop.y * sourceH;
+      const sourceCrop = cropToSourceRect(crop, exportGeometry);
 
       const outputCanvas = document.createElement("canvas");
       outputCanvas.width = OUTPUT_SIZE;
@@ -179,10 +155,10 @@ export function ProductImageUploadForm({
       if (!outputCtx) throw new Error("This browser does not support canvas image processing.");
       outputCtx.drawImage(
         rotatedCanvas,
-        cropXPx,
-        cropYPx,
-        cropSizePx,
-        cropSizePx,
+        sourceCrop.x,
+        sourceCrop.y,
+        sourceCrop.size,
+        sourceCrop.size,
         0,
         0,
         OUTPUT_SIZE,
@@ -216,21 +192,25 @@ export function ProductImageUploadForm({
     }
   }
 
+  const displayCrop = cropToDisplayRect(crop, geometry);
   const boxStyle = {
-    left: `${(display.offsetX + crop.x * display.width) * 100}%`,
-    top: `${(display.offsetY + crop.y * display.height) * 100}%`,
-    width: `${crop.size * display.width * 100}%`,
-    height: `${crop.size * display.height * 100}%`
+    left: `${displayCrop.offsetX * 100}%`,
+    top: `${displayCrop.offsetY * 100}%`,
+    width: `${displayCrop.width * 100}%`,
+    height: `${displayCrop.height * 100}%`
   };
 
   return (
     <div className="admin-media-upload-form">
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/jpeg,image/png,image/webp,image/avif"
-        onChange={handleFileChange}
-      />
+      <label className="admin-image-file-label">
+        <span>Replace primary image</span>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/avif"
+          onChange={handleFileChange}
+        />
+      </label>
 
       {imageSrc && (
         <div className="admin-image-crop-tool">
