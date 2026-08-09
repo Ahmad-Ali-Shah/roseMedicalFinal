@@ -73,8 +73,7 @@ describe("F3E-B product pages", () => {
       "Save draft",
       "Submit for review",
       "Publish",
-      "Archive",
-      "Delete product"
+      "Archive"
     ]) {
       expect(html).not.toContain(label);
     }

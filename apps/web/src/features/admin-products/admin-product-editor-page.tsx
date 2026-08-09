@@ -15,6 +15,7 @@ import { AdminProductCompleteness } from "./admin-product-completeness";
 import { AdminProductOptions } from "./admin-product-options";
 import { ProductImageUploadForm } from "./product-image-upload-form";
 import { activateProduct } from "./actions";
+import { DeleteProductButton } from "./delete-product-button";
 
 export function AdminProductEditorPage({
   model
@@ -46,6 +47,12 @@ export function AdminProductEditorPage({
             )}
             <ButtonLink href={model.publicHref} variant="secondary">View public product</ButtonLink>
             <ButtonLink href={model.publicFamilyHref} variant="quiet">View public family</ButtonLink>
+            <DeleteProductButton
+              productId={product.id}
+              productName={product.name}
+              familySlug={product.familySlug}
+              productSlug={product.slug}
+            />
           </>
         }
       />

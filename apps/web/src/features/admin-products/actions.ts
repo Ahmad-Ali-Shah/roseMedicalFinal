@@ -206,6 +206,63 @@ export async function createProduct(formData: FormData) {
   redirect(`/admin/products/${familySlug}/${product.slug}`);
 }
 
+export async function deleteProduct(formData: FormData) {
+  const productId = formString(formData, "product_id");
+  const familySlug = formString(formData, "family_slug");
+  const productSlug = formString(formData, "product_slug");
+  if (!productId) {
+    throw new Error("Missing product id.");
+  }
+  await requireAdminUser();
+  const admin = createAdminClient();
+
+  const { data: images } = await admin
+    .from("product_images")
+    .select("image_path")
+    .eq("product_id", productId);
+
+  if (images && images.length > 0) {
+    const paths = images.map((row) => row.image_path).filter(Boolean);
+    if (paths.length > 0) {
+      await admin.storage.from("product-media").remove(paths);
+    }
+  }
+
+  const { error: imagesError } = await admin
+    .from("product_images")
+    .delete()
+    .eq("product_id", productId);
+  if (imagesError) {
+    throw new Error(`Deleting product images failed: ${imagesError.message}`);
+  }
+
+  const { error: variantsError } = await admin
+    .from("product_variants")
+    .delete()
+    .eq("product_id", productId);
+  if (variantsError) {
+    throw new Error(`Deleting product variants failed: ${variantsError.message}`);
+  }
+
+  const { error: productError } = await admin
+    .from("products")
+    .delete()
+    .eq("id", productId);
+  if (productError) {
+    throw new Error(`Deleting product failed: ${productError.message}`);
+  }
+
+  clearCatalogueProjectionCache();
+  revalidatePath("/");
+  revalidatePath("/products");
+  revalidatePath("/search");
+  revalidatePath(`/products/${familySlug}`);
+  revalidatePath(`/products/${familySlug}/${productSlug}`);
+  revalidatePath("/admin/products");
+  revalidatePath(`/admin/products/${familySlug}/${productSlug}`);
+  redirect("/admin/products");
+}
+
 export async function activateProduct(formData: FormData) {
   const productId = formString(formData, "product_id");
   const familySlug = formString(formData, "family_slug");
