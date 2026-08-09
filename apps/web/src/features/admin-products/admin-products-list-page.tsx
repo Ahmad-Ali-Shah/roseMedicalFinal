@@ -1,4 +1,4 @@
-import { Button, ButtonLink } from "@/components/ui";
+import { ButtonLink } from "@/components/ui";
 import {
   AdminAlert,
   AdminDataTable,
@@ -14,6 +14,7 @@ import {
 import { getLiveCatalogueProducts } from "@/features/catalogue-live";
 import { ProductMediaPlaceholder } from "@/features/public-catalogue";
 import { getAdminFamilyRows } from "@/features/admin-families";
+import { adminNewProductHref } from "@/features/admin-management-routing";
 import {
   getAdminProductRows,
   type AdminProductRow
@@ -94,7 +95,7 @@ export async function AdminProductsListPage() {
         eyebrow="Products"
         title="Manage the instrument catalogue."
         description="This collection reads the same canonical Supabase product records used by the public catalogue."
-        actions={<Button disabled>Add product</Button>}
+        actions={<ButtonLink href={adminNewProductHref()}>Add product</ButtonLink>}
       />
 
       <AdminAlert tone="info" title="Live canonical catalogue">

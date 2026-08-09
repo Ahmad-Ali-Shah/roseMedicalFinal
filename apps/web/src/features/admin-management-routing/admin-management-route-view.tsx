@@ -10,11 +10,12 @@ import {
   getAdminFamilyEditor
 } from "@/features/admin-families";
 import {
-  getLiveCatalogueProducts,
+  getAdminCatalogueProducts,
   getProductByPublicRoute
 } from "@/features/catalogue-live";
 import { AdminMediaPage } from "@/features/admin-media";
 import {
+  AdminProductCreatePage,
   AdminProductEditorPage,
   AdminProductsListPage,
   getAdminProductEditor
@@ -29,8 +30,10 @@ export async function AdminManagementRouteView({
   switch (result.kind) {
     case "products":
       return <AdminProductsListPage />;
+    case "new-product":
+      return <AdminProductCreatePage />;
     case "product": {
-      const products = await getLiveCatalogueProducts();
+      const products = await getAdminCatalogueProducts();
       const product = getProductByPublicRoute(
         products,
         result.familySlug,
