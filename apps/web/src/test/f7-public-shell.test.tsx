@@ -31,6 +31,20 @@ describe("F7 premium public shell", () => {
     expect(html).toContain('data-motion="route-transition"');
   });
 
+  it("places a compact contact and social strip immediately before the footer", () => {
+    const html = renderToStaticMarkup(
+      <PublicShell><p>Public page content</p></PublicShell>
+    );
+
+    expect(html).toMatch(/class="public-contact-strip"[\s\S]*<footer class="site-footer">/);
+    expect(html).toContain("Contact us");
+    expect(html).toContain('href="mailto:info@rosamedical.org"');
+    expect(html).toContain('href="tel:+966597204394"');
+    expect((html.match(/data-social-icon=/g) ?? [])).toHaveLength(4);
+    expect(html).toMatch(/class="public-contact-strip"[^>]*data-motion="reveal"/);
+    expect((html.match(/data-motion="stagger-item"/g) ?? [])).toHaveLength(3);
+  });
+
   it("uses an accessible button-driven mobile curtain", () => {
     const html = renderToStaticMarkup(
       <PublicShell><p>Content</p></PublicShell>

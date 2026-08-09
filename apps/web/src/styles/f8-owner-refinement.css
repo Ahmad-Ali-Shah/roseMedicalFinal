@@ -23,7 +23,7 @@
 
 .story-media-frame--brand:hover .media-frame__image,
 .procurement-editorial__brand:hover .media-frame__image {
-  transform: scale(1.145);
+  transform: scale(1.22);
 }
 
 .about-hero .f3d-hero__layout {
@@ -435,7 +435,7 @@
 
 .supported-buyers__item:hover .media-frame__image {
   filter: saturate(0.9) contrast(1.04);
-  transform: scale(1.022);
+  transform: scale(1.09);
 }
 
 .supported-buyers__content {

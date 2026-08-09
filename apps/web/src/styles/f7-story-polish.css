@@ -16,6 +16,11 @@
   border: 1px solid var(--color-border);
 }
 
+.story-media-frame:hover .media-frame__image,
+.story-media-frame:focus-within .media-frame__image {
+  transform: scale(1.09);
+}
+
 .story-media-frame__placeholder {
   min-height: inherit;
 }

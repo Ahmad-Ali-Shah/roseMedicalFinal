@@ -45,42 +45,19 @@ export function HomeHeroCarousel({
   );
   const reducedMotion = Boolean(useReducedMotion());
   const [activeIndex, setActiveIndex] = useState(0);
-  const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [manualEpoch, setManualEpoch] = useState(0);
   const pointerStartX = useRef<number | null>(null);
   const pointerStartY = useRef<number | null>(null);
-  const preloadRequest = useRef(0);
+  const preloadedImage = useRef<HTMLImageElement | null>(null);
   const dotRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
-  const activateWhenReady = useCallback((index: number, manual = false) => {
-    if (index === activeIndex) {
-      if (manual) setManualEpoch((epoch) => epoch + 1);
-      return;
-    }
-
-    const request = ++preloadRequest.current;
-    const source = preferredHeroSource(slides[index] ?? slides[0]!);
-    const image = new window.Image();
-    image.decoding = "async";
-    image.src = source;
-
-    const activate = () => {
-      if (preloadRequest.current !== request) return;
-      setActiveIndex(index);
-      if (manual) setManualEpoch((epoch) => epoch + 1);
-    };
-
-    if (image.complete) {
-      activate();
-      return;
-    }
-
-    image.onload = activate;
-    image.onerror = activate;
-  }, [activeIndex, slides]);
+  const activateSlide = useCallback((index: number, manual = false) => {
+    setActiveIndex(index);
+    if (manual) setManualEpoch((epoch) => epoch + 1);
+  }, []);
 
   useEffect(() => {
     const handleVisibility = () => setHidden(document.hidden);
@@ -90,9 +67,16 @@ export function HomeHeroCarousel({
   }, []);
 
   useEffect(() => {
+    const nextSlide = slides[nextHeroSlideIndex(activeIndex, slides.length)] ?? slides[0]!;
+    const image = new window.Image();
+    image.decoding = "async";
+    image.src = preferredHeroSource(nextSlide);
+    preloadedImage.current = image;
+  }, [activeIndex, slides]);
+
+  useEffect(() => {
     if (!shouldHeroAutoplay({
       reducedMotion,
-      hovered,
       focused,
       dragging,
       hidden
@@ -101,11 +85,11 @@ export function HomeHeroCarousel({
     }
 
     const timeout = window.setTimeout(() => {
-      activateWhenReady(nextHeroSlideIndex(activeIndex, slides.length));
+      activateSlide(nextHeroSlideIndex(activeIndex, slides.length));
     }, HERO_AUTOPLAY_MS);
 
     return () => window.clearTimeout(timeout);
-  }, [activeIndex, activateWhenReady, dragging, focused, hidden, hovered, manualEpoch, reducedMotion, slides.length]);
+  }, [activeIndex, activateSlide, dragging, focused, hidden, manualEpoch, reducedMotion, slides.length]);
 
   const handleDotKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
@@ -113,7 +97,7 @@ export function HomeHeroCarousel({
     const index = event.key === "ArrowRight"
       ? nextHeroSlideIndex(activeIndex, slides.length)
       : previousHeroSlideIndex(activeIndex, slides.length);
-    activateWhenReady(index, true);
+    activateSlide(index, true);
     dotRefs.current[index]?.focus();
   };
 
@@ -140,7 +124,7 @@ export function HomeHeroCarousel({
     const deltaY = event.clientY - startY;
     if (Math.abs(deltaY) > Math.abs(deltaX)) return;
     if (Math.abs(deltaX) < DRAG_THRESHOLD_PX) return;
-    activateWhenReady(
+    activateSlide(
       deltaX < 0
         ? nextHeroSlideIndex(activeIndex, slides.length)
         : previousHeroSlideIndex(activeIndex, slides.length),
@@ -162,8 +146,6 @@ export function HomeHeroCarousel({
       data-active-slide={slide.id}
       aria-roledescription="carousel"
       aria-labelledby="home-title"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
       onFocusCapture={() => setFocused(true)}
       onBlurCapture={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false);
@@ -257,7 +239,7 @@ export function HomeHeroCarousel({
             aria-label={locale === "ar" ? `الشريحة ${index + 1}` : `Go to slide ${index + 1}`}
             aria-current={index === activeIndex ? "true" : undefined}
             tabIndex={index === activeIndex ? 0 : -1}
-            onClick={() => activateWhenReady(index, true)}
+            onClick={() => activateSlide(index, true)}
           >
             <span className="sr-only">{item.title}</span>
           </button>

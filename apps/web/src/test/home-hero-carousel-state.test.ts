@@ -13,13 +13,13 @@ describe("homepage hero carousel state", () => {
     expect(previousHeroSlideIndex(0, 4)).toBe(3);
   });
   it.each([
-    { reducedMotion: true }, { hovered: true }, { focused: true }, { dragging: true }, { hidden: true }
+    { reducedMotion: true }, { focused: true }, { dragging: true }, { hidden: true }
   ])("pauses for blocked autoplay state %#", (override) => {
     expect(shouldHeroAutoplay({
-      reducedMotion: false, hovered: false, focused: false, dragging: false, hidden: false, ...override
+      reducedMotion: false, focused: false, dragging: false, hidden: false, ...override
     })).toBe(false);
   });
   it("autoplays only while fully active", () => {
-    expect(shouldHeroAutoplay({ reducedMotion: false, hovered: false, focused: false, dragging: false, hidden: false })).toBe(true);
+    expect(shouldHeroAutoplay({ reducedMotion: false, focused: false, dragging: false, hidden: false })).toBe(true);
   });
 });

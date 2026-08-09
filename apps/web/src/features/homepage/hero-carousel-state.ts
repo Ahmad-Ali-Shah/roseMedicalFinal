@@ -2,7 +2,6 @@ export const HERO_AUTOPLAY_MS = 4_750;
 
 export interface HeroAutoplayState {
   reducedMotion: boolean;
-  hovered: boolean;
   focused: boolean;
   dragging: boolean;
   hidden: boolean;
@@ -25,5 +24,5 @@ export function previousHeroSlideIndex(index: number, count: number): number {
 }
 
 export function shouldHeroAutoplay(state: HeroAutoplayState): boolean {
-  return !state.reducedMotion && !state.hovered && !state.focused && !state.dragging && !state.hidden;
+  return !state.reducedMotion && !state.focused && !state.dragging && !state.hidden;
 }

@@ -1,7 +1,6 @@
 import { RouteTransition, ScrollHeaderController } from "@/features/motion";
 import { PUBLIC_CONTENT_VALUES } from "@/features/public-content-registry";
 import { InquiryCountLabel } from "@/features/inquiry";
-import { SocialLinksRow } from "@/features/social-links";
 import {
   LanguageSwitcher,
   LocaleDocumentController,
@@ -16,6 +15,7 @@ import {
 } from "./mobile-navigation";
 import { PublicNavigationLink } from "./public-navigation-link";
 import { PublicBrandMark } from "./public-brand-mark";
+import { PublicContactStrip } from "./public-contact-strip";
 
 const primaryLinks = [
   ["Products", "/products"],
@@ -81,6 +81,7 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
       <main className="page-main" id="main-content">
         <RouteTransition>{children}</RouteTransition>
       </main>
+      <PublicContactStrip />
       <footer className="site-footer">
         <Container className="site-footer__grid" size="wide">
           <div className="site-footer__brand stack">
@@ -89,7 +90,6 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
             <LocalizedButtonLink href="/request-quotation" size="small">
               <LocalizedText en="Request a quote" ar="اطلب عرض سعر" />
             </LocalizedButtonLink>
-            <SocialLinksRow className="site-footer__social-links" />
           </div>
           <nav aria-label="Product families / عائلات المنتجات">
             <p className="site-footer__title"><LocalizedText en="Products" ar="المنتجات" /></p>

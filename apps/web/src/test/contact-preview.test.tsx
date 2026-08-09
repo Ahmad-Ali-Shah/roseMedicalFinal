@@ -15,9 +15,8 @@ describe("F3D contact normal state", () => {
     expect(CONTACT_INFORMATION.map((row) => row.value)).toEqual([
       "Rosa Medical",
       "King Fahd Road, Al Olaya, Riyadh 12214, Saudi Arabia",
-      "+966 11 555 0142",
-      "+966 50 555 0142",
-      "hello@example.com",
+      "+966 59 720 4394",
+      "info@rosamedical.org",
       "Sunday–Thursday, 09:00–17:00 (AST)"
     ]);
   });
@@ -35,9 +34,9 @@ describe("F3D contact normal state", () => {
     expect(html).toContain('aria-live="polite"');
     expect(html).toContain('data-contact-status="idle"');
     expect(html).not.toContain('readOnly=""');
-    expect(html).toContain('href="mailto:hello@example.com"');
-    expect(html).toContain('href="tel:+966115550142"');
-    expect(html).toContain('href="https://wa.me/966505550142"');
+    expect(html).toContain('href="mailto:info@rosamedical.org"');
+    expect(html).toContain('href="tel:+966597204394"');
+    expect(html).not.toContain("example.com");
     expect(html).toContain('title="Map showing Riyadh, Saudi Arabia"');
     expect(html).toContain('loading="lazy"');
     expect(html).not.toContain("Awaiting client confirmation");
@@ -45,6 +44,7 @@ describe("F3D contact normal state", () => {
     expect(html).toContain('href="/inquiry"');
     expect(html).toContain("Follow Rosa");
     expect((html.match(/target="_blank" rel="noopener noreferrer"/g) ?? [])).toHaveLength(4);
+    expect((html.match(/data-social-icon=/g) ?? [])).toHaveLength(4);
     expect(html).not.toContain("@rosamedicalexample");
   });
 });

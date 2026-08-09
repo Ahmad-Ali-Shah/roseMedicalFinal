@@ -52,13 +52,15 @@ describe("client-feedback responsive homepage contract", () => {
     expect(density).toContain("font-family: var(--font-arabic)");
   });
 
-  it("centralizes exactly four valid social placeholders", () => {
-    expect(SOCIAL_LINKS.map((item) => item.platform)).toEqual(["instagram", "facebook", "linkedin", "x"]);
+  it("centralizes the supplied social profiles and branded icon set", () => {
+    expect(SOCIAL_LINKS.map((item) => item.platform)).toEqual(["instagram", "x", "facebook", "linkedin"]);
     expect(SOCIAL_LINKS).toHaveLength(4);
-    for (const item of SOCIAL_LINKS) {
-      expect(item.href).toMatch(/^https:\/\//);
-      expect(item.href).not.toBe("#");
-    }
+    expect(SOCIAL_LINKS.map((item) => item.href)).toEqual([
+      "https://www.instagram.com/rosa_international/",
+      "https://x.com/",
+      "https://www.facebook.com/profile.php?id=61581294504389",
+      "https://www.linkedin.com/in/rosa-int-l-trading-co-370a74398/"
+    ]);
   });
 
   it("uses a dedicated five-family homepage gallery instead of FamilyCard collage", () => {

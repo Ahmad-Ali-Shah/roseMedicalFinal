@@ -8,8 +8,8 @@ export interface SocialLink {
 }
 
 export const SOCIAL_LINKS: readonly SocialLink[] = [
-  { platform: "instagram", label: "Instagram", labelAr: "إنستغرام", href: "https://www.instagram.com/" },
-  { platform: "facebook", label: "Facebook", labelAr: "فيسبوك", href: "https://www.facebook.com/" },
-  { platform: "linkedin", label: "LinkedIn", labelAr: "لينكدإن", href: "https://www.linkedin.com/" },
-  { platform: "x", label: "X / Twitter", labelAr: "إكس / تويتر", href: "https://x.com/" }
+  { platform: "instagram", label: "Instagram", labelAr: "إنستغرام", href: "https://www.instagram.com/rosa_international/" },
+  { platform: "x", label: "X", labelAr: "إكس", href: "https://x.com/" },
+  { platform: "facebook", label: "Facebook", labelAr: "فيسبوك", href: "https://www.facebook.com/profile.php?id=61581294504389" },
+  { platform: "linkedin", label: "LinkedIn", labelAr: "لينكدإن", href: "https://www.linkedin.com/in/rosa-int-l-trading-co-370a74398/" }
 ] as const;

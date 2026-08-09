@@ -24,6 +24,12 @@ export const PUBLIC_CONTENT_VALUES = {
     title: "Send a general business message.",
     copy: "Use this page for company, catalogue or support questions. Product quotation requests belong in the inquiry flow so product details remain attached."
   },
+  contactDetails: {
+    email: "info@rosamedical.org",
+    emailHref: "mailto:info@rosamedical.org",
+    phone: "+966 59 720 4394",
+    phoneHref: "tel:+966597204394"
+  },
   footerDescription: {
     copy: "Medical instruments supplier and procurement partner."
   }

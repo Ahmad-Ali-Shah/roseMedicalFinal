@@ -9,7 +9,7 @@ import {
 } from "./motion.config";
 import type { MotionDirection } from "./types";
 
-type RevealTag = "div" | "section" | "header" | "span" | "li";
+type RevealTag = "aside" | "div" | "section" | "header" | "span" | "li";
 
 interface RevealProps extends PropsWithChildren {
   as?: RevealTag;
@@ -96,6 +96,8 @@ export function Reveal({
   } as const;
 
   switch (as) {
+    case "aside":
+      return <motion.aside {...shared}>{children}</motion.aside>;
     case "section":
       return <motion.section {...shared}>{children}</motion.section>;
     case "header":

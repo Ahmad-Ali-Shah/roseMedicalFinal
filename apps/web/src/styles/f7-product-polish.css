@@ -63,7 +63,7 @@
 
 .family-product-card:hover .product-media-placeholder,
 .family-product-card:focus-within .product-media-placeholder {
-  transform: scale(1.012);
+  transform: scale(1.08);
 }
 
 .family-product-card:hover h2,
@@ -122,7 +122,7 @@
 
 .product-gallery__primary:hover .product-gallery__image,
 .product-gallery__primary:focus-within .product-gallery__image {
-  transform: scale(1.008);
+  transform: scale(1.08);
 }
 
 .products-search-entry,

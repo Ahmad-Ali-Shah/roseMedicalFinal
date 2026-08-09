@@ -1,5 +1,18 @@
 import type { NextConfig } from "next";
 import { resolve } from "node:path";
+import { networkInterfaces } from "node:os";
+
+function localLanHosts(): string[] {
+  const hosts: string[] = [];
+  for (const entries of Object.values(networkInterfaces())) {
+    for (const entry of entries ?? []) {
+      if (entry.family === "IPv4" && !entry.internal) {
+        hosts.push(entry.address);
+      }
+    }
+  }
+  return hosts;
+}
 
 function configuredSupabaseOrigin(): URL | null {
   const value = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
@@ -29,7 +42,7 @@ const contentSecurityPolicy = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ["127.0.0.1"],
+  allowedDevOrigins: ["127.0.0.1", ...localLanHosts()],
   images: {
     unoptimized: true,
     qualities: [75, 92],

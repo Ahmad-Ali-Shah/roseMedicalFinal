@@ -637,7 +637,7 @@ body:has(.public-page--home) .site-header[data-scrolled="true"] .mobile-navigati
 
 .product-preview-card__link:hover .product-media-placeholder,
 .product-preview-card__link:focus-visible .product-media-placeholder {
-  transform: scale(1.012);
+  transform: scale(1.08);
 }
 
 .procurement-editorial__media-reveal {

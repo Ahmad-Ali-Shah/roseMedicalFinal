@@ -492,6 +492,15 @@
   min-height: 5.25rem;
 }
 
+.search-result-preview .product-media-placeholder {
+  transition: transform var(--motion-section) var(--motion-ease-emphasized);
+}
+
+.search-result-preview:hover .product-media-placeholder,
+.search-result-preview:focus-within .product-media-placeholder {
+  transform: scale(1.08);
+}
+
 .search-result-preview__identity h2 {
   margin: var(--space-1) 0;
   font-size: 1.35rem;

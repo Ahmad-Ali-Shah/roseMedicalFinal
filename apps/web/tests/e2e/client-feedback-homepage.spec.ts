@@ -195,7 +195,7 @@ test("hero dot keyboard navigation wraps and keeps roving focus", async ({ page 
   await expect(dots.first()).toBeFocused();
 });
 
-test("hero autoplay advances while idle and pauses during focus and hover", async ({ page }, testInfo) => {
+test("hero autoplay advances consistently under an idle pointer and pauses during focus", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop");
   await page.goto("/");
   const hero = page.locator("[data-section='home-hero']");
@@ -203,14 +203,13 @@ test("hero autoplay advances while idle and pauses during focus and hover", asyn
   await page.waitForTimeout(5_200);
   await expect(hero).toHaveAttribute("data-active-slide", "clinical-instrument-context");
 
-  await page.locator(".home-hero-carousel__dot").nth(1).focus();
-  await page.waitForTimeout(5_200);
-  await expect(hero).toHaveAttribute("data-active-slide", "clinical-instrument-context");
-
-  await page.locator("body").focus();
   await hero.hover();
   await page.waitForTimeout(5_200);
-  await expect(hero).toHaveAttribute("data-active-slide", "clinical-instrument-context");
+  await expect(hero).toHaveAttribute("data-active-slide", "surgical-instrument-selection");
+
+  await page.locator(".home-hero-carousel__dot").nth(1).focus();
+  await page.waitForTimeout(5_200);
+  await expect(hero).toHaveAttribute("data-active-slide", "surgical-instrument-selection");
 });
 
 test("reduced motion disables hero autoplay", async ({ page }, testInfo) => {

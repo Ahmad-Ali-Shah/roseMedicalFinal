@@ -767,11 +767,11 @@
   }
 }
 
-/* Shared public social links: compact in the footer, explicit on Contact. */
+/* Shared social links and the compact contact band above every public footer. */
 .social-links-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.35rem 0.8rem;
+  gap: 0.45rem 1rem;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -781,11 +781,27 @@
   min-height: 2.75rem;
   display: inline-flex;
   align-items: center;
+  gap: 0.55rem;
   color: inherit;
   font-size: 0.82rem;
-  font-weight: 650;
+  font-weight: 700;
   text-decoration: none;
   border-bottom: 1px solid transparent;
+}
+
+.social-links-row__icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  display: grid;
+  flex: 0 0 1.25rem;
+  place-items: center;
+  transition: transform var(--transition-fast);
+}
+
+.social-links-row__icon svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
 }
 
 .social-links-row a:hover,
@@ -793,8 +809,114 @@
   border-bottom-color: currentColor;
 }
 
-.site-footer__social-links {
-  margin-top: 0.25rem;
+.social-links-row a:hover .social-links-row__icon,
+.social-links-row a:focus-visible .social-links-row__icon {
+  transform: scale(1.16);
+}
+
+.public-contact-strip {
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid var(--color-ink);
+  background: var(--color-rosa-red-dark);
+  box-shadow:
+    inset 0 1px rgb(255 255 255 / 0.1),
+    inset 0 -1px rgb(45 0 3 / 0.28);
+  color: var(--color-paper);
+}
+
+.public-contact-strip__inner {
+  padding-block: clamp(1.1rem, 2vw, 1.65rem);
+}
+
+.public-contact-strip__label {
+  margin: 0;
+  font-size: 0.7rem;
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.public-contact-strip__content {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(13rem, 0.7fr) minmax(0, 1fr);
+  gap: clamp(1.25rem, 3vw, 3rem);
+  align-items: center;
+}
+
+.public-contact-strip__content > [data-motion="stagger-item"] {
+  min-width: 0;
+}
+
+.public-contact-strip__socials {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.public-contact-strip__social-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 1.25rem;
+}
+
+.public-contact-strip__social-links a {
+  width: fit-content;
+  color: var(--color-paper);
+}
+
+.public-contact-strip__message {
+  display: flex;
+  gap: 0.7rem;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  color: var(--color-paper);
+  font-family: var(--font-editorial);
+  font-size: clamp(1.8rem, 2.5vw, 2.45rem);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.public-contact-strip__message-cell {
+  align-self: center;
+}
+
+.public-contact-strip__message::before,
+.public-contact-strip__message::after {
+  content: "";
+  width: clamp(1.4rem, 2.2vw, 2.25rem);
+  height: 1px;
+  background: rgb(255 255 255 / 0.42);
+}
+
+.public-contact-strip__details {
+  display: grid;
+  gap: 0.85rem;
+  justify-items: end;
+  font-style: normal;
+  text-align: end;
+}
+
+.public-contact-strip__details-cell {
+  min-width: 0;
+}
+
+.public-contact-strip__details a {
+  display: grid;
+  gap: 0.22rem;
+  color: var(--color-paper);
+  text-decoration: none;
+}
+
+.public-contact-strip__details a:hover bdi,
+.public-contact-strip__details a:focus-visible bdi {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
 }
 
 .contact-social-panel {
@@ -813,9 +935,41 @@
 }
 
 @media (max-width: 40rem) {
+  .public-contact-strip__inner {
+    padding-block: 1.1rem;
+  }
+
+  .public-contact-strip__content {
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+    align-items: start;
+  }
+
+  .public-contact-strip__message-cell {
+    order: -1;
+    justify-self: center;
+  }
+
+  .public-contact-strip__message {
+    font-size: 1.75rem;
+  }
+
+  .public-contact-strip__details {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-items: start;
+    text-align: start;
+  }
+
   .contact-social-panel {
     grid-template-columns: 1fr;
     align-items: start;
+  }
+}
+
+@media (max-width: 22rem) {
+  .public-contact-strip__social-links,
+  .public-contact-strip__details {
+    grid-template-columns: 1fr;
   }
 }
 

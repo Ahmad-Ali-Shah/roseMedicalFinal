@@ -83,7 +83,7 @@ describe("F7 public story and utility polish", () => {
     expect(html).toContain("General contact form");
     expect(html).toContain('title="Map showing Riyadh, Saudi Arabia"');
     expect((html.match(/data-motion="reveal"/g) ?? []).length).toBeGreaterThanOrEqual(4);
-    expect(html).toContain("hello@example.com");
+    expect(html).toContain("info@rosamedical.org");
     expect(html).toContain("Send Message");
     expect(form).toContain('fetch("/api/contact"');
     expect(form).toContain('method: "POST"');
