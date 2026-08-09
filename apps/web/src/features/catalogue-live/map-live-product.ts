@@ -217,10 +217,14 @@ function mapLiveOnlyProduct(
       new Set(catalogueCodes.map((option) => option.size).filter(Boolean))
     );
 
+    const familyPrefix = `${category.slug}-`;
+    const bareSlug = product.slug.startsWith(familyPrefix)
+      ? product.slug.slice(familyPrefix.length)
+      : product.slug;
     return {
       id: product.id,
       familySlug: category.slug as FamilySlug,
-      slug: product.slug,
+      slug: bareSlug,
       name: product.name_en,
       code: product.item_code ?? "",
       ...(description ? { description } : {}),
