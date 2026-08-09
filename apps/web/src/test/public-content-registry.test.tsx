@@ -30,7 +30,7 @@ describe("F3E-D public content registry", () => {
     expect(homepage).toContain(PUBLIC_CONTENT_VALUES.homeSupport.title);
     expect(renderToStaticMarkup(<AboutPage />)).toContain(PUBLIC_CONTENT_VALUES.aboutIntroduction.title);
     expect(renderToStaticMarkup(<ProcurementSupportPage />)).toContain(PUBLIC_CONTENT_VALUES.procurementIntroduction.title);
-    expect(renderToStaticMarkup(<ContactPage />)).toContain(PUBLIC_CONTENT_VALUES.contactIntroduction.title);
+    expect(await renderServerComponent(<ContactPage />)).toContain(PUBLIC_CONTENT_VALUES.contactIntroduction.title);
     expect(renderToStaticMarkup(<PublicShell><p>Body</p></PublicShell>)).toContain(PUBLIC_CONTENT_VALUES.footerDescription.copy);
   });
 

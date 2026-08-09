@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 import { AboutPage } from "@/features/about";
 import { CataloguesPage } from "@/features/catalogues";
 import { ContactPage } from "@/features/contact-preview";
+import { renderServerComponent } from "@/test/render-server-component";
 import {
   LegalPage,
   PRIVACY_DOCUMENT,
@@ -76,8 +77,8 @@ describe("F7 public story and utility polish", () => {
     expect(styles).toMatch(/\.public-family-index\s*>\s*li:hover[^{]*[^{]*\{[^}]*color:\s*var\(--color-rosa-red\)/s);
   });
 
-  it("polishes contact presentation with centralized example details and a Riyadh map", () => {
-    const html = renderToStaticMarkup(<ContactPage />);
+  it("polishes contact presentation with centralized example details and a Riyadh map", async () => {
+    const html = await renderServerComponent(<ContactPage />);
     const form = source("src/features/contact-preview/contact-form-preview.tsx");
 
     expect(html).toContain("General contact form");
