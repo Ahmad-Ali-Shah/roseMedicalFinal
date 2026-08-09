@@ -5,10 +5,17 @@ import { Reveal, TextReveal } from "@/features/motion";
 import { PUBLIC_CONTENT_VALUES } from "@/features/public-content-registry";
 import { ContactFormPreview } from "./contact-form-preview";
 import { ContactInformationPanel } from "./contact-information-panel";
+import { buildContactInformation } from "./contact-information-model";
 import { RiyadhMap } from "./riyadh-map";
 import type { PublicLocale } from "@/features/localization/locales";
+import { createClient } from "@/lib/supabase/server";
 
-export function ContactPage({ locale = "en" }: { locale?: PublicLocale }): ReactElement {
+export async function ContactPage({ locale = "en" }: { locale?: PublicLocale }): Promise<ReactElement> {
+  const supabase = await createClient();
+  const { data: settingsData } = await supabase
+    .from("site_settings")
+    .select("key,value_en,value_ar");
+  const contactRows = buildContactInformation(settingsData ?? []);
   const ar = locale === "ar";
   const introduction = PUBLIC_CONTENT_VALUES.contactIntroduction;
   const hero = ar ? {
@@ -49,7 +56,7 @@ export function ContactPage({ locale = "en" }: { locale?: PublicLocale }): React
         <Container size="wide">
           <div className="contact-main-layout">
             <Reveal direction="up" className="contact-information-reveal">
-              <ContactInformationPanel locale={locale} />
+              <ContactInformationPanel locale={locale} rows={contactRows} />
             </Reveal>
             <Reveal direction="up" delay={0.06} className="contact-form-reveal">
               <div className="contact-form-region">

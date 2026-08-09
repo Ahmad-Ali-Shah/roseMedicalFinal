@@ -18,3 +18,45 @@ export const CONTACT_INFORMATION: readonly ContactInformationRow[] = [
   { label: "Working hours", labelAr: "ساعات العمل", value: "Sunday–Thursday, 09:00–17:00 (AST)", valueAr: "الأحد–الخميس، 09:00–17:00 (بتوقيت السعودية)", confirmed: true },
   { label: "Social profiles", labelAr: "حسابات التواصل", value: "@rosamedicalexample", href: "https://example.com/rosa-medical", confirmed: true, external: true, ltr: true }
 ];
+
+export interface SiteSettingLike {
+  key: string;
+  value_en: string | null;
+  value_ar: string | null;
+}
+
+const CONTACT_SETTING_KEY_BY_LABEL: Record<string, string> = {
+  "Business name": "contact_business_name",
+  "Address": "contact_address",
+  "Telephone": "contact_phone",
+  "WhatsApp": "contact_whatsapp",
+  "Email": "contact_email",
+  "Working hours": "contact_working_hours"
+};
+
+function buildDynamicHref(label: string, value: string): { href?: string; external?: boolean } {
+  if (label === "Telephone") return { href: `tel:${value.replace(/[^\d+]/g, "")}` };
+  if (label === "WhatsApp") return { href: `https://wa.me/${value.replace(/\D/g, "")}`, external: true };
+  if (label === "Email") return { href: `mailto:${value}` };
+  return {};
+}
+
+export function buildContactInformation(
+  settings: readonly SiteSettingLike[] = []
+): ContactInformationRow[] {
+  return CONTACT_INFORMATION.map((row) => {
+    const settingKey = CONTACT_SETTING_KEY_BY_LABEL[row.label];
+    if (!settingKey) return row;
+    const setting = settings.find((entry) => entry.key === settingKey);
+    const value = setting?.value_en?.trim() || row.value;
+    const valueAr = setting?.value_ar?.trim() || row.valueAr;
+    const dynamicHref = buildDynamicHref(row.label, value);
+    return {
+      ...row,
+      value,
+      valueAr,
+      href: dynamicHref.href ?? row.href,
+      external: dynamicHref.external ?? row.external
+    };
+  });
+}
