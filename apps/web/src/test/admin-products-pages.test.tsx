@@ -60,7 +60,8 @@ describe("F3E-B product pages", () => {
     expect(html).toContain("Protected catalogue identity");
     expect(html).toContain("Primary product image");
     expect(html).toContain("Replace primary image");
-    expect(html).toContain("<form");
+    expect(html).toContain('type="file"');
+    expect(html).toContain("admin-media-upload-form");
     expect(html).not.toContain("data-preview-only");
   });
 

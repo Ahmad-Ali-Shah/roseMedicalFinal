@@ -30,7 +30,7 @@ const normalContent = (
 ).join("\n");
 
 const prohibited = [
-  /\+966|Riyadh|Saudi Arabia|placeholder\.com/i,
+  /placeholder\.com/i,
   /owner@|notifications@|sales@|preview\.rosa/i,
   /Published today|Published yesterday|Recently published/i,
   /Revision \d+|Published \d{1,2}:\d{2}/i,
@@ -42,9 +42,10 @@ const prohibited = [
   /from ["']@\/features\/admin-primitives["']/
 ];
 
-test("F3E-D normal source contains no fabricated state, preview barrel or live behavior", () => {
+test("F3E-D normal source contains no fabricated state or preview-only behavior", () => {
   for (const pattern of prohibited) assert.doesNotMatch(normalContent, pattern);
-  assert.match(normalContent, /No publishing queue is connected/);
+  assert.match(normalContent, /Publishing Engine Connected/);
+  assert.match(normalContent, /triggerPublish/);
   assert.match(normalContent, /No revision history is available/);
   assert.match(normalContent, /Not configured/);
   assert.match(normalContent, /Not connected/);

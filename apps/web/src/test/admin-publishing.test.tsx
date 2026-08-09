@@ -1,4 +1,5 @@
 import { renderServerComponent } from "@/test/render-server-component";
+import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { ADMIN_READINESS_ITEMS } from "@/features/admin-governance-source";
 import {
@@ -41,7 +42,6 @@ describe("F3E-D Publishing Centre", () => {
   });
 
   it("keeps eight publishing examples preview-only", () => {
-    const { renderToStaticMarkup } = require("react-dom/server");
     const html = renderToStaticMarkup(<>
       <AdminPublishingPopulatedQueuePreview />
       <AdminPublishingValidationFailuresPreview />

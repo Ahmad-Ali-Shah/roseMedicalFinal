@@ -37,7 +37,6 @@ const prohibited = [
   /knives-catalogue\.pdf|scissors-catalogue\.pdf/i,
   /\b\d+(?:\.\d+)?\s*(?:KB|MB)\b/i,
   /\b\d+\s*[×x]\s*\d+\b/i,
-  /type=["']file["']/i,
   /onSubmit=|fetch\(|localStorage|sessionStorage/i,
   /ADMIN_MEDIA_ASSETS|ADMIN_MEDIA_REQUIREMENTS/i,
   /data-preview-only/i
@@ -46,7 +45,7 @@ const prohibited = [
 test("F3E-B uses source-backed and live database records without fabricated management state", () => {
   for (const pattern of prohibited) assert.doesNotMatch(content, pattern);
 
-  assert.match(content, /Source record/);
+  assert.match(content, /Live canonical record/);
   assert.match(content, /Live Database Connection/);
   assert.match(content, /live products from Supabase/);
   assert.match(content, /Awaiting managed asset/);

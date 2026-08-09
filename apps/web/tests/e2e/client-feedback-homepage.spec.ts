@@ -143,11 +143,13 @@ test("1366x768 keeps the remaining homepage sections within compact density boun
   expect(metrics.quotationPanel.paddingTop).toBeLessThanOrEqual(52);
 });
 
-test("shared social links render safely in the footer and dedicated Contact section", async ({ page }) => {
+test("shared social links render safely above the footer and in the dedicated Contact section", async ({ page }) => {
   await page.goto("/");
-  const footerSocials = page.locator(".site-footer [data-social-links] a");
-  await expect(footerSocials).toHaveCount(4);
-  for (const link of await footerSocials.all()) {
+  const strip = page.locator(".public-contact-strip");
+  const stripSocials = strip.locator("[data-social-links] a");
+  await expect(stripSocials).toHaveCount(4);
+  await expect(strip.locator("xpath=following-sibling::footer[1]")).toHaveCount(1);
+  for (const link of await stripSocials.all()) {
     await expect(link).toHaveAttribute("href", /^https:\/\//);
     await expect(link).toHaveAttribute("target", "_blank");
     await expect(link).toHaveAttribute("rel", /noopener/);
@@ -179,7 +181,7 @@ test("Arabic homepage keeps RTL typography and the same physical hero compositio
   expect(computed.fontFamily).toContain("Noto Sans Arabic");
   expect(computed.overflow).toBe(false);
   await expect(page.locator("[data-home-family-gallery]")).toBeVisible();
-  await expect(page.locator(".site-footer [data-social-links] a")).toHaveCount(4);
+  await expect(page.locator(".public-contact-strip [data-social-links] a")).toHaveCount(4);
 });
 
 test("hero dot keyboard navigation wraps and keeps roving focus", async ({ page }, testInfo) => {

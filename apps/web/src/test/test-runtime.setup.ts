@@ -42,7 +42,10 @@ function createUnavailableQueryBuilder() {
     upsert: () => builder,
     maybeSingle: rejection,
     single: rejection,
-    then: (onFulfilled: any, onRejected: any) => rejection().then(onFulfilled, onRejected)
+    then: <TResult1 = never, TResult2 = never>(
+      onFulfilled?: ((value: never) => TResult1 | PromiseLike<TResult1>) | null,
+      onRejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null
+    ) => rejection().then(onFulfilled, onRejected)
   };
   return builder;
 }

@@ -106,7 +106,7 @@ test("reconciliation preserves homepage cinematic choreography", async () => {
     productCard,
     premiumCss
   ] = await Promise.all([
-    read("features/homepage/sections/home-hero.tsx"),
+    read("features/homepage/sections/home-hero-carousel.tsx"),
     read("features/homepage/sections/family-discovery.tsx"),
     read("features/homepage/sections/featured-instruments.tsx"),
     read("features/homepage/sections/procurement-support.tsx"),
@@ -118,15 +118,13 @@ test("reconciliation preserves homepage cinematic choreography", async () => {
   ]);
 
   assertIncludes(hero, [
-    "TextReveal",
-    "Magnetic",
-    "MediaFrame",
-    "home-hero__visual--fullbleed",
-    "home-hero__media-fade",
-    'data-home-choreography="hero"',
-    'mediaSlot="homepage-hero"'
+    "AnimatePresence",
+    "HOME_HERO_SLIDES",
+    "shouldHeroAutoplay",
+    'data-home-choreography="carousel"',
+    'data-media-slot="homepage-hero-active"'
   ], "homepage hero");
-  assertIncludes(familyDiscovery, ["Stagger", "StaggerItem", "interval={0.065}"], "family discovery");
+  assertIncludes(familyDiscovery, ["HomeFamilyGallery", "family-discovery"], "family discovery");
   assertIncludes(featuredInstruments, ["Stagger", "StaggerItem", "interval={0.08}"], "featured instruments");
   assertIncludes(procurementSupport, [
     'direction="right"',

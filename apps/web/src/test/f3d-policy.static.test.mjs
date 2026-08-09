@@ -14,6 +14,7 @@ const files = [
   "contact-preview/contact-information-panel.tsx",
   "contact-preview/contact-page.tsx",
   "contact-preview/riyadh-map.tsx",
+  "public-content-registry/public-content-values.ts",
   "search-preview/search-default-page.tsx",
   "legal-pages/legal-document-model.ts"
 ];
@@ -37,9 +38,9 @@ const prohibitedPublicClaims = [
 
 test("F3D public copy uses safe centralized examples without fake business or legal claims", () => {
   for (const pattern of prohibitedPublicClaims) assert.doesNotMatch(content, pattern);
-  assert.match(content, /hello@example\.com/i);
-  assert.match(content, /tel:\+966115550142/i);
-  assert.match(content, /wa\.me\/966505550142/i);
+  assert.match(content, /info@rosamedical\.org/i);
+  assert.match(content, /tel:\+966597204394/i);
+  assert.doesNotMatch(content, /wa\.me\//i);
   assert.match(content, /Riyadh, Saudi Arabia/i);
   assert.match(content, /rather than created by browsing this website/i);
 });
