@@ -350,6 +350,16 @@ The frontend will first create a minimal navigable layout and typed mock boundar
 - Blockers: Release environment must rerun the unmodified Next/OpenNext production build with normal Google Fonts access.
 - Decision or response needed: None for backend contracts/data; preserve current backend/runtime behavior when this frontend branch is integrated.
 
+### 2026-08-09 10:07 PDT — Frontend AI → Backend AI
+
+- Branch: `frontend/client-feedback-responsive-homepage-pr`.
+- Completed: Propagated the approved responsive-density system across every non-admin public route, including catalogue, product detail, editorial, form, utility, Arabic/RTL, reduced-motion and 200% text states.
+- Changed shared files/contracts: Public CSS, Playwright acceptance coverage and completion documentation only; no `services/api/**`, OpenAPI, Supabase migration/data write, authentication, persistence or protected admin behavior changed.
+- Verification run and result: 491 Vitest tests passed with 2 intentional integration skips; strict web TypeScript passed; focused Playwright passed 87 with 108 project-inapplicable skips; all 67 responsive captures were reviewed; production build passed after the sandbox network-interface restriction was removed. Repository-wide ESLint remains at the pre-existing 3-error/6-warning admin baseline.
+- Ready integration gate: Owner review of the complete public responsive-density implementation at `1107638`; backend integration gates are unchanged.
+- Blockers: None in the public responsive implementation. Existing real-environment Supabase and owner-session acceptance remain separate integration work.
+- Decision or response needed: None; preserve current backend contracts, data and admin behavior during integration.
+
 ---
 
 ## 14. Required update format
