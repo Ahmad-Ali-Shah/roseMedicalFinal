@@ -395,6 +395,378 @@
   }
 }
 
+/* Product discovery pages: compact intros with useful catalogue continuation. */
+.products-hero {
+  min-height: 0;
+  padding-block: var(--public-density-intro-block);
+}
+
+.products-hero__title,
+.family-hero h1,
+.catalogues-intro h1 {
+  font-size: var(--public-density-hero-title);
+  letter-spacing: 0;
+}
+
+.family-hero {
+  min-height: 0;
+}
+
+.family-hero__copy {
+  padding: clamp(1.75rem, 4vw, 3.5rem);
+}
+
+.family-hero__media {
+  min-height: min(var(--public-density-media-block), 58vh);
+}
+
+.products-discovery-shell,
+.family-discovery-shell {
+  gap: var(--public-density-card-gap);
+}
+
+.products-family-grid,
+.family-product-grid,
+.catalogue-document-grid {
+  gap: var(--public-density-card-gap);
+}
+
+.products-family-grid .family-card,
+.products-family-grid > li:nth-child(5) .family-card {
+  height: var(--public-density-family-block);
+}
+
+.family-product-card .product-media-placeholder {
+  min-height: clamp(14rem, 22vw, 17.875rem);
+}
+
+.family-product-card__body {
+  min-height: clamp(10rem, 14vw, 12.5rem);
+}
+
+.catalogue-document-card {
+  min-height: clamp(22rem, 32vw, 27.5rem);
+  gap: var(--public-density-card-gap);
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+}
+
+@media (max-height: 800px) and (min-width: 64.001rem) {
+  .family-hero__copy {
+    padding: clamp(1.5rem, 4vh, 2.5rem);
+  }
+
+  .products-discovery-shell {
+    margin-top: var(--space-5);
+  }
+
+  .family-page-intro .public-breadcrumbs {
+    margin-bottom: var(--space-4);
+  }
+}
+
+@media (max-width: 40rem) {
+  .products-hero__title,
+  .family-hero h1,
+  .catalogues-intro h1 {
+    font-size: var(--public-density-hero-title);
+  }
+
+  .products-hero__copy {
+    margin-top: var(--space-4);
+  }
+
+  .family-hero__media {
+    min-height: 15.5rem;
+  }
+
+  .products-family-grid .family-card,
+  .products-family-grid > li:nth-child(5) .family-card {
+    height: clamp(17rem, 72vw, 20rem);
+  }
+
+  .catalogue-document-card {
+    min-height: 0;
+  }
+}
+
+/* Product detail: balance evaluative media with procurement actions. */
+.product-detail-layout {
+  gap: clamp(1.75rem, 4vw, 4rem);
+  align-items: start;
+}
+
+.product-gallery__primary,
+.product-gallery__image {
+  height: min(46rem, calc(100svh - var(--public-density-header-block) - 7rem));
+  min-height: 0;
+  max-height: min(46rem, calc(100svh - var(--public-density-header-block) - 7rem));
+}
+
+.product-procurement-summary h1 {
+  font-size: var(--public-density-hero-title);
+  letter-spacing: 0;
+}
+
+.product-procurement-summary__description {
+  margin-block: clamp(1.25rem, 3vw, 2rem);
+}
+
+.product-procurement-summary__options {
+  gap: var(--public-density-card-gap);
+}
+
+.product-procurement-summary textarea {
+  min-height: var(--public-density-textarea-block);
+}
+
+@media (max-height: 800px) and (min-width: 64.001rem) {
+  .product-procurement-summary {
+    padding-top: 0;
+  }
+
+  .product-procurement-summary h1 {
+    margin-top: var(--space-3);
+  }
+}
+
+@media (max-width: 40rem) {
+  .product-gallery__primary {
+    height: auto;
+    max-height: none;
+  }
+
+  .product-gallery__image {
+    height: auto;
+    min-height: clamp(20rem, 110vw, 26.875rem);
+    max-height: none;
+  }
+
+  .product-procurement-summary h1 {
+    font-size: var(--public-density-hero-title);
+  }
+}
+
+/* Editorial pages: retain the story while avoiding near-viewport blank rhythm. */
+.f3d-hero__copy h1,
+.company-profile__introduction h2 {
+  font-size: var(--public-density-hero-title);
+  letter-spacing: 0;
+}
+
+.f3d-section-heading h2,
+.f3d-feature-panel h2,
+.f3d-final-cta h2 {
+  font-size: var(--public-density-section-title);
+  letter-spacing: 0;
+}
+
+.f3d-hero__layout {
+  gap: clamp(1.75rem, 5vw, 5rem);
+  padding-block: 0;
+}
+
+.f3d-hero__media {
+  min-height: min(var(--public-density-media-block), 62vh);
+  max-height: min(45rem, 62vh);
+}
+
+.about-hero .story-hero-media-reveal {
+  width: min(100%, var(--public-density-media-block));
+}
+
+.company-profile,
+.numbered-editorial-list,
+.supported-buyers {
+  gap: var(--public-density-card-gap);
+}
+
+.supported-buyers__item,
+.supported-buyers__item--dark {
+  min-height: min(clamp(17rem, 24vw, 22rem), 62vh);
+}
+
+@media (max-height: 800px) and (min-width: 64.001rem) {
+  .company-profile__introduction {
+    position: static;
+  }
+
+  .f3d-hero__media {
+    max-height: min(var(--public-density-media-block), 58vh);
+  }
+}
+
+@media (max-width: 40rem) {
+  .f3d-hero__copy h1,
+  .company-profile__introduction h2 {
+    font-size: var(--public-density-hero-title);
+  }
+
+  .f3d-hero__media {
+    min-height: min(20rem, 58vh);
+    max-height: none;
+  }
+
+  .about-hero .f3d-hero__media {
+    min-height: 0;
+  }
+}
+
+/* Public forms: compact page rhythm with comfortable controls. */
+.contact-hero__copy h1,
+.inquiry-preview-intro h1,
+.quotation-form-preview__introduction h1,
+.quotation-blocked-page h1,
+.empty-inquiry-page__content h1 {
+  font-size: var(--public-density-hero-title);
+  letter-spacing: 0;
+}
+
+.contact-hero__copy {
+  padding-block: 0;
+}
+
+.contact-main-layout,
+.inquiry-preview-layout,
+.quotation-page .quotation-form-preview,
+.quotation-form-preview__field-grid {
+  gap: var(--public-density-card-gap);
+}
+
+.contact-form-preview__grid,
+.quotation-page .quotation-form-preview__fields {
+  gap: var(--public-density-card-gap);
+}
+
+.contact-preview-field input,
+.contact-preview-field select,
+.quotation-field input,
+.quotation-field select {
+  min-height: var(--public-density-control-block);
+}
+
+.contact-preview-field textarea,
+.quotation-field textarea {
+  min-height: var(--public-density-textarea-block);
+}
+
+.inquiry-preview-quantity button,
+.inquiry-preview-quantity output,
+.inquiry-preview-note input {
+  min-height: 2.75rem;
+}
+
+.quotation-page {
+  padding-block: var(--public-density-intro-block);
+}
+
+.quotation-form-preview__introduction {
+  padding-bottom: var(--public-density-card-gap);
+}
+
+.quotation-page .quotation-form-preview [data-quotation-fieldset] {
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+}
+
+.quotation-page .quotation-form-preview legend {
+  margin-bottom: var(--public-density-card-gap);
+}
+
+@media (max-width: 40rem) {
+  .contact-hero__copy h1,
+  .inquiry-preview-intro h1,
+  .quotation-form-preview__introduction h1,
+  .quotation-blocked-page h1,
+  .empty-inquiry-page__content h1 {
+    font-size: var(--public-density-hero-title);
+  }
+}
+
+/* Utility pages and public states: concise intros and readable long-form content. */
+.search-default-page h1,
+.legal-page__hero h1,
+.application-state h1,
+.quotation-success-state h1 {
+  font-size: var(--public-density-hero-title);
+  letter-spacing: 0;
+}
+
+.search-default-page__panel,
+.search-state-preview {
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+}
+
+.search-catalogue-form,
+.search-results-preview__list,
+.search-mobile-results-preview__list {
+  gap: var(--public-density-card-gap);
+}
+
+.search-default-page__field,
+.search-state-preview__field {
+  margin-block: var(--public-density-card-gap);
+}
+
+.search-default-page__field input,
+.search-state-preview__field input {
+  min-height: var(--public-density-control-block);
+}
+
+.search-live-results {
+  margin-top: var(--public-density-section-block-compact);
+}
+
+.legal-page__layout {
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+}
+
+.legal-page__content > section {
+  padding-bottom: var(--public-density-section-block-compact);
+  margin-bottom: var(--public-density-section-block-compact);
+}
+
+.empty-inquiry-page,
+.quotation-blocked-page {
+  min-height: min(40rem, calc(100svh - var(--public-density-header-block)));
+  padding-block: var(--public-density-intro-block);
+}
+
+.application-state,
+.application-loading {
+  min-height: min(70vh, 40rem);
+  padding-block: var(--public-density-intro-block);
+}
+
+.application-state__actions,
+.empty-inquiry-page__actions,
+.quotation-blocked-page__actions {
+  gap: var(--public-density-card-gap);
+  margin-top: var(--public-density-card-gap);
+}
+
+@media (max-height: 800px) and (min-width: 64.001rem) {
+  .legal-section-navigation {
+    position: static;
+  }
+}
+
+@media (max-width: 40rem) {
+  .search-default-page h1,
+  .legal-page__hero h1,
+  .application-state h1,
+  .quotation-success-state h1 {
+    font-size: var(--public-density-hero-title);
+  }
+
+  .empty-inquiry-page,
+  .quotation-blocked-page {
+    min-height: auto;
+  }
+
+  .legal-section-navigation {
+    position: static;
+  }
+}
+
 /* Shared public social links: compact in the footer, explicit on Contact. */
 .social-links-row {
   display: flex;
@@ -448,6 +820,26 @@
 }
 
 /* Arabic density: keep Noto Sans Arabic and tune rhythm without mirroring image composition. */
+html[dir="rtl"] .page-main {
+  font-family: var(--font-arabic), var(--font-interface), sans-serif;
+}
+
+html[dir="rtl"] .page-main :is(h1, h2, h3) {
+  font-family: var(--font-arabic), var(--font-interface), sans-serif;
+  font-weight: 600;
+  line-height: 1.32;
+  letter-spacing: 0;
+}
+
+html[dir="rtl"] .page-main :is(p, li, dd) {
+  line-height: 1.72;
+}
+
+html[dir="rtl"] .page-main :is(label, legend, dt) {
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
 html[dir="rtl"] .public-page--home,
 html[dir="rtl"] .site-footer,
 html[dir="rtl"] .contact-social-panel {
