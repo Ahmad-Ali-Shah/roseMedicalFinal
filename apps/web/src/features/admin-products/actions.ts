@@ -171,7 +171,8 @@ export async function createProduct(formData: FormData) {
     throw new Error(`Unknown family: ${familySlug}`);
   }
 
-  const slug = slugify(requestedSlug || itemCode || nameEn);
+  const bareSlug = slugify(requestedSlug || itemCode || nameEn);
+  const slug = bareSlug ? `${familySlug}-${bareSlug}` : "";
   if (!slug) {
     throw new Error("Could not generate a valid slug from the item code or name.");
   }
