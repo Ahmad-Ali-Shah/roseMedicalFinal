@@ -203,7 +203,11 @@ export async function createProduct(formData: FormData) {
   clearCatalogueProjectionCache();
   revalidatePath("/admin/products");
 
-  redirect(`/admin/products/${familySlug}/${product.slug}`);
+  const createdFamilyPrefix = `${familySlug}-`;
+  const createdBareSlug = product.slug.startsWith(createdFamilyPrefix)
+    ? product.slug.slice(createdFamilyPrefix.length)
+    : product.slug;
+  redirect(`/admin/products/${familySlug}/${createdBareSlug}`);
 }
 
 export async function deleteProduct(formData: FormData) {
