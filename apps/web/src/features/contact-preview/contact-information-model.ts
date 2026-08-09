@@ -51,12 +51,14 @@ export function buildContactInformation(
     const value = setting?.value_en?.trim() || row.value;
     const valueAr = setting?.value_ar?.trim() || row.valueAr;
     const dynamicHref = buildDynamicHref(row.label, value);
+    const href = dynamicHref.href ?? row.href;
+    const external = dynamicHref.external ?? row.external;
     return {
       ...row,
       value,
-      valueAr,
-      href: dynamicHref.href ?? row.href,
-      external: dynamicHref.external ?? row.external
+      ...(valueAr !== undefined ? { valueAr } : {}),
+      ...(href !== undefined ? { href } : {}),
+      ...(external !== undefined ? { external } : {})
     };
   });
 }
