@@ -132,7 +132,6 @@ export async function replacePrimaryProductImage(
 
   if (
     !identity ||
-    !identity.isActive ||
     identity.id !== input.productId ||
     identity.familySlug !== validated.familySlug ||
     identity.dbSlug !== expectedDbSlug
