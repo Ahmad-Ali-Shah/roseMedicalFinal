@@ -1,6 +1,7 @@
 import "server-only";
 import { isAdminProfile } from "./admin-security";
 import { createClient } from "./server";
+import { createAdminClient } from "./admin";
 
 export async function requireAdminUser(): Promise<{ userId: string }> {
   const supabase = await createClient();
@@ -13,7 +14,9 @@ export async function requireAdminUser(): Promise<{ userId: string }> {
     throw new Error("Admin authentication is required.");
   }
 
-  const { data: profile, error: profileError } = await supabase
+  const adminClient = createAdminClient();
+
+  const { data: profile, error: profileError } = await adminClient
     .from("profiles")
     .select("role")
     .eq("id", user.id)

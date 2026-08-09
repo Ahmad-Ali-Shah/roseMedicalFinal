@@ -802,3 +802,49 @@
   font: inherit;
   cursor: pointer;
 }
+
+.admin-image-crop-tool {
+  display: grid;
+  gap: var(--space-3);
+}
+.admin-image-crop-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-width: 22rem;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  background: var(--color-ink);
+  touch-action: none;
+  cursor: move;
+}
+.admin-image-crop-preview {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+.admin-image-crop-box {
+  position: absolute;
+  border: 2px solid var(--color-rosa-red);
+  box-shadow: 0 0 0 999px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+}
+.admin-image-crop-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.admin-image-crop-error {
+  margin: 0;
+  color: var(--color-rosa-red);
+  font-size: 0.85rem;
+}
+.admin-image-crop-success {
+  margin: 0;
+  color: var(--color-ink);
+  font-size: 0.85rem;
+}

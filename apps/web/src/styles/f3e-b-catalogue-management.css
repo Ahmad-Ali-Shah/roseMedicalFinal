@@ -198,6 +198,9 @@
   grid-template-columns: minmax(16rem, 0.9fr) minmax(0, 1.1fr);
   gap: var(--space-5);
   align-items: center;
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  background: var(--color-warm-white);
 }
 
 .admin-catalogue-cover-placeholder {
