@@ -7,13 +7,13 @@ import {
   useMemo,
   useRef,
   useState,
-  type CSSProperties,
   type KeyboardEvent,
   type PointerEvent,
   type ReactElement
 } from "react";
-import { useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion, type MotionStyle } from "motion/react";
 import { LocalizedButtonLink, type PublicLocale } from "@/features/localization";
+import { MOTION_DURATION, MOTION_EASING } from "@/features/motion/motion.config";
 import {
   HOME_HERO_SLIDES,
   localizeHomeHeroSlide,
@@ -152,7 +152,7 @@ export function HomeHeroCarousel({
   const slideStyle = {
     "--hero-desktop-focal": slide.image.desktopFocalPoint,
     "--hero-mobile-focal": slide.image.mobileFocalPoint
-  } as CSSProperties;
+  } as MotionStyle;
 
   return (
     <section
@@ -176,47 +176,71 @@ export function HomeHeroCarousel({
         setDragging(false);
       }}
     >
-      <div
-        className="home-hero-carousel__slide"
-        data-copy-side={slide.copySide}
-        data-tone={slide.tone}
-        aria-roledescription="slide"
-        aria-label={`${activeIndex + 1} of ${slides.length}`}
-        style={slideStyle}
-      >
-        <div className="home-hero-carousel__media" data-media-slot="homepage-hero-active">
-          <picture>
-            <source media="(max-width: 40rem)" srcSet={slide.image.mobileSrc} />
-            <Image
-              src={slide.image.desktopSrc}
-              alt={slide.image.alt}
-              fill
-              priority={activeIndex === 0}
-              sizes="100vw"
-              style={{ objectFit: "cover" }}
-            />
-          </picture>
-        </div>
-        <span className="home-hero-carousel__overlay" aria-hidden="true" />
-        <div className="home-hero-carousel__content">
-          <div className="home-hero-carousel__copy">
-            <p className="public-eyebrow">{slide.eyebrow}</p>
-            <h1 className="home-hero__title" id="home-title">{slide.title}</h1>
-            <p className="home-hero__copy-text">{slide.copy}</p>
-            <div className="home-hero__actions">
-              {slide.ctas.map((cta) => (
-                <LocalizedButtonLink
-                  key={`${slide.id}-${cta.href}`}
-                  href={cta.href}
-                  variant={cta.variant ?? "primary"}
-                >
-                  {cta.label}
-                </LocalizedButtonLink>
-              ))}
-            </div>
+      <AnimatePresence initial={false} mode="sync">
+        <motion.div
+          key={slide.id}
+          className="home-hero-carousel__slide"
+          data-copy-side={slide.copySide}
+          data-tone={slide.tone}
+          aria-roledescription="slide"
+          aria-label={`${activeIndex + 1} of ${slides.length}`}
+          style={slideStyle}
+          initial={reducedMotion ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={reducedMotion ? { opacity: 0 } : { opacity: 0, pointerEvents: "none" }}
+          transition={{ duration: reducedMotion ? 0 : MOTION_DURATION.hero, ease: "linear" }}
+        >
+          <motion.div
+            className="home-hero-carousel__media"
+            data-media-slot="homepage-hero-active"
+            initial={reducedMotion ? false : { scale: 1.028 }}
+            animate={{ scale: 1 }}
+            exit={reducedMotion ? { scale: 1 } : { scale: 1.012 }}
+            transition={{ duration: reducedMotion ? 0 : 1.16, ease: MOTION_EASING.standard }}
+          >
+            <picture>
+              <source media="(max-width: 40rem)" srcSet={slide.image.mobileSrc} />
+              <Image
+                src={slide.image.desktopSrc}
+                alt={slide.image.alt}
+                fill
+                priority={activeIndex === 0}
+                sizes="100vw"
+                style={{ objectFit: "cover" }}
+              />
+            </picture>
+          </motion.div>
+          <span className="home-hero-carousel__overlay" aria-hidden="true" />
+          <div className="home-hero-carousel__content">
+            <motion.div
+              className="home-hero-carousel__copy"
+              initial={reducedMotion ? false : { opacity: 0, x: slide.copySide === "right" ? 18 : -18 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={reducedMotion ? { opacity: 1, x: 0 } : { opacity: 0, x: slide.copySide === "right" ? -10 : 10 }}
+              transition={{
+                duration: reducedMotion ? 0 : MOTION_DURATION.section,
+                delay: reducedMotion ? 0 : 0.12,
+                ease: MOTION_EASING.emphasized
+              }}
+            >
+              <p className="public-eyebrow">{slide.eyebrow}</p>
+              <h1 className="home-hero__title" id="home-title">{slide.title}</h1>
+              <p className="home-hero__copy-text">{slide.copy}</p>
+              <div className="home-hero__actions">
+                {slide.ctas.map((cta) => (
+                  <LocalizedButtonLink
+                    key={`${slide.id}-${cta.href}`}
+                    href={cta.href}
+                    variant={cta.variant ?? "primary"}
+                  >
+                    {cta.label}
+                  </LocalizedButtonLink>
+                ))}
+              </div>
+            </motion.div>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </AnimatePresence>
 
       <div
         className="home-hero-carousel__dots"

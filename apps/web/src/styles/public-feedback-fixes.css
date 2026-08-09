@@ -1,0 +1,23 @@
+/* Owner feedback corrections layered after the approved responsive-density sheet. */
+.home-hero-carousel__slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  will-change: opacity;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  @container (min-width: 56rem) {
+    .home-family-gallery .home-family-gallery__panel:first-child {
+      flex-grow: 1;
+    }
+
+    .home-family-gallery .home-family-gallery__panel[data-active="true"] {
+      flex-grow: 2.8;
+    }
+
+    .home-family-gallery__panel[data-active="true"] .home-family-gallery__media .media-frame__image {
+      transform: scale(1.025);
+    }
+  }
+}

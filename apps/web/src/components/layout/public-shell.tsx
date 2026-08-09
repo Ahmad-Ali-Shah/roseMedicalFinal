@@ -74,7 +74,6 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
             <LocalizedButtonLink href="/request-quotation" size="small">
               <LocalizedText en="Request a quote" ar="اطلب عرض سعر" />
             </LocalizedButtonLink>
-            <SocialLinksRow className="site-footer__social-links" />
           </div>
           <MobileNavigation primaryLinks={primaryLinks} utilityLinks={utilityLinks} />
         </Container>
