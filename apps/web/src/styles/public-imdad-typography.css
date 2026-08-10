@@ -56,17 +56,15 @@ html:not([dir="rtl"]) .public-contact-strip .social-links-row a {
   font-weight: 600;
 }
 
-/* Arabic refinement: the old GE SS declaration was only a local-font stack,
-   so most visitors without GE SS installed fell through to Tahoma/Arial.
-   Tajawal is loaded as an actual webfont and used consistently across the
-   Arabic public experience for a cleaner Gulf-corporate sans appearance. */
+/* Arabic refinement: Tajawal is bundled as a real webfont so Arabic rendering
+   does not depend on visitors having GE SS installed locally. */
 html[dir="rtl"] :is(.public-locale-boundary, .site-header, .public-contact-strip, .site-footer) {
   font-family: var(--font-arabic);
   font-synthesis: none;
 }
 
-/* Imdad-like restraint: Arabic hierarchy is driven by size/spacing, not heavy
-   weight. Existing Arabic rules elsewhere are intentionally overridden here. */
+/* Arabic hierarchy follows the same restrained corporate balance: medium
+   headings and controls, regular body copy, bold reserved for labels/emphasis. */
 html[dir="rtl"] .public-locale-boundary :is(h1, h2, h3, h4, h5, h6),
 html[dir="rtl"] :is(.public-contact-strip__message, .contact-social-panel h2) {
   font-family: var(--font-arabic);
@@ -81,7 +79,7 @@ html[dir="rtl"] .public-locale-boundary :is(p, li, dd) {
 }
 
 html[dir="rtl"] .public-locale-boundary :is(strong, b) {
-  font-weight: 600;
+  font-weight: 700;
 }
 
 html[dir="rtl"] :is(
@@ -104,7 +102,7 @@ html[dir="rtl"] .public-locale-boundary :is(
 
 html[dir="rtl"] :is(.site-footer__title, .public-contact-strip__label),
 html[dir="rtl"] .public-locale-boundary :is(.public-eyebrow, .page-eyebrow) {
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0;
   text-transform: none;
 }
