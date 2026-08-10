@@ -1,0 +1,61 @@
+/* Imdad refinement — Change 01: public typography only.
+   Keep the deployed Rosa structure, media, motion, spacing, and Arabic GE SS stack unchanged. */
+
+/* English public pages use the existing Inter interface family everywhere that
+   previously opted into the editorial Lora token. This is deliberately scoped
+   to the public locale boundary so admin/auth surfaces are unaffected. */
+.public-locale-boundary[data-locale="en"] {
+  --font-editorial: var(--font-interface);
+}
+
+/* Keep the global/public-shell brand mark untouched, but remove the serif voice
+   from the contact statement that sits outside the locale boundary. */
+html:not([dir="rtl"]) .public-contact-strip__message,
+html:not([dir="rtl"]) .contact-social-panel h2 {
+  font-family: var(--font-interface);
+}
+
+/* Headings stay prominent through their existing scale and composition rather
+   than heavy weight. No size, spacing, or motion rule is changed here. */
+.public-locale-boundary[data-locale="en"] :is(h1, h2) {
+  font-weight: 500;
+}
+
+.public-locale-boundary[data-locale="en"] :is(h3, h4, h5, h6) {
+  font-weight: 500;
+}
+
+/* Small hierarchy labels become quieter but remain clearly differentiated. */
+.public-locale-boundary[data-locale="en"] :is(.public-eyebrow, .page-eyebrow),
+html:not([dir="rtl"]) .site-footer__title,
+html:not([dir="rtl"]) .public-contact-strip__label {
+  font-weight: 600;
+}
+
+/* Public navigation and controls use a consistent medium weight. */
+html:not([dir="rtl"]) .site-header .nav-link,
+html:not([dir="rtl"]) .site-header .language-switcher,
+.public-locale-boundary[data-locale="en"] .button,
+html:not([dir="rtl"]) .site-header .button,
+html:not([dir="rtl"]) .site-footer .button {
+  font-weight: 500;
+}
+
+/* Discovery links and product/catalogue actions should read as navigation, not
+   as bold promotional labels. */
+.public-locale-boundary[data-locale="en"] :is(
+  .text-link,
+  .premium-link,
+  .family-card__action,
+  .product-preview-card__action,
+  .catalogue-card__action
+),
+html:not([dir="rtl"]) .public-contact-strip .social-links-row a {
+  font-weight: 500;
+}
+
+/* Public form labels retain enough emphasis for scanability without the old
+   700–800 weight treatment. */
+.public-locale-boundary[data-locale="en"] :is(label, legend, dt, .field__label) {
+  font-weight: 600;
+}
