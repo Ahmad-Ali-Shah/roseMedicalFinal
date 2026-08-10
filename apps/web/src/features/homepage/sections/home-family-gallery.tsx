@@ -13,23 +13,23 @@ import {
 
 const HOME_FAMILY_COVER_BY_SLUG = {
   knives: {
-    src: "/media/families/homepage-covers/knives-family-cover.svg",
+    src: "/media/families/homepage-covers/knives-family-cover-full.svg",
     focalPoint: "50% 50%"
   },
   scissors: {
-    src: "/media/families/homepage-covers/scissors-family-cover.svg",
+    src: "/media/families/homepage-covers/scissors-family-cover-full.svg",
     focalPoint: "50% 50%"
   },
   punches: {
-    src: "/media/families/homepage-covers/punches-family-cover.svg",
+    src: "/media/families/homepage-covers/punches-family-cover-full.svg",
     focalPoint: "50% 50%"
   },
   chisels: {
-    src: "/media/families/homepage-covers/chisels-family-cover.svg",
+    src: "/media/families/homepage-covers/chisels-family-cover-full.svg",
     focalPoint: "50% 50%"
   },
   cutters: {
-    src: "/media/families/homepage-covers/cutters-family-cover.svg",
+    src: "/media/families/homepage-covers/cutters-family-cover-full.svg",
     focalPoint: "50% 50%"
   }
 } as const satisfies Record<
@@ -81,22 +81,24 @@ export function HomeFamilyGallery({
               <LocaleLink
                 className="home-family-gallery__link"
                 href={familyHref(family.slug)}
+                aria-label={family.name}
               >
                 <MediaFrame
                   src={cover.src}
                   alt={publicMediaAlt(family.media, locale)}
-                  aspect="landscape"
+                  aspect="portrait"
                   focalPoint={cover.focalPoint}
-                  fit="cover"
+                  fit="contain"
                   tone="light"
                   overlay="none"
                   mediaSlot={`homepage-family-${family.slug}`}
                   className="home-family-gallery__media home-family-gallery__media--catalogue-cover"
                   quality={92}
-                  sizes="(max-width: 56rem) 84vw, 28vw"
+                  sizes="(max-width: 56rem) 78vw, 30vw"
                 />
-                <span className="home-family-gallery__shade" aria-hidden="true" />
-                <h3 className="home-family-gallery__title">{family.name}</h3>
+                <h3 className="home-family-gallery__title home-family-gallery__title--cover">
+                  {family.name}
+                </h3>
               </LocaleLink>
             </li>
           );
