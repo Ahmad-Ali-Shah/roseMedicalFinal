@@ -7,8 +7,35 @@ import { publicMediaAlt } from "@/features/public-media";
 import {
   FAMILY_SLUGS,
   familyHref,
-  type FamilyCardModel
+  type FamilyCardModel,
+  type FamilySlug
 } from "@/features/public-catalogue";
+
+const HOME_FAMILY_COVER_BY_SLUG = {
+  knives: {
+    src: "/media/families/homepage-covers/knives-family-cover.svg",
+    focalPoint: "50% 50%"
+  },
+  scissors: {
+    src: "/media/families/homepage-covers/scissors-family-cover.svg",
+    focalPoint: "50% 50%"
+  },
+  punches: {
+    src: "/media/families/homepage-covers/punches-family-cover.svg",
+    focalPoint: "50% 50%"
+  },
+  chisels: {
+    src: "/media/families/homepage-covers/chisels-family-cover.svg",
+    focalPoint: "50% 50%"
+  },
+  cutters: {
+    src: "/media/families/homepage-covers/cutters-family-cover.svg",
+    focalPoint: "50% 50%"
+  }
+} as const satisfies Record<
+  FamilySlug,
+  { src: string; focalPoint: string }
+>;
 
 function inApprovedFamilyOrder(
   families: readonly FamilyCardModel[]
@@ -38,38 +65,42 @@ export function HomeFamilyGallery({
         data-home-family-gallery
         aria-label={locale === "ar" ? "منتجات روزا" : "ROSA products"}
       >
-        {orderedFamilies.map((family) => (
-          <li
-            key={family.slug}
-            className="home-family-gallery__panel"
-            data-family-panel
-            data-family={family.slug}
-            data-active={family.slug === activeFamily ? "true" : "false"}
-            onMouseEnter={() => setActiveFamily(family.slug)}
-            onFocusCapture={() => setActiveFamily(family.slug)}
-          >
-            <LocaleLink
-              className="home-family-gallery__link"
-              href={familyHref(family.slug)}
+        {orderedFamilies.map((family) => {
+          const cover = HOME_FAMILY_COVER_BY_SLUG[family.slug];
+
+          return (
+            <li
+              key={family.slug}
+              className="home-family-gallery__panel"
+              data-family-panel
+              data-family={family.slug}
+              data-active={family.slug === activeFamily ? "true" : "false"}
+              onMouseEnter={() => setActiveFamily(family.slug)}
+              onFocusCapture={() => setActiveFamily(family.slug)}
             >
-              <MediaFrame
-                src={family.media.src}
-                alt={publicMediaAlt(family.media, locale)}
-                aspect="landscape"
-                focalPoint={family.media.focalPoint}
-                fit={family.media.fit}
-                tone="dark"
-                overlay="none"
-                mediaSlot={`homepage-family-${family.slug}`}
-                className="home-family-gallery__media"
-                quality={92}
-                sizes="(max-width: 56rem) 84vw, 28vw"
-              />
-              <span className="home-family-gallery__shade" aria-hidden="true" />
-              <h3 className="home-family-gallery__title">{family.name}</h3>
-            </LocaleLink>
-          </li>
-        ))}
+              <LocaleLink
+                className="home-family-gallery__link"
+                href={familyHref(family.slug)}
+              >
+                <MediaFrame
+                  src={cover.src}
+                  alt={publicMediaAlt(family.media, locale)}
+                  aspect="landscape"
+                  focalPoint={cover.focalPoint}
+                  fit="cover"
+                  tone="light"
+                  overlay="none"
+                  mediaSlot={`homepage-family-${family.slug}`}
+                  className="home-family-gallery__media home-family-gallery__media--catalogue-cover"
+                  quality={92}
+                  sizes="(max-width: 56rem) 84vw, 28vw"
+                />
+                <span className="home-family-gallery__shade" aria-hidden="true" />
+                <h3 className="home-family-gallery__title">{family.name}</h3>
+              </LocaleLink>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
