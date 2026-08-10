@@ -415,7 +415,17 @@ export async function getProductCatalogueContext(
 ): Promise<readonly CatalogueProductRecord[]> {
   if (!isFamilySlug(familySlug) || !productSlug.trim()) return [];
   const manifest = productContextManifest(familySlug, productSlug);
-  if (manifest.length === 0) return [];
+
+  // Live-only products (created via the admin "Add product" flow, never
+  // added to the static manifest) are stored with a `${family}-${slug}`
+  // dbSlug convention -- see mapLiveOnlyProduct in map-live-product.ts.
+  // Always include that candidate slug so a live-only product still
+  // resolves even when it has no manifest entry at all.
+  const liveOnlyDbSlug = `${familySlug}-${productSlug}`;
+  const manifestSlugs = manifest.map((entry) => entry.dbSlug);
+  const targetSlugs = manifestSlugs.includes(liveOnlyDbSlug)
+    ? manifestSlugs
+    : [...manifestSlugs, liveOnlyDbSlug];
 
   return withInfrastructureFallback(
     `product ${familySlug}/${productSlug}`,
@@ -434,10 +444,7 @@ export async function getProductCatalogueContext(
                 .eq("category.is_active", true)
                 .is("category.deleted_at", null)
                 .eq("category.slug", familySlug)
-                .in(
-                  "slug",
-                  manifest.map((entry) => entry.dbSlug)
-                );
+                .in("slug", targetSlugs);
               return {
                 data: data as unknown as readonly LiveProductProjectionRow[] | null,
                 error
