@@ -1,7 +1,7 @@
 "use client";
 
-import type { ReactElement } from "react";
-import { MediaFrame } from "@/features/motion";
+import Image from "next/image";
+import { useRef, type ReactElement } from "react";
 import { LocaleLink, type PublicLocale } from "@/features/localization";
 import { publicMediaAlt } from "@/features/public-media";
 import {
@@ -54,10 +54,47 @@ export function HomeFamilyGallery({
   locale?: PublicLocale;
 }): ReactElement {
   const orderedFamilies = inApprovedFamilyOrder(families);
+  const galleryRef = useRef<HTMLUListElement>(null);
+
+  const scrollGallery = (direction: -1 | 1) => {
+    const gallery = galleryRef.current;
+    if (!gallery) return;
+
+    const amount = Math.max(gallery.clientWidth * 0.72, 220);
+    const rtlMultiplier = locale === "ar" ? -1 : 1;
+
+    gallery.scrollBy({
+      left: direction * amount * rtlMultiplier,
+      behavior: "smooth"
+    });
+  };
 
   return (
     <div className="home-family-gallery-shell">
+      <div
+        className="home-family-gallery__mobile-controls"
+        aria-label={locale === "ar" ? "التنقل بين عائلات المنتجات" : "Product family navigation"}
+      >
+        <button
+          type="button"
+          className="home-family-gallery__arrow"
+          aria-label={locale === "ar" ? "العائلة السابقة" : "Previous family"}
+          onClick={() => scrollGallery(-1)}
+        >
+          <span aria-hidden="true">←</span>
+        </button>
+        <button
+          type="button"
+          className="home-family-gallery__arrow"
+          aria-label={locale === "ar" ? "العائلة التالية" : "Next family"}
+          onClick={() => scrollGallery(1)}
+        >
+          <span aria-hidden="true">→</span>
+        </button>
+      </div>
+
       <ul
+        ref={galleryRef}
         className="home-family-gallery"
         data-home-family-gallery
         aria-label={locale === "ar" ? "منتجات روزا" : "ROSA products"}
@@ -77,19 +114,17 @@ export function HomeFamilyGallery({
                 href={familyHref(family.slug)}
                 aria-label={family.name}
               >
-                <MediaFrame
-                  src={cover.src}
-                  alt={publicMediaAlt(family.media, locale)}
-                  aspect="portrait"
-                  focalPoint={cover.focalPoint}
-                  fit="cover"
-                  tone="light"
-                  overlay="none"
-                  mediaSlot={`homepage-family-${family.slug}`}
-                  className="home-family-gallery__media home-family-gallery__media--catalogue-cover"
-                  quality={92}
-                  sizes="(max-width: 40rem) 46vw, (max-width: 64rem) 30vw, 18vw"
-                />
+                <div className="home-family-gallery__media home-family-gallery__media--catalogue-cover">
+                  <Image
+                    className="home-family-gallery__image"
+                    src={cover.src}
+                    alt={publicMediaAlt(family.media, locale)}
+                    fill
+                    sizes="(max-width: 40rem) 44vw, (max-width: 64rem) 30vw, 18vw"
+                    unoptimized
+                    style={{ objectFit: "cover", objectPosition: cover.focalPoint }}
+                  />
+                </div>
                 <h3 className="home-family-gallery__title home-family-gallery__title--cover">
                   {family.name}
                 </h3>
