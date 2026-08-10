@@ -79,9 +79,9 @@
   }
 }
 
-/* Homepage family catalogue covers: a straightforward responsive catalogue
-   grid. Every cover keeps its full portrait artwork; the only desktop effect
-   is a clearly visible image zoom on hover/focus. */
+/* Homepage family catalogue covers: standard catalogue cards. The artwork
+   fills the image frame edge-to-edge, the family name sits below it, and hover
+   adds only a smooth, clearly visible zoom. */
 .home-family-gallery-shell {
   overflow: visible;
 }
@@ -89,7 +89,7 @@
 .home-family-gallery {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: clamp(0.85rem, 1.5vw, 1.35rem);
+  gap: clamp(0.9rem, 1.6vw, 1.4rem);
   height: auto;
   overflow: visible;
   padding: 0;
@@ -102,51 +102,61 @@
   min-width: 0;
   width: auto;
   height: auto;
-  aspect-ratio: 0.71 / 1;
+  aspect-ratio: auto;
   flex: none;
   opacity: 1;
-  overflow: hidden;
-  border-radius: 0.35rem;
-  background: var(--color-paper);
+  overflow: visible;
+  border-radius: 0;
+  background: transparent;
   scroll-snap-align: none;
   transition: none;
 }
 
 .home-family-gallery__link {
   position: relative;
-  display: block;
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  height: 100%;
-  overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--color-border) 84%, transparent);
-  border-radius: inherit;
-  background: var(--color-paper);
+  height: auto;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   color: inherit;
   text-decoration: none;
-  box-shadow: 0 0.35rem 1.25rem rgb(17 24 39 / 0.055);
+  box-shadow: none;
 }
 
 .home-family-gallery__media,
 .home-family-gallery__media--catalogue-cover {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  inset: auto;
+  display: block;
   width: 100%;
-  height: 100%;
-  aspect-ratio: auto !important;
+  height: auto;
+  aspect-ratio: 0.71 / 1 !important;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-border) 84%, transparent);
+  border-radius: 0.35rem;
   background: var(--color-paper);
+  box-shadow: 0 0.35rem 1.25rem rgb(17 24 39 / 0.055);
 }
 
 .home-family-gallery__media--catalogue-cover .media-frame__image {
-  object-fit: contain !important;
+  width: 100%;
+  height: 100%;
+  object-fit: cover !important;
   object-position: 50% 50% !important;
   transform: scale(1);
-  transition: transform 320ms var(--motion-ease-standard);
   transform-origin: center center;
+  transition: transform 440ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: transform;
 }
 
 .home-family-gallery__link:hover .home-family-gallery__media--catalogue-cover .media-frame__image,
-.home-family-gallery__link:focus-visible .home-family-gallery__media--catalogue-cover .media-frame__image {
-  transform: scale(1.11);
+.home-family-gallery__link:focus-visible .home-family-gallery__media--catalogue-cover .media-frame__image,
+.home-family-gallery__link:focus-within .home-family-gallery__media--catalogue-cover .media-frame__image {
+  transform: scale(1.09);
 }
 
 .home-family-gallery__shade {
@@ -154,15 +164,27 @@
 }
 
 .home-family-gallery__title--cover {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0.8rem 0.1rem 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
   border: 0;
+  color: var(--color-ink);
+  font-family: var(--font-interface);
+  font-size: clamp(0.98rem, 1.15vw, 1.12rem);
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+html[dir="rtl"] .home-family-gallery__title--cover {
+  font-family: var(--font-arabic), var(--font-interface), sans-serif;
+  font-weight: 500;
+  letter-spacing: 0;
 }
 
 @media (max-width: 64rem) {
@@ -174,7 +196,12 @@
 @media (max-width: 40rem) {
   .home-family-gallery {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: clamp(0.7rem, 3vw, 1rem);
+    gap: clamp(0.8rem, 3vw, 1.05rem);
+  }
+
+  .home-family-gallery__title--cover {
+    padding-top: 0.65rem;
+    font-size: 0.96rem;
   }
 }
 
