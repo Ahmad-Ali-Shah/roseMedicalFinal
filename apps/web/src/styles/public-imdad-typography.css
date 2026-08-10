@@ -1,5 +1,5 @@
 /* Imdad refinement — Change 01: public typography only.
-   Keep the deployed Rosa structure, media, motion, spacing, and Arabic GE SS stack unchanged. */
+   Keep the deployed Rosa structure, media, motion, spacing, and functionality unchanged. */
 
 /* English public pages use the existing Inter interface family everywhere that
    previously opted into the editorial Lora token. This is deliberately scoped
@@ -17,11 +17,7 @@ html:not([dir="rtl"]) .contact-social-panel h2 {
 
 /* Headings stay prominent through their existing scale and composition rather
    than heavy weight. No size, spacing, or motion rule is changed here. */
-.public-locale-boundary[data-locale="en"] :is(h1, h2) {
-  font-weight: 500;
-}
-
-.public-locale-boundary[data-locale="en"] :is(h3, h4, h5, h6) {
+.public-locale-boundary[data-locale="en"] :is(h1, h2, h3, h4, h5, h6) {
   font-weight: 500;
 }
 
@@ -58,4 +54,62 @@ html:not([dir="rtl"]) .public-contact-strip .social-links-row a {
    700–800 weight treatment. */
 .public-locale-boundary[data-locale="en"] :is(label, legend, dt, .field__label) {
   font-weight: 600;
+}
+
+/* Arabic refinement: the old GE SS declaration was only a local-font stack,
+   so most visitors without GE SS installed fell through to Tahoma/Arial.
+   Tajawal is loaded as an actual webfont and used consistently across the
+   Arabic public experience for a cleaner Gulf-corporate sans appearance. */
+html[dir="rtl"] :is(.public-locale-boundary, .site-header, .public-contact-strip, .site-footer) {
+  font-family: var(--font-arabic);
+  font-synthesis: none;
+}
+
+/* Imdad-like restraint: Arabic hierarchy is driven by size/spacing, not heavy
+   weight. Existing Arabic rules elsewhere are intentionally overridden here. */
+html[dir="rtl"] .public-locale-boundary :is(h1, h2, h3, h4, h5, h6),
+html[dir="rtl"] :is(.public-contact-strip__message, .contact-social-panel h2) {
+  font-family: var(--font-arabic);
+  font-weight: 500;
+  line-height: 1.38;
+  letter-spacing: 0;
+}
+
+html[dir="rtl"] .public-locale-boundary :is(p, li, dd) {
+  font-weight: 400;
+  line-height: 1.68;
+}
+
+html[dir="rtl"] .public-locale-boundary :is(strong, b) {
+  font-weight: 600;
+}
+
+html[dir="rtl"] :is(
+  .site-header .nav-link,
+  .site-header .language-switcher,
+  .site-header .button,
+  .site-footer .button,
+  .public-contact-strip .social-links-row a
+),
+html[dir="rtl"] .public-locale-boundary :is(
+  .button,
+  .text-link,
+  .premium-link,
+  .family-card__action,
+  .product-preview-card__action,
+  .catalogue-card__action
+) {
+  font-weight: 500;
+}
+
+html[dir="rtl"] :is(.site-footer__title, .public-contact-strip__label),
+html[dir="rtl"] .public-locale-boundary :is(.public-eyebrow, .page-eyebrow) {
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+html[dir="rtl"] .public-locale-boundary :is(label, legend, dt, .field__label) {
+  font-weight: 500;
+  letter-spacing: 0;
 }
