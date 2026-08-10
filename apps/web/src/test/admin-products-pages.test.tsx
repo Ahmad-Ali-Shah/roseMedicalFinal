@@ -36,9 +36,10 @@ function scalpelHandleModel() {
 describe("F3E-B product pages", () => {
   it("renders the collection from the canonical live catalogue boundary", () => {
     const listPage = source("src/features/admin-products/admin-products-list-page.tsx");
+    const collection = source("src/features/admin-products/admin-products-collection.tsx");
     expect(listPage).toContain("getLiveCatalogueProducts");
     expect(listPage).toContain("getAdminProductRows(products)");
-    expect(listPage).toContain("src={row.mediaPath}");
+    expect(collection).toContain("src={row.mediaPath}");
     expect(listPage).not.toContain('from("products")');
     expect(listPage).not.toContain("stock_status");
     expect(listPage).not.toContain("sell_mode");
