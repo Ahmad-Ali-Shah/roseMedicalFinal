@@ -75,7 +75,7 @@ export const HOME_HERO_SLIDES = [
     },
     ctas: [
       { label: { en: "Explore Products", ar: "استعرض المنتجات" }, href: "/products" as const },
-      { label: { en: "Request a Quote", ar: "اطلب عرض سعر" }, href: "/request-quotation" as const, variant: "secondary" as const }
+      { label: { en: "View Catalogues", ar: "عرض الكتالوجات" }, href: "/catalogues" as const, variant: "secondary" as const }
     ]
   },
   {
@@ -102,7 +102,7 @@ export const HOME_HERO_SLIDES = [
       ar: "استعرض عائلات الأدوات المركزة، وراجع الرموز والخيارات، واحتفظ بالتفاصيل الصحيحة داخل استفسارك."
     },
     ctas: [
-      { label: { en: "Browse Instruments", ar: "استعرض الأدوات" }, href: "/products" as const },
+      { label: { en: "Explore Products", ar: "استعرض المنتجات" }, href: "/products" as const },
       { label: { en: "View Catalogues", ar: "عرض الكتالوجات" }, href: "/catalogues" as const, variant: "secondary" as const }
     ]
   },
@@ -131,7 +131,7 @@ export const HOME_HERO_SLIDES = [
     },
     ctas: [
       { label: { en: "Explore Products", ar: "استعرض المنتجات" }, href: "/products" as const },
-      { label: { en: "Request a Quote", ar: "اطلب عرض سعر" }, href: "/request-quotation" as const, variant: "secondary" as const }
+      { label: { en: "View Catalogues", ar: "عرض الكتالوجات" }, href: "/catalogues" as const, variant: "secondary" as const }
     ]
   },
   {
@@ -158,7 +158,7 @@ export const HOME_HERO_SLIDES = [
       ar: "حدد عائلة الأداة، وراجع الخيارات المتاحة، واجمع الكميات مع الحفاظ على سياق كل منتج."
     },
     ctas: [
-      { label: { en: "Request a Quote", ar: "اطلب عرض سعر" }, href: "/request-quotation" as const },
+      { label: { en: "View Catalogues", ar: "عرض الكتالوجات" }, href: "/catalogues" as const },
       { label: { en: "Explore Products", ar: "استعرض المنتجات" }, href: "/products" as const, variant: "secondary" as const }
     ]
   }
