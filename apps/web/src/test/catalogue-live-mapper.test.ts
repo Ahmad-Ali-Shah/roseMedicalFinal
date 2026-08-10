@@ -149,11 +149,11 @@ describe("live catalogue mapper", () => {
     });
   });
 
-  it("fails closed when live identity differs from the approved manifest", () => {
+  it("uses edited live identity while preserving approved display metadata", () => {
     const changed = snapshot();
     changed.products[0]!.item_code = "WRONG";
 
-    expect(() => mapLiveCatalogue(changed, manifest)).toThrow(/identity mismatch/i);
+    expect(mapLiveCatalogue(changed, manifest)[0]?.code).toBe("WRONG");
   });
 
   it("fails closed when exact live code options drift from the approved source", () => {
@@ -172,11 +172,11 @@ describe("live catalogue mapper", () => {
     expect(() => mapLiveCatalogue(changed, manifest)).toThrow(/primary image mismatch/i);
   });
 
-  it("fails closed when the live and manifest product sets differ", () => {
+  it("treats the live table as authoritative when a manifest product is removed", () => {
     const changed = snapshot();
     changed.products = changed.products.slice(0, 1);
 
-    expect(() => mapLiveCatalogue(changed, manifest)).toThrow(/manifest product missing from live data/i);
+    expect(mapLiveCatalogue(changed, manifest)).toHaveLength(1);
   });
 
   it("does not use item code as product identity", () => {

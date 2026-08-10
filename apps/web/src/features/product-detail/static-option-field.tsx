@@ -18,7 +18,6 @@ export function StaticOptionField({
       >
         {value}
       </output>
-      <span className="static-option-field__marker" aria-hidden="true">⌄</span>
     </div>
   );
 }

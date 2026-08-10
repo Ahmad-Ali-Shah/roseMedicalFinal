@@ -6,6 +6,79 @@
   will-change: opacity;
 }
 
+/* Five representative families in one quiet desktop row; a native rail keeps
+   every card reachable without shrinking touch targets on smaller screens. */
+.public-page--home .product-preview-grid--featured {
+  gap: clamp(0.75rem, 1.2vw, 1.1rem);
+}
+
+.public-page--home .product-preview-grid--featured .product-preview-card__link {
+  padding: 0.7rem;
+}
+
+.public-page--home .product-preview-grid--featured .product-media-placeholder--landscape {
+  aspect-ratio: 1.18 / 1;
+}
+
+.public-page--home .product-preview-grid--featured .product-preview-card__body {
+  min-height: 8.75rem;
+  padding-top: 0.9rem;
+}
+
+.public-page--home .product-preview-grid--featured .product-preview-card__family {
+  margin-bottom: 0.5rem;
+  font-size: 0.62rem;
+}
+
+.public-page--home .product-preview-grid--featured .product-preview-card__title {
+  font-size: 1.05rem;
+  line-height: 1.3;
+}
+
+.public-page--home .product-preview-grid--featured .product-preview-card__meta,
+.public-page--home .product-preview-grid--featured .product-preview-card__action {
+  font-size: 0.76rem;
+}
+
+.public-page--home .product-preview-grid--featured .product-preview-card__action {
+  padding-top: 0.9rem;
+}
+
+@media (min-width: 64.001rem) {
+  .public-page--home .product-preview-grid--featured {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 64rem) {
+  .public-page--home .product-preview-grid--featured {
+    display: grid;
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: min(36vw, 18rem);
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    padding: 0.2rem 0.15rem 0.85rem;
+    scroll-snap-type: inline mandatory;
+    scrollbar-color: color-mix(in srgb, var(--color-rosa-red) 45%, var(--color-border)) transparent;
+    scrollbar-width: thin;
+  }
+
+  .public-page--home .product-preview-grid--featured > li,
+  .public-page--home .product-preview-grid--featured > li:last-child {
+    display: block;
+    width: auto;
+    grid-column: auto;
+    scroll-snap-align: start;
+  }
+}
+
+@media (max-width: 40rem) {
+  .public-page--home .product-preview-grid--featured {
+    grid-auto-columns: min(78vw, 18rem);
+  }
+}
+
 @media (hover: hover) and (pointer: fine) {
   @container (min-width: 56rem) {
     .home-family-gallery .home-family-gallery__panel:first-child {

@@ -25,7 +25,7 @@ export function FamilyProductGrid({
       <Stagger as="ul" className="family-product-grid" interval={0.055}>
         {products.map((product) => (
           <StaggerItem as="li" key={product.id}>
-            <FamilyProductCard family={family} product={product} />
+            <FamilyProductCard family={family} product={product} locale={locale} />
           </StaggerItem>
         ))}
       </Stagger>

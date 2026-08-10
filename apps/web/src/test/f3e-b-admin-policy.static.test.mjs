@@ -15,8 +15,6 @@ const normalFiles = [
   "features/admin-catalogues/admin-catalogue-model.ts",
   "features/admin-catalogues/admin-catalogues-page.tsx",
   "features/admin-catalogues/admin-catalogue-detail-page.tsx",
-  "features/admin-media/admin-media-model.ts",
-  "features/admin-media/admin-media-page.tsx",
   "features/admin-management-routing/admin-management-route-model.ts",
   "features/admin-management-routing/admin-management-route-view.tsx"
 ];
@@ -45,11 +43,10 @@ const prohibited = [
 test("F3E-B uses source-backed and live database records without fabricated management state", () => {
   for (const pattern of prohibited) assert.doesNotMatch(content, pattern);
 
-  assert.match(content, /Live canonical record/);
-  assert.match(content, /Live Database Connection/);
-  assert.match(content, /live products from Supabase/);
-  assert.match(content, /Awaiting managed asset/);
-  assert.match(content, /No managed asset registered/);
+  assert.match(content, /Manage products/);
+  assert.match(content, /Save product/);
+  assert.match(content, /Save family/);
+  assert.doesNotMatch(content, /Upload \/ Replace catalogue PDF/);
 });
 
 test("F3E-B route view never returns a blank successful response", () => {

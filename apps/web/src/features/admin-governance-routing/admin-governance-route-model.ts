@@ -1,9 +1,5 @@
 export const ADMIN_GOVERNANCE_ROOTS = [
-  "content",
-  "contact-details",
-  "publishing",
-  "revisions",
-  "settings"
+  "contact-details"
 ] as const;
 
 export type AdminGovernanceRoot = (typeof ADMIN_GOVERNANCE_ROOTS)[number];

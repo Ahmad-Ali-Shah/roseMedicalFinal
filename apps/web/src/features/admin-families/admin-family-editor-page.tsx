@@ -1,15 +1,14 @@
 import { Button, ButtonLink } from "@/components/ui";
 import {
   AdminAlert,
-  AdminFieldPreview,
-  AdminLocaleFieldPair,
+  AdminField,
   AdminPageHeader,
   AdminSection,
   AdminStatusBadge,
-  AdminTextareaPreview
+  AdminTextareaField
 } from "@/features/admin-primitives";
 import { adminProductHref } from "@/features/admin-management-routing/admin-management-hrefs";
-import { uploadFamilyHeroImage } from "./actions";
+import { saveFamily } from "./actions";
 import type { AdminFamilyEditorModel } from "./admin-family-model";
 
 export function AdminFamilyEditorPage({
@@ -22,7 +21,7 @@ export function AdminFamilyEditorPage({
       <AdminPageHeader
         eyebrow="Family record"
         title={model.name}
-        description="Live family data from Supabase. Product membership and hero image are editable; text content is not yet."
+        description="Edit the family name and public English introduction."
         actions={
           <>
             <AdminStatusBadge tone="neutral">Live record</AdminStatusBadge>
@@ -32,30 +31,21 @@ export function AdminFamilyEditorPage({
         }
       />
 
-      <AdminAlert tone="info" title="Live Database Connection">
-        This family and its {model.productCount} products are read live from Supabase.
+      <AdminAlert tone="info" title="Live family record">
+        Arabic falls back to the English family name when no Arabic value is supplied.
       </AdminAlert>
 
-      <AdminSection title="Identity" description="Text fields are not yet editable — schema addition required for family introduction copy.">
-        <div className="admin-editor-grid">
-          <AdminLocaleFieldPair
-            id={`admin-family-${model.slug}-name`}
-            label="Family name"
-            englishValue={model.name}
-            arabicValue="Not supplied"
-          />
-          <AdminTextareaPreview
-            id={`admin-family-${model.slug}-intro-en`}
-            label="Introduction — English"
-            value={model.introduction}
-          />
-          <AdminFieldPreview
-            id={`admin-family-${model.slug}-catalogue-label`}
-            label="Catalogue label"
-            value={model.catalogueLabel}
-          />
-        </div>
-      </AdminSection>
+      <form action={saveFamily} className="admin-family-edit-form">
+        <input type="hidden" name="slug" value={model.slug} />
+        <AdminSection title="Family details">
+          <div className="admin-editor-grid">
+            <AdminField id={`admin-family-${model.slug}-name-en`} name="name_en" label="Family name — English" defaultValue={model.name} required />
+            <AdminField id={`admin-family-${model.slug}-name-ar`} name="name_ar" label="Family name — Arabic" defaultValue={model.nameAr || model.name} direction="rtl" />
+            <AdminTextareaField id={`admin-family-${model.slug}-intro-en`} name="introduction_en" label="Introduction — English" defaultValue={model.introduction} rows={4} required />
+          </div>
+          <div className="admin-card-actions"><Button type="submit">Save family</Button></div>
+        </AdminSection>
+      </form>
 
       <AdminSection
         title={`${model.productCount} products`}
@@ -76,46 +66,6 @@ export function AdminFamilyEditorPage({
         </ol>
       </AdminSection>
 
-      <AdminSection title="Presentation requirements">
-        <div className="admin-editor-grid">
-          <article className="admin-requirement-panel">
-            <p className="page-eyebrow">Family imagery</p>
-            <h3>{model.imagePath ? "Hero image on file" : "No hero image registered"}</h3>
-            {model.imagePath ? (
-              <img
-                src={model.imagePath}
-                alt={`${model.name} hero`}
-                style={{ maxWidth: "100%", borderRadius: 8, marginBottom: 12 }}
-              />
-            ) : (
-              <p>No managed asset registered.</p>
-            )}
-            <form action={uploadFamilyHeroImage}>
-              <input type="hidden" name="slug" value={model.slug} />
-              <input type="file" name="file" accept="image/*" required />
-              <Button type="submit">Upload hero media</Button>
-            </form>
-          </article>
-          <article className="admin-requirement-panel">
-            <p className="page-eyebrow">Catalogue PDF</p>
-            <h3>{model.pdfAvailability}</h3>
-            <p>Requires a pdf_path column on categories before this can be wired up.</p>
-            <Button variant="secondary" disabled>Replace catalogue PDF</Button>
-          </article>
-        </div>
-      </AdminSection>
-
-      <AdminSection
-        title="Future workflow actions"
-        description="Text save, preview, publication and featured-product selection are not yet connected."
-      >
-        <div className="admin-management-actions">
-          <Button disabled>Save draft (text)</Button>
-          <Button variant="secondary" disabled>Preview family changes</Button>
-          <Button variant="secondary" disabled>Publish changes</Button>
-          <Button variant="quiet" disabled>Select featured products</Button>
-        </div>
-      </AdminSection>
     </div>
   );
 }

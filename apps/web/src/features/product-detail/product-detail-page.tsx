@@ -1,4 +1,5 @@
 import type { ReactElement } from "react";
+import { notFound } from "next/navigation";
 import { Container, Section } from "@/components/layout";
 import { getProductCatalogueContext } from "@/features/catalogue-live";
 import type { InquiryItem } from "@/features/inquiry";
@@ -26,16 +27,26 @@ export async function ProductDetailPage({
 }): Promise<ReactElement | null> {
   const products = await getProductCatalogueContext(familySlug, productSlug);
   const data = createProductDetailData(familySlug, productSlug, products);
-  if (!data) return null;
+  if (!data) {
+    notFound();
+    return null;
+  }
   const ar = locale === "ar";
   const family = ar ? { ...data.family, name: FAMILY_NAMES_AR[data.family.slug] } : data.family;
+  const product = ar ? {
+    ...data.product,
+    name: data.product.nameAr?.trim() || data.product.name,
+    ...(data.product.descriptionAr?.trim()
+      ? { description: data.product.descriptionAr.trim() }
+      : {})
+  } : data.product;
 
   const inquiryItem: InquiryItem = {
-    id: data.product.id,
-    familySlug: data.product.familySlug,
-    slug: data.product.slug,
-    name: data.product.name,
-    code: data.product.code,
+    id: product.id,
+    familySlug: product.familySlug,
+    slug: product.slug,
+    name: product.name,
+    code: product.code,
     size: data.sizeValue,
     variant: data.variantValue,
     quantity: 1,
@@ -51,12 +62,12 @@ export async function ProductDetailPage({
           </Reveal>
           <div className="product-detail-layout">
             <Reveal direction="right" delay={0.04} className="product-detail-layout__gallery-reveal">
-              <ProductGallery product={data.product} />
+              <ProductGallery product={product} />
             </Reveal>
             <Reveal direction="left" delay={0.1} className="product-detail-layout__summary-reveal">
               <ProductProcurementSummary
                 family={family}
-                product={data.product}
+                product={product}
                 sizeValue={data.sizeValue}
                 variantValue={data.variantValue}
                 catalogueReference={data.catalogueReference}

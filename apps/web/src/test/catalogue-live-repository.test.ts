@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { CatalogueMetadataManifestEntry } from "@/features/catalogue-migration/catalogue-metadata-manifest";
 import {
-  CatalogueLiveParityError,
   CatalogueLiveReadError,
   loadCatalogueProducts,
   type CatalogueSnapshotReader
@@ -95,7 +94,7 @@ describe("live catalogue repository", () => {
     );
   });
 
-  it("classifies live-vs-manifest drift as parity failure, not an outage", async () => {
+  it("accepts owner-edited live identity", async () => {
     const driftedReader: CatalogueSnapshotReader = {
       async read() {
         const snapshot = await reader.read();
@@ -109,8 +108,8 @@ describe("live catalogue repository", () => {
       }
     };
 
-    await expect(loadCatalogueProducts(driftedReader, manifest)).rejects.toBeInstanceOf(
-      CatalogueLiveParityError
-    );
+    await expect(loadCatalogueProducts(driftedReader, manifest)).resolves.toMatchObject([
+      { code: "CHANGED-IN-LIVE-DATA" }
+    ]);
   });
 });

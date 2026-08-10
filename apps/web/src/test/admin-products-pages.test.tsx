@@ -37,9 +37,11 @@ describe("F3E-B product pages", () => {
   it("renders the collection from the canonical live catalogue boundary", () => {
     const listPage = source("src/features/admin-products/admin-products-list-page.tsx");
     const collection = source("src/features/admin-products/admin-products-collection.tsx");
-    expect(listPage).toContain("getLiveCatalogueProducts");
+    expect(listPage).toContain("getAdminCatalogueProducts");
     expect(listPage).toContain("getAdminProductRows(products)");
     expect(collection).toContain("src={row.mediaPath}");
+    expect(collection).toContain("setFamily");
+    expect(collection).toContain("setSearch");
     expect(listPage).not.toContain('from("products")');
     expect(listPage).not.toContain("stock_status");
     expect(listPage).not.toContain("sell_mode");
@@ -50,7 +52,7 @@ describe("F3E-B product pages", () => {
     const listPage = source("src/features/admin-products/admin-products-list-page.tsx");
     expect(listPage).toContain("adminNewProductHref()");
     expect(listPage).toContain("Add product");
-    expect(listPage).toContain("Live canonical catalogue");
+    expect(listPage).toContain("Live product records");
   });
 
   it("renders a canonical product editor with one supported media operation", () => {
@@ -59,7 +61,8 @@ describe("F3E-B product pages", () => {
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
     expect(html).toContain(model.product.name);
     expect(html).toContain(model.product.code);
-    expect(html).toContain("Protected catalogue identity");
+    expect(html).toContain("Live product editor");
+    expect(html).toContain("Save product");
     expect(html).toContain("Primary product image");
     expect(html).toContain("Replace primary image");
     expect(html).toContain('type="file"');
@@ -79,7 +82,7 @@ describe("F3E-B product pages", () => {
       expect(html).not.toContain(label);
     }
     expect(html).toContain("Replace primary image");
-    expect(html).toMatch(/<button[^>]*disabled[^>]*><span class="button__label">Add option<\/span><\/button>/);
+    expect(html).toContain("Documented options");
   });
 
   it("marks legacy demonstration states as preview-only and truthful", () => {

@@ -213,12 +213,12 @@ const supabaseCatalogueReader: CatalogueSnapshotReader = {
         supabase
           .from("products")
           .select(
-            "id,category_id,item_code,name_en,description_en,is_active,slug,created_at"
+            "id,category_id,item_code,name_en,name_ar,description_en,description_ar,is_active,slug,created_at"
           )
           .eq("is_active", true),
         supabase
           .from("categories")
-          .select("id,slug,name_en,is_active,deleted_at")
+          .select("id,slug,name_en,name_ar,is_active,deleted_at")
           .eq("is_active", true)
           .is("deleted_at", null),
         supabase
@@ -278,11 +278,11 @@ const adminCatalogueReader: CatalogueSnapshotReader = {
         supabase
           .from("products")
           .select(
-            "id,category_id,item_code,name_en,description_en,is_active,slug,created_at"
+            "id,category_id,item_code,name_en,name_ar,description_en,description_ar,is_active,slug,created_at"
           ),
         supabase
           .from("categories")
-          .select("id,slug,name_en,is_active,deleted_at")
+          .select("id,slug,name_en,name_ar,is_active,deleted_at")
           .eq("is_active", true)
           .is("deleted_at", null),
         supabase
@@ -491,4 +491,20 @@ export async function getPublicCatalogueProducts(): Promise<
   readonly CatalogueProductRecord[]
 > {
   return getSearchCatalogueProducts();
+}
+
+export function selectProductCatalogueContext(
+  familyProducts: readonly CatalogueProductRecord[],
+  productSlug: string
+): readonly CatalogueProductRecord[] {
+  const product = familyProducts.find(
+    (candidate) => candidate.slug === productSlug.trim()
+  );
+  if (!product) return [];
+
+  const related = familyProducts
+    .filter((candidate) => candidate.id !== product.id)
+    .slice(0, 3);
+
+  return [product, ...related];
 }

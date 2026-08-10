@@ -44,8 +44,8 @@ function isKnownProductRoute(
   // Route SHAPE only: a known family slug plus a non-empty product slug is
   // enough to hand off to ProductDetailPage, which resolves existence
   // against live Supabase (including live-only products with no static
-  // manifest entry). ProductDetailPage calls notFound() itself when the
-  // slug doesn't resolve to a real product.
+  // manifest entry). The page route and ProductDetailPage resolve actual
+  // existence against the canonical live family projection.
   if (!familySlug || !productSlug || !productSlug.trim()) return false;
   return isKnownFamilyRoute(familySlug);
 }

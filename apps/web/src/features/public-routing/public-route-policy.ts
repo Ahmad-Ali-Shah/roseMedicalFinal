@@ -1,4 +1,4 @@
-import { resolveCataloguePath } from "@/features/catalogue-registry";
+import { FAMILY_SLUGS } from "@/features/public-catalogue";
 
 const PUBLIC_PAGE_KEYS = new Set([
   "",
@@ -51,6 +51,14 @@ export function shouldRenderPublicNotFound(pathname: string): boolean {
 
   if (PUBLIC_PAGE_KEYS.has(key)) return false;
   if (publicSegments[0] !== "products") return true;
+  const familySlug = publicSegments[1];
+  const knownFamily = Boolean(
+    familySlug && (FAMILY_SLUGS as readonly string[]).includes(familySlug)
+  );
 
-  return resolveCataloguePath(publicSegments).kind === "not-found";
+  if (publicSegments.length === 2) return !knownFamily;
+  if (publicSegments.length === 3) {
+    return !knownFamily || !publicSegments[2]?.trim();
+  }
+  return true;
 }

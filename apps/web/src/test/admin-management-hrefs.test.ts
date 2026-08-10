@@ -4,7 +4,6 @@ import {
   adminCataloguesHref,
   adminFamiliesHref,
   adminFamilyHref,
-  adminMediaHref,
   adminProductHref,
   adminProductsHref
 } from "@/features/admin-management-routing";
@@ -15,7 +14,6 @@ describe("F3E-B admin management hrefs", () => {
     expect(adminProductsHref()).toBe("/admin/products");
     expect(adminFamiliesHref()).toBe("/admin/families");
     expect(adminCataloguesHref()).toBe("/admin/catalogues");
-    expect(adminMediaHref()).toBe("/admin/media");
   });
 
   it("builds source-backed detail routes", () => {

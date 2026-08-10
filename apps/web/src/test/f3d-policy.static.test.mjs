@@ -40,7 +40,7 @@ test("F3D public copy uses safe centralized examples without fake business or le
   for (const pattern of prohibitedPublicClaims) assert.doesNotMatch(content, pattern);
   assert.match(content, /info@rosamedical\.org/i);
   assert.match(content, /tel:\+966597204394/i);
-  assert.doesNotMatch(content, /wa\.me\//i);
+  assert.match(content, /wa\.me\//i);
   assert.match(content, /Riyadh, Saudi Arabia/i);
   assert.match(content, /rather than created by browsing this website/i);
 });

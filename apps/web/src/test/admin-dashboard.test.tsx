@@ -29,10 +29,6 @@ describe("F3E-A dashboard", () => {
     expect(JSON.stringify(model.operationalMetrics)).not.toMatch(/value|count|total/);
   });
 
-  it("contains the five approved readiness dependencies", () => {
-    expect(getAdminDashboardModel().readinessItems).toHaveLength(5);
-  });
-
   it("renders catalogue metrics and live operational count boundaries without fake analytics", async () => {
     const html = await renderServerComponent(<AdminDashboardPage />);
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);

@@ -12,7 +12,7 @@ describe("F3E-B management routing", () => {
     expect(resolveAdminManagementRoute(["products"]).kind).toBe("products");
     expect(resolveAdminManagementRoute(["families"]).kind).toBe("families");
     expect(resolveAdminManagementRoute(["catalogues"]).kind).toBe("catalogues");
-    expect(resolveAdminManagementRoute(["media"]).kind).toBe("media");
+    expect(resolveAdminManagementRoute(["media"]).kind).toBe("not-found");
 
     for (const product of CATALOGUE_PRODUCTS) {
       expect(resolveAdminManagementRoute(["products", product.familySlug, product.slug]).kind).toBe("product");
@@ -40,8 +40,9 @@ describe("F3E-B management routing", () => {
     expect(resolveAdminManagementRoute(["products", "cutters", "not-a-real-product"]).kind).toBe("product");
   });
 
-  it("identifies only the four F3E-B roots", () => {
-    expect(["products", "families", "catalogues", "media"].every(isAdminManagementRoot)).toBe(true);
+  it("identifies only the three retained management roots", () => {
+    expect(["products", "families", "catalogues"].every(isAdminManagementRoot)).toBe(true);
+    expect(isAdminManagementRoot("media")).toBe(false);
     expect(isAdminManagementRoot("inquiries")).toBe(false);
   });
 

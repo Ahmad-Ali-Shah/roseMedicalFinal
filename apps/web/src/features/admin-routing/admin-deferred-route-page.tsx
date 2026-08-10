@@ -20,10 +20,6 @@ const COPY: Record<DeferredAdminRouteKey, { title: string; description: string }
     title: "Catalogues",
     description: "Catalogue management composition is scheduled for the next admin catalogue milestone."
   },
-  media: {
-    title: "Media",
-    description: "Media management composition is scheduled for the next admin catalogue milestone."
-  },
   inquiries: {
     title: "Quotation Inquiries",
     description: "Inquiry operations composition is scheduled for the admin operations milestone."
@@ -32,26 +28,10 @@ const COPY: Record<DeferredAdminRouteKey, { title: string; description: string }
     title: "General Messages",
     description: "Message operations composition is scheduled for the admin operations milestone."
   },
-  content: {
-    title: "Website Content",
-    description: "Website content composition is scheduled for the admin content and publishing milestone."
-  },
   "contact-details": {
     title: "Contact Details",
     description: "Contact details composition is scheduled for the admin content and publishing milestone."
   },
-  publishing: {
-    title: "Publishing Centre",
-    description: "Publishing composition is scheduled for the admin content and publishing milestone."
-  },
-  revisions: {
-    title: "Revision History",
-    description: "Revision history composition is scheduled for the admin content and publishing milestone."
-  },
-  settings: {
-    title: "Settings",
-    description: "Settings composition is scheduled for the admin content and publishing milestone."
-  }
 };
 
 export function AdminDeferredRoutePage({ routeKey }: { routeKey: DeferredAdminRouteKey }) {

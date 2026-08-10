@@ -1,7 +1,6 @@
 import type { Route } from "next";
 import { CATALOGUE_FAMILIES, CATALOGUE_PRODUCTS } from "@/features/catalogue-registry";
 import { CATALOGUE_DOCUMENTS } from "@/features/catalogues";
-import { ADMIN_READINESS_ITEMS, type AdminReadinessItem } from "@/features/admin-governance-source/admin-readiness-model";
 
 export interface AdminDashboardMetric {
   key: "families" | "products" | "catalogues";
@@ -19,7 +18,6 @@ export interface AdminOperationalMetric {
 export interface AdminDashboardModel {
   catalogueMetrics: readonly AdminDashboardMetric[];
   operationalMetrics: readonly AdminOperationalMetric[];
-  readinessItems: readonly AdminReadinessItem[];
   quickRoutes: readonly { label: string; href: Route<string> }[];
 }
 
@@ -36,12 +34,13 @@ export function getAdminDashboardModel(): AdminDashboardModel {
       { key: "inquiries", label: "Quotation inquiries" },
       { key: "messages", label: "General messages" }
     ],
-    readinessItems: ADMIN_READINESS_ITEMS,
     quickRoutes: [
       { label: "Products", href: route("/admin/products") },
+      { label: "Families", href: route("/admin/families") },
+      { label: "Catalogues", href: route("/admin/catalogues") },
       { label: "Inquiries", href: route("/admin/inquiries") },
-      { label: "Website Content", href: route("/admin/content") },
-      { label: "Publishing Centre", href: route("/admin/publishing") }
+      { label: "Messages", href: route("/admin/messages") },
+      { label: "Contact details", href: route("/admin/contact-details") }
     ]
   };
 }

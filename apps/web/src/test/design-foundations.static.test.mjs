@@ -34,7 +34,8 @@ test('admin shell and navigation preserve the complete single-owner workspace', 
   const shell = await read('components/layout/admin-shell.tsx');
   const navigation = await read('features/admin-navigation/admin-navigation-model.ts');
   const source = `${shell}\n${navigation}`;
-  for (const label of ['Overview', 'Products', 'Families', 'Catalogues', 'Media', 'Inquiries', 'Messages', 'Website Content', 'Contact Details', 'Publishing', 'Revisions', 'Settings']) assert.match(source, new RegExp(label));
+  for (const label of ['Overview', 'Products', 'Families', 'Catalogues', 'Inquiries', 'Messages', 'Contact Details']) assert.match(source, new RegExp(label));
+  for (const removed of ['Media', 'Website Content', 'Publishing Centre', 'Revision History', 'Settings']) assert.doesNotMatch(source, new RegExp(removed));
   assert.match(shell, /Owner workspace/);
   assert.match(shell, /View public website/);
   assert.match(shell, /<AdminNavigation \/>/);

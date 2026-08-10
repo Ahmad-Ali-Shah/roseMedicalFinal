@@ -5,7 +5,6 @@ import type { FamilySlug } from "@/features/public-catalogue";
 export const adminProductsHref = () => "/admin/products" as Route<string>;
 export const adminFamiliesHref = () => "/admin/families" as Route<string>;
 export const adminCataloguesHref = () => "/admin/catalogues" as Route<string>;
-export const adminMediaHref = () => "/admin/media" as Route<string>;
 
 export function adminProductHref(
   product: Pick<CatalogueProductRecord, "familySlug" | "slug">

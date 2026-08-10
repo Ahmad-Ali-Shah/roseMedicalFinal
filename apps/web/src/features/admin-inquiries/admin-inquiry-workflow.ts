@@ -9,6 +9,12 @@ export const ADMIN_INQUIRY_WORKFLOW = [
 
 export type AdminInquiryStatus = (typeof ADMIN_INQUIRY_WORKFLOW)[number];
 
+export function normalizeInquiryStatus(value: string | null | undefined): AdminInquiryStatus {
+  return ADMIN_INQUIRY_WORKFLOW.includes(value as AdminInquiryStatus)
+    ? value as AdminInquiryStatus
+    : "New";
+}
+
 export const INQUIRY_WORKFLOW_COPY: Record<AdminInquiryStatus, string> = {
   New: "A submission has entered the protected owner queue and needs review.",
   Reviewed: "Requirements and preserved product snapshots have been checked.",

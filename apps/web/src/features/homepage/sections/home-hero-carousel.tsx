@@ -51,6 +51,7 @@ export function HomeHeroCarousel({
   const [manualEpoch, setManualEpoch] = useState(0);
   const pointerStartX = useRef<number | null>(null);
   const pointerStartY = useRef<number | null>(null);
+  const pointerFocusing = useRef(false);
   const preloadedImage = useRef<HTMLImageElement | null>(null);
   const dotRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
@@ -146,15 +147,23 @@ export function HomeHeroCarousel({
       data-active-slide={slide.id}
       aria-roledescription="carousel"
       aria-labelledby="home-title"
-      onFocusCapture={() => setFocused(true)}
+      onFocusCapture={() => setFocused(!pointerFocusing.current)}
       onBlurCapture={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false);
       }}
       onPointerDown={handlePointerDown}
+      onPointerDownCapture={() => {
+        pointerFocusing.current = true;
+        setFocused(false);
+      }}
       onPointerUp={finishPointer}
+      onPointerUpCapture={() => {
+        pointerFocusing.current = false;
+      }}
       onPointerCancel={() => {
         pointerStartX.current = null;
         pointerStartY.current = null;
+        pointerFocusing.current = false;
         setDragging(false);
       }}
     >

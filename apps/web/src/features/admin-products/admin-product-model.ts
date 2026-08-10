@@ -19,6 +19,7 @@ export interface AdminProductRow {
   catalogueReference: string;
   mediaLabel: string;
   mediaPath?: string;
+  isActive: boolean;
   publicHref: ReturnType<typeof productHref>;
   familyHref: ReturnType<typeof familyHref>;
   adminHref: ReturnType<typeof adminProductHref>;
@@ -105,7 +106,11 @@ function completenessFor(
       state: hasDocumentedOptions(product) ? "Present" : "Not supplied"
     },
     { key: "catalogue", label: "Catalogue reference", state: "Present" },
-    { key: "arabic", label: "Arabic content", state: "Not supplied" },
+    {
+      key: "arabic",
+      label: "Arabic content",
+      state: product.nameAr?.trim() || product.descriptionAr?.trim() ? "Present" : "Not supplied"
+    },
     {
       key: "media",
       label: "Primary product media",
@@ -131,6 +136,7 @@ export function getAdminProductRows(
       catalogueReference: formatCatalogueReference(product),
       mediaLabel: product.mediaLabel,
       ...(product.mediaPath ? { mediaPath: product.mediaPath } : {}),
+      isActive: product.isActive ?? true,
       publicHref: productHref(product),
       familyHref: familyHref(product.familySlug),
       adminHref: adminProductHref(product)

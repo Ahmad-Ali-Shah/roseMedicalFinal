@@ -164,6 +164,8 @@ function mapManifestProduct(
   validateIdentity(product, category, entry);
 
   const description = product.description_en?.trim();
+  const descriptionAr = product.description_ar?.trim();
+  const nameAr = product.name_ar?.trim();
   const mediaPath = primaryImageFor(product, snapshot.images);
   const catalogueCodes = catalogueCodesFor(product, snapshot.variants, entry);
 
@@ -172,8 +174,10 @@ function mapManifestProduct(
     familySlug: entry.familySlug,
     slug: entry.publicSlug,
     name: product.name_en,
+    ...(nameAr ? { nameAr } : {}),
     code: product.item_code!,
     ...(description ? { description } : {}),
+    ...(descriptionAr ? { descriptionAr } : {}),
     sizes: entry.metadata.sizes,
     variants: entry.metadata.variants,
     directions: entry.metadata.directions,
@@ -209,6 +213,8 @@ function mapLiveOnlyProduct(
   try {
     const category = categoryFor(product, categoriesById);
     const description = product.description_en?.trim();
+    const descriptionAr = product.description_ar?.trim();
+    const nameAr = product.name_ar?.trim();
     const mediaPath = allowMissingImage
       ? primaryImageForOptional(product, snapshot.images)
       : primaryImageFor(product, snapshot.images);
@@ -226,8 +232,10 @@ function mapLiveOnlyProduct(
       familySlug: category.slug as FamilySlug,
       slug: bareSlug,
       name: product.name_en,
+      ...(nameAr ? { nameAr } : {}),
       code: product.item_code ?? "",
       ...(description ? { description } : {}),
+      ...(descriptionAr ? { descriptionAr } : {}),
       sizes,
       variants: [],
       directions: [],

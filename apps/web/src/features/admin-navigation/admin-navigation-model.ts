@@ -3,28 +3,18 @@ export type AdminNavigationKey =
   | "products"
   | "families"
   | "catalogues"
-  | "media"
   | "inquiries"
   | "messages"
-  | "content"
-  | "contact-details"
-  | "publishing"
-  | "revisions"
-  | "settings";
+  | "contact-details";
 
 export type AdminNavigationHref =
   | "/admin"
   | "/admin/products"
   | "/admin/families"
   | "/admin/catalogues"
-  | "/admin/media"
   | "/admin/inquiries"
   | "/admin/messages"
-  | "/admin/content"
-  | "/admin/contact-details"
-  | "/admin/publishing"
-  | "/admin/revisions"
-  | "/admin/settings";
+  | "/admin/contact-details";
 
 export interface AdminNavigationItem {
   key: AdminNavigationKey;
@@ -34,7 +24,7 @@ export interface AdminNavigationItem {
 }
 
 export interface AdminNavigationGroup {
-  key: "overview" | "catalogue" | "operations" | "website" | "publishing" | "system";
+  key: "overview" | "catalogue" | "operations" | "website";
   label: string;
   items: readonly AdminNavigationItem[];
 }
@@ -53,8 +43,7 @@ export const ADMIN_NAVIGATION_GROUPS: readonly AdminNavigationGroup[] = [
     items: [
       { key: "products", label: "Products", shortLabel: "Products", href: "/admin/products" },
       { key: "families", label: "Families", shortLabel: "Families", href: "/admin/families" },
-      { key: "catalogues", label: "Catalogues", shortLabel: "Catalogues", href: "/admin/catalogues" },
-      { key: "media", label: "Media", shortLabel: "Media", href: "/admin/media" }
+      { key: "catalogues", label: "Catalogues", shortLabel: "Catalogues", href: "/admin/catalogues" }
     ]
   },
   {
@@ -69,23 +58,7 @@ export const ADMIN_NAVIGATION_GROUPS: readonly AdminNavigationGroup[] = [
     key: "website",
     label: "Website",
     items: [
-      { key: "content", label: "Website Content", shortLabel: "Content", href: "/admin/content" },
       { key: "contact-details", label: "Contact Details", shortLabel: "Contact", href: "/admin/contact-details" }
-    ]
-  },
-  {
-    key: "publishing",
-    label: "Publishing",
-    items: [
-      { key: "publishing", label: "Publishing Centre", shortLabel: "Publishing", href: "/admin/publishing" },
-      { key: "revisions", label: "Revision History", shortLabel: "Revisions", href: "/admin/revisions" }
-    ]
-  },
-  {
-    key: "system",
-    label: "System",
-    items: [
-      { key: "settings", label: "Settings", shortLabel: "Settings", href: "/admin/settings" }
     ]
   }
 ];

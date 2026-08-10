@@ -6,14 +6,9 @@ const protectedRoutes = [
   "/admin/products",
   "/admin/families",
   "/admin/catalogues",
-  "/admin/media",
   "/admin/inquiries",
   "/admin/messages",
-  "/admin/content",
-  "/admin/contact-details",
-  "/admin/publishing",
-  "/admin/revisions",
-  "/admin/settings"
+  "/admin/contact-details"
 ] as const;
 
 for (const route of authRoutes) {

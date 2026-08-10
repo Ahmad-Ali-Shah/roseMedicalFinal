@@ -3,7 +3,9 @@ export interface LiveProductRow {
   category_id: string | null;
   item_code: string | null;
   name_en: string;
+  name_ar?: string | null;
   description_en: string | null;
+  description_ar?: string | null;
   is_active: boolean;
   slug: string;
   created_at: string;
@@ -13,6 +15,7 @@ export interface LiveCategoryRow {
   id: string;
   slug: string;
   name_en: string;
+  name_ar?: string | null;
   is_active: boolean;
   deleted_at: string | null;
 }

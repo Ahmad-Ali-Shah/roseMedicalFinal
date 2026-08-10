@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui";
 import { AdminField, AdminFormSection, AdminSelectField, AdminTextareaField } from "@/features/admin-primitives";
-import { getAdminFamilyRows } from "@/features/admin-families";
+import { getLiveAdminFamilyRows } from "@/features/admin-families";
 import { createProduct } from "./actions";
 
-type AdminFamilyRow = ReturnType<typeof getAdminFamilyRows>[number];
+type AdminFamilyRow = Awaited<ReturnType<typeof getLiveAdminFamilyRows>>[number];
 
 export function AdminProductCreateForm({
   families
@@ -52,6 +52,12 @@ export function AdminProductCreateForm({
             id="admin-new-product-description-en"
             name="description_en"
             label="Short description — English"
+          />
+          <AdminTextareaField
+            id="admin-new-product-description-ar"
+            name="description_ar"
+            label="Short description — Arabic"
+            direction="rtl"
           />
         </div>
       </AdminFormSection>

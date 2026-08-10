@@ -286,7 +286,7 @@
 .admin-content {
   width: 100%;
   min-width: 0;
-  padding: clamp(1.5rem, 4vw, 4rem) var(--page-gutter) var(--space-section);
+  padding: 2rem clamp(1.5rem, 3vw, 3rem) 4rem;
 }
 
 .admin-page-header {
@@ -294,7 +294,7 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: var(--space-6);
-  margin-bottom: var(--space-7);
+  margin-bottom: var(--space-6);
 }
 
 .admin-page-header__copy {
@@ -302,8 +302,8 @@
 }
 
 .admin-page-header h1 {
-  max-width: 18ch;
-  font-size: clamp(2.2rem, 5vw, 4.75rem);
+  max-width: 24ch;
+  font-size: clamp(2rem, 3vw, 3.25rem);
 }
 
 .admin-page-header__description {
@@ -321,7 +321,7 @@
 
 .admin-section {
   min-width: 0;
-  margin-top: var(--space-7);
+  margin-top: var(--space-6);
 }
 
 .admin-section-header {
@@ -339,7 +339,7 @@
 .admin-form-section legend {
   margin: 0;
   font-family: var(--font-editorial);
-  font-size: clamp(1.45rem, 2.5vw, 2.2rem);
+  font-size: clamp(1.35rem, 2vw, 1.85rem);
   font-weight: 400;
 }
 

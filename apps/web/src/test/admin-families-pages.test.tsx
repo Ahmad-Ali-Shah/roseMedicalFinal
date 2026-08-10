@@ -12,15 +12,17 @@ describe("F3E-B family pages", () => {
     const html = await renderServerComponent(<AdminFamiliesPage />);
     const normalizedHtml = html.replaceAll("<!-- -->", "");
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
-    expect(html).toContain("Organise the five instrument families.");
-    expect(normalizedHtml).toContain("live families from Supabase");
+    expect(html).toContain("Manage instrument families.");
+    expect(normalizedHtml).toContain("families are available");
     expect(html).not.toContain("data-preview-only");
   });
 
-  it("renders a read-only family editor", async () => {
+  it("renders an editable family record", async () => {
     const model = (await getAdminFamilyEditor("knives"))!;
     const html = renderToStaticMarkup(<AdminFamilyEditorPage model={model} />);
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
     expect(html).toContain(model.name);
+    expect(html).toContain("Save family");
+    expect(html).toContain('name="introduction_en"');
   });
 });

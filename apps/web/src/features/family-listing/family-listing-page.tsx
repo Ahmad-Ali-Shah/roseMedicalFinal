@@ -6,8 +6,8 @@ import { FamilyHero } from "./family-hero";
 import { FamilyProductDiscovery } from "./family-product-discovery";
 import { FamilySupportPanel } from "./family-support-panel";
 import type { PublicLocale } from "@/features/localization/locales";
-import { FAMILY_NAMES_AR } from "@/features/localization/public-copy";
 import { LocaleLink } from "@/features/localization/locale-link";
+import { createClient } from "@/lib/supabase/server";
 
 export async function FamilyListingPage({
   familySlug,
@@ -16,16 +16,29 @@ export async function FamilyListingPage({
   familySlug: string;
   locale?: PublicLocale;
 }): Promise<ReactElement | null> {
-  const products = await getFamilyCatalogueProducts(familySlug);
+  const supabase = await createClient();
+  const [products, categoryResult, introductionResult] = await Promise.all([
+    getFamilyCatalogueProducts(familySlug),
+    supabase.from("categories").select("name_en,name_ar").eq("slug", familySlug).maybeSingle(),
+    supabase.from("site_settings").select("value_en").eq("key", `family_introduction_${familySlug}`).maybeSingle()
+  ]);
   const data = createFamilyListingData(familySlug, products);
   if (!data) return null;
   const ar = locale === "ar";
+  const liveName = categoryResult.data?.name_en?.trim() || data.family.name;
+  const liveNameAr = categoryResult.data?.name_ar?.trim() || liveName;
+  const liveIntroduction = introductionResult.data?.value_en?.trim() || data.family.introduction;
   const family = ar ? {
     ...data.family,
-    name: FAMILY_NAMES_AR[data.family.slug],
-    introduction: `أدوات ${FAMILY_NAMES_AR[data.family.slug]} منظمة حسب رمز المنتج والمقاس والخيارات المدرجة لتسهيل إعداد طلب عرض السعر.`,
-    catalogueLabel: `كتالوج ${FAMILY_NAMES_AR[data.family.slug]}`
-  } : data.family;
+    name: liveNameAr,
+    introduction: `أدوات ${liveNameAr} منظمة حسب رمز المنتج والمقاس والخيارات المدرجة لتسهيل إعداد طلب عرض السعر.`,
+    catalogueLabel: `كتالوج ${liveNameAr}`
+  } : {
+    ...data.family,
+    name: liveName,
+    introduction: liveIntroduction,
+    catalogueLabel: `${liveName} catalogue`
+  };
 
   return (
     <div className="public-page public-page--family">

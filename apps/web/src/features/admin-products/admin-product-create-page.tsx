@@ -1,9 +1,9 @@
 import { AdminAlert, AdminPageHeader } from "@/features/admin-primitives";
-import { getAdminFamilyRows } from "@/features/admin-families";
+import { getLiveAdminFamilyRows } from "@/features/admin-families";
 import { AdminProductCreateForm } from "./admin-product-create-form";
 
-export function AdminProductCreatePage() {
-  const families = getAdminFamilyRows();
+export async function AdminProductCreatePage() {
+  const families = await getLiveAdminFamilyRows();
 
   return (
     <div className="admin-product-editor">
@@ -14,7 +14,7 @@ export function AdminProductCreatePage() {
       />
 
       <AdminAlert tone="info" title="Draft-first workflow">
-        This product is saved as a draft (inactive). Upload its primary image and activate it from the product editor once it's ready.
+        This product is saved as a draft (inactive). Upload its primary image and activate it from the product editor once it is ready.
       </AdminAlert>
 
       <AdminProductCreateForm families={families} />

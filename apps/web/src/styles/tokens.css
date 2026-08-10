@@ -16,6 +16,7 @@
 
   --font-editorial: var(--font-lora), Georgia, serif;
   --font-interface: var(--font-inter), Arial, sans-serif;
+  --font-arabic: "GE SS Two", "GE SS Text", "GE SS", Tahoma, Arial, sans-serif;
 
   --container-wide: 80rem;
   --container-standard: 72rem;
