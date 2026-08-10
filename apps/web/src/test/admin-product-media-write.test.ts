@@ -15,6 +15,7 @@ function dependencies(overrides?: {
   identity?: Awaited<ReturnType<ProductMediaWriteRepository["findProductIdentity"]>>;
   primaryImages?: Awaited<ReturnType<ProductMediaWriteRepository["findPrimaryImages"]>>;
   updateError?: Error;
+  insertError?: Error;
 }) {
   const repository: ProductMediaWriteRepository = {
     findProductIdentity: vi.fn(async () =>
@@ -32,6 +33,10 @@ function dependencies(overrides?: {
         { id: "image-row-1", imagePath: "/media/old-liston.avif" }
       ]
     ),
+    insertPrimaryImage: vi.fn(async () => {
+      if (overrides?.insertError) throw overrides.insertError;
+      return { insertedId: "new-image-row" };
+    }),
     updateImagePathEverywhere: vi.fn(async () => {
       if (overrides?.updateError) throw overrides.updateError;
       return { updatedCount: 1 };
@@ -72,8 +77,31 @@ describe("safe product primary-media replacement", () => {
       oldImagePath: "/media/old-liston.avif",
       newImagePath: result.publicUrl
     });
+    expect(deps.repository.insertPrimaryImage).not.toHaveBeenCalled();
     expect(deps.storage.remove).not.toHaveBeenCalled();
     expect(result.previousImagePath).toBe("/media/old-liston.avif");
+    expect(result.linkedImagesUpdated).toBe(1);
+  });
+
+  it("inserts a new primary image row when the product has none yet", async () => {
+    const deps = dependencies({ primaryImages: [] });
+    const result = await replacePrimaryProductImage(
+      {
+        productId,
+        familySlug: "cutters",
+        productSlug: "liston",
+        file: imageFile()
+      },
+      { ...deps, createObjectId: () => "new-object" }
+    );
+
+    expect(deps.repository.insertPrimaryImage).toHaveBeenCalledWith({
+      productId,
+      imagePath: result.publicUrl
+    });
+    expect(deps.repository.updateImagePathEverywhere).not.toHaveBeenCalled();
+    expect(deps.storage.remove).not.toHaveBeenCalled();
+    expect(result.previousImagePath).toBeNull();
     expect(result.linkedImagesUpdated).toBe(1);
   });
 
@@ -96,8 +124,7 @@ describe("safe product primary-media replacement", () => {
     expect(deps.storage.upload).not.toHaveBeenCalled();
   });
 
-  it("rejects missing or duplicate primary rows before upload", async () => {
-    const missing = dependencies({ primaryImages: [] });
+  it("rejects duplicate primary rows before upload", async () => {
     const duplicate = dependencies({
       primaryImages: [
         { id: "one", imagePath: "/media/one.avif" },
@@ -105,15 +132,13 @@ describe("safe product primary-media replacement", () => {
       ]
     });
 
-    for (const deps of [missing, duplicate]) {
-      await expect(
-        replacePrimaryProductImage(
-          { productId, familySlug: "cutters", productSlug: "liston", file: imageFile() },
-          { ...deps, createObjectId: () => "new-object" }
-        )
-      ).rejects.toThrow(/exactly one primary image/i);
-      expect(deps.storage.upload).not.toHaveBeenCalled();
-    }
+    await expect(
+      replacePrimaryProductImage(
+        { productId, familySlug: "cutters", productSlug: "liston", file: imageFile() },
+        { ...duplicate, createObjectId: () => "new-object" }
+      )
+    ).rejects.toThrow(/at most one primary image/i);
+    expect(duplicate.storage.upload).not.toHaveBeenCalled();
   });
 
   it("derives safe extensions from MIME and rejects invalid files", async () => {
@@ -155,6 +180,22 @@ describe("safe product primary-media replacement", () => {
         { ...deps, createObjectId: () => "new-object" }
       )
     ).rejects.toThrow("update failed");
+
+    expect(deps.storage.remove).toHaveBeenCalledWith(
+      `products/${productId}/new-object.png`
+    );
+    expect(deps.storage.remove).toHaveBeenCalledTimes(1);
+  });
+
+  it("removes only the newly uploaded object when the database insert fails", async () => {
+    const deps = dependencies({ primaryImages: [], insertError: new Error("insert failed") });
+
+    await expect(
+      replacePrimaryProductImage(
+        { productId, familySlug: "cutters", productSlug: "liston", file: imageFile() },
+        { ...deps, createObjectId: () => "new-object" }
+      )
+    ).rejects.toThrow("insert failed");
 
     expect(deps.storage.remove).toHaveBeenCalledWith(
       `products/${productId}/new-object.png`

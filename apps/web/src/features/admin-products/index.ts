@@ -4,3 +4,5 @@ export * from "./admin-product-editor-page";
 export * from "./admin-product-options";
 export * from "./admin-product-completeness";
 export * from "./admin-product-preview-states";
+export * from "./admin-product-create-form";
+export * from "./admin-product-create-page";

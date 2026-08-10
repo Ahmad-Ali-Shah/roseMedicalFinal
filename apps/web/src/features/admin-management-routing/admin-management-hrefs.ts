@@ -20,3 +20,5 @@ export function adminFamilyHref(familySlug: FamilySlug): Route<string> {
 export function adminCatalogueHref(familySlug: FamilySlug): Route<string> {
   return `/admin/catalogues/${familySlug}` as Route<string>;
 }
+
+export const adminNewProductHref = () => "/admin/products/new" as Route<string>;

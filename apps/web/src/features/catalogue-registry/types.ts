@@ -38,6 +38,7 @@ export interface CatalogueProductRecord {
   mediaIndex?: number;
   mediaSourceUrl?: string;
   mediaReviewNote?: string;
+  isActive?: boolean;
 }
 
 export type CatalogueRouteResult =

@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { clearCatalogueProjectionCache } from "@/features/catalogue-live/catalogue-live.cache";
 import { requireAdminUser } from "@/lib/supabase/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -77,6 +78,20 @@ export async function uploadProductMedia(formData: FormData) {
       }));
     },
 
+    async insertPrimaryImage({ productId: id, imagePath }) {
+      const { data, error } = await admin
+        .from("product_images")
+        .insert({ product_id: id, image_path: imagePath, sort_order: 0 })
+        .select("id")
+        .single();
+
+      if (error) {
+        throw new Error(`Primary image creation failed: ${error.message}`);
+      }
+
+      return { insertedId: data.id };
+    },
+
     async updateImagePathEverywhere({ oldImagePath, newImagePath }) {
       const { data, error } = await admin
         .from("product_images")
@@ -123,6 +138,169 @@ export async function uploadProductMedia(formData: FormData) {
     { productId, familySlug, productSlug, file: fileValue },
     { repository, storage }
   );
+
+  clearCatalogueProjectionCache();
+  revalidatePath("/");
+  revalidatePath("/products");
+  revalidatePath("/search");
+  revalidatePath(`/products/${familySlug}`);
+  revalidatePath(`/products/${familySlug}/${productSlug}`);
+  revalidatePath("/admin/products");
+  revalidatePath(`/admin/products/${familySlug}/${productSlug}`);
+}
+
+function slugify(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+export async function createProduct(formData: FormData) {
+  const familySlug = formString(formData, "family_slug");
+  const nameEn = formString(formData, "name_en");
+  const itemCode = formString(formData, "item_code");
+  const descriptionEn = formString(formData, "description_en");
+  const nameAr = formString(formData, "name_ar");
+  const requestedSlug = formString(formData, "slug");
+
+  if (!familySlug || !nameEn || !itemCode) {
+    throw new Error("Family, name, and item code are required.");
+  }
+
+  await requireAdminUser();
+  const admin = createAdminClient();
+
+  const { data: category, error: categoryError } = await admin
+    .from("categories")
+    .select("id")
+    .eq("slug", familySlug)
+    .maybeSingle();
+
+  if (categoryError) {
+    throw new Error(`Family lookup failed: ${categoryError.message}`);
+  }
+  if (!category) {
+    throw new Error(`Unknown family: ${familySlug}`);
+  }
+
+  const bareSlug = slugify(requestedSlug || itemCode || nameEn);
+  const slug = bareSlug ? `${familySlug}-${bareSlug}` : "";
+  if (!slug) {
+    throw new Error("Could not generate a valid slug from the item code or name.");
+  }
+
+  const { data: product, error: insertError } = await admin
+    .from("products")
+    .insert({
+      category_id: category.id,
+      item_code: itemCode,
+      name_en: nameEn,
+      name_ar: nameAr || nameEn,
+      description_en: descriptionEn || null,
+      is_active: false,
+      slug,
+      stock_status: "available",
+      sell_mode: "quote"
+    })
+    .select("id,slug")
+    .single();
+
+  if (insertError) {
+    if (insertError.code === "23505") {
+      throw new Error(`Slug "${slug}" is already used — try a different item code or name.`);
+    }
+    throw new Error(`Product creation failed: ${insertError.message}`);
+  }
+
+  clearCatalogueProjectionCache();
+  revalidatePath("/admin/products");
+
+  const createdFamilyPrefix = `${familySlug}-`;
+  const createdBareSlug = product.slug.startsWith(createdFamilyPrefix)
+    ? product.slug.slice(createdFamilyPrefix.length)
+    : product.slug;
+  redirect(`/admin/products/${familySlug}/${createdBareSlug}`);
+}
+
+export async function deleteProduct(formData: FormData) {
+  const productId = formString(formData, "product_id");
+  const familySlug = formString(formData, "family_slug");
+  const productSlug = formString(formData, "product_slug");
+  if (!productId) {
+    throw new Error("Missing product id.");
+  }
+  await requireAdminUser();
+  const admin = createAdminClient();
+
+  const { data: images } = await admin
+    .from("product_images")
+    .select("image_path")
+    .eq("product_id", productId);
+
+  if (images && images.length > 0) {
+    const paths = images.map((row) => row.image_path).filter(Boolean);
+    if (paths.length > 0) {
+      await admin.storage.from("product-media").remove(paths);
+    }
+  }
+
+  const { error: imagesError } = await admin
+    .from("product_images")
+    .delete()
+    .eq("product_id", productId);
+  if (imagesError) {
+    throw new Error(`Deleting product images failed: ${imagesError.message}`);
+  }
+
+  const { error: variantsError } = await admin
+    .from("product_variants")
+    .delete()
+    .eq("product_id", productId);
+  if (variantsError) {
+    throw new Error(`Deleting product variants failed: ${variantsError.message}`);
+  }
+
+  const { error: productError } = await admin
+    .from("products")
+    .delete()
+    .eq("id", productId);
+  if (productError) {
+    throw new Error(`Deleting product failed: ${productError.message}`);
+  }
+
+  clearCatalogueProjectionCache();
+  revalidatePath("/");
+  revalidatePath("/products");
+  revalidatePath("/search");
+  revalidatePath(`/products/${familySlug}`);
+  revalidatePath(`/products/${familySlug}/${productSlug}`);
+  revalidatePath("/admin/products");
+  revalidatePath(`/admin/products/${familySlug}/${productSlug}`);
+  redirect("/admin/products");
+}
+
+export async function activateProduct(formData: FormData) {
+  const productId = formString(formData, "product_id");
+  const familySlug = formString(formData, "family_slug");
+  const productSlug = formString(formData, "product_slug");
+
+  if (!productId) {
+    throw new Error("Missing product id.");
+  }
+
+  await requireAdminUser();
+  const admin = createAdminClient();
+
+  const { error } = await admin
+    .from("products")
+    .update({ is_active: true })
+    .eq("id", productId);
+
+  if (error) {
+    throw new Error(`Product activation failed: ${error.message}`);
+  }
 
   clearCatalogueProjectionCache();
   revalidatePath("/");

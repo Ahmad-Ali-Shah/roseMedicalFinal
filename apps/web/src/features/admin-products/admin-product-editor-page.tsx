@@ -1,4 +1,4 @@
-import { ButtonLink } from "@/components/ui";
+import { Button, ButtonLink } from "@/components/ui";
 import {
   AdminAlert,
   AdminFieldPreview,
@@ -14,6 +14,8 @@ import type { AdminProductEditorModel } from "./admin-product-model";
 import { AdminProductCompleteness } from "./admin-product-completeness";
 import { AdminProductOptions } from "./admin-product-options";
 import { ProductImageUploadForm } from "./product-image-upload-form";
+import { activateProduct } from "./actions";
+import { DeleteProductButton } from "./delete-product-button";
 
 export function AdminProductEditorPage({
   model
@@ -30,9 +32,27 @@ export function AdminProductEditorPage({
         description="This page reads the same canonical Supabase product record used by the public catalogue."
         actions={
           <>
-            <AdminStatusBadge tone="success">Live record</AdminStatusBadge>
+            {model.isActive ? (
+              <AdminStatusBadge tone="success">Live record</AdminStatusBadge>
+            ) : (
+              <>
+                <AdminStatusBadge tone="neutral">Draft — not public</AdminStatusBadge>
+                <form action={activateProduct}>
+                  <input type="hidden" name="product_id" value={product.id} />
+                  <input type="hidden" name="family_slug" value={product.familySlug} />
+                  <input type="hidden" name="product_slug" value={product.slug} />
+                  <Button type="submit">Activate product</Button>
+                </form>
+              </>
+            )}
             <ButtonLink href={model.publicHref} variant="secondary">View public product</ButtonLink>
             <ButtonLink href={model.publicFamilyHref} variant="quiet">View public family</ButtonLink>
+            <DeleteProductButton
+              productId={product.id}
+              productName={product.name}
+              familySlug={product.familySlug}
+              productSlug={product.slug}
+            />
           </>
         }
       />

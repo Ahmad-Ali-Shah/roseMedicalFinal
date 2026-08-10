@@ -88,12 +88,13 @@ export async function getAdminFamilyEditor(
       .eq("category_id", category.id)
       .order("name_en", { ascending: true });
 
+    const familyPrefix = `${slug}-`;
     products = (productRows || []).map((p) => ({
       id: p.id,
       name: p.name_en,
       code: p.item_code || "",
       familySlug: slug,
-      slug: p.slug
+      slug: p.slug.startsWith(familyPrefix) ? p.slug.slice(familyPrefix.length) : p.slug
     }));
   } else {
     products = CATALOGUE_PRODUCTS.filter((p) => p.familySlug === slug).map((p) => ({

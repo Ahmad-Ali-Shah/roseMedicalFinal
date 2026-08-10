@@ -37,6 +37,10 @@ export interface PrimaryProductImageRow {
 export interface ProductMediaWriteRepository {
   findProductIdentity(productId: string): Promise<ProductIdentityForMediaWrite | null>;
   findPrimaryImages(productId: string): Promise<readonly PrimaryProductImageRow[]>;
+  insertPrimaryImage(input: {
+    productId: string;
+    imagePath: string;
+  }): Promise<{ insertedId: string }>;
   updateImagePathEverywhere(input: {
     oldImagePath: string;
     newImagePath: string;
@@ -123,7 +127,7 @@ export async function replacePrimaryProductImage(
 ): Promise<{
   publicUrl: string;
   storagePath: string;
-  previousImagePath: string;
+  previousImagePath: string | null;
   linkedImagesUpdated: number;
 }> {
   const validated = validateInput(input);
@@ -132,7 +136,6 @@ export async function replacePrimaryProductImage(
 
   if (
     !identity ||
-    !identity.isActive ||
     identity.id !== input.productId ||
     identity.familySlug !== validated.familySlug ||
     identity.dbSlug !== expectedDbSlug
@@ -141,13 +144,13 @@ export async function replacePrimaryProductImage(
   }
 
   const primaryImages = await dependencies.repository.findPrimaryImages(input.productId);
-  if (primaryImages.length !== 1) {
+  if (primaryImages.length > 1) {
     throw new Error(
-      `Expected exactly one primary image row before replacement; found ${primaryImages.length}.`
+      `Expected at most one primary image row before replacement; found ${primaryImages.length}. Clean up duplicate product_images rows before uploading.`
     );
   }
 
-  const primaryImage = primaryImages[0]!;
+  const existingPrimaryImage = primaryImages[0] ?? null;
   const objectId = (dependencies.createObjectId ?? randomUUID)();
   const storagePath = `products/${input.productId}/${objectId}.${validated.extension}`;
   const uploaded = await dependencies.storage.upload({
@@ -158,11 +161,19 @@ export async function replacePrimaryProductImage(
 
   let linkedImagesUpdated: number;
   try {
-    const result = await dependencies.repository.updateImagePathEverywhere({
-      oldImagePath: primaryImage.imagePath,
-      newImagePath: uploaded.publicUrl
-    });
-    linkedImagesUpdated = result.updatedCount;
+    if (existingPrimaryImage) {
+      const result = await dependencies.repository.updateImagePathEverywhere({
+        oldImagePath: existingPrimaryImage.imagePath,
+        newImagePath: uploaded.publicUrl
+      });
+      linkedImagesUpdated = result.updatedCount;
+    } else {
+      await dependencies.repository.insertPrimaryImage({
+        productId: input.productId,
+        imagePath: uploaded.publicUrl
+      });
+      linkedImagesUpdated = 1;
+    }
   } catch (error) {
     try {
       await dependencies.storage.remove(storagePath);
@@ -178,7 +189,7 @@ export async function replacePrimaryProductImage(
   return {
     publicUrl: uploaded.publicUrl,
     storagePath,
-    previousImagePath: primaryImage.imagePath,
+    previousImagePath: existingPrimaryImage?.imagePath ?? null,
     linkedImagesUpdated
   };
 }

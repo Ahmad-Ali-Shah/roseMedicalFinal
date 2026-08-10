@@ -80,6 +80,30 @@ function primaryImageFor(
   return path;
 }
 
+/**
+ * Same lookup, but tolerant of zero images — used only for admin/inactive
+ * products, where a freshly created draft has no image yet. Still throws on
+ * more than one primary image (genuinely ambiguous state).
+ */
+function primaryImageForOptional(
+  product: LiveProductRow,
+  images: readonly LiveImageRow[]
+): string | undefined {
+  const primaryImages = images.filter(
+    (image) => image.product_id === product.id && image.sort_order === 0
+  );
+
+  if (primaryImages.length === 0) return undefined;
+  if (primaryImages.length > 1) {
+    throw new Error(
+      `[catalogue-migration] primary image mismatch for ${product.slug}: expected exactly one, found ${primaryImages.length}`
+    );
+  }
+
+  const path = primaryImages[0]!.image_path.trim();
+  return path || undefined;
+}
+
 function liveCatalogueCodesFor(
   productId: string,
   variants: readonly LiveVariantRow[]
@@ -130,19 +154,113 @@ function catalogueCodesFor(
   return expected ?? live;
 }
 
+function mapManifestProduct(
+  product: LiveProductRow,
+  entry: CatalogueMetadataManifestEntry,
+  categoriesById: ReadonlyMap<string, LiveCategoryRow>,
+  snapshot: LiveCatalogueSnapshot
+): CatalogueProductRecord {
+  const category = categoryFor(product, categoriesById);
+  validateIdentity(product, category, entry);
+
+  const description = product.description_en?.trim();
+  const mediaPath = primaryImageFor(product, snapshot.images);
+  const catalogueCodes = catalogueCodesFor(product, snapshot.variants, entry);
+
+  return {
+    id: product.id,
+    familySlug: entry.familySlug,
+    slug: entry.publicSlug,
+    name: product.name_en,
+    code: product.item_code!,
+    ...(description ? { description } : {}),
+    sizes: entry.metadata.sizes,
+    variants: entry.metadata.variants,
+    directions: entry.metadata.directions,
+    ...(entry.metadata.primaryOption
+      ? { primaryOption: entry.metadata.primaryOption }
+      : {}),
+    catalogueReference: {
+      family: category.name_en,
+      ...(entry.metadata.cataloguePage
+        ? { page: entry.metadata.cataloguePage }
+        : {})
+    },
+    mediaLabel: entry.metadata.mediaLabel,
+    ...(catalogueCodes.length ? { catalogueCodes } : {}),
+    mediaPath,
+    isActive: product.is_active
+  };
+}
+
+/**
+ * Active (or, when includeInactive is set, any) product with no manifest
+ * entry — a genuinely new product added via the admin "Add product" flow.
+ * Built directly from its own Supabase columns instead of the strict legacy
+ * parity check. Returns null (and warns) instead of throwing, so one
+ * incomplete draft never takes down the whole catalogue.
+ */
+function mapLiveOnlyProduct(
+  product: LiveProductRow,
+  categoriesById: ReadonlyMap<string, LiveCategoryRow>,
+  snapshot: LiveCatalogueSnapshot,
+  allowMissingImage: boolean
+): CatalogueProductRecord | null {
+  try {
+    const category = categoryFor(product, categoriesById);
+    const description = product.description_en?.trim();
+    const mediaPath = allowMissingImage
+      ? primaryImageForOptional(product, snapshot.images)
+      : primaryImageFor(product, snapshot.images);
+    const catalogueCodes = liveCatalogueCodesFor(product.id, snapshot.variants);
+    const sizes = Array.from(
+      new Set(catalogueCodes.map((option) => option.size).filter(Boolean))
+    );
+
+    const familyPrefix = `${category.slug}-`;
+    const bareSlug = product.slug.startsWith(familyPrefix)
+      ? product.slug.slice(familyPrefix.length)
+      : product.slug;
+    return {
+      id: product.id,
+      familySlug: category.slug as FamilySlug,
+      slug: bareSlug,
+      name: product.name_en,
+      code: product.item_code ?? "",
+      ...(description ? { description } : {}),
+      sizes,
+      variants: [],
+      directions: [],
+      catalogueReference: {
+        family: category.name_en
+      },
+      mediaLabel: product.name_en,
+      ...(catalogueCodes.length ? { catalogueCodes } : {}),
+      ...(mediaPath ? { mediaPath } : {}),
+      isActive: product.is_active
+    };
+  } catch (error) {
+    console.warn(
+      `[catalogue-live] skipping live-only product ${product.slug}: ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    );
+    return null;
+  }
+}
+
 export function mapLiveCatalogue(
   snapshot: LiveCatalogueSnapshot,
-  manifest: readonly CatalogueMetadataManifestEntry[]
+  manifest: readonly CatalogueMetadataManifestEntry[],
+  options?: { includeInactive?: boolean }
 ): readonly CatalogueProductRecord[] {
-  const activeProducts = snapshot.products.filter((product) => product.is_active);
-  if (activeProducts.length !== manifest.length) {
-    throw new Error(
-      `[catalogue-migration] product count mismatch: live=${activeProducts.length} manifest=${manifest.length}`
-    );
-  }
+  const includeInactive = options?.includeInactive ?? false;
+  const eligibleProducts = includeInactive
+    ? snapshot.products
+    : snapshot.products.filter((product) => product.is_active);
 
-  const productsBySlug = new Map(activeProducts.map((product) => [product.slug, product] as const));
-  if (productsBySlug.size !== activeProducts.length) {
+  const productsBySlug = new Map(eligibleProducts.map((product) => [product.slug, product] as const));
+  if (productsBySlug.size !== eligibleProducts.length) {
     throw new Error("[catalogue-migration] duplicate live product slug detected");
   }
 
@@ -151,51 +269,27 @@ export function mapLiveCatalogue(
     throw new Error("[catalogue-migration] duplicate manifest product slug detected");
   }
 
-  for (const product of activeProducts) {
-    if (!manifestBySlug.has(product.slug)) {
-      throw new Error(`[catalogue-migration] live product missing from manifest: ${product.slug}`);
-    }
-  }
-
   const categoriesById = new Map(
     snapshot.categories.map((category) => [category.id, category] as const)
   );
 
-  return manifest.map((entry): CatalogueProductRecord => {
+  // Legacy path: every manifest entry must still resolve to a matching, valid
+  // live product — strict validation, unchanged from before.
+  const manifestResults = manifest.map((entry): CatalogueProductRecord => {
     const product = productsBySlug.get(entry.dbSlug);
     if (!product) {
       throw new Error(`[catalogue-migration] manifest product missing from live data: ${entry.dbSlug}`);
     }
-
-    const category = categoryFor(product, categoriesById);
-    validateIdentity(product, category, entry);
-
-    const description = product.description_en?.trim();
-    const mediaPath = primaryImageFor(product, snapshot.images);
-    const catalogueCodes = catalogueCodesFor(product, snapshot.variants, entry);
-
-    return {
-      id: product.id,
-      familySlug: entry.familySlug,
-      slug: entry.publicSlug,
-      name: product.name_en,
-      code: product.item_code!,
-      ...(description ? { description } : {}),
-      sizes: entry.metadata.sizes,
-      variants: entry.metadata.variants,
-      directions: entry.metadata.directions,
-      ...(entry.metadata.primaryOption
-        ? { primaryOption: entry.metadata.primaryOption }
-        : {}),
-      catalogueReference: {
-        family: category.name_en,
-        ...(entry.metadata.cataloguePage
-          ? { page: entry.metadata.cataloguePage }
-          : {})
-      },
-      mediaLabel: entry.metadata.mediaLabel,
-      ...(catalogueCodes.length ? { catalogueCodes } : {}),
-      mediaPath
-    };
+    return mapManifestProduct(product, entry, categoriesById, snapshot);
   });
+
+  // Live-only path: active (or, in admin mode, any eligible) products with no
+  // manifest entry no longer crash anything — they're built straight from
+  // their own Supabase data instead.
+  const liveOnlyResults = eligibleProducts
+    .filter((product) => !manifestBySlug.has(product.slug))
+    .map((product) => mapLiveOnlyProduct(product, categoriesById, snapshot, includeInactive))
+    .filter((record): record is CatalogueProductRecord => record !== null);
+
+  return [...manifestResults, ...liveOnlyResults];
 }

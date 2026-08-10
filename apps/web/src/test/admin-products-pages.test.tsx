@@ -45,9 +45,10 @@ describe("F3E-B product pages", () => {
     expect(listPage).not.toContain("?category=");
   });
 
-  it("keeps product creation disabled until the canonical create workflow exists", () => {
+  it("wires product creation to a real add-product workflow", () => {
     const listPage = source("src/features/admin-products/admin-products-list-page.tsx");
-    expect(listPage).toContain("<Button disabled>Add product</Button>");
+    expect(listPage).toContain("adminNewProductHref()");
+    expect(listPage).toContain("Add product");
     expect(listPage).toContain("Live canonical catalogue");
   });
 
@@ -72,8 +73,7 @@ describe("F3E-B product pages", () => {
       "Save draft",
       "Submit for review",
       "Publish",
-      "Archive",
-      "Delete product"
+      "Archive"
     ]) {
       expect(html).not.toContain(label);
     }

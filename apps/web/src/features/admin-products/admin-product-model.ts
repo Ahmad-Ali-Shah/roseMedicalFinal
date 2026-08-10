@@ -41,6 +41,7 @@ export interface AdminProductCompletenessItem {
 export interface AdminProductEditorModel {
   family: CatalogueFamilyRecord;
   product: CatalogueProductRecord;
+  isActive: boolean;
   publicHref: ReturnType<typeof productHref>;
   publicFamilyHref: ReturnType<typeof familyHref>;
   adminCatalogueHref: ReturnType<typeof adminCatalogueHref>;
@@ -146,6 +147,7 @@ export function getAdminProductEditor(
   return {
     family,
     product,
+    isActive: product.isActive ?? true,
     publicHref: productHref(product),
     publicFamilyHref: familyHref(family.slug),
     adminCatalogueHref: adminCatalogueHref(family.slug),

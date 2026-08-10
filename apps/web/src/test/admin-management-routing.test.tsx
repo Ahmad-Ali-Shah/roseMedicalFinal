@@ -30,10 +30,14 @@ describe("F3E-B management routing", () => {
     { segments: ["families", "knives", "extra"] },
     { segments: ["catalogues", "knives", "extra"] },
     { segments: ["media", "extra"] },
-    { segments: ["products", "scissors", "scalpel-handle-no-3"] },
     { segments: ["unknown"] }
   ] as const)("returns not-found for unsupported shape $segments", ({ segments }) => {
     expect(resolveAdminManagementRoute(segments).kind).toBe("not-found");
+  });
+
+  it("resolves any syntactically valid product route regardless of existence (existence is resolved later via the page's own Supabase read)", () => {
+    expect(resolveAdminManagementRoute(["products", "scissors", "scalpel-handle-no-3"]).kind).toBe("product");
+    expect(resolveAdminManagementRoute(["products", "cutters", "not-a-real-product"]).kind).toBe("product");
   });
 
   it("identifies only the four F3E-B roots", () => {

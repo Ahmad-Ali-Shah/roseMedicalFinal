@@ -9,6 +9,7 @@ import {
   ContactSuccessPreview,
   ContactValidationPreview
 } from "@/features/contact-preview";
+import { renderServerComponent } from "@/test/render-server-component";
 
 describe("F3D contact normal state", () => {
   it("centralizes complete example contact values", () => {
@@ -21,8 +22,8 @@ describe("F3D contact normal state", () => {
     ]);
   });
 
-  it("renders one heading, actionable details, the connected form, and Riyadh map", () => {
-    const html = renderToStaticMarkup(<ContactPage />);
+  it("renders one heading, actionable details, the connected form, and Riyadh map", async () => {
+    const html = await renderServerComponent(<ContactPage />);
 
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
     expect(html).toContain("General contact form");

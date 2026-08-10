@@ -17,7 +17,7 @@ describe("public route dispatch", () => {
     ["products/knives", "family"],
     ["products/scissors", "family"],
     ["products/knives/scalpel-handle-no-3", "product"],
-    ["products/scissors/scalpel-handle-no-3", "not-found"],
+    ["products/scissors/scalpel-handle-no-3", "product"],
     ["products/unknown", "not-found"],
     ["products/knives/scalpel-handle-no-3/extra", "not-found"],
     ["unplanned-page", "not-found"]

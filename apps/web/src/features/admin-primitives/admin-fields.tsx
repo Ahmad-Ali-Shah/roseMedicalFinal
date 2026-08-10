@@ -146,3 +146,125 @@ export function AdminLocaleFieldPair({
     </div>
   );
 }
+
+export interface AdminFieldProps {
+  id: string;
+  name: string;
+  label: string;
+  defaultValue?: string;
+  placeholder?: string;
+  type?: "text" | "email" | "password" | "url";
+  hint?: string;
+  error?: string;
+  direction?: "ltr" | "rtl";
+  required?: boolean;
+}
+
+export function AdminField({
+  id,
+  name,
+  label,
+  defaultValue = "",
+  placeholder,
+  type = "text",
+  hint,
+  error,
+  direction = "ltr",
+  required = false
+}: AdminFieldProps) {
+  return (
+    <div className="admin-field-preview" dir={direction}>
+      <label htmlFor={id}>{label}</label>
+      <input
+        id={id}
+        name={name}
+        type={type}
+        defaultValue={defaultValue}
+        placeholder={placeholder}
+        required={required}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={descriptionIds(id, hint, error)}
+      />
+      {hint ? <p className="field__hint" id={`${id}-hint`}>{hint}</p> : null}
+      {error ? <p className="field__error" id={`${id}-error`} role="alert">{error}</p> : null}
+    </div>
+  );
+}
+
+export interface AdminTextareaFieldProps extends Omit<AdminFieldProps, "type"> {
+  rows?: number;
+}
+
+export function AdminTextareaField({
+  id,
+  name,
+  label,
+  defaultValue = "",
+  placeholder,
+  hint,
+  error,
+  direction = "ltr",
+  required = false,
+  rows = 6
+}: AdminTextareaFieldProps) {
+  return (
+    <div className="admin-field-preview" dir={direction}>
+      <label htmlFor={id}>{label}</label>
+      <textarea
+        id={id}
+        name={name}
+        defaultValue={defaultValue}
+        placeholder={placeholder}
+        rows={rows}
+        required={required}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={descriptionIds(id, hint, error)}
+      />
+      {hint ? <p className="field__hint" id={`${id}-hint`}>{hint}</p> : null}
+      {error ? <p className="field__error" id={`${id}-error`} role="alert">{error}</p> : null}
+    </div>
+  );
+}
+
+export interface AdminSelectFieldOption {
+  value: string;
+  label: string;
+}
+
+export interface AdminSelectFieldProps {
+  id: string;
+  name: string;
+  label: string;
+  options: readonly AdminSelectFieldOption[];
+  defaultValue?: string;
+  hint?: string;
+  required?: boolean;
+}
+
+export function AdminSelectField({
+  id,
+  name,
+  label,
+  options,
+  defaultValue,
+  hint,
+  required = false
+}: AdminSelectFieldProps) {
+  return (
+    <div className="admin-field-preview">
+      <label htmlFor={id}>{label}</label>
+      <select
+        id={id}
+        name={name}
+        defaultValue={defaultValue ?? options[0]?.value ?? ""}
+        required={required}
+        aria-describedby={hint ? `${id}-hint` : undefined}
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>{option.label}</option>
+        ))}
+      </select>
+      {hint ? <p className="field__hint" id={`${id}-hint`}>{hint}</p> : null}
+    </div>
+  );
+}

@@ -133,7 +133,8 @@ const FEATURED_MANIFEST: readonly CatalogueMetadataManifestEntry[] =
 
 export async function loadCatalogueProducts(
   reader: CatalogueSnapshotReader,
-  manifest: readonly CatalogueMetadataManifestEntry[] = CATALOGUE_METADATA_MANIFEST
+  manifest: readonly CatalogueMetadataManifestEntry[] = CATALOGUE_METADATA_MANIFEST,
+  options?: { includeInactive?: boolean }
 ): Promise<readonly CatalogueProductRecord[]> {
   let snapshot: LiveCatalogueSnapshot;
   try {
@@ -144,7 +145,7 @@ export async function loadCatalogueProducts(
   }
 
   try {
-    return mapLiveCatalogue(snapshot, manifest);
+    return mapLiveCatalogue(snapshot, manifest, options);
   } catch (error) {
     throw new CatalogueLiveParityError(messageFrom(error), { cause: error });
   }
@@ -269,6 +270,79 @@ export async function getLiveCatalogueProducts(): Promise<
   return loadCatalogueProducts(supabaseCatalogueReader);
 }
 
+const adminCatalogueReader: CatalogueSnapshotReader = {
+  async read(): Promise<LiveCatalogueSnapshot> {
+    const supabase = await createClient();
+    const [productsResult, categoriesResult, variantsResult, imagesResult] =
+      await Promise.all([
+        supabase
+          .from("products")
+          .select(
+            "id,category_id,item_code,name_en,description_en,is_active,slug,created_at"
+          ),
+        supabase
+          .from("categories")
+          .select("id,slug,name_en,is_active,deleted_at")
+          .eq("is_active", true)
+          .is("deleted_at", null),
+        supabase
+          .from("product_variants")
+          .select("product_id,sku,size,variant_type,created_at")
+          .order("created_at", { ascending: true }),
+        supabase
+          .from("product_images")
+          .select("product_id,image_path,sort_order")
+          .order("sort_order", { ascending: true })
+      ]);
+
+    return {
+      products: requireSuccessfulRead(
+        "products",
+        productsResult as {
+          data: LiveProductRow[] | null;
+          error: { message?: string } | null;
+        }
+      ),
+      categories: requireSuccessfulRead(
+        "categories",
+        categoriesResult as {
+          data: LiveCategoryRow[] | null;
+          error: { message?: string } | null;
+        }
+      ),
+      variants: requireSuccessfulRead(
+        "product_variants",
+        variantsResult as {
+          data: LiveVariantRow[] | null;
+          error: { message?: string } | null;
+        }
+      ),
+      images: requireSuccessfulRead(
+        "product_images",
+        imagesResult as {
+          data: LiveImageRow[] | null;
+          error: { message?: string } | null;
+        }
+      )
+    };
+  }
+};
+
+/**
+ * Admin-only: includes inactive (draft) products, so a freshly created
+ * product's editor page can be found and rendered before it's activated.
+ * Never used on public-facing routes.
+ */
+export async function getAdminCatalogueProducts(): Promise<
+  readonly CatalogueProductRecord[]
+> {
+  return loadCatalogueProducts(
+    adminCatalogueReader,
+    CATALOGUE_METADATA_MANIFEST,
+    { includeInactive: true }
+  );
+}
+
 export async function getFeaturedCatalogueProducts(): Promise<
   readonly CatalogueProductRecord[]
 > {
@@ -341,7 +415,17 @@ export async function getProductCatalogueContext(
 ): Promise<readonly CatalogueProductRecord[]> {
   if (!isFamilySlug(familySlug) || !productSlug.trim()) return [];
   const manifest = productContextManifest(familySlug, productSlug);
-  if (manifest.length === 0) return [];
+
+  // Live-only products (created via the admin "Add product" flow, never
+  // added to the static manifest) are stored with a `${family}-${slug}`
+  // dbSlug convention -- see mapLiveOnlyProduct in map-live-product.ts.
+  // Always include that candidate slug so a live-only product still
+  // resolves even when it has no manifest entry at all.
+  const liveOnlyDbSlug = `${familySlug}-${productSlug}`;
+  const manifestSlugs = manifest.map((entry) => entry.dbSlug);
+  const targetSlugs = Array.from(
+    new Set([...manifestSlugs, productSlug, liveOnlyDbSlug])
+  );
 
   return withInfrastructureFallback(
     `product ${familySlug}/${productSlug}`,
@@ -360,10 +444,7 @@ export async function getProductCatalogueContext(
                 .eq("category.is_active", true)
                 .is("category.deleted_at", null)
                 .eq("category.slug", familySlug)
-                .in(
-                  "slug",
-                  manifest.map((entry) => entry.dbSlug)
-                );
+                .in("slug", targetSlugs);
               return {
                 data: data as unknown as readonly LiveProductProjectionRow[] | null,
                 error

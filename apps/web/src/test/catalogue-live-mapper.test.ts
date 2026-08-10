@@ -176,7 +176,7 @@ describe("live catalogue mapper", () => {
     const changed = snapshot();
     changed.products = changed.products.slice(0, 1);
 
-    expect(() => mapLiveCatalogue(changed, manifest)).toThrow(/product count mismatch/i);
+    expect(() => mapLiveCatalogue(changed, manifest)).toThrow(/manifest product missing from live data/i);
   });
 
   it("does not use item code as product identity", () => {

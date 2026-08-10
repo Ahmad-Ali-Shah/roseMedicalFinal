@@ -31,7 +31,7 @@ describe("canonical Product Admin models", () => {
     });
     expect(
       resolveAdminManagementRoute(["products", "cutters", "not-a-real-product"])
-    ).toEqual({ kind: "not-found" });
+    ).toEqual({ kind: "product", familySlug: "cutters", productSlug: "not-a-real-product" });
   });
 
   it("builds list rows from canonical product media and documented options", () => {
