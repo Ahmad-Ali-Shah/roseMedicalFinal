@@ -78,6 +78,20 @@ export async function uploadProductMedia(formData: FormData) {
       }));
     },
 
+    async insertPrimaryImage({ productId: id, imagePath }) {
+      const { data, error } = await admin
+        .from("product_images")
+        .insert({ product_id: id, image_path: imagePath, sort_order: 0 })
+        .select("id")
+        .single();
+
+      if (error) {
+        throw new Error(`Primary image creation failed: ${error.message}`);
+      }
+
+      return { insertedId: data.id };
+    },
+
     async updateImagePathEverywhere({ oldImagePath, newImagePath }) {
       const { data, error } = await admin
         .from("product_images")
@@ -203,7 +217,11 @@ export async function createProduct(formData: FormData) {
   clearCatalogueProjectionCache();
   revalidatePath("/admin/products");
 
-  redirect(`/admin/products/${familySlug}/${product.slug}`);
+  const createdFamilyPrefix = `${familySlug}-`;
+  const createdBareSlug = product.slug.startsWith(createdFamilyPrefix)
+    ? product.slug.slice(createdFamilyPrefix.length)
+    : product.slug;
+  redirect(`/admin/products/${familySlug}/${createdBareSlug}`);
 }
 
 export async function deleteProduct(formData: FormData) {
