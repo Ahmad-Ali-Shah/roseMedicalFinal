@@ -423,9 +423,9 @@ export async function getProductCatalogueContext(
   // resolves even when it has no manifest entry at all.
   const liveOnlyDbSlug = `${familySlug}-${productSlug}`;
   const manifestSlugs = manifest.map((entry) => entry.dbSlug);
-  const targetSlugs = manifestSlugs.includes(liveOnlyDbSlug)
-    ? manifestSlugs
-    : [...manifestSlugs, liveOnlyDbSlug];
+  const targetSlugs = Array.from(
+    new Set([...manifestSlugs, productSlug, liveOnlyDbSlug])
+  );
 
   return withInfrastructureFallback(
     `product ${familySlug}/${productSlug}`,
