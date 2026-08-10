@@ -13,6 +13,6 @@ describe("public product route classification", () => {
   it("recognizes fixed family routes and rejects unknown product routes", () => {
     expect(resolvePublicPageKind("products/cutters")).toBe("family");
     expect(resolvePublicPageKind("products/not-a-family")).toBe("not-found");
-    expect(resolvePublicPageKind("products/cutters/not-a-real-product")).toBe("not-found");
+    expect(resolvePublicPageKind("products/cutters/not-a-real-product")).toBe("product");
   });
 });

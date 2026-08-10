@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import { AboutPage } from "@/features/about";
 import { CataloguesPage } from "@/features/catalogues";
-import { CATALOGUE_METADATA_MANIFEST } from "@/features/catalogue-migration/catalogue-metadata-manifest";
 import { ContactPage } from "@/features/contact-preview";
 import { FamilyListingPage } from "@/features/family-listing/family-listing-page";
 import { Homepage } from "@/features/homepage/homepage";
@@ -42,11 +41,13 @@ function isKnownProductRoute(
   familySlug: string | undefined,
   productSlug: string | undefined
 ): boolean {
-  if (!familySlug || !productSlug) return false;
-  return CATALOGUE_METADATA_MANIFEST.some(
-    (entry) =>
-      entry.familySlug === familySlug && entry.publicSlug === productSlug
-  );
+  // Route SHAPE only: a known family slug plus a non-empty product slug is
+  // enough to hand off to ProductDetailPage, which resolves existence
+  // against live Supabase (including live-only products with no static
+  // manifest entry). ProductDetailPage calls notFound() itself when the
+  // slug doesn't resolve to a real product.
+  if (!familySlug || !productSlug || !productSlug.trim()) return false;
+  return isKnownFamilyRoute(familySlug);
 }
 
 export function resolvePublicPageKind(key: string): PublicPageKind {
