@@ -82,7 +82,7 @@ export function HomeFamilyGallery({
                   alt={publicMediaAlt(family.media, locale)}
                   aspect="portrait"
                   focalPoint={cover.focalPoint}
-                  fit="contain"
+                  fit="cover"
                   tone="light"
                   overlay="none"
                   mediaSlot={`homepage-family-${family.slug}`}
