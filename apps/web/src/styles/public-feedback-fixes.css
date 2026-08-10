@@ -79,49 +79,74 @@
   }
 }
 
-@media (hover: hover) and (pointer: fine) {
-  @container (min-width: 56rem) {
-    .home-family-gallery .home-family-gallery__panel:first-child {
-      flex-grow: 1;
-    }
-
-    .home-family-gallery .home-family-gallery__panel[data-active="true"] {
-      flex-grow: 2.8;
-    }
-
-    .home-family-gallery__panel[data-active="true"] .home-family-gallery__media .media-frame__image {
-      transform: scale(1.025);
-    }
-  }
+/* Homepage family catalogue covers: a straightforward responsive catalogue
+   grid. Every cover keeps its full portrait artwork; the only desktop effect
+   is a clearly visible image zoom on hover/focus. */
+.home-family-gallery-shell {
+  overflow: visible;
 }
 
-/* Owner-approved portrait-cover treatment: the catalogue artwork stays fully
-   visible. The active cover grows into the hero of the rail while the remaining
-   covers stay intentionally small instead of being horizontally cropped. */
-.home-family-gallery__panel {
+.home-family-gallery {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(0.85rem, 1.5vw, 1.35rem);
+  height: auto;
+  overflow: visible;
+  padding: 0;
+  scroll-snap-type: none;
+}
+
+.home-family-gallery__panel,
+.home-family-gallery .home-family-gallery__panel:first-child,
+.home-family-gallery:has(.home-family-gallery__panel:hover, .home-family-gallery__panel:focus-within) .home-family-gallery__panel {
+  min-width: 0;
+  width: auto;
   height: auto;
   aspect-ratio: 0.71 / 1;
-  background: transparent;
-  border-radius: 0.45rem;
+  flex: none;
+  opacity: 1;
+  overflow: hidden;
+  border-radius: 0.35rem;
+  background: var(--color-paper);
+  scroll-snap-align: none;
+  transition: none;
 }
 
 .home-family-gallery__link {
-  background: var(--color-paper);
-  border: 1px solid color-mix(in srgb, var(--color-border) 82%, transparent);
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-border) 84%, transparent);
   border-radius: inherit;
+  background: var(--color-paper);
+  color: inherit;
+  text-decoration: none;
+  box-shadow: 0 0.35rem 1.25rem rgb(17 24 39 / 0.055);
 }
 
+.home-family-gallery__media,
 .home-family-gallery__media--catalogue-cover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto !important;
   background: var(--color-paper);
 }
 
-.home-family-gallery__media--catalogue-cover .media-frame__image,
-.home-family-gallery__link:hover .home-family-gallery__media--catalogue-cover .media-frame__image,
-.home-family-gallery__link:focus-visible .home-family-gallery__media--catalogue-cover .media-frame__image,
-.home-family-gallery__panel[data-active="true"] .home-family-gallery__media--catalogue-cover .media-frame__image {
+.home-family-gallery__media--catalogue-cover .media-frame__image {
   object-fit: contain !important;
   object-position: 50% 50% !important;
-  transform: none !important;
+  transform: scale(1);
+  transition: transform 320ms var(--motion-ease-standard);
+  transform-origin: center center;
+}
+
+.home-family-gallery__link:hover .home-family-gallery__media--catalogue-cover .media-frame__image,
+.home-family-gallery__link:focus-visible .home-family-gallery__media--catalogue-cover .media-frame__image {
+  transform: scale(1.11);
 }
 
 .home-family-gallery__shade {
@@ -140,63 +165,26 @@
   border: 0;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  @container (min-width: 56rem) {
-    .home-family-gallery {
-      height: clamp(31rem, 48vw, 40rem);
-      gap: clamp(0.6rem, 1vw, 0.85rem);
-      align-items: stretch;
-    }
-
-    .home-family-gallery__panel,
-    .home-family-gallery .home-family-gallery__panel:first-child,
-    .home-family-gallery:has(.home-family-gallery__panel:hover, .home-family-gallery__panel:focus-within) .home-family-gallery__panel {
-      flex: 0.65 1 0;
-      height: 100%;
-      aspect-ratio: auto;
-      opacity: 0.76;
-      transition:
-        flex-grow var(--motion-section) var(--motion-ease-emphasized),
-        opacity var(--motion-component) var(--motion-ease-standard);
-    }
-
-    .home-family-gallery .home-family-gallery__panel[data-active="true"],
-    .home-family-gallery:has(.home-family-gallery__panel:hover, .home-family-gallery__panel:focus-within) .home-family-gallery__panel:hover,
-    .home-family-gallery:has(.home-family-gallery__panel:hover, .home-family-gallery__panel:focus-within) .home-family-gallery__panel:focus-within {
-      flex-grow: 2.8;
-      opacity: 1;
-    }
-
-    .home-family-gallery__link {
-      box-shadow: 0 0.75rem 2.25rem rgb(17 24 39 / 0.06);
-      transition:
-        box-shadow var(--motion-component) var(--motion-ease-standard),
-        border-color var(--motion-component) var(--motion-ease-standard);
-    }
-
-    .home-family-gallery__panel[data-active="true"] .home-family-gallery__link {
-      border-color: color-mix(in srgb, var(--color-rosa-red) 22%, var(--color-border));
-      box-shadow: 0 1.1rem 3rem rgb(17 24 39 / 0.1);
-    }
+@media (max-width: 64rem) {
+  .home-family-gallery {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 56rem), (hover: none), (pointer: coarse) {
+@media (max-width: 40rem) {
   .home-family-gallery {
-    gap: clamp(0.85rem, 3vw, 1.1rem);
-    align-items: stretch;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(0.7rem, 3vw, 1rem);
   }
+}
 
-  .home-family-gallery__panel {
-    flex: 0 0 min(78vw, 22rem);
-    aspect-ratio: 0.71 / 1;
-    opacity: 1;
+@media (max-width: 25rem) {
+  .home-family-gallery {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .home-family-gallery__panel,
-  .home-family-gallery__link,
   .home-family-gallery__media--catalogue-cover .media-frame__image {
     transition: none !important;
     transform: none !important;
