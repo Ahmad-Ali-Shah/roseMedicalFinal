@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactElement } from "react";
+import type { ReactElement } from "react";
 import { MediaFrame } from "@/features/motion";
 import { LocaleLink, type PublicLocale } from "@/features/localization";
 import { publicMediaAlt } from "@/features/public-media";
@@ -54,9 +54,6 @@ export function HomeFamilyGallery({
   locale?: PublicLocale;
 }): ReactElement {
   const orderedFamilies = inApprovedFamilyOrder(families);
-  const [activeFamily, setActiveFamily] = useState(
-    () => orderedFamilies[0]?.slug ?? "knives"
-  );
 
   return (
     <div className="home-family-gallery-shell">
@@ -74,9 +71,6 @@ export function HomeFamilyGallery({
               className="home-family-gallery__panel"
               data-family-panel
               data-family={family.slug}
-              data-active={family.slug === activeFamily ? "true" : "false"}
-              onMouseEnter={() => setActiveFamily(family.slug)}
-              onFocusCapture={() => setActiveFamily(family.slug)}
             >
               <LocaleLink
                 className="home-family-gallery__link"
@@ -94,7 +88,7 @@ export function HomeFamilyGallery({
                   mediaSlot={`homepage-family-${family.slug}`}
                   className="home-family-gallery__media home-family-gallery__media--catalogue-cover"
                   quality={92}
-                  sizes="(max-width: 56rem) 78vw, 30vw"
+                  sizes="(max-width: 40rem) 46vw, (max-width: 64rem) 30vw, 18vw"
                 />
                 <h3 className="home-family-gallery__title home-family-gallery__title--cover">
                   {family.name}
