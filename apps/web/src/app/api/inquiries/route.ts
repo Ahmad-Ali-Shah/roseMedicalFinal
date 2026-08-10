@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireApiOwner, requireApiUser } from "@/lib/supabase/api-auth";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -8,7 +9,8 @@ export async function GET(req: Request) {
 
   if (!auth.ok) return auth.response;
 
-  let query = auth.supabase
+  const database = scope === "mine" ? auth.supabase : createAdminClient();
+  let query = database
     .from("quote_requests")
     .select("*")
     .order("created_at", { ascending: false });
@@ -16,7 +18,7 @@ export async function GET(req: Request) {
   if (scope === "mine") {
     query = query.eq("user_id", auth.user.id);
   } else {
-    const search = searchParams.get("search") || "";
+    const search = (searchParams.get("search") || "").replace(/[%,().]/g, " ").trim();
     const status = searchParams.get("status") || "All inquiry states";
 
     if (search) {

@@ -7,13 +7,13 @@ import {
 import {
   AdminFamiliesPage,
   AdminFamilyEditorPage,
-  getAdminFamilyEditor
+  getAdminFamilyEditor,
+  getLiveAdminFamilyRows
 } from "@/features/admin-families";
 import {
   getAdminCatalogueProducts,
   getProductByPublicRoute
 } from "@/features/catalogue-live";
-import { AdminMediaPage } from "@/features/admin-media";
 import {
   AdminProductCreatePage,
   AdminProductEditorPage,
@@ -43,7 +43,8 @@ export async function AdminManagementRouteView({
 
       const model = getAdminProductEditor(product);
       if (!model) notFound();
-      return <AdminProductEditorPage model={model} />;
+      const families = await getLiveAdminFamilyRows();
+      return <AdminProductEditorPage model={model} families={families} />;
     }
     case "families":
       return <AdminFamiliesPage />;
@@ -59,8 +60,6 @@ export async function AdminManagementRouteView({
       if (!model) notFound();
       return <AdminCatalogueDetailPage model={model} />;
     }
-    case "media":
-      return <AdminMediaPage />;
     case "not-found":
       notFound();
   }

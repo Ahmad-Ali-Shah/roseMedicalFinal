@@ -7,10 +7,6 @@ import {
   AdminToolbar
 } from "@/features/admin-primitives/admin-controls";
 import { AdminSection } from "@/features/admin-primitives/admin-section";
-import {
-  AdminFieldPreview,
-  AdminTextareaPreview
-} from "@/features/admin-primitives/admin-fields";
 import { familyHref, productHref } from "@/features/public-catalogue";
 import {
   getAdminContentBlocks,
@@ -34,8 +30,6 @@ const PROTECTED_LAYOUT_ITEMS = [
   "HTML",
   "CSS"
 ] as const;
-
-const safeId = (value: string) => value.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
 
 import { saveSiteContent } from "./actions";
 

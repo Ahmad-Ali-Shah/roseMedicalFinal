@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getFamilyListingModel, getProductDetailModel } from "@/features/catalogue-registry";
+import { getProductCatalogueContext } from "@/features/catalogue-live";
 import {
   resolvePublicPage,
   resolvePublicPageKind
@@ -134,7 +135,15 @@ export default async function Page({
   const path = `/${key}`;
   const title = routeTitles[key] ?? (segments.at(-1)?.replaceAll("-", " ") || "Homepage");
 
-  if (resolvePublicPageKind(key) === "not-found") notFound();
+  const kind = resolvePublicPageKind(key);
+  if (kind === "not-found") notFound();
+  if (kind === "product") {
+    const products = await getProductCatalogueContext(
+      segments[1] ?? "",
+      segments[2] ?? ""
+    );
+    if (!products.length) notFound();
+  }
   const page = resolvePublicPage({ key, path, title, searchQuery, locale });
   if (!page) notFound();
   return <div className="public-locale-boundary" data-locale={locale} lang={locale} dir={locale === "ar" ? "rtl" : "ltr"}>{page}</div>;

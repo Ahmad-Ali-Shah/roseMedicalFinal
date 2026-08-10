@@ -26,7 +26,8 @@ describe("F3E-D Contact Details", () => {
   it("renders the centralized example contact data without exposing public actions in admin", async () => {
     const html = await renderServerComponent(<AdminContactDetailsPage />);
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
-    expect(html).toContain("Centralized business contact management.");
+    expect(html).toContain("Manage contact details.");
+    expect(html).toContain("info@rosamedical.org");
     expect(html).not.toContain("data-preview-only");
     expect(html).toContain("<form");
   });

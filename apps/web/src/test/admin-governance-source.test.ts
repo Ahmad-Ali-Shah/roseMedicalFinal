@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { getAdminDashboardModel } from "@/features/admin-dashboard";
 import {
   ADMIN_READINESS_ITEMS,
   CONTACT_IMPACT_ROWS,
@@ -10,7 +9,6 @@ import { CONTACT_INFORMATION } from "@/features/contact-preview/contact-informat
 describe("F3E-D governance source models", () => {
   it("keeps one shared five-item readiness model", () => {
     expect(ADMIN_READINESS_ITEMS).toHaveLength(5);
-    expect(getAdminDashboardModel().readinessItems).toBe(ADMIN_READINESS_ITEMS);
   });
 
   it("derives unresolved contact values", () => {

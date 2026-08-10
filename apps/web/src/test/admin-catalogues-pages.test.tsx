@@ -17,20 +17,20 @@ describe("F3E-B catalogue pages", () => {
     const html = await renderServerComponent(<AdminCataloguesPage />);
     const normalizedHtml = html.replaceAll("<!-- -->", "");
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
-    expect(html).toContain("Maintain technical document records.");
-    expect(normalizedHtml).toContain("Showing 0 live catalogue records from Supabase.");
+    expect(html).toContain("Browse technical catalogues.");
+    expect(normalizedHtml).toContain("family catalogues are available");
     expect(html).not.toMatch(/href="[^"]+\.pdf"/i);
     expect(html).not.toMatch(/\b\d+(?:\.\d+)?\s*(?:KB|MB)\b/i);
     expect(html).not.toContain("data-preview-only");
   });
 
-  it("renders a truthful catalogue detail with upload form", () => {
+  it("renders a read-only catalogue detail", () => {
     const model = getAdminCatalogueEditor("knives")!;
     const html = renderToStaticMarkup(<AdminCatalogueDetailPage model={model} />);
     expect(html).toContain(model.document.name);
-    expect(html).toContain(model.availability);
-    expect(html).toContain("Upload / Replace catalogue PDF");
-    expect(html).toContain("<form");
+    expect(html).toContain("Document metadata");
+    expect(html).not.toContain("Upload / Replace catalogue PDF");
+    expect(html).not.toContain("<form");
   });
 
   it("keeps upload and replacement states isolated", () => {

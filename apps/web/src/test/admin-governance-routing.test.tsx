@@ -7,14 +7,8 @@ import {
 import { renderServerComponent } from "@/test/render-server-component";
 
 describe("F3E-D governance routing", () => {
-  it.each([
-    { segments: ["content"], expected: "content" },
-    { segments: ["contact-details"], expected: "contact-details" },
-    { segments: ["publishing"], expected: "publishing" },
-    { segments: ["revisions"], expected: "revisions" },
-    { segments: ["settings"], expected: "settings" }
-  ] as const)("resolves exact route $segments", ({ segments, expected }) => {
-    expect(resolveAdminGovernanceRoute(segments).kind).toBe(expected);
+  it("resolves the retained contact route", () => {
+    expect(resolveAdminGovernanceRoute(["contact-details"]).kind).toBe("contact-details");
   });
 
   it.each([
@@ -31,14 +25,15 @@ describe("F3E-D governance routing", () => {
 
   it("renders normal route views without preview-only states", async () => {
     const html = await renderServerComponent(
-      <AdminGovernanceRouteView result={{ kind: "content" }} />
+      <AdminGovernanceRouteView result={{ kind: "contact-details" }} />
     );
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
     expect(html).not.toContain("data-preview-only");
   });
 
-  it("owns only the five governance roots", () => {
-    expect(isAdminGovernanceRoot("content")).toBe(true);
+  it("owns only the retained governance root", () => {
+    expect(isAdminGovernanceRoot("contact-details")).toBe(true);
+    expect(isAdminGovernanceRoot("content")).toBe(false);
     expect(isAdminGovernanceRoot("products")).toBe(false);
   });
 });

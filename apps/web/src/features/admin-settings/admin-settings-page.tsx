@@ -2,7 +2,6 @@ import { Button, ButtonLink } from "@/components/ui";
 import { AdminAlert } from "@/features/admin-primitives/admin-feedback";
 import { AdminPageHeader } from "@/features/admin-primitives/admin-page-header";
 import { AdminSection } from "@/features/admin-primitives/admin-section";
-import { AdminStatusBadge } from "@/features/admin-primitives/admin-status";
 import { ADMIN_SETTINGS_GROUPS, PROTECTED_SYSTEM_SETTINGS } from "./admin-settings-model";
 
 import { createClient } from "@/lib/supabase/server";

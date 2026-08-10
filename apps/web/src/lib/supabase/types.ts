@@ -4,4 +4,4 @@ export interface ProductVariant { id: string; product_id: string; sku: string; s
 export interface ProductImage { id: string; product_id: string; image_path: string; sort_order: number; }
 export interface SiteSetting { key: string; value_en: string; value_ar: string; updated_at: string; }
 export interface ContactMessage { id: string; name: string; email: string; phone: string | null; company: string | null; country: string | null; subject: string | null; message: string; status: string | null; admin_note: string | null; read: boolean; created_at: string; user_id: string | null; is_spam: boolean; }
-export interface QuoteRequest { id: string; product_id: string; name: string; email: string; phone: string | null; message: string; created_at: string; user_id: string | null; status: string | null; appointment_date: string | null; cart_hash: string | null; }
+export interface QuoteRequest { id: string; product_id: string; name: string; email: string; phone: string | null; message: string; created_at: string; user_id: string | null; status: string | null; appointment_date: string | null; cart_hash: string | null; notification?: string | null; }

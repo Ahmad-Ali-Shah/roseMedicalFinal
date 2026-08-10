@@ -31,7 +31,7 @@ export function FeaturedInstruments({
         />
         <Stagger
           as="ul"
-          className="product-preview-grid"
+          className="product-preview-grid product-preview-grid--featured"
           aria-label="Representative products"
           interval={0.08}
         >

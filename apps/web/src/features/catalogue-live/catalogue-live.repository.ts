@@ -24,8 +24,8 @@ import type {
 } from "./catalogue-live.types";
 
 const PUBLIC_PRODUCT_SELECT = `
-  id,category_id,item_code,name_en,description_en,is_active,slug,created_at,
-  category:categories!inner(id,slug,name_en,is_active,deleted_at),
+  id,category_id,item_code,name_en,name_ar,description_en,description_ar,is_active,slug,created_at,
+  category:categories!inner(id,slug,name_en,name_ar,is_active,deleted_at),
   variants:product_variants(product_id,sku,size,variant_type,created_at),
   images:product_images(product_id,image_path,sort_order)
 `;
@@ -99,21 +99,6 @@ function familyManifest(
   return CATALOGUE_METADATA_MANIFEST.filter(
     (entry) => entry.familySlug === familySlug
   );
-}
-
-function productContextManifest(
-  familySlug: FamilySlug,
-  productSlug: string
-): readonly CatalogueMetadataManifestEntry[] {
-  const family = familyManifest(familySlug);
-  const product = family.find((entry) => entry.publicSlug === productSlug);
-  if (!product) return [];
-
-  const related = family
-    .filter((entry) => entry.publicSlug !== productSlug)
-    .slice(0, 3);
-
-  return [product, ...related];
 }
 
 const FEATURED_MANIFEST: readonly CatalogueMetadataManifestEntry[] =
@@ -213,12 +198,12 @@ const supabaseCatalogueReader: CatalogueSnapshotReader = {
         supabase
           .from("products")
           .select(
-            "id,category_id,item_code,name_en,description_en,is_active,slug,created_at"
+            "id,category_id,item_code,name_en,name_ar,description_en,description_ar,is_active,slug,created_at"
           )
           .eq("is_active", true),
         supabase
           .from("categories")
-          .select("id,slug,name_en,is_active,deleted_at")
+          .select("id,slug,name_en,name_ar,is_active,deleted_at")
           .eq("is_active", true)
           .is("deleted_at", null),
         supabase
@@ -278,11 +263,11 @@ const adminCatalogueReader: CatalogueSnapshotReader = {
         supabase
           .from("products")
           .select(
-            "id,category_id,item_code,name_en,description_en,is_active,slug,created_at"
+            "id,category_id,item_code,name_en,name_ar,description_en,description_ar,is_active,slug,created_at"
           ),
         supabase
           .from("categories")
-          .select("id,slug,name_en,is_active,deleted_at")
+          .select("id,slug,name_en,name_ar,is_active,deleted_at")
           .eq("is_active", true)
           .is("deleted_at", null),
         supabase
@@ -414,48 +399,24 @@ export async function getProductCatalogueContext(
   productSlug: string
 ): Promise<readonly CatalogueProductRecord[]> {
   if (!isFamilySlug(familySlug) || !productSlug.trim()) return [];
-  const manifest = productContextManifest(familySlug, productSlug);
+  const familyProducts = await getFamilyCatalogueProducts(familySlug);
+  return selectProductCatalogueContext(familyProducts, productSlug);
+}
 
-  // Live-only products (created via the admin "Add product" flow, never
-  // added to the static manifest) are stored with a `${family}-${slug}`
-  // dbSlug convention -- see mapLiveOnlyProduct in map-live-product.ts.
-  // Always include that candidate slug so a live-only product still
-  // resolves even when it has no manifest entry at all.
-  const liveOnlyDbSlug = `${familySlug}-${productSlug}`;
-  const manifestSlugs = manifest.map((entry) => entry.dbSlug);
-  const targetSlugs = Array.from(
-    new Set([...manifestSlugs, productSlug, liveOnlyDbSlug])
+export function selectProductCatalogueContext(
+  familyProducts: readonly CatalogueProductRecord[],
+  productSlug: string
+): readonly CatalogueProductRecord[] {
+  const product = familyProducts.find(
+    (candidate) => candidate.slug === productSlug.trim()
   );
+  if (!product) return [];
 
-  return withInfrastructureFallback(
-    `product ${familySlug}/${productSlug}`,
-    () =>
-      getCachedCatalogueProjection(
-        `catalogue:product:${familySlug}:${productSlug}`,
-        async () => {
-          const supabase = createPublicReadClient();
-          return loadProjectedCatalogue(
-            `product ${familySlug}/${productSlug}`,
-            async () => {
-              const { data, error } = await supabase
-                .from("products")
-                .select(PUBLIC_PRODUCT_SELECT)
-                .eq("is_active", true)
-                .eq("category.is_active", true)
-                .is("category.deleted_at", null)
-                .eq("category.slug", familySlug)
-                .in("slug", targetSlugs);
-              return {
-                data: data as unknown as readonly LiveProductProjectionRow[] | null,
-                error
-              };
-            },
-            manifest
-          );
-        }
-      ),
-    staticProductsForManifest(manifest)
-  );
+  const related = familyProducts
+    .filter((candidate) => candidate.id !== product.id)
+    .slice(0, 3);
+
+  return [product, ...related];
 }
 
 export async function getSearchCatalogueProducts(): Promise<

@@ -7,5 +7,5 @@
 /media/optimized/v1/*
   Cache-Control: public,max-age=31536000,immutable
 
-/media/brand/rosa-header-logo-v1.webp
+/media/brand/rosa-header-logo.png
   Cache-Control: public,max-age=31536000,immutable

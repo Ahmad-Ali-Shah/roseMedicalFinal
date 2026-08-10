@@ -178,7 +178,7 @@ test("Arabic homepage keeps RTL typography and the same physical hero compositio
     fontFamily: getComputedStyle(node).fontFamily,
     overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth
   }));
-  expect(computed.fontFamily).toContain("Noto Sans Arabic");
+  expect(computed.fontFamily).toContain("GE SS");
   expect(computed.overflow).toBe(false);
   await expect(page.locator("[data-home-family-gallery]")).toBeVisible();
   await expect(page.locator(".public-contact-strip [data-social-links] a")).toHaveCount(4);
@@ -197,7 +197,7 @@ test("hero dot keyboard navigation wraps and keeps roving focus", async ({ page 
   await expect(dots.first()).toBeFocused();
 });
 
-test("hero autoplay advances consistently under an idle pointer and pauses during focus", async ({ page }, testInfo) => {
+test("hero autoplay advances after pointer selection and pauses during keyboard focus", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop");
   await page.goto("/");
   const hero = page.locator("[data-section='home-hero']");
@@ -209,9 +209,14 @@ test("hero autoplay advances consistently under an idle pointer and pauses durin
   await page.waitForTimeout(5_200);
   await expect(hero).toHaveAttribute("data-active-slide", "surgical-instrument-selection");
 
+  await page.locator(".home-hero-carousel__dot").nth(3).click();
+  await expect(hero).toHaveAttribute("data-active-slide", "catalogue-to-quotation");
+  await page.waitForTimeout(5_200);
+  await expect(hero).toHaveAttribute("data-active-slide", "precision-instruments");
+
   await page.locator(".home-hero-carousel__dot").nth(1).focus();
   await page.waitForTimeout(5_200);
-  await expect(hero).toHaveAttribute("data-active-slide", "surgical-instrument-selection");
+  await expect(hero).toHaveAttribute("data-active-slide", "precision-instruments");
 });
 
 test("reduced motion disables hero autoplay", async ({ page }, testInfo) => {

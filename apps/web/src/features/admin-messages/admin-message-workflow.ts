@@ -2,17 +2,22 @@ import type { AdminStatusTone } from "@/features/admin-primitives";
 
 export const ADMIN_MESSAGE_WORKFLOW = [
   "New",
-  "Read",
-  "Replied",
+  "Reviewed",
   "Closed"
 ] as const;
 
 export type AdminMessageStatus = (typeof ADMIN_MESSAGE_WORKFLOW)[number];
 
+export function normalizeMessageStatus(value: string | null | undefined): AdminMessageStatus {
+  if (value === "Read" || value === "Replied") return "Reviewed";
+  return ADMIN_MESSAGE_WORKFLOW.includes(value as AdminMessageStatus)
+    ? value as AdminMessageStatus
+    : "New";
+}
+
 export const MESSAGE_WORKFLOW_COPY: Record<AdminMessageStatus, string> = {
   New: "A message has entered the protected owner queue.",
-  Read: "The owner has reviewed the message.",
-  Replied: "The owner has responded through a future external communication workflow.",
+  Reviewed: "The owner has reviewed the message.",
   Closed: "The message no longer requires active follow-up."
 };
 
@@ -22,10 +27,8 @@ export function getMessageStatusTone(
   switch (status) {
     case "New":
       return "warning";
-    case "Read":
+    case "Reviewed":
       return "review";
-    case "Replied":
-      return "ready";
     case "Closed":
       return "archived";
   }

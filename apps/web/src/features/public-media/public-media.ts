@@ -17,7 +17,7 @@ export const ROSA_LOGO_MEDIA = {
 } as const satisfies PublicMediaModel;
 
 export const ROSA_HEADER_LOGO_MEDIA = {
-  src: "/media/brand/rosa-header-logo-v1.webp",
+  src: "/media/brand/rosa-header-logo.png",
   alt: ROSA_LOGO_MEDIA.alt,
   altAr: ROSA_LOGO_MEDIA.altAr,
   focalPoint: ROSA_LOGO_MEDIA.focalPoint,

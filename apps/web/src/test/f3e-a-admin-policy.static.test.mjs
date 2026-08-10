@@ -12,12 +12,10 @@ const authFiles = [
 const supportingFiles = [
   "features/admin-dashboard/admin-dashboard-page.tsx",
   "features/admin-dashboard/admin-dashboard-model.ts",
-  "features/admin-dashboard/admin-workspace-status.tsx",
   "features/admin-dashboard/admin-operational-data.tsx",
   "features/admin-primitives/admin-metrics.tsx",
   "components/layout/admin-shell.tsx",
-  "features/admin-navigation/admin-navigation-model.ts",
-  "features/admin-routing/admin-deferred-route-page.tsx"
+  "features/admin-navigation/admin-navigation-model.ts"
 ];
 
 const authContent = (

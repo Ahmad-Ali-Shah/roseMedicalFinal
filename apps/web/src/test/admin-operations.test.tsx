@@ -33,7 +33,8 @@ import {
   AdminMessagePopulatedListPreview,
   AdminMessagePricingGuidancePreview,
   AdminMessagesPage,
-  getMessageStatusTone
+  getMessageStatusTone,
+  normalizeMessageStatus
 } from "@/features/admin-messages";
 import {
   isAdminOperationsRoot,
@@ -45,12 +46,12 @@ describe("F3E-C normal operations pages", () => {
     const html = renderToStaticMarkup(<AdminInquiriesPage />);
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
     expect((html.match(/<main/g) ?? [])).toHaveLength(0);
-    expect(html).toContain("Product requirements awaiting connection.");
-    expect(html).toContain("Search by name or email...");
-    expect(html).toContain("All Statuses");
-    expect(html).toContain("Filter");
+    expect(html).toContain("Manage quotation inquiries.");
+    expect(html).toContain("Name or email");
+    expect(html).toContain("All statuses");
+    expect(html).toContain("private owner notes");
     expect(html).not.toContain("data-preview-only");
-    expect((html.match(/<form/g) ?? [])).toHaveLength(1);
+    expect(html).not.toContain("Intended workflow");
     expect(html).not.toContain("<table");
     expect(html).not.toMatch(/EXAMPLE-INQUIRY|buyer@example.invalid|Last synced/i);
   });
@@ -59,8 +60,8 @@ describe("F3E-C normal operations pages", () => {
     const html = renderToStaticMarkup(<AdminMessagesPage />);
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
     expect((html.match(/<main/g) ?? [])).toHaveLength(0);
-    expect(html).toContain("Contact messages remain separate.");
-    expect(html).toContain("Keep general communication separate from structured product requirements.");
+    expect(html).toContain("Manage contact messages.");
+    expect(html).toContain("Name, email, or subject");
     expect(html).not.toContain("data-preview-only");
     expect(html).not.toContain("<form");
     expect(html).not.toContain("<table");
@@ -69,9 +70,11 @@ describe("F3E-C normal operations pages", () => {
 
   it("keeps the two status vocabularies exact and deterministic", () => {
     expect(ADMIN_INQUIRY_WORKFLOW).toEqual(["New", "Reviewed", "Contacted", "Closed"]);
-    expect(ADMIN_MESSAGE_WORKFLOW).toEqual(["New", "Read", "Replied", "Closed"]);
+    expect(ADMIN_MESSAGE_WORKFLOW).toEqual(["New", "Reviewed", "Closed"]);
     expect(ADMIN_INQUIRY_WORKFLOW.map(getInquiryStatusTone)).toEqual(["warning", "review", "ready", "archived"]);
-    expect(ADMIN_MESSAGE_WORKFLOW.map(getMessageStatusTone)).toEqual(["warning", "review", "ready", "archived"]);
+    expect(ADMIN_MESSAGE_WORKFLOW.map(getMessageStatusTone)).toEqual(["warning", "review", "archived"]);
+    expect(normalizeMessageStatus("Read")).toBe("Reviewed");
+    expect(normalizeMessageStatus("Replied")).toBe("Reviewed");
   });
 });
 

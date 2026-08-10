@@ -1,28 +1,31 @@
 import { Button, ButtonLink } from "@/components/ui";
 import {
   AdminAlert,
-  AdminFieldPreview,
+  AdminField,
   AdminFormSection,
-  AdminLocaleFieldPair,
   AdminPageHeader,
+  AdminSelectField,
   AdminSection,
   AdminStatusBadge,
-  AdminTextareaPreview
+  AdminTextareaField
 } from "@/features/admin-primitives";
 import { ProductMediaPlaceholder } from "@/features/public-catalogue";
 import type { AdminProductEditorModel } from "./admin-product-model";
 import { AdminProductCompleteness } from "./admin-product-completeness";
 import { AdminProductOptions } from "./admin-product-options";
 import { ProductImageUploadForm } from "./product-image-upload-form";
-import { activateProduct } from "./actions";
+import { activateProduct, saveProduct } from "./actions";
 import { DeleteProductButton } from "./delete-product-button";
+import { getAdminFamilyRows, type AdminFamilyRow } from "@/features/admin-families";
 
 export function AdminProductEditorPage({
-  model
+  model,
+  families = getAdminFamilyRows()
 }: {
   model: AdminProductEditorModel;
+  families?: readonly AdminFamilyRow[];
 }) {
-  const { family, product } = model;
+  const { product } = model;
 
   return (
     <div className="admin-product-editor">
@@ -57,44 +60,25 @@ export function AdminProductEditorPage({
         }
       />
 
-      <AdminAlert tone="neutral" title="Protected catalogue identity">
-        Product identity, family, codes and documented options stay read-only while the source-of-truth migration is being verified. Primary product media is the supported operational edit on this page.
+      <AdminAlert tone="info" title="Live product editor">
+        Saved identity and copy changes are used by the public catalogue. Arabic fields fall back to English when left blank.
       </AdminAlert>
 
-      <AdminFormSection
-        title="Identity"
-        description="These values come from the live canonical product record. Arabic product copy has not been verified for admin editing."
-      >
-        <div className="admin-editor-grid">
-          <AdminLocaleFieldPair
-            id={`admin-product-${product.id}-name`}
-            label="Product name"
-            englishValue={product.name}
-            arabicValue="Not supplied"
-          />
-          <AdminFieldPreview
-            id={`admin-product-${product.id}-code`}
-            label="Product code"
-            value={product.code}
-          />
-          <AdminFieldPreview
-            id={`admin-product-${product.id}-family`}
-            label="Instrument family"
-            value={family.name}
-          />
-          <AdminTextareaPreview
-            id={`admin-product-${product.id}-description-en`}
-            label="Short description — English"
-            value={product.description ?? "Not documented in source"}
-          />
-          <AdminTextareaPreview
-            id={`admin-product-${product.id}-description-ar`}
-            label="Short description — Arabic"
-            value="Not supplied"
-            direction="rtl"
-          />
-        </div>
-      </AdminFormSection>
+      <form action={saveProduct} className="admin-product-edit-form">
+        <input type="hidden" name="product_id" value={product.id} />
+        <AdminFormSection title="Product details">
+          <div className="admin-editor-grid">
+            <AdminField id={`admin-product-${product.id}-name-en`} name="name_en" label="Product name — English" defaultValue={product.name} required />
+            <AdminField id={`admin-product-${product.id}-name-ar`} name="name_ar" label="Product name — Arabic" defaultValue={product.nameAr || product.name} direction="rtl" />
+            <AdminField id={`admin-product-${product.id}-code`} name="item_code" label="Product code" defaultValue={product.code} required />
+            <AdminSelectField id={`admin-product-${product.id}-family`} name="family_slug" label="Instrument family" defaultValue={product.familySlug} options={families.map((item) => ({ value: item.slug, label: item.name }))} required />
+            <AdminField id={`admin-product-${product.id}-slug`} name="slug" label="URL slug" defaultValue={product.slug} required />
+            <AdminTextareaField id={`admin-product-${product.id}-description-en`} name="description_en" label="Short description — English" defaultValue={product.description || ""} rows={4} />
+            <AdminTextareaField id={`admin-product-${product.id}-description-ar`} name="description_ar" label="Short description — Arabic" defaultValue={product.descriptionAr || product.description || ""} direction="rtl" rows={4} />
+          </div>
+        </AdminFormSection>
+        <div className="admin-card-actions"><Button type="submit">Save product</Button></div>
+      </form>
 
       <AdminProductOptions groups={model.optionGroups} />
 

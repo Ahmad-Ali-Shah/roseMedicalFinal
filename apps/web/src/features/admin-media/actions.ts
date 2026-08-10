@@ -8,7 +8,6 @@ export async function uploadMediaAsset(formData: FormData) {
   if (!file || file.size === 0) return;
 
   const admin = createAdminClient();
-  const ext = file.name.split(".").pop() || "png";
   const path = `uploads/${Date.now()}_${file.name.replace(/[^a-z0-9.]/gi, "_")}`;
 
   const { error } = await admin.storage

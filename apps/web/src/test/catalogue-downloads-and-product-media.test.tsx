@@ -30,7 +30,7 @@ describe("owner catalogue downloads and complete product media", () => {
   it("resolves real registry media into every representative product card", () => {
     const featured = selectFeaturedProducts(CATALOGUE_PRODUCTS);
 
-    expect(featured).toHaveLength(3);
+    expect(featured).toHaveLength(5);
     for (const product of featured) {
       expect(product).toHaveProperty("mediaPath");
 

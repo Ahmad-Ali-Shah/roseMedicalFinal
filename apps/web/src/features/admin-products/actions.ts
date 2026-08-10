@@ -162,6 +162,7 @@ export async function createProduct(formData: FormData) {
   const nameEn = formString(formData, "name_en");
   const itemCode = formString(formData, "item_code");
   const descriptionEn = formString(formData, "description_en");
+  const descriptionAr = formString(formData, "description_ar");
   const nameAr = formString(formData, "name_ar");
   const requestedSlug = formString(formData, "slug");
 
@@ -199,6 +200,7 @@ export async function createProduct(formData: FormData) {
       name_en: nameEn,
       name_ar: nameAr || nameEn,
       description_en: descriptionEn || null,
+      description_ar: descriptionAr || descriptionEn || null,
       is_active: false,
       slug,
       stock_status: "available",
@@ -310,4 +312,62 @@ export async function activateProduct(formData: FormData) {
   revalidatePath(`/products/${familySlug}/${productSlug}`);
   revalidatePath("/admin/products");
   revalidatePath(`/admin/products/${familySlug}/${productSlug}`);
+}
+
+export async function saveProduct(formData: FormData) {
+  const productId = formString(formData, "product_id");
+  const familySlug = formString(formData, "family_slug");
+  const nameEn = formString(formData, "name_en");
+  const nameAr = formString(formData, "name_ar") || nameEn;
+  const itemCode = formString(formData, "item_code");
+  const descriptionEn = formString(formData, "description_en");
+  const descriptionAr = formString(formData, "description_ar") || descriptionEn;
+  const requestedSlug = formString(formData, "slug");
+
+  if (!productId || !familySlug || !nameEn || !itemCode) {
+    throw new Error("Family, English name, and item code are required.");
+  }
+
+  const bareSlug = slugify(requestedSlug || itemCode || nameEn);
+  if (!bareSlug) throw new Error("Enter a valid product URL slug.");
+
+  await requireAdminUser();
+  const admin = createAdminClient();
+  const { data: category, error: categoryError } = await admin
+    .from("categories")
+    .select("id")
+    .eq("slug", familySlug)
+    .maybeSingle();
+
+  if (categoryError) throw new Error(`Family lookup failed: ${categoryError.message}`);
+  if (!category) throw new Error(`Unknown family: ${familySlug}`);
+
+  const dbSlug = `${familySlug}-${bareSlug}`;
+  const { error } = await admin
+    .from("products")
+    .update({
+      category_id: category.id,
+      item_code: itemCode,
+      name_en: nameEn,
+      name_ar: nameAr,
+      description_en: descriptionEn || null,
+      description_ar: descriptionAr || null,
+      slug: dbSlug
+    })
+    .eq("id", productId);
+
+  if (error) {
+    if (error.code === "23505") {
+      throw new Error(`URL slug "${bareSlug}" is already in use.`);
+    }
+    throw new Error(`Product update failed: ${error.message}`);
+  }
+
+  clearCatalogueProjectionCache();
+  revalidatePath("/");
+  revalidatePath("/products");
+  revalidatePath("/search");
+  revalidatePath("/admin/products");
+  revalidatePath(`/products/${familySlug}`);
+  redirect(`/admin/products/${familySlug}/${bareSlug}`);
 }

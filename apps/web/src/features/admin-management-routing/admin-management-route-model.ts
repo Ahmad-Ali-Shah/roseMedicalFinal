@@ -12,8 +12,7 @@ import { FAMILY_SLUGS, type FamilySlug } from "@/features/public-catalogue/model
 export const ADMIN_MANAGEMENT_ROOTS = [
   "products",
   "families",
-  "catalogues",
-  "media"
+  "catalogues"
 ] as const;
 export type AdminManagementRoot = (typeof ADMIN_MANAGEMENT_ROOTS)[number];
 
@@ -25,7 +24,6 @@ export type AdminManagementRouteResult =
   | { kind: "family"; family: CatalogueFamilyRecord; products: readonly CatalogueProductRecord[] }
   | { kind: "catalogues" }
   | { kind: "catalogue"; family: CatalogueFamilyRecord; document: CatalogueDocument }
-  | { kind: "media" }
   | { kind: "not-found" };
 
 export function isAdminManagementRoot(value: string): value is AdminManagementRoot {
@@ -79,9 +77,6 @@ export function resolveAdminManagementRoute(
     return familyResult.kind === "family" && document
       ? { kind: "catalogue", family: familyResult.family, document }
       : { kind: "not-found" };
-  }
-  if (segments.length === 1 && segments[0] === "media") {
-    return { kind: "media" };
   }
   return { kind: "not-found" };
 }

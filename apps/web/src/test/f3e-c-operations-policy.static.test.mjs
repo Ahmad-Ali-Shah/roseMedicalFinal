@@ -49,9 +49,11 @@ test("F3E-C uses protected live queues without fictional records or browser pers
   assert.match(content, /\/api\/inquiries\?/);
   assert.match(content, /\/api\/inquiries\/update/);
   assert.match(content, /\/api\/messages/);
-  assert.match(content, /updateMessageStatus/);
-  assert.match(content, /protected owner queue/i);
-  assert.match(content, /No general messages are currently available/);
+  assert.match(content, /Private note/);
+  assert.match(content, /method:\s*["']DELETE["']/);
+  assert.match(content, /Manage quotation inquiries/);
+  assert.match(content, /Manage contact messages/);
+  assert.doesNotMatch(content, /Intended workflow|Owner scope|snapshot policy/i);
 });
 
 test("F3E-C route view fails closed rather than returning a blank success", () => {

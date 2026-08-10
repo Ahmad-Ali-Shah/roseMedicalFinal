@@ -23,14 +23,9 @@ const expectedRoutes = [
   "/admin/products",
   "/admin/families",
   "/admin/catalogues",
-  "/admin/media",
   "/admin/inquiries",
   "/admin/messages",
-  "/admin/content",
-  "/admin/contact-details",
-  "/admin/publishing",
-  "/admin/revisions",
-  "/admin/settings"
+  "/admin/contact-details"
 ] as const;
 
 describe("F3E-A admin navigation", () => {
@@ -40,7 +35,7 @@ describe("F3E-A admin navigation", () => {
 
   it("defines each approved workspace route exactly once", () => {
     expect(ADMIN_NAVIGATION_ITEMS.map((item) => item.href)).toEqual(expectedRoutes);
-    expect(new Set(ADMIN_NAVIGATION_ITEMS.map((item) => item.href)).size).toBe(12);
+    expect(new Set(ADMIN_NAVIGATION_ITEMS.map((item) => item.href)).size).toBe(7);
   });
 
   it("preserves the approved navigation groups", () => {
@@ -48,9 +43,7 @@ describe("F3E-A admin navigation", () => {
       "Overview",
       "Catalogue",
       "Operations",
-      "Website",
-      "Publishing",
-      "System"
+      "Website"
     ]);
   });
 
@@ -69,6 +62,7 @@ describe("F3E-A admin navigation", () => {
     expect(html).not.toContain("<details");
     expect(html).not.toContain("<summary");
     expect(html).not.toMatch(/hamburger|menu toggle/i);
+    expect(html).not.toMatch(/Publishing Centre|Revision History|Website Content|Media|Settings/);
   });
 
   it("owns the sole workspace main and exposes connected session controls", () => {

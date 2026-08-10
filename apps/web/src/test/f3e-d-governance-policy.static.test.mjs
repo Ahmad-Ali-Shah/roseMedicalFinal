@@ -8,18 +8,8 @@ const root = fileURLToPath(new URL("../", import.meta.url));
 const normalFiles = [
   "features/public-content-registry/public-content-values.ts",
   "features/public-content-registry/public-content-registry.ts",
-  "features/admin-governance-source/admin-readiness-model.ts",
-  "features/admin-governance-source/contact-impact-model.ts",
-  "features/admin-content/admin-content-model.ts",
-  "features/admin-content/admin-content-page.tsx",
-  "features/admin-contact-details/admin-contact-details-model.ts",
   "features/admin-contact-details/admin-contact-details-page.tsx",
-  "features/admin-publishing/admin-publishing-model.ts",
-  "features/admin-publishing/admin-publishing-page.tsx",
-  "features/admin-revisions/admin-revision-policy.ts",
-  "features/admin-revisions/admin-revisions-page.tsx",
-  "features/admin-settings/admin-settings-model.ts",
-  "features/admin-settings/admin-settings-page.tsx",
+  "features/admin-contact-details/actions.ts",
   "features/admin-governance-routing/admin-governance-route-model.ts",
   "features/admin-governance-routing/admin-governance-route-view.tsx",
   "app/admin/(workspace)/[...segments]/page.tsx"
@@ -44,11 +34,9 @@ const prohibited = [
 
 test("F3E-D normal source contains no fabricated state or preview-only behavior", () => {
   for (const pattern of prohibited) assert.doesNotMatch(normalContent, pattern);
-  assert.match(normalContent, /Publishing Engine Connected/);
-  assert.match(normalContent, /triggerPublish/);
-  assert.match(normalContent, /No revision history is available/);
-  assert.match(normalContent, /Not configured/);
-  assert.match(normalContent, /Not connected/);
+  assert.match(normalContent, /Manage contact details/);
+  assert.match(normalContent, /saveContactDetail/);
+  assert.doesNotMatch(normalContent, /Publishing Centre|Revision History|Website Content|Settings/);
 });
 
 test("F3E-D routing removes deferred fallback and blank success paths", async () => {
@@ -68,11 +56,7 @@ test("F3E-D routing removes deferred fallback and blank success paths", async ()
   assert.match(catchAllSource, /notFound\(\)/);
   assert.doesNotMatch(routeViewSource, /return\s+null/);
   assert.doesNotMatch(routeViewSource, /from ["'][^"']+\/index["']/);
-  assert.match(routeViewSource, /admin-content-page/);
   assert.match(routeViewSource, /admin-contact-details-page/);
-  assert.match(routeViewSource, /admin-publishing-page/);
-  assert.match(routeViewSource, /admin-revisions-page/);
-  assert.match(routeViewSource, /admin-settings-page/);
 });
 
 const previewFiles = [

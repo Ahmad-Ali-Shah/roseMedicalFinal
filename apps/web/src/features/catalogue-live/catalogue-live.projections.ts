@@ -31,7 +31,9 @@ export function projectionRowsToSnapshot(
       category_id: row.category_id,
       item_code: row.item_code,
       name_en: row.name_en,
+      ...(row.name_ar !== undefined ? { name_ar: row.name_ar } : {}),
       description_en: row.description_en,
+      ...(row.description_ar !== undefined ? { description_ar: row.description_ar } : {}),
       is_active: row.is_active,
       slug: row.slug,
       created_at: row.created_at

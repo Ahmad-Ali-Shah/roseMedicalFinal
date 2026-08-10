@@ -7,6 +7,9 @@ describe("public route policy", () => {
     "/products",
     "/products/knives",
     "/products/knives/scalpel-handle-no-3",
+    "/products/knives/0303",
+    "/ar/products/knives/0303",
+    "/products/scissors/scalpel-handle-no-3",
     "/ar/products/scissors/mayo-scissors",
     "/catalogues",
     "/login",
@@ -18,9 +21,8 @@ describe("public route policy", () => {
   });
 
   it.each([
-    "/products/scissors/scalpel-handle-no-3",
     "/products/knives/scalpel-handle-no-3/extra",
-    "/ar/products/scissors/scalpel-handle-no-3",
+    "/products/not-a-family/0303",
     "/totally-missing"
   ])("fails closed for an unknown public route: %s", (pathname) => {
     expect(shouldRenderPublicNotFound(pathname)).toBe(true);

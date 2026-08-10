@@ -30,6 +30,26 @@ export const productFixtures = [
     shortDescription: { en: "Punch instrument presented with a clear product reference for inquiry preparation.", ar: null },
     mainImage: null,
     optionSummary: ["4 mm", "Standard"]
+  },
+  {
+    id: "product_codman",
+    slug: "codman",
+    code: "36-7101",
+    familySlug: "chisels",
+    name: { en: "Codman", ar: null },
+    shortDescription: { en: "Codman pattern chisel presented with its catalogue length and direction.", ar: null },
+    mainImage: null,
+    optionSummary: ["28 cm", "Straight"]
+  },
+  {
+    id: "product-cutters-liston-straight",
+    slug: "liston",
+    code: "36-5101",
+    familySlug: "cutters",
+    name: { en: "Liston", ar: null },
+    shortDescription: { en: "Liston bone cutting forceps presented with its catalogue sizes and direction.", ar: null },
+    mainImage: null,
+    optionSummary: ["14.0 cm", "Straight"]
   }
 ] satisfies components["schemas"]["ProductSummary"][];
 

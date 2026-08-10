@@ -6,9 +6,7 @@ import {
 } from "@/features/admin-primitives";
 import { AdminCatalogueOverview } from "./admin-catalogue-overview";
 import { getAdminDashboardModel, type AdminOperationalMetric } from "./admin-dashboard-model";
-import { AdminLaunchReadiness } from "./admin-launch-readiness";
 import { AdminOperationalData } from "./admin-operational-data";
-import { AdminWorkspaceStatus } from "./admin-workspace-status";
 
 export async function AdminDashboardPage() {
   const model = getAdminDashboardModel();
@@ -33,17 +31,15 @@ export async function AdminDashboardPage() {
       <AdminPageHeader
         eyebrow="Admin overview"
         title="Rosa workspace overview."
-        description="This static workspace previews the future single-owner content management system."
+        description="Manage catalogue records, customer requests, and public contact details."
       />
 
-      <AdminWorkspaceStatus />
       <AdminCatalogueOverview metrics={model.catalogueMetrics} />
       <AdminOperationalData metrics={operationalMetrics} />
-      <AdminLaunchReadiness items={model.readinessItems} />
 
       <AdminSection
         title="Quick routes"
-        description="Navigation only. Management actions are not active."
+        description="Open a working area directly."
         className="admin-dashboard__quick"
       >
         <div className="admin-dashboard__quick-routes">

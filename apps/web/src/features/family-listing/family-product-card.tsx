@@ -10,21 +10,27 @@ import {
   ProductMediaPlaceholder,
   productHref
 } from "@/features/public-catalogue";
+import type { PublicLocale } from "@/features/localization/locales";
 
 export function FamilyProductCard({
   family,
-  product
+  product,
+  locale = "en"
 }: {
   family: CatalogueFamilyRecord;
   product: CatalogueProductRecord;
+  locale?: PublicLocale;
 }): ReactElement {
+  const displayedProduct = locale === "ar"
+    ? { ...product, name: product.nameAr?.trim() || product.name }
+    : product;
   const sizeCount = product.sizes.length;
 
   return (
     <TiltSurface as="article" className="family-product-card premium-surface" maxDegrees={1.6}>
       <div data-product-card={product.id} className="family-product-card__surface">
         <ProductMediaPlaceholder
-          label={product.mediaLabel}
+          label={displayedProduct.mediaLabel}
           decorative
           src={product.mediaPath}
           fallbackSrc={product.mediaFallbackPath}
@@ -33,7 +39,7 @@ export function FamilyProductCard({
         />
         <div className="family-product-card__body">
           <p className="public-eyebrow">{family.name}</p>
-          <h2>{product.name}</h2>
+          <h2>{displayedProduct.name}</h2>
           <p className="family-product-card__meta">
             {product.code}
             {product.primaryOption ? ` · ${product.primaryOption}` : ""}

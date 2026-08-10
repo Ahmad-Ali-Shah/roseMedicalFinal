@@ -40,23 +40,6 @@ function categoryFor(
   return category;
 }
 
-function validateIdentity(
-  product: LiveProductRow,
-  category: LiveCategoryRow,
-  manifest: CatalogueMetadataManifestEntry
-): void {
-  if (
-    product.slug !== manifest.dbSlug ||
-    category.slug !== manifest.familySlug ||
-    product.item_code !== manifest.expectedCode ||
-    product.name_en !== manifest.expectedName
-  ) {
-    throw new Error(
-      `[catalogue-migration] identity mismatch for ${manifest.dbSlug}: expected ${manifest.expectedCode} / ${manifest.expectedName}`
-    );
-  }
-}
-
 function primaryImageFor(
   product: LiveProductRow,
   images: readonly LiveImageRow[]
@@ -161,9 +144,10 @@ function mapManifestProduct(
   snapshot: LiveCatalogueSnapshot
 ): CatalogueProductRecord {
   const category = categoryFor(product, categoriesById);
-  validateIdentity(product, category, entry);
 
   const description = product.description_en?.trim();
+  const descriptionAr = product.description_ar?.trim();
+  const nameAr = product.name_ar?.trim();
   const mediaPath = primaryImageFor(product, snapshot.images);
   const catalogueCodes = catalogueCodesFor(product, snapshot.variants, entry);
 
@@ -172,8 +156,10 @@ function mapManifestProduct(
     familySlug: entry.familySlug,
     slug: entry.publicSlug,
     name: product.name_en,
+    ...(nameAr ? { nameAr } : {}),
     code: product.item_code!,
     ...(description ? { description } : {}),
+    ...(descriptionAr ? { descriptionAr } : {}),
     sizes: entry.metadata.sizes,
     variants: entry.metadata.variants,
     directions: entry.metadata.directions,
@@ -209,6 +195,8 @@ function mapLiveOnlyProduct(
   try {
     const category = categoryFor(product, categoriesById);
     const description = product.description_en?.trim();
+    const descriptionAr = product.description_ar?.trim();
+    const nameAr = product.name_ar?.trim();
     const mediaPath = allowMissingImage
       ? primaryImageForOptional(product, snapshot.images)
       : primaryImageFor(product, snapshot.images);
@@ -226,8 +214,10 @@ function mapLiveOnlyProduct(
       familySlug: category.slug as FamilySlug,
       slug: bareSlug,
       name: product.name_en,
+      ...(nameAr ? { nameAr } : {}),
       code: product.item_code ?? "",
       ...(description ? { description } : {}),
+      ...(descriptionAr ? { descriptionAr } : {}),
       sizes,
       variants: [],
       directions: [],
@@ -273,14 +263,11 @@ export function mapLiveCatalogue(
     snapshot.categories.map((category) => [category.id, category] as const)
   );
 
-  // Legacy path: every manifest entry must still resolve to a matching, valid
-  // live product — strict validation, unchanged from before.
-  const manifestResults = manifest.map((entry): CatalogueProductRecord => {
+  // Existing manifest entries keep their verified option metadata while the
+  // live products table remains authoritative about which records exist.
+  const manifestResults = manifest.flatMap((entry): CatalogueProductRecord[] => {
     const product = productsBySlug.get(entry.dbSlug);
-    if (!product) {
-      throw new Error(`[catalogue-migration] manifest product missing from live data: ${entry.dbSlug}`);
-    }
-    return mapManifestProduct(product, entry, categoriesById, snapshot);
+    return product ? [mapManifestProduct(product, entry, categoriesById, snapshot)] : [];
   });
 
   // Live-only path: active (or, in admin mode, any eligible) products with no

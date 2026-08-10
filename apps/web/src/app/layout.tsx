@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import { Inter, Lora, Noto_Sans_Arabic } from "next/font/google";
+import { Inter, Lora } from "next/font/google";
 import { MotionProvider } from "@/features/motion";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const lora = Lora({ subsets: ["latin"], variable: "--font-lora", display: "swap" });
-const arabic = Noto_Sans_Arabic({ subsets: ["arabic"], variable: "--font-arabic", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.rosamedical.example"),
@@ -23,7 +22,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${lora.variable} ${arabic.variable}`} data-scroll-behavior="smooth">
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${lora.variable}`} data-scroll-behavior="smooth">
       <body>
         <script dangerouslySetInnerHTML={{ __html: "try{var a=location.pathname==='/ar'||location.pathname.indexOf('/ar/')===0;document.documentElement.lang=a?'ar':'en';document.documentElement.dir=a?'rtl':'ltr'}catch(e){}" }} />
         <MotionProvider>

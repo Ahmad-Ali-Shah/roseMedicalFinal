@@ -973,7 +973,7 @@
   }
 }
 
-/* Arabic density: keep Noto Sans Arabic and tune rhythm without mirroring image composition. */
+/* Arabic density: use the GE SS family and tune rhythm without mirroring image composition. */
 html[dir="rtl"] .page-main {
   font-family: var(--font-arabic), var(--font-interface), sans-serif;
 }

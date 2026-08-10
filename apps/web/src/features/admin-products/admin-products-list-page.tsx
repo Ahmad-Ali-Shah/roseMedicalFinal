@@ -1,132 +1,39 @@
 import { ButtonLink } from "@/components/ui";
 import {
   AdminAlert,
-  AdminDataTable,
-  AdminFilterPreview,
   AdminPageHeader,
-  AdminPaginationPreview,
-  AdminSearchPreview,
   AdminSection,
-  AdminStatusBadge,
-  AdminToolbar,
-  type AdminDataTableColumn
 } from "@/features/admin-primitives";
-import { getLiveCatalogueProducts } from "@/features/catalogue-live";
-import { ProductMediaPlaceholder } from "@/features/public-catalogue";
-import { getAdminFamilyRows } from "@/features/admin-families";
+import { getAdminCatalogueProducts } from "@/features/catalogue-live";
+import { getLiveAdminFamilyRows } from "@/features/admin-families";
 import { adminNewProductHref } from "@/features/admin-management-routing";
-import {
-  getAdminProductRows,
-  type AdminProductRow
-} from "./admin-product-model";
-
-const columns: readonly AdminDataTableColumn<AdminProductRow>[] = [
-  {
-    key: "product",
-    header: "Product",
-    render: (row) => (
-      <div className="admin-product-cell">
-        <ProductMediaPlaceholder
-          label={row.mediaLabel}
-          aspect="square"
-          className="admin-product-cell__media"
-          src={row.mediaPath}
-        />
-        <div>
-          <strong>{row.name}</strong>
-          <span>{row.code}</span>
-        </div>
-      </div>
-    )
-  },
-  {
-    key: "family",
-    header: "Family",
-    render: (row) => (
-      <ButtonLink href={row.familyHref} variant="quiet" size="small">
-        {row.familyName}
-      </ButtonLink>
-    )
-  },
-  {
-    key: "options",
-    header: "Documented options",
-    render: (row) => row.optionSummary.join(" · ")
-  },
-  {
-    key: "catalogue",
-    header: "Catalogue reference",
-    render: (row) => row.catalogueReference
-  },
-  {
-    key: "media",
-    header: "Media",
-    render: (row) => row.mediaLabel
-  },
-  {
-    key: "record",
-    header: "Record",
-    render: () => <AdminStatusBadge tone="success">Live canonical record</AdminStatusBadge>
-  },
-  {
-    key: "actions",
-    header: "Actions",
-    render: (row) => (
-      <div className="admin-table-actions">
-        <ButtonLink href={row.publicHref} variant="quiet" size="small">
-          View public
-        </ButtonLink>
-        <ButtonLink href={row.adminHref} variant="secondary" size="small">
-          Open editor
-        </ButtonLink>
-      </div>
-    )
-  }
-];
+import { getAdminProductRows } from "./admin-product-model";
+import { AdminProductsCollection } from "./admin-products-collection";
 
 export async function AdminProductsListPage() {
-  const products = await getLiveCatalogueProducts();
+  const products = await getAdminCatalogueProducts();
   const rows = getAdminProductRows(products);
-  const families = getAdminFamilyRows();
+  const families = await getLiveAdminFamilyRows();
 
   return (
     <div className="admin-products-page">
       <AdminPageHeader
         eyebrow="Products"
-        title="Manage the instrument catalogue."
-        description="This collection reads the same canonical Supabase product records used by the public catalogue."
+        title="Manage products."
+        description="Search, filter, add, edit, activate, or remove catalogue products."
         actions={<ButtonLink href={adminNewProductHref()}>Add product</ButtonLink>}
       />
 
-      <AdminAlert tone="info" title="Live canonical catalogue">
-        Showing {rows.length} live products from Supabase.
+      <AdminAlert tone="info" title="Live product records">
+        {rows.length} products are available.
       </AdminAlert>
 
-      <AdminToolbar label="Product collection controls">
-        <AdminSearchPreview label="Search products" placeholder="Product name or code" />
-        <AdminFilterPreview
-          id="admin-products-family-filter"
-          label="Family"
-          options={["All families", ...families.map((family) => family.name)]}
-        />
-      </AdminToolbar>
-
-      <p className="admin-collection-count">{rows.length} live products</p>
-
-      <AdminDataTable
-        caption="Live canonical product records"
-        captionVisibility="screen-reader"
-        rows={rows}
-        columns={columns}
-        getRowKey={(row) => row.id}
-      />
-
-      <AdminPaginationPreview label="Product collection pagination" />
+      <AdminProductsCollection rows={rows} families={families.map(({ slug, name }) => ({ slug, name }))} />
 
       <AdminSection
         title="Instrument families"
         eyebrow="Family summary"
-        description="The five family identities and presentation remain source-controlled while product records are canonical in Supabase."
+        description="Open a family to edit its name or introduction."
       >
         <div className="admin-family-grid admin-family-grid--summary">
           {families.map((family) => (

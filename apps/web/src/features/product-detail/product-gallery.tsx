@@ -11,24 +11,9 @@ export function ProductGallery({
   return (
     <section className="product-gallery" aria-label={`${product.name} media preview`}>
       <div className="product-gallery__rail" aria-label="Media preview states">
-        {[0, 1, 2, 3].map((index) => (
-          <span
-            className={`product-gallery__thumbnail ${index === 0 ? "is-current" : ""}`.trim()}
-            aria-current={index === 0 ? "true" : undefined}
-            data-gallery-state={index === 0 ? "current" : "preview"}
-            key={index}
-          >
-            <ProductMediaPlaceholder
-              label={`${product.name} preview ${index + 1}`}
-              decorative
-              aspect="portrait"
-              src={index === 0 ? product.mediaPath : undefined}
-              fallbackSrc={index === 0 ? product.mediaFallbackPath : undefined}
-              spriteIndex={index === 0 ? product.mediaIndex : undefined}
-              sizes="5rem"
-            />
-          </span>
-        ))}
+        <span className="product-gallery__thumbnail is-current" aria-current="true" data-gallery-state="current">
+          <ProductMediaPlaceholder label={`${product.name} preview`} decorative aspect="portrait" src={product.mediaPath} fallbackSrc={product.mediaFallbackPath} spriteIndex={product.mediaIndex} sizes="5rem" />
+        </span>
       </div>
       <TiltSurface className="product-gallery__primary" maxDegrees={1.35}>
         <ProductMediaPlaceholder
@@ -42,7 +27,7 @@ export function ProductGallery({
           sizes="(max-width: 768px) 100vw, 55vw"
         />
         <span className="product-gallery__zoom-note">
-          {product.mediaPath ? "Catalogue image · approved review asset" : "Zoom preview activates next phase"}
+          {product.mediaPath ? "Catalogue image" : "Product image unavailable"}
         </span>
       </TiltSurface>
     </section>

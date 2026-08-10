@@ -23,8 +23,10 @@ export interface CatalogueProductRecord {
   familySlug: FamilySlug;
   slug: string;
   name: string;
+  nameAr?: string;
   code: string;
   description?: string;
+  descriptionAr?: string;
   sizes: readonly string[];
   variants: readonly string[];
   directions: readonly string[];

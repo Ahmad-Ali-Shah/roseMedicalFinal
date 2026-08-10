@@ -82,7 +82,7 @@ describe("public performance policy", () => {
   });
 
   it("uses right-sized versioned local presentation assets for the heavy sources", () => {
-    expect(ROSA_HEADER_LOGO_MEDIA.src).toBe("/media/brand/rosa-header-logo-v1.webp");
+    expect(ROSA_HEADER_LOGO_MEDIA.src).toBe("/media/brand/rosa-header-logo.png");
     expect(PROCUREMENT_SUPPORT_MEDIA.src).toBe("/media/optimized/v1/procurement-support.webp");
     expect(FAMILY_MEDIA_BY_SLUG.cutters.src).toBe("/media/optimized/v1/cutters-family.webp");
     expect(SUPPORTED_BUYER_MEDIA.hospitals.src).toBe("/media/optimized/v1/about-hospitals.webp");

@@ -44,10 +44,12 @@ describe("client-feedback responsive homepage contract", () => {
     expect(carouselSource.match(/priority=\{activeIndex === 0\}/g)).toHaveLength(1);
   });
 
-  it("keeps Noto Sans Arabic and adds dedicated Arabic density rules", () => {
+  it("uses the requested GE SS Arabic stack and dedicated Arabic density rules", () => {
     const layout = source("src/app/layout.tsx");
+    const tokens = source("src/styles/tokens.css");
     const density = source("src/styles/public-density.css");
-    expect(layout).toContain("Noto_Sans_Arabic");
+    expect(layout).not.toContain("Noto_Sans_Arabic");
+    expect(tokens).toContain('"GE SS Two", "GE SS Text", "GE SS"');
     expect(density).toContain('html[dir="rtl"] .home-hero-carousel');
     expect(density).toContain("font-family: var(--font-arabic)");
   });
