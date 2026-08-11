@@ -197,6 +197,7 @@ export function HomeHeroCarousel({
                 fill
                 priority={activeIndex === 0}
                 sizes="100vw"
+                unoptimized
                 style={{ objectFit: "cover" }}
               />
             </picture>
