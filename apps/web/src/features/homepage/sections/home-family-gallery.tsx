@@ -119,7 +119,8 @@ export function HomeFamilyGallery({
                     className="home-family-gallery__image"
                     src={cover.src}
                     alt={publicMediaAlt(family.media, locale)}
-                    fill
+                    width={560}
+                    height={786}
                     sizes="(max-width: 40rem) 44vw, (max-width: 64rem) 30vw, 18vw"
                     unoptimized
                     style={{ objectFit: "cover", objectPosition: cover.focalPoint }}
