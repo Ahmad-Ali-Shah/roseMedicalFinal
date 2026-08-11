@@ -53,14 +53,14 @@ export const HOME_HERO_SLIDES = [
   {
     id: "precision-instruments",
     image: {
-      desktopSrc: "/media/editorial/home-hero/v1/home-hero-01-desktop.webp",
-      mobileSrc: "/media/editorial/home-hero/v1/home-hero-01-mobile.webp",
+      desktopSrc: "/media/editorial/home-hero/client-v2/home-hero-client-01.svg",
+      mobileSrc: "/media/editorial/home-hero/client-v2/home-hero-client-01.svg",
       alt: {
-        en: "Surgical instruments arranged on a sterile blue field",
-        ar: "أدوات جراحية مرتبة على سطح أزرق معقم"
+        en: "Gloved hand selecting a surgical instrument from an arranged set",
+        ar: "يد مرتدية قفازًا تختار أداة جراحية من مجموعة مرتبة"
       },
-      desktopFocalPoint: "61% 58%",
-      mobileFocalPoint: "66% 54%"
+      desktopFocalPoint: "52% 50%",
+      mobileFocalPoint: "52% 50%"
     },
     copySide: "left",
     tone: "dark",
@@ -81,14 +81,14 @@ export const HOME_HERO_SLIDES = [
   {
     id: "clinical-instrument-context",
     image: {
-      desktopSrc: "/media/editorial/home-hero/v1/home-hero-02-desktop.webp",
-      mobileSrc: "/media/editorial/home-hero/v1/home-hero-02-mobile.webp",
+      desktopSrc: "/media/editorial/home-hero/client-v2/home-hero-client-02.svg",
+      mobileSrc: "/media/editorial/home-hero/client-v2/home-hero-client-02.svg",
       alt: {
-        en: "Surgical instruments hanging on a rack beside an operating field",
-        ar: "أدوات جراحية معلقة على حامل بجوار حقل العمليات"
+        en: "Gloved hand holding ring-handled surgical forceps beside other instruments",
+        ar: "يد مرتدية قفازًا تمسك ملقطًا جراحيًا بحلقات بجوار أدوات أخرى"
       },
-      desktopFocalPoint: "68% 53%",
-      mobileFocalPoint: "78% 52%"
+      desktopFocalPoint: "65% 50%",
+      mobileFocalPoint: "65% 50%"
     },
     copySide: "left",
     tone: "dark",
@@ -109,14 +109,14 @@ export const HOME_HERO_SLIDES = [
   {
     id: "surgical-instrument-selection",
     image: {
-      desktopSrc: "/media/editorial/home-hero/v1/home-hero-03-desktop.webp",
-      mobileSrc: "/media/editorial/home-hero/v1/home-hero-03-mobile.webp",
+      desktopSrc: "/media/editorial/home-hero/client-v2/home-hero-client-03.svg",
+      mobileSrc: "/media/editorial/home-hero/client-v2/home-hero-client-03.svg",
       alt: {
-        en: "Gloved surgical team passing a surgical instrument in an operating room",
-        ar: "فريق جراحي مرتدٍ للقفازات يتبادل أداة جراحية داخل غرفة العمليات"
+        en: "Gloved hands examining a surgical scissors instrument",
+        ar: "يدان مرتديتان قفازات تفحصان مقصًا جراحيًا"
       },
-      desktopFocalPoint: "54% 50%",
-      mobileFocalPoint: "55% 50%"
+      desktopFocalPoint: "50% 50%",
+      mobileFocalPoint: "50% 50%"
     },
     copySide: "left",
     tone: "dark",
@@ -137,14 +137,14 @@ export const HOME_HERO_SLIDES = [
   {
     id: "catalogue-to-quotation",
     image: {
-      desktopSrc: "/media/editorial/home-hero/v1/home-hero-04-desktop.webp",
-      mobileSrc: "/media/editorial/home-hero/v1/home-hero-04-mobile.webp",
+      desktopSrc: "/media/editorial/home-hero/client-v2/home-hero-client-04.svg",
+      mobileSrc: "/media/editorial/home-hero/client-v2/home-hero-client-04.svg",
       alt: {
-        en: "Surgical instruments prepared on a blue sterile drape",
-        ar: "أدوات جراحية مجهزة على غطاء أزرق معقم"
+        en: "Dark surgical instruments arranged on a textured sterile surface",
+        ar: "أدوات جراحية داكنة مرتبة على سطح طبي منسوج"
       },
-      desktopFocalPoint: "48% 52%",
-      mobileFocalPoint: "48% 52%"
+      desktopFocalPoint: "50% 50%",
+      mobileFocalPoint: "50% 50%"
     },
     copySide: "right",
     tone: "dark",
