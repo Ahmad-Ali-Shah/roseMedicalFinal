@@ -9,17 +9,20 @@ function source(path: string): string {
 }
 
 describe("client-feedback responsive homepage contract", () => {
-  it("loads the dedicated density layer after owner refinement", () => {
+  it("loads the compact client redesign after the existing refinement layers", () => {
     const globals = source("src/app/globals.css");
     expect(globals.indexOf('../styles/public-density.css')).toBeGreaterThan(
       globals.indexOf('../styles/f8-owner-refinement.css')
     );
+    expect(globals.indexOf('../styles/home-client-redesign.css')).toBeGreaterThan(
+      globals.indexOf('../styles/public-imdad-typography.css')
+    );
 
-    const density = source("src/styles/public-density.css");
-    expect(density).toContain("--public-density-section-block");
-    expect(density).toContain("--public-density-hero-title");
-    expect(density).toContain("@media (max-height: 800px)");
-    expect(density).not.toContain("transform: scale(0.");
+    const redesign = source("src/styles/home-client-redesign.css");
+    expect(redesign).toContain("home-compact-section-title");
+    expect(redesign).toContain("@media (max-height: 800px)");
+    expect(redesign).not.toMatch(/\bzoom\s*:/);
+    expect(redesign).not.toContain("transform: scale(0.");
   });
 
   it("defines exactly four bounded hero slides", () => {
@@ -30,31 +33,29 @@ describe("client-feedback responsive homepage contract", () => {
     expect(HOME_HERO_SLIDES.every((slide) => slide.image.mobileSrc.startsWith("/media/"))).toBe(true);
   });
 
-  it("ships final versioned hero derivatives and final slide IDs", () => {
-    expect(HOME_HERO_SLIDES.every((slide) => !slide.id.startsWith("hero-development-"))).toBe(true);
+  it("uses the four current client hero banners directly", () => {
     HOME_HERO_SLIDES.forEach((slide, index) => {
       const number = String(index + 1).padStart(2, "0");
-      expect(slide.image.desktopSrc).toBe(`/media/editorial/home-hero/v1/home-hero-${number}-desktop.webp`);
-      expect(slide.image.mobileSrc).toBe(`/media/editorial/home-hero/v1/home-hero-${number}-mobile.webp`);
-      expect(existsSync(resolve(process.cwd(), `public${slide.image.desktopSrc}`))).toBe(true);
-      expect(existsSync(resolve(process.cwd(), `public${slide.image.mobileSrc}`))).toBe(true);
+      const expected = `/media/editorial/home-hero/client-v2/home-hero-client-${number}.svg`;
+      expect(slide.image.desktopSrc).toBe(expected);
+      expect(slide.image.mobileSrc).toBe(expected);
+      expect(existsSync(resolve(process.cwd(), `public${expected}`))).toBe(true);
     });
 
     const carouselSource = source("src/features/homepage/sections/home-hero-carousel.tsx");
-    expect(carouselSource.match(/priority=\{activeIndex === 0\}/g)).toHaveLength(1);
+    expect(carouselSource.match(/priority=\{activeIndex === 0\}/g) ?? []).toHaveLength(1);
+    expect(carouselSource).toContain("unoptimized");
   });
 
-  it("uses the requested GE SS Arabic stack and dedicated Arabic density rules", () => {
-    const layout = source("src/app/layout.tsx");
-    const tokens = source("src/styles/tokens.css");
-    const density = source("src/styles/public-density.css");
-    expect(layout).not.toContain("Noto_Sans_Arabic");
-    expect(tokens).toContain('"GE SS Two", "GE SS Text", "GE SS"');
-    expect(density).toContain('html[dir="rtl"] .home-hero-carousel');
-    expect(density).toContain("font-family: var(--font-arabic)");
+  it("keeps Arabic typography localized and tightens homepage line-height separately", () => {
+    const typography = source("src/styles/public-imdad-typography.css");
+    const redesign = source("src/styles/home-client-redesign.css");
+    expect(typography).toContain("var(--font-arabic)");
+    expect(redesign).toContain('html[dir="rtl"] .public-page--home');
+    expect(redesign).toContain("line-height: 1.6");
   });
 
-  it("centralizes the supplied social profiles and branded icon set", () => {
+  it("centralizes the supplied social profiles without a YouTube entry", () => {
     expect(SOCIAL_LINKS.map((item) => item.platform)).toEqual(["instagram", "x", "facebook", "linkedin"]);
     expect(SOCIAL_LINKS).toHaveLength(4);
     expect(SOCIAL_LINKS.map((item) => item.href)).toEqual([
@@ -65,12 +66,13 @@ describe("client-feedback responsive homepage contract", () => {
     ]);
   });
 
-  it("uses a dedicated five-family homepage gallery instead of FamilyCard collage", () => {
+  it("uses the dedicated five-family homepage gallery in the client sequence", () => {
     const discovery = source("src/features/homepage/sections/family-discovery.tsx");
     const gallery = source("src/features/homepage/sections/home-family-gallery.tsx");
     expect(discovery).toContain("HomeFamilyGallery");
-    expect(discovery).not.toContain("FamilyCard");
+    expect(discovery).not.toContain("SectionHeading");
+    expect(gallery).toContain("HOME_FAMILY_ORDER");
+    expect(gallery).toContain('["scissors", "cutters", "punches", "chisels", "knives"]');
     expect(gallery).toContain("data-home-family-gallery");
-    expect(gallery).not.toContain("Explore collection");
   });
 });

@@ -24,14 +24,18 @@ describe("F3E-D public content registry", () => {
     ]);
   });
 
-  it("preserves every shared value in public renderers", async () => {
+  it("preserves shared content values on the public renderers that still consume them", async () => {
     const homepage = await renderServerComponent(<Homepage />);
     expect(homepage).toContain(PUBLIC_CONTENT_VALUES.homeHero.title);
-    expect(homepage).toContain(PUBLIC_CONTENT_VALUES.homeSupport.title);
     expect(renderToStaticMarkup(<AboutPage />)).toContain(PUBLIC_CONTENT_VALUES.aboutIntroduction.title);
     expect(renderToStaticMarkup(<ProcurementSupportPage />)).toContain(PUBLIC_CONTENT_VALUES.procurementIntroduction.title);
     expect(await renderServerComponent(<ContactPage />)).toContain(PUBLIC_CONTENT_VALUES.contactIntroduction.title);
     expect(renderToStaticMarkup(<PublicShell><p>Body</p></PublicShell>)).toContain(PUBLIC_CONTENT_VALUES.footerDescription.copy);
+  });
+
+  it("keeps the retired homepage-support block governed even though the client redesign no longer renders it", () => {
+    expect(getPublicContentBlock("home.support")).toBeDefined();
+    expect(PUBLIC_CONTENT_VALUES.homeSupport.title.length).toBeGreaterThan(0);
   });
 
   it("keeps fields independent and Arabic unresolved", () => {

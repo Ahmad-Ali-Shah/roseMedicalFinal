@@ -25,15 +25,16 @@ describe("public localization", () => {
     expect(localizePath("/", "ar")).toBe("/ar");
   });
 
-  it("renders a genuinely localized Arabic homepage model", async () => {
+  it("renders the redesigned Arabic homepage model", async () => {
     const html = await renderServerComponent(<Homepage locale="ar" />);
     expect(html).toContain("أدوات دقيقة. ومشتريات أكثر وضوحًا.");
-    expect(html).toContain("منتجاتنا");
-    expect(html).toContain("استكشف مجموعة أدوات روزا.");
+    expect(html).toContain("مجموعة منتجاتنا");
+    expect(html).toContain("خطط شاملة");
+    expect(html).toContain("ترسيخ الثقة");
+    expect(html).toContain("خدمات تدعم نجاح عملائنا");
     expect(html).toContain("اطلب عرض سعر");
-    expect(html).toContain('alt="أدوات جراحية مرتبة على سطح أزرق معقم"');
-    expect(html).toContain('alt="يد مرتدية قفازًا تمسك بشفرة جراحية دقيقة"');
-    expect(html).not.toContain('alt="A gloved hand holding a precision surgical blade"');
+    expect(html).toContain('alt="يد مرتدية قفازًا تختار أداة جراحية من مجموعة مرتبة"');
+    expect(html).not.toContain('alt="Gloved hand selecting a surgical instrument from an arranged set"');
   });
 
   it("keeps the Arabic story and contact journeys localized beyond the homepage", () => {
@@ -41,13 +42,5 @@ describe("public localization", () => {
     const procurement = renderToStaticMarkup(<ProcurementSupportPage locale="ar" />);
     const contact = renderToStaticMarkup(<ContactInformationPanel locale="ar" />);
 
-    expect(about).toContain("وضوح أكبر لاختيار الأدوات الطبية");
-    expect(about).toContain("المستشفيات والعيادات");
-    expect(about).toContain('alt="فريق جراحي يمرر أداة داخل غرفة العمليات"');
-    expect(about).not.toContain('alt="A surgical team passing an instrument in theatre"');
-    expect(procurement).toContain("ست خطوات عملية");
-    expect(procurement).toContain("إرسال بيانات التواصل");
-    expect(contact).toContain("طريق الملك فهد");
-    expect(contact).not.toContain("Example contact details");
-  });
-});
+    expect(about).toContain("وضوح أكبر لاختيار الأد؈ات الطبية");
+    expect(about).toContain("المستشفٶ)�*�6b6)�a6.vm�}���}��"���W�V7B�&�WB����B�F�6��F��v�C�$7W&v�6�FV�76��r���7G'V�V�B��F�VG&R"r���W�V7B�&�7W&V�V�B��F�6��F��-�=����}���}�����]�M����"���W�V7B�&�7W&V�V�B��F�6��F��-�]��=�}�B�����}�m�}���}�M�����}�]�B"���W�V7B�6��F7B��F�6��F��-�}����"�}�M�]�M�2��}��"���W�V7B�6��F7B����B�F�6��F��$W���R6��F7BFWF��2"���ғ��ғ��
