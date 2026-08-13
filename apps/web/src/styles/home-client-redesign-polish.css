@@ -19,6 +19,10 @@
   background-size: cover;
 }
 
+.home-family-gallery__panel[data-family="punches"] .home-family-gallery__image {
+  opacity: 0;
+}
+
 .home-confidence__media-reveal {
   width: min(100%, 19rem);
   justify-self: end;
