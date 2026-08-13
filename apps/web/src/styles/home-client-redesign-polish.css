@@ -1,0 +1,46 @@
+/* Final client-reference polish layered after home-client-redesign.css. */
+
+.home-contact-band__surface {
+  flex-direction: column;
+  gap: 0.45rem;
+  min-height: 5.6rem;
+  padding-block: clamp(0.75rem, 1.6vw, 1rem);
+}
+
+.home-contact-band__copy {
+  order: initial;
+  text-align: center;
+}
+
+.home-assurance-card__body {
+  gap: 0.65rem;
+}
+
+.home-assurance-card__icon {
+  width: 3rem;
+  height: 3rem;
+  border: 0;
+  border-radius: 0;
+}
+
+.home-assurance-card__icon svg {
+  width: 2.6rem;
+  height: 2.6rem;
+}
+
+@media (max-width: 40rem) {
+  .home-contact-band__surface {
+    gap: 0.55rem;
+    padding: 0.85rem;
+  }
+
+  .home-assurance-card__icon {
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+
+  .home-assurance-card__icon svg {
+    width: 2.15rem;
+    height: 2.15rem;
+  }
+}
