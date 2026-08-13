@@ -2,6 +2,7 @@ import type { ReactElement } from "react";
 import { Container, Section } from "@/components/layout";
 import { SocialLinksRow } from "@/features/social-links";
 import type { PublicLocale } from "@/features/localization";
+import { Reveal, Stagger, StaggerItem } from "@/features/motion";
 import type {
   HomeAssuranceModel,
   HomeComprehensiveModel,
@@ -23,24 +24,30 @@ export function ComprehensivePlans({ model }: { model: HomeComprehensiveModel })
   return (
     <Section className="home-comprehensive" tone="paper" data-section="comprehensive-plans" aria-labelledby="home-comprehensive-title">
       <Container size="wide">
-        <h2 id="home-comprehensive-title" className="home-compact-section-title home-compact-section-title--center">{model.title}</h2>
+        <Reveal direction="up">
+          <h2 id="home-comprehensive-title" className="home-compact-section-title home-compact-section-title--center">{model.title}</h2>
+        </Reveal>
         <div className="home-comprehensive__lead">
-          <figure className="home-specialty home-specialty--lead">
-            <HomeMediaPlaceholder label={model.leadSpecialty} />
-            <figcaption>{model.leadSpecialty}</figcaption>
-          </figure>
-          <p className="home-editorial-copy">{model.copy}</p>
+          <Reveal direction="right">
+            <figure className="home-specialty home-specialty--lead">
+              <HomeMediaPlaceholder label={model.leadSpecialty} />
+              <figcaption>{model.leadSpecialty}</figcaption>
+            </figure>
+          </Reveal>
+          <Reveal direction="left" delay={0.06}>
+            <p className="home-editorial-copy">{model.copy}</p>
+          </Reveal>
         </div>
-        <ul className="home-comprehensive__specialties" aria-label={model.title}>
+        <Stagger as="ul" className="home-comprehensive__specialties" aria-label={model.title} interval={0.055}>
           {model.specialties.map((specialty) => (
-            <li key={specialty}>
+            <StaggerItem key={specialty} as="li">
               <figure className="home-specialty">
                 <HomeMediaPlaceholder label={specialty} />
                 <figcaption>{specialty}</figcaption>
               </figure>
-            </li>
+            </StaggerItem>
           ))}
-        </ul>
+        </Stagger>
       </Container>
     </Section>
   );
@@ -50,11 +57,13 @@ export function SecuringConfidence({ model }: { model: HomeConfidenceModel }): R
   return (
     <Section className="home-confidence" tone="paper" data-section="securing-confidence" aria-labelledby="home-confidence-title">
       <Container className="home-confidence__grid" size="wide">
-        <div className="home-confidence__copy">
+        <Reveal className="home-confidence__copy" direction="right">
           <h2 id="home-confidence-title" className="home-compact-section-title">{model.title}</h2>
           <p className="home-editorial-copy">{model.copy}</p>
-        </div>
-        <HomeMediaPlaceholder label={model.imageLabel} aspect="portrait" />
+        </Reveal>
+        <Reveal className="home-confidence__media-reveal" direction="left" delay={0.06}>
+          <HomeMediaPlaceholder label={model.imageLabel} aspect="portrait" />
+        </Reveal>
       </Container>
     </Section>
   );
@@ -94,7 +103,7 @@ export function HomeContactBand({ model }: { model: HomeContactBandModel }): Rea
   return (
     <section className="home-contact-band" data-section="home-contact-band" aria-labelledby="home-contact-band-title">
       <Container size="wide">
-        <div className="home-contact-band__surface">
+        <Reveal className="home-contact-band__surface" direction="up">
           <div className="home-contact-band__actions">
             <a className="home-contact-action home-contact-action--whatsapp" href={model.whatsappHref} target="_blank" rel="noreferrer">
               <span className="home-contact-action__icon" aria-hidden="true"><ContactIcon kind="whatsapp" /></span>
@@ -109,7 +118,7 @@ export function HomeContactBand({ model }: { model: HomeContactBandModel }): Rea
             <p className="home-contact-band__eyebrow">{model.eyebrow}</p>
             <h2 id="home-contact-band-title">{model.title}</h2>
           </div>
-        </div>
+        </Reveal>
       </Container>
     </section>
   );
@@ -172,10 +181,12 @@ export function ClientSuccessAssurance({ model }: { model: HomeAssuranceModel })
   return (
     <Section className="home-assurance" tone="paper" data-section="client-success-assurance" aria-labelledby="home-assurance-title">
       <Container size="wide">
-        <h2 id="home-assurance-title" className="home-assurance__heading">{model.title} <span>{model.badge}</span></h2>
-        <ul className="home-assurance__grid">
+        <Reveal direction="up">
+          <h2 id="home-assurance-title" className="home-assurance__heading">{model.title} <span>{model.badge}</span></h2>
+        </Reveal>
+        <Stagger as="ul" className="home-assurance__grid" interval={0.055}>
           {model.cards.map((card) => (
-            <li key={card.id}>
+            <StaggerItem key={card.id} as="li">
               <article className="home-assurance-card">
                 <h3>{card.title}</h3>
                 <div className="home-assurance-card__body">
@@ -185,9 +196,9 @@ export function ClientSuccessAssurance({ model }: { model: HomeAssuranceModel })
                   <p>{card.copy}</p>
                 </div>
               </article>
-            </li>
+            </StaggerItem>
           ))}
-        </ul>
+        </Stagger>
       </Container>
     </Section>
   );
