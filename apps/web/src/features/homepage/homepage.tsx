@@ -1,5 +1,4 @@
 import type { ReactElement } from "react";
-import "@/styles/home-client-redesign-polish.css";
 import { createHomePageModel } from "./homepage.data";
 import type { PublicLocale } from "@/features/localization";
 import { HomeHeroCarousel } from "./sections/home-hero-carousel";
