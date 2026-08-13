@@ -28,6 +28,29 @@
   height: 2.6rem;
 }
 
+/* Preserve the client's dense one-row information rhythm on tablets instead
+   of falling into taller 3+2 / 2+2 compositions inherited from older rules. */
+@media (min-width: 40.001rem) and (max-width: 64rem) {
+  .public-page--home .home-family-gallery {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: clamp(0.5rem, 1.1vw, 0.75rem);
+  }
+
+  .public-page--home .home-family-gallery__title--cover {
+    font-size: clamp(0.72rem, 1.25vw, 0.84rem);
+  }
+
+  .home-comprehensive__specialties,
+  .home-assurance__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(0.55rem, 1.25vw, 0.9rem);
+  }
+
+  .home-assurance-card__body {
+    padding-inline: clamp(0.55rem, 1.2vw, 0.8rem);
+  }
+}
+
 @media (max-width: 40rem) {
   .home-contact-band__surface {
     gap: 0.55rem;
