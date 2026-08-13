@@ -51,14 +51,27 @@ describe("client homepage compact redesign", () => {
     expect(homepage).not.toContain("ProcurementSupport");
   });
 
-  it("loads a final compact density layer without CSS zoom", () => {
+  it("loads final compact density and polish layers without CSS zoom", () => {
     const globals = source("src/app/globals.css");
     const redesign = source("src/styles/home-client-redesign.css");
-    expect(globals.trim().endsWith('@import "../styles/home-client-redesign.css";')).toBe(true);
+    const polish = source("src/styles/home-client-redesign-polish.css");
+    expect(globals.trim().endsWith('@import "../styles/home-client-redesign-polish.css";')).toBe(true);
+    expect(globals.indexOf('../styles/home-client-redesign-polish.css')).toBeGreaterThan(
+      globals.indexOf('../styles/home-client-redesign.css')
+    );
     expect(redesign).toContain("body:has(.public-page--home) .site-header__bar");
     expect(redesign).toContain("max-height: 800px");
-    expect(redesign).not.toMatch(/\bzoom\s*:/);
-    expect(redesign).not.toContain("transform: scale(0.");
+    expect(polish).toContain("flex-direction: column");
+    expect(polish).toContain("home-assurance-card__icon svg");
+    expect(`${redesign}\n${polish}`).not.toMatch(/\bzoom\s*:/);
+    expect(`${redesign}\n${polish}`).not.toContain("transform: scale(0.");
+  });
+
+  it("uses proper assurance iconography instead of temporary letter badges", () => {
+    const sections = source("src/features/homepage/sections/client-home-sections.tsx");
+    expect(sections).toContain("function AssuranceIcon");
+    expect(sections).toContain("<svg");
+    expect(sections).not.toContain('customization: "C"');
   });
 
   it("uses only the four real social profiles and never adds YouTube", async () => {
