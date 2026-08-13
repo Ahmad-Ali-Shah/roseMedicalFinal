@@ -1,25 +1,30 @@
 import type { ReactElement } from "react";
-import { getFeaturedCatalogueProducts } from "@/features/catalogue-live";
 import { createHomePageModel } from "./homepage.data";
 import type { PublicLocale } from "@/features/localization";
 import { HomeHeroCarousel } from "./sections/home-hero-carousel";
 import { FamilyDiscovery } from "./sections/family-discovery";
-import { ProcurementSupport } from "./sections/procurement-support";
-import { FeaturedInstruments } from "./sections/featured-instruments";
-import { CatalogueAccess } from "./sections/catalogue-access";
 import { QuotationCta } from "./sections/quotation-cta";
+import {
+  ClientSuccessAssurance,
+  ComprehensivePlans,
+  HomeContactBand,
+  HomeSocialStrip,
+  SecuringConfidence
+} from "./sections/client-home-sections";
 
-export async function Homepage({ locale = "en" }: { locale?: PublicLocale }): Promise<ReactElement> {
-  const products = await getFeaturedCatalogueProducts();
-  const model = createHomePageModel(products, locale);
+export function Homepage({ locale = "en" }: { locale?: PublicLocale }): ReactElement {
+  const model = createHomePageModel(locale);
+
   return (
     <div className="public-page public-page--home">
       <HomeHeroCarousel locale={locale} />
       <FamilyDiscovery intro={model.familyIntro} families={model.families} locale={locale} />
-      <ProcurementSupport model={model.procurement} locale={locale} />
-      <FeaturedInstruments intro={model.productsIntro} products={model.products} />
-      <CatalogueAccess model={model.catalogue} locale={locale} />
+      <ComprehensivePlans model={model.comprehensive} />
+      <SecuringConfidence model={model.confidence} />
+      <HomeContactBand model={model.contactBand} />
+      <ClientSuccessAssurance model={model.assurance} />
       <QuotationCta model={model.quotation} />
+      <HomeSocialStrip model={model.social} locale={locale} />
     </div>
   );
 }
