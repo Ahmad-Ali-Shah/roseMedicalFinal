@@ -32,9 +32,14 @@ const CLIENT_MOBILE_HERO_SOURCES = [
   "/media/editorial/home-hero/client-v3/hero-03-mobile.avif",
   "/media/editorial/home-hero/client-v3/hero-04-mobile.avif"
 ] as const;
+const CLIENT_MOBILE_HERO_FOCALS = ["50% 46%", "50% 48%", "54% 48%", "50% 48%"] as const;
 
 function mobileHeroSource(index: number, fallback: string): string {
   return CLIENT_MOBILE_HERO_SOURCES[index] ?? fallback;
+}
+
+function mobileHeroFocal(index: number, fallback: string): string {
+  return CLIENT_MOBILE_HERO_FOCALS[index] ?? fallback;
 }
 
 function preferredHeroSource(slide: LocalizedHomeHeroSlide, index: number): string {
@@ -146,7 +151,7 @@ export function HomeHeroCarousel({
   const slide = slides[activeIndex] ?? slides[0]!;
   const slideStyle = {
     "--hero-desktop-focal": slide.image.desktopFocalPoint,
-    "--hero-mobile-focal": slide.image.mobileFocalPoint
+    "--hero-mobile-focal": mobileHeroFocal(activeIndex, slide.image.mobileFocalPoint)
   } as MotionStyle;
   const mediaStyle = {
     "--hero-desktop-image": `url("${slide.image.desktopSrc}")`,
