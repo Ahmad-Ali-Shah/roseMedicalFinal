@@ -59,8 +59,8 @@ export const HOME_HERO_SLIDES = [
         en: "Gloved hand selecting a surgical instrument from an arranged set",
         ar: "يد مرتدية قفازًا تختار أداة جراحية من مجموعة مرتبة"
       },
-      desktopFocalPoint: "52% 50%",
-      mobileFocalPoint: "52% 50%"
+      desktopFocalPoint: "58% 50%",
+      mobileFocalPoint: "56% 46%"
     },
     copySide: "left",
     tone: "dark",
@@ -87,8 +87,8 @@ export const HOME_HERO_SLIDES = [
         en: "Gloved hand holding ring-handled surgical forceps beside other instruments",
         ar: "يد مرتدية قفازًا تمسك ملقطًا جراحيًا بحلقات بجوار أدوات أخرى"
       },
-      desktopFocalPoint: "65% 50%",
-      mobileFocalPoint: "65% 50%"
+      desktopFocalPoint: "63% 49%",
+      mobileFocalPoint: "62% 46%"
     },
     copySide: "left",
     tone: "dark",
@@ -115,8 +115,8 @@ export const HOME_HERO_SLIDES = [
         en: "Gloved hands examining a surgical scissors instrument",
         ar: "يدان مرتديتان قفازات تفحصان مقصًا جراحيًا"
       },
-      desktopFocalPoint: "50% 50%",
-      mobileFocalPoint: "50% 50%"
+      desktopFocalPoint: "62% 50%",
+      mobileFocalPoint: "66% 48%"
     },
     copySide: "left",
     tone: "dark",
@@ -143,8 +143,8 @@ export const HOME_HERO_SLIDES = [
         en: "Dark surgical instruments arranged on a textured sterile surface",
         ar: "أدوات جراحية داكنة مرتبة على سطح طبي منسوج"
       },
-      desktopFocalPoint: "50% 50%",
-      mobileFocalPoint: "50% 50%"
+      desktopFocalPoint: "46% 50%",
+      mobileFocalPoint: "48% 48%"
     },
     copySide: "right",
     tone: "dark",
