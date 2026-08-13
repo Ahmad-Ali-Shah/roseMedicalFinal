@@ -12,7 +12,7 @@ import type {
 
 function HomeMediaPlaceholder({ label, aspect = "landscape" }: { label: string; aspect?: "landscape" | "portrait" }): ReactElement {
   return (
-    <div className={`home-media-placeholder home-media-placeholder--${aspect}`} role="img" aria-label={`${label} image placeholder`} data-home-media-placeholder>
+    <div className={`home-media-placeholder home-media-placeholder--${aspect}`} role="img" aria-label={label} data-home-media-placeholder>
       <span className="home-media-placeholder__cross" aria-hidden="true" />
       <span className="home-media-placeholder__label">{label}</span>
     </div>
@@ -60,6 +60,36 @@ export function SecuringConfidence({ model }: { model: HomeConfidenceModel }): R
   );
 }
 
+function ContactIcon({ kind }: { kind: "whatsapp" | "email" }): ReactElement {
+  const common = {
+    width: 18,
+    height: 18,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.75,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    "aria-hidden": true
+  };
+
+  if (kind === "email") {
+    return (
+      <svg {...common}>
+        <rect x="3" y="5" width="18" height="14" rx="1.8" />
+        <path d="m4.5 7 7.5 6 7.5-6" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg {...common}>
+      <path d="M20 11.6a8 8 0 0 1-11.8 7L4 20l1.4-4.1A8 8 0 1 1 20 11.6Z" />
+      <path d="M9.1 8.5c.4 2.7 2 4.4 4.7 5.2l1.3-1.3 2.1.9c-.4 1.9-1.7 2.8-3.5 2.5-3.8-.7-6.2-3.1-6.9-6.9-.3-1.8.6-3.1 2.5-3.5l.9 2.1Z" />
+    </svg>
+  );
+}
+
 export function HomeContactBand({ model }: { model: HomeContactBandModel }): ReactElement {
   return (
     <section className="home-contact-band" data-section="home-contact-band" aria-labelledby="home-contact-band-title">
@@ -67,11 +97,11 @@ export function HomeContactBand({ model }: { model: HomeContactBandModel }): Rea
         <div className="home-contact-band__surface">
           <div className="home-contact-band__actions">
             <a className="home-contact-action home-contact-action--whatsapp" href={model.whatsappHref} target="_blank" rel="noreferrer">
-              <span className="home-contact-action__icon" aria-hidden="true">WA</span>
+              <span className="home-contact-action__icon" aria-hidden="true"><ContactIcon kind="whatsapp" /></span>
               {model.whatsappLabel}
             </a>
             <a className="home-contact-action home-contact-action--email" href={model.emailHref}>
-              <span className="home-contact-action__icon" aria-hidden="true">@</span>
+              <span className="home-contact-action__icon" aria-hidden="true"><ContactIcon kind="email" /></span>
               {model.emailLabel}
             </a>
           </div>
