@@ -1,5 +1,33 @@
 /* Final client-reference polish layered after home-client-redesign.css. */
 
+/* Render the client-supplied hero wrappers as background media. This avoids
+   the SVG + Next Image failure mode while retaining the exact supplied art. */
+.home-hero-carousel__media {
+  background-image: var(--hero-desktop-image);
+  background-position: var(--hero-desktop-focal, 50% 50%);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* Punches gets an explicit CSS fallback because its catalogue cover was the
+   one client asset reported as disappearing in the image-element pipeline. */
+.home-family-gallery__panel[data-family="punches"] .home-family-gallery__media--catalogue-cover {
+  background-color: var(--color-paper);
+  background-image: url("/media/families/homepage-covers/punches-family-cover-full.svg");
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.home-confidence__media-reveal {
+  width: min(100%, 19rem);
+  justify-self: end;
+}
+
+.home-confidence__media-reveal .home-media-placeholder {
+  width: 100%;
+}
+
 .home-contact-band__surface {
   flex-direction: column;
   gap: 0.45rem;
@@ -52,6 +80,16 @@
 }
 
 @media (max-width: 40rem) {
+  .home-hero-carousel__media {
+    background-image: var(--hero-mobile-image);
+    background-position: var(--hero-mobile-focal, 50% 50%);
+  }
+
+  .home-confidence__media-reveal {
+    width: 100%;
+    justify-self: stretch;
+  }
+
   .home-contact-band__surface {
     gap: 0.55rem;
     padding: 0.85rem;
