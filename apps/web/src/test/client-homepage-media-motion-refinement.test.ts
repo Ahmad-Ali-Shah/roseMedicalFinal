@@ -26,16 +26,17 @@ describe("homepage media and entrance-motion refinement", () => {
     expect(HOME_HERO_SLIDES.map((slide) => [slide.image.desktopFocalPoint, slide.image.mobileFocalPoint])).toEqual(EXPECTED_FOCALS);
   });
 
-  it("renders hero and catalogue-cover wrappers as direct background media instead of through Next Image", () => {
+  it("bypasses the hero SVG/Next-Image failure path and gives Punches an independent render fallback", () => {
     const hero = source("src/features/homepage/sections/home-hero-carousel.tsx");
     const gallery = source("src/features/homepage/sections/home-family-gallery.tsx");
+    const polish = source("src/styles/home-client-redesign-polish.css");
 
     expect(hero).not.toContain('from "next/image"');
     expect(hero).toContain("--hero-desktop-image");
     expect(hero).toContain("--hero-mobile-image");
-    expect(gallery).not.toContain('from "next/image"');
-    expect(gallery).toContain("backgroundImage");
     expect(gallery).toContain('/media/families/homepage-covers/punches-family-cover-full.svg');
+    expect(polish).toContain('.home-family-gallery__panel[data-family="punches"]');
+    expect(polish).toContain('background-image: url("/media/families/homepage-covers/punches-family-cover-full.svg")');
   });
 
   it("restores subtle rise/slide entrance choreography across the redesigned homepage", () => {
