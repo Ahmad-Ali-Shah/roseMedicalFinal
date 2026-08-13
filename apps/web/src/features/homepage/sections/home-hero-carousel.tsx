@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import {
   useCallback,
   useEffect,
@@ -138,6 +137,10 @@ export function HomeHeroCarousel({
     "--hero-desktop-focal": slide.image.desktopFocalPoint,
     "--hero-mobile-focal": slide.image.mobileFocalPoint
   } as MotionStyle;
+  const mediaStyle = {
+    "--hero-desktop-image": `url("${slide.image.desktopSrc}")`,
+    "--hero-mobile-image": `url("${slide.image.mobileSrc}")`
+  } as MotionStyle;
 
   return (
     <section
@@ -184,31 +187,29 @@ export function HomeHeroCarousel({
           <motion.div
             className="home-hero-carousel__media"
             data-media-slot="homepage-hero-active"
-            initial={reducedMotion ? false : { scale: 1.028 }}
-            animate={{ scale: 1 }}
-            exit={reducedMotion ? { scale: 1 } : { scale: 1.012 }}
-            transition={{ duration: reducedMotion ? 0 : 1.16, ease: MOTION_EASING.standard }}
-          >
-            <picture>
-              <source media="(max-width: 40rem)" srcSet={slide.image.mobileSrc} />
-              <Image
-                src={slide.image.desktopSrc}
-                alt={slide.image.alt}
-                fill
-                priority={activeIndex === 0}
-                sizes="100vw"
-                unoptimized
-                style={{ objectFit: "cover" }}
-              />
-            </picture>
-          </motion.div>
+            data-entry-motion="slide-settle"
+            role="img"
+            aria-label={slide.image.alt}
+            style={mediaStyle}
+            initial={reducedMotion ? false : {
+              scale: 1.035,
+              x: slide.copySide === "right" ? -12 : 12
+            }}
+            animate={{ scale: 1, x: 0 }}
+            exit={reducedMotion ? { scale: 1, x: 0 } : {
+              scale: 1.012,
+              x: slide.copySide === "right" ? 8 : -8
+            }}
+            transition={{ duration: reducedMotion ? 0 : 1.12, ease: MOTION_EASING.standard }}
+          />
           <span className="home-hero-carousel__overlay" aria-hidden="true" />
           <div className="home-hero-carousel__content">
             <motion.div
               className="home-hero-carousel__copy"
-              initial={reducedMotion ? false : { opacity: 0, x: slide.copySide === "right" ? 18 : -18 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={reducedMotion ? { opacity: 1, x: 0 } : { opacity: 0, x: slide.copySide === "right" ? -10 : 10 }}
+              data-entry-motion="rise"
+              initial={reducedMotion ? false : { opacity: 0, y: 22 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -10 }}
               transition={{
                 duration: reducedMotion ? 0 : MOTION_DURATION.section,
                 delay: reducedMotion ? 0 : 0.12,
