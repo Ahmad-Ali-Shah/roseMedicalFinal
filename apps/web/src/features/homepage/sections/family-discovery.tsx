@@ -24,7 +24,7 @@ export function FamilyDiscovery({
             {intro.title}
           </h2>
         </Reveal>
-        <Reveal direction="up" delay={0.08}>
+        <Reveal direction="right" delay={0.08}>
           <HomeFamilyGallery families={families} locale={locale} />
         </Reveal>
       </Container>
