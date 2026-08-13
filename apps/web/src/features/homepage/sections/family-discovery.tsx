@@ -1,11 +1,10 @@
 import type { ReactElement } from "react";
 import { Container, Section } from "@/components/layout";
-import { SectionHeading } from "@/features/public-catalogue";
-import type { HomeFamilyIntroModel } from "../homepage.data";
 import type { PublicLocale } from "@/features/localization";
+import type { HomeFamilyIntroModel } from "../homepage.data";
 import { HomeFamilyGallery } from "./home-family-gallery";
 
-type FamilyGalleryFamilies = Parameters<typeof HomeFamilyGallery>[0]["families"];
+type GalleryFamilies = Parameters<typeof HomeFamilyGallery>[0]["families"];
 
 export function FamilyDiscovery({
   intro,
@@ -13,22 +12,15 @@ export function FamilyDiscovery({
   locale = "en"
 }: {
   intro: HomeFamilyIntroModel;
-  families: FamilyGalleryFamilies;
+  families: GalleryFamilies;
   locale?: PublicLocale;
 }): ReactElement {
   return (
-    <Section
-      tone="paper"
-      data-section="family-discovery"
-      aria-labelledby="family-discovery-title"
-    >
+    <Section className="home-product-range" tone="paper" data-section="family-discovery" aria-labelledby="family-discovery-title">
       <Container size="wide">
-        <SectionHeading
-          id="family-discovery-title"
-          level={2}
-          eyebrow={intro.eyebrow}
-          title={intro.title}
-        />
+        <h2 id="family-discovery-title" className="home-compact-section-title home-compact-section-title--center">
+          {intro.title}
+        </h2>
         <HomeFamilyGallery families={families} locale={locale} />
       </Container>
     </Section>
