@@ -26,10 +26,20 @@ import {
 } from "../hero-carousel-state";
 
 const DRAG_THRESHOLD_PX = 48;
+const CLIENT_MOBILE_HERO_SOURCES = [
+  "/media/editorial/home-hero/client-v3/hero-01-mobile.avif",
+  "/media/editorial/home-hero/client-v3/hero-02-mobile.avif",
+  "/media/editorial/home-hero/client-v3/hero-03-mobile.avif",
+  "/media/editorial/home-hero/client-v3/hero-04-mobile.avif"
+] as const;
 
-function preferredHeroSource(slide: LocalizedHomeHeroSlide): string {
+function mobileHeroSource(index: number, fallback: string): string {
+  return CLIENT_MOBILE_HERO_SOURCES[index] ?? fallback;
+}
+
+function preferredHeroSource(slide: LocalizedHomeHeroSlide, index: number): string {
   return window.matchMedia("(max-width: 40rem)").matches
-    ? slide.image.mobileSrc
+    ? mobileHeroSource(index, slide.image.mobileSrc)
     : slide.image.desktopSrc;
 }
 
@@ -67,10 +77,11 @@ export function HomeHeroCarousel({
   }, []);
 
   useEffect(() => {
-    const nextSlide = slides[nextHeroSlideIndex(activeIndex, slides.length)] ?? slides[0]!;
+    const nextIndex = nextHeroSlideIndex(activeIndex, slides.length);
+    const nextSlide = slides[nextIndex] ?? slides[0]!;
     const image = new window.Image();
     image.decoding = "async";
-    image.src = preferredHeroSource(nextSlide);
+    image.src = preferredHeroSource(nextSlide, nextIndex);
     preloadedImage.current = image;
   }, [activeIndex, slides]);
 
@@ -139,7 +150,7 @@ export function HomeHeroCarousel({
   } as MotionStyle;
   const mediaStyle = {
     "--hero-desktop-image": `url("${slide.image.desktopSrc}")`,
-    "--hero-mobile-image": `url("${slide.image.mobileSrc}")`
+    "--hero-mobile-image": `url("${mobileHeroSource(activeIndex, slide.image.mobileSrc)}")`
   } as MotionStyle;
 
   return (
