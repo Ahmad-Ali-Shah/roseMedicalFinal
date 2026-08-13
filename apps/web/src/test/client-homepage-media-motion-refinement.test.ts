@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { HOME_HERO_SLIDES } from "@/features/homepage/home-hero-slides";
@@ -6,26 +6,36 @@ import { HOME_HERO_SLIDES } from "@/features/homepage/home-hero-slides";
 const source = (path: string) => readFileSync(resolve(process.cwd(), path), "utf8");
 
 const EXPECTED_HERO_MEDIA = [
-  ["/media/editorial/home-hero/client-v3/hero-01-desktop.avif", "/media/editorial/home-hero/client-v3/hero-01-mobile.avif"],
-  ["/media/editorial/home-hero/client-v3/hero-02-desktop.avif", "/media/editorial/home-hero/client-v3/hero-02-mobile.avif"],
-  ["/media/editorial/home-hero/client-v3/hero-03-desktop.avif", "/media/editorial/home-hero/client-v3/hero-03-mobile.avif"],
-  ["/media/editorial/home-hero/client-v3/hero-04-desktop.avif", "/media/editorial/home-hero/client-v3/hero-04-mobile.avif"]
+  "/media/editorial/home-hero/client-v2/home-hero-client-01.svg",
+  "/media/editorial/home-hero/client-v2/home-hero-client-02.svg",
+  "/media/editorial/home-hero/client-v2/home-hero-client-03.svg",
+  "/media/editorial/home-hero/client-v2/home-hero-client-04.svg"
+] as const;
+
+const EXPECTED_FOCALS = [
+  ["58% 50%", "56% 46%"],
+  ["63% 49%", "62% 46%"],
+  ["62% 50%", "66% 48%"],
+  ["46% 50%", "48% 48%"]
 ] as const;
 
 describe("homepage media and entrance-motion refinement", () => {
-  it("uses the four supplied banners as direct AVIF desktop/mobile sources", () => {
-    expect(HOME_HERO_SLIDES.map((slide) => [slide.image.desktopSrc, slide.image.mobileSrc])).toEqual(EXPECTED_HERO_MEDIA);
-
-    for (const [desktopSrc, mobileSrc] of EXPECTED_HERO_MEDIA) {
-      expect(existsSync(resolve(process.cwd(), `public${desktopSrc}`))).toBe(true);
-      expect(existsSync(resolve(process.cwd(), `public${mobileSrc}`))).toBe(true);
-    }
+  it("keeps the four supplied client banners and gives every slide deliberate desktop/mobile focal points", () => {
+    expect(HOME_HERO_SLIDES.map((slide) => slide.image.desktopSrc)).toEqual(EXPECTED_HERO_MEDIA);
+    expect(HOME_HERO_SLIDES.map((slide) => slide.image.mobileSrc)).toEqual(EXPECTED_HERO_MEDIA);
+    expect(HOME_HERO_SLIDES.map((slide) => [slide.image.desktopFocalPoint, slide.image.mobileFocalPoint])).toEqual(EXPECTED_FOCALS);
   });
 
-  it("uses the reattached Punches cover rather than the embedded-image SVG wrapper", () => {
+  it("renders hero and catalogue-cover wrappers as direct background media instead of through Next Image", () => {
+    const hero = source("src/features/homepage/sections/home-hero-carousel.tsx");
     const gallery = source("src/features/homepage/sections/home-family-gallery.tsx");
-    expect(gallery).toContain('/media/families/homepage-covers/punches-family-cover-client.avif');
-    expect(existsSync(resolve(process.cwd(), "public/media/families/homepage-covers/punches-family-cover-client.avif"))).toBe(true);
+
+    expect(hero).not.toContain('from "next/image"');
+    expect(hero).toContain("--hero-desktop-image");
+    expect(hero).toContain("--hero-mobile-image");
+    expect(gallery).not.toContain('from "next/image"');
+    expect(gallery).toContain("backgroundImage");
+    expect(gallery).toContain('/media/families/homepage-covers/punches-family-cover-full.svg');
   });
 
   it("restores subtle rise/slide entrance choreography across the redesigned homepage", () => {
