@@ -48,9 +48,8 @@ export function HomeFamilyGallery({ families, locale = "en" }: { families: reado
             <li key={family.slug} className="home-family-gallery__panel" data-family-panel data-family={family.slug}>
               <LocaleLink className="home-family-gallery__link" href={familyHref(family.slug)} aria-label={family.name}>
                 <div className="home-family-gallery__media home-family-gallery__media--catalogue-cover">
-                  <Image className="home-family-gallery__image" src={cover.src} alt={publicMediaAlt(family.media, locale)} width={560} height={786} sizes="(max-width: 40rem) 44vw, (max-width: 64rem) 30vw, 18vw" unoptimized style={{ objectFit: "cover", objectPosition: cover.focalPoint }} />
+                  <Image className="home-family-gallery__image" src={cover.src} alt={publicMediaAlt(family.media, locale)} width={560} height={786} sizes="(max-width: 40rem) 44vw, (max-width: 64rem) 19vw, 18vw" unoptimized style={{ objectFit: "cover", objectPosition: cover.focalPoint }} />
                 </div>
-                <h3 className="home-family-gallery__title home-family-gallery__title--cover">{family.name}</h3>
               </LocaleLink>
             </li>
           );
