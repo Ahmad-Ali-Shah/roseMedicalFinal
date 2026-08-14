@@ -20,6 +20,14 @@ const EXPECTED_MOBILE_HERO_MEDIA = [
 ] as const;
 
 const EXPECTED_MOBILE_FOCALS = ["50% 46%", "50% 48%", "54% 48%", "50% 48%"] as const;
+const EXPECTED_SPECIALTY_MEDIA = [
+  "/media/editorial/home-specialties/plastic-surgery.webp",
+  "/media/editorial/home-specialties/orthopedics.webp",
+  "/media/editorial/home-specialties/maxillofacial.webp",
+  "/media/editorial/home-specialties/orthodontics.webp",
+  "/media/editorial/home-specialties/spine.webp",
+  "/media/editorial/home-specialties/securing-confidence.webp"
+] as const;
 
 describe("homepage media and entrance-motion refinement", () => {
   it("uses direct client banner assets with dedicated phone crops", () => {
@@ -52,6 +60,18 @@ describe("homepage media and entrance-motion refinement", () => {
     expect(gallery).not.toContain('/media/families/homepage-covers/punches-family-cover-full.svg');
     expect(polish).not.toContain('background-image: url("/media/families/homepage-covers/punches-family-cover-full.svg")');
     expect(polish).not.toContain('.home-family-gallery__panel[data-family="punches"] .home-family-gallery__image');
+  });
+
+  it("replaces every approved medical placeholder with local clinical photography", () => {
+    const clientSections = source("src/features/homepage/sections/client-home-sections.tsx");
+
+    for (const mediaSrc of EXPECTED_SPECIALTY_MEDIA) {
+      expect(existsSync(resolve(process.cwd(), `public${mediaSrc}`))).toBe(true);
+      expect(clientSections).toContain(mediaSrc);
+    }
+    expect(clientSections).toContain('from "next/image"');
+    expect(clientSections).not.toContain("HomeMediaPlaceholder");
+    expect(clientSections).not.toContain("home-media-placeholder__cross");
   });
 
   it("restores subtle rise/slide entrance choreography across the redesigned homepage", () => {
