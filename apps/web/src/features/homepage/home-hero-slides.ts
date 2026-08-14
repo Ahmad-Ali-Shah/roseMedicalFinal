@@ -53,14 +53,14 @@ export const HOME_HERO_SLIDES = [
   {
     id: "precision-instruments",
     image: {
-      desktopSrc: "/media/editorial/home-hero/client-v2/home-hero-client-01.svg",
-      mobileSrc: "/media/editorial/home-hero/client-v2/home-hero-client-01.svg",
+      desktopSrc: "/media/editorial/home-hero/client-v4/hero-01-desktop.webp",
+      mobileSrc: "/media/editorial/home-hero/client-v3/hero-01-mobile.avif",
       alt: {
         en: "Gloved hand selecting a surgical instrument from an arranged set",
         ar: "يد مرتدية قفازًا تختار أداة جراحية من مجموعة مرتبة"
       },
       desktopFocalPoint: "58% 50%",
-      mobileFocalPoint: "56% 46%"
+      mobileFocalPoint: "50% 46%"
     },
     copySide: "left",
     tone: "dark",
@@ -81,14 +81,14 @@ export const HOME_HERO_SLIDES = [
   {
     id: "clinical-instrument-context",
     image: {
-      desktopSrc: "/media/editorial/home-hero/client-v2/home-hero-client-02.svg",
-      mobileSrc: "/media/editorial/home-hero/client-v2/home-hero-client-02.svg",
+      desktopSrc: "/media/editorial/home-hero/client-v4/hero-02-desktop.webp",
+      mobileSrc: "/media/editorial/home-hero/client-v3/hero-02-mobile.avif",
       alt: {
         en: "Gloved hand holding ring-handled surgical forceps beside other instruments",
         ar: "يد مرتدية قفازًا تمسك ملقطًا جراحيًا بحلقات بجوار أدوات أخرى"
       },
       desktopFocalPoint: "63% 49%",
-      mobileFocalPoint: "62% 46%"
+      mobileFocalPoint: "50% 48%"
     },
     copySide: "left",
     tone: "dark",
@@ -109,14 +109,14 @@ export const HOME_HERO_SLIDES = [
   {
     id: "surgical-instrument-selection",
     image: {
-      desktopSrc: "/media/editorial/home-hero/client-v2/home-hero-client-03.svg",
-      mobileSrc: "/media/editorial/home-hero/client-v2/home-hero-client-03.svg",
+      desktopSrc: "/media/editorial/home-hero/client-v4/hero-03-desktop.webp",
+      mobileSrc: "/media/editorial/home-hero/client-v3/hero-03-mobile.avif",
       alt: {
         en: "Gloved hands examining a surgical scissors instrument",
         ar: "يدان مرتديتان قفازات تفحصان مقصًا جراحيًا"
       },
       desktopFocalPoint: "62% 50%",
-      mobileFocalPoint: "66% 48%"
+      mobileFocalPoint: "54% 48%"
     },
     copySide: "left",
     tone: "dark",
@@ -137,14 +137,14 @@ export const HOME_HERO_SLIDES = [
   {
     id: "catalogue-to-quotation",
     image: {
-      desktopSrc: "/media/editorial/home-hero/client-v2/home-hero-client-04.svg",
-      mobileSrc: "/media/editorial/home-hero/client-v2/home-hero-client-04.svg",
+      desktopSrc: "/media/editorial/home-hero/client-v4/hero-04-desktop.webp",
+      mobileSrc: "/media/editorial/home-hero/client-v3/hero-04-mobile.avif",
       alt: {
         en: "Dark surgical instruments arranged on a textured sterile surface",
         ar: "أدوات جراحية داكنة مرتبة على سطح طبي منسوج"
       },
       desktopFocalPoint: "46% 50%",
-      mobileFocalPoint: "48% 48%"
+      mobileFocalPoint: "50% 48%"
     },
     copySide: "right",
     tone: "dark",
