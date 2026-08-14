@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { ReactElement } from "react";
 import { Container, Section } from "@/components/layout";
 import { SocialLinksRow } from "@/features/social-links";
@@ -11,11 +12,46 @@ import type {
   HomeSocialModel
 } from "../homepage.data";
 
-function HomeMediaPlaceholder({ label, aspect = "landscape" }: { label: string; aspect?: "landscape" | "portrait" }): ReactElement {
+const SPECIALTY_MEDIA = {
+  plasticSurgery: { src: "/media/editorial/home-specialties/plastic-surgery.webp", focalPoint: "50% 44%" },
+  orthopedics: { src: "/media/editorial/home-specialties/orthopedics.webp", focalPoint: "50% 50%" },
+  maxillofacial: { src: "/media/editorial/home-specialties/maxillofacial.webp", focalPoint: "50% 48%" },
+  orthodontics: { src: "/media/editorial/home-specialties/orthodontics.webp", focalPoint: "50% 48%" },
+  spine: { src: "/media/editorial/home-specialties/spine.webp", focalPoint: "50% 47%" },
+  confidence: { src: "/media/editorial/home-specialties/securing-confidence.webp", focalPoint: "52% 50%" }
+} as const;
+
+const SUPPORTING_SPECIALTY_MEDIA = [
+  SPECIALTY_MEDIA.orthopedics,
+  SPECIALTY_MEDIA.maxillofacial,
+  SPECIALTY_MEDIA.orthodontics,
+  SPECIALTY_MEDIA.spine
+] as const;
+
+function HomeClinicalMedia({
+  src,
+  alt,
+  focalPoint,
+  aspect = "landscape",
+  sizes
+}: {
+  src: string;
+  alt: string;
+  focalPoint: string;
+  aspect?: "landscape" | "portrait";
+  sizes: string;
+}): ReactElement {
   return (
-    <div className={`home-media-placeholder home-media-placeholder--${aspect}`} role="img" aria-label={label} data-home-media-placeholder>
-      <span className="home-media-placeholder__cross" aria-hidden="true" />
-      <span className="home-media-placeholder__label">{label}</span>
+    <div className={`home-clinical-media home-clinical-media--${aspect}`}>
+      <Image
+        className="home-clinical-media__image"
+        src={src}
+        alt={alt}
+        fill
+        sizes={sizes}
+        unoptimized
+        style={{ objectPosition: focalPoint }}
+      />
     </div>
   );
 }
@@ -30,7 +66,12 @@ export function ComprehensivePlans({ model }: { model: HomeComprehensiveModel })
         <div className="home-comprehensive__lead">
           <Reveal direction="right">
             <figure className="home-specialty home-specialty--lead">
-              <HomeMediaPlaceholder label={model.leadSpecialty} />
+              <HomeClinicalMedia
+                src={SPECIALTY_MEDIA.plasticSurgery.src}
+                alt={model.leadSpecialty}
+                focalPoint={SPECIALTY_MEDIA.plasticSurgery.focalPoint}
+                sizes="(max-width: 40rem) 100vw, 30vw"
+              />
               <figcaption>{model.leadSpecialty}</figcaption>
             </figure>
           </Reveal>
@@ -39,14 +80,22 @@ export function ComprehensivePlans({ model }: { model: HomeComprehensiveModel })
           </Reveal>
         </div>
         <Stagger as="ul" className="home-comprehensive__specialties" aria-label={model.title} interval={0.055}>
-          {model.specialties.map((specialty) => (
-            <StaggerItem key={specialty} as="li">
-              <figure className="home-specialty">
-                <HomeMediaPlaceholder label={specialty} />
-                <figcaption>{specialty}</figcaption>
-              </figure>
-            </StaggerItem>
-          ))}
+          {model.specialties.map((specialty, index) => {
+            const media = SUPPORTING_SPECIALTY_MEDIA[index] ?? SPECIALTY_MEDIA.orthopedics;
+            return (
+              <StaggerItem key={specialty} as="li">
+                <figure className="home-specialty">
+                  <HomeClinicalMedia
+                    src={media.src}
+                    alt={specialty}
+                    focalPoint={media.focalPoint}
+                    sizes="(max-width: 40rem) 48vw, (max-width: 64rem) 23vw, 16vw"
+                  />
+                  <figcaption>{specialty}</figcaption>
+                </figure>
+              </StaggerItem>
+            );
+          })}
         </Stagger>
       </Container>
     </Section>
@@ -62,7 +111,13 @@ export function SecuringConfidence({ model }: { model: HomeConfidenceModel }): R
           <p className="home-editorial-copy">{model.copy}</p>
         </Reveal>
         <Reveal className="home-confidence__media-reveal" direction="left" delay={0.06}>
-          <HomeMediaPlaceholder label={model.imageLabel} aspect="portrait" />
+          <HomeClinicalMedia
+            src={SPECIALTY_MEDIA.confidence.src}
+            alt={model.imageLabel}
+            focalPoint={SPECIALTY_MEDIA.confidence.focalPoint}
+            aspect="portrait"
+            sizes="(max-width: 40rem) 100vw, 19rem"
+          />
         </Reveal>
       </Container>
     </Section>
