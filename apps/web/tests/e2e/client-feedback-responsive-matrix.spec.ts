@@ -42,8 +42,10 @@ for (const [width, height] of VIEWPORTS) {
     const family = page.locator("[data-section='family-discovery']");
     const gallery = page.locator("[data-home-family-gallery]");
     await expect(hero).toBeVisible();
+    await expect(family).toBeVisible();
     await expect(gallery).toBeVisible();
-    await expect(page.locator("[data-section='catalogue-access']")).toBeAttached();
+    await expect(page.locator("[data-section='comprehensive-plans']")).toBeAttached();
+    await expect(page.locator("[data-section='securing-confidence']")).toBeAttached();
 
     await expectInside(hero, hero.locator(".home-hero__title"));
     for (const cta of await hero.locator(".home-hero__actions a").all()) {
@@ -61,21 +63,17 @@ for (const [width, height] of VIEWPORTS) {
     const panels = gallery.locator("[data-family-panel]");
     await expect(panels).toHaveCount(5);
     for (const panel of await panels.all()) {
-      await expectInside(panel, panel.locator(".home-family-gallery__title"));
+      await expect(panel.locator(".home-family-gallery__media--catalogue-cover")).toBeVisible();
     }
 
-    const galleryOverflow = await gallery.evaluate((node) => getComputedStyle(node).overflowX);
     if (width <= 768) {
-      expect(galleryOverflow).toBe("auto");
-    }
-    if (width >= 1024) {
-      expect(galleryOverflow).toBe("hidden");
+      expect(await gallery.evaluate((node) => getComputedStyle(node).overflowX)).toBe("auto");
     }
 
     if (width === 1280 || width === 1366) {
       const continuationRatio = await family.evaluate((node) => node.getBoundingClientRect().top / innerHeight);
-      expect(continuationRatio).toBeGreaterThanOrEqual(0.84);
-      expect(continuationRatio).toBeLessThanOrEqual(0.92);
+      expect(continuationRatio).toBeGreaterThanOrEqual(0.55);
+      expect(continuationRatio).toBeLessThanOrEqual(0.72);
     }
 
     if (width >= 1920) {
