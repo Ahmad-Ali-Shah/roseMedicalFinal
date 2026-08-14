@@ -1,5 +1,9 @@
 # Hero binary repair note
 
-The four `client-v4` desktop hero WebPs were repaired in place from the complete user-supplied monochrome surgical-instrument banner masters. Runtime paths remain stable, while each desktop file is now a direct RIFF/WebP raster derivative rather than a wrapper or interrupted binary transfer.
+The compact homepage now serves the four client-selected monochrome surgical-instrument banners from `apps/web/public/media/editorial/home-hero/client-v5/` as direct WebP files for both desktop and mobile presentation.
 
-The homepage keeps the dedicated `client-v3` phone crops for narrow viewports. Tests verify that all four desktop files exist, exceed a minimal production-size floor, and carry the expected `RIFF` / `WEBP` signatures.
+The earlier failure was not a CSS/focal-point problem: several committed WebPs were truncated. Their RIFF headers declared a larger file size than the Git blob actually contained, so browsers could not decode them reliably. The damaged binaries were replaced from the exact user-supplied banner masters.
+
+Punches is likewise served from one direct local WebP (`/media/families/homepage-covers/punches-family-cover.webp`) generated from the supplied Punches catalogue cover, avoiding the previous AVIF/SVG fallback chain.
+
+The media regression contract now validates `RIFF` / `WEBP` signatures and requires the RIFF-declared byte length to equal the actual file length. This guards the exact interrupted-binary regression rather than only checking that a file exists.
