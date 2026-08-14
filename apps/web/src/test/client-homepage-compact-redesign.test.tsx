@@ -35,9 +35,10 @@ describe("client homepage compact redesign", () => {
     expect(html).toContain("SACS");
   });
 
-  it("uses intentional placeholders for the six client imagery slots", async () => {
+  it("renders six real clinical media slots without temporary placeholders", async () => {
     const html = await renderServerComponent(<Homepage />);
-    expect((html.match(/data-home-media-placeholder/g) ?? [])).toHaveLength(6);
+    expect((html.match(/data-home-clinical-media/g) ?? [])).toHaveLength(6);
+    expect(html).not.toContain("data-home-media-placeholder");
     for (const label of ["Plastic Surgery", "Orthopedics", "Maxillofacial", "Orthodontics", "Spine"]) {
       expect(html).toContain(label);
     }
