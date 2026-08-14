@@ -11,17 +11,29 @@ const EXPECTED_DESKTOP_HERO_MEDIA = [
   "/media/editorial/home-hero/client-v5/hero-03-desktop.webp",
   "/media/editorial/home-hero/client-v5/hero-04-desktop.webp"
 ] as const;
+const EXPECTED_DESKTOP_HERO_AVIF = [
+  "/media/editorial/home-hero/client-v5/hero-01-desktop.avif",
+  "/media/editorial/home-hero/client-v5/hero-02-desktop.avif",
+  "/media/editorial/home-hero/client-v5/hero-03-desktop.avif",
+  "/media/editorial/home-hero/client-v5/hero-04-desktop.avif"
+] as const;
 const EXPECTED_MOBILE_HERO_MEDIA = [
   "/media/editorial/home-hero/client-v5/hero-01-mobile.webp",
   "/media/editorial/home-hero/client-v5/hero-02-mobile.webp",
   "/media/editorial/home-hero/client-v5/hero-03-mobile.webp",
   "/media/editorial/home-hero/client-v5/hero-04-mobile.webp"
 ] as const;
-const EXPECTED_DESKTOP_HERO_DIMENSIONS = [
+const EXPECTED_DESKTOP_MASTER_DIMENSIONS = [
   { width: 1738, height: 592 },
   { width: 1738, height: 592 },
   { width: 1738, height: 592 },
   { width: 1440, height: 720 }
+] as const;
+const EXPECTED_DESKTOP_FALLBACK_DIMENSIONS = [
+  { width: 1200, height: 409 },
+  { width: 1200, height: 409 },
+  { width: 1200, height: 409 },
+  { width: 1200, height: 600 }
 ] as const;
 const EXPECTED_MOBILE_HERO_DIMENSIONS = [
   { width: 474, height: 592 },
@@ -65,18 +77,33 @@ function readLossyWebPDimensions(mediaSrc: string): { width: number; height: num
   };
 }
 
+function readAvifDimensions(mediaSrc: string): { width: number; height: number } {
+  const file = mediaFile(mediaSrc);
+  expect(file.length).toBeGreaterThan(4_000);
+  expect(file.subarray(4, 12).toString("ascii")).toBe("ftypavif");
+  const ispeOffset = file.indexOf(Buffer.from("ispe"));
+  expect(ispeOffset).toBeGreaterThanOrEqual(0);
+  return {
+    width: file.readUInt32BE(ispeOffset + 8),
+    height: file.readUInt32BE(ispeOffset + 12)
+  };
+}
+
 describe("homepage media and entrance-motion refinement", () => {
-  it("uses complete full-resolution v5 client WebP banners with dedicated phone crops", () => {
+  it("uses source-resolution AVIF hero masters, complete WebP fallbacks and dedicated phone crops", () => {
     const hero = source("src/features/homepage/sections/home-hero-carousel.tsx");
 
     expect(HOME_HERO_SLIDES.map((slide) => slide.image.desktopSrc)).toEqual(EXPECTED_DESKTOP_HERO_MEDIA);
+    expect(HOME_HERO_SLIDES.map((slide) => slide.image.desktopAvifSrc)).toEqual(EXPECTED_DESKTOP_HERO_AVIF);
     expect(HOME_HERO_SLIDES.map((slide) => slide.image.mobileSrc)).toEqual(EXPECTED_MOBILE_HERO_MEDIA);
     for (const mediaSrc of [...EXPECTED_DESKTOP_HERO_MEDIA, ...EXPECTED_MOBILE_HERO_MEDIA]) {
       expectCompleteWebP(mediaSrc);
     }
-    expect(EXPECTED_DESKTOP_HERO_MEDIA.map(readLossyWebPDimensions)).toEqual(EXPECTED_DESKTOP_HERO_DIMENSIONS);
+    expect(EXPECTED_DESKTOP_HERO_AVIF.map(readAvifDimensions)).toEqual(EXPECTED_DESKTOP_MASTER_DIMENSIONS);
+    expect(EXPECTED_DESKTOP_HERO_MEDIA.map(readLossyWebPDimensions)).toEqual(EXPECTED_DESKTOP_FALLBACK_DIMENSIONS);
     expect(EXPECTED_MOBILE_HERO_MEDIA.map(readLossyWebPDimensions)).toEqual(EXPECTED_MOBILE_HERO_DIMENSIONS);
     expect(hero).toContain('<source media="(max-width: 40rem)"');
+    expect(hero).toContain('type="image/avif"');
     expect(hero).toContain('type="image/webp"');
     for (const focal of EXPECTED_MOBILE_FOCALS) expect(hero).toContain(focal);
   });
