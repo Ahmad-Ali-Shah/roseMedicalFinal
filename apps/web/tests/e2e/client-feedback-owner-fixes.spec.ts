@@ -37,17 +37,19 @@ test("desktop family gallery applies an obvious cover zoom without resizing the 
   const chisels = gallery.locator("[data-family='chisels']");
   const image = chisels.locator(".home-family-gallery__image");
   const before = await chisels.boundingBox();
+  const restingTransform = await image.evaluate((node) => getComputedStyle(node).transform);
 
   await chisels.hover();
   await page.waitForTimeout(720);
 
   const after = await chisels.boundingBox();
+  const hoveredTransform = await image.evaluate((node) => getComputedStyle(node).transform);
   expect(after).not.toBeNull();
   expect(before).not.toBeNull();
   expect(Math.abs(after!.width - before!.width)).toBeLessThanOrEqual(1);
-  expect(await image.evaluate((node) => getComputedStyle(node).transform)).not.toBe("none");
+  expect(hoveredTransform).not.toBe(restingTransform);
 
   await page.locator("[data-section='family-discovery'] .home-compact-section-title").hover();
   await page.waitForTimeout(720);
-  expect(await image.evaluate((node) => getComputedStyle(node).transform)).toBe("none");
+  expect(await image.evaluate((node) => getComputedStyle(node).transform)).toBe(restingTransform);
 });
