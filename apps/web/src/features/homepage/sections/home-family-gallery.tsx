@@ -9,7 +9,7 @@ import { familyHref, type FamilyCardModel, type FamilySlug } from "@/features/pu
 const HOME_FAMILY_COVER_BY_SLUG = {
   knives: { src: "/media/families/homepage-covers/knives-family-cover-full.svg", focalPoint: "50% 50%" },
   scissors: { src: "/media/families/homepage-covers/scissors-family-cover-full.svg", focalPoint: "50% 50%" },
-  punches: { src: "/media/families/homepage-covers/punches-family-cover.webp", focalPoint: "50% 50%" },
+  punches: { src: "/media/families/homepage-covers/punches-family-cover.avif", focalPoint: "50% 50%" },
   chisels: { src: "/media/families/homepage-covers/chisels-family-cover-full.svg", focalPoint: "50% 50%" },
   cutters: { src: "/media/families/homepage-covers/cutters-family-cover-full.svg", focalPoint: "50% 50%" }
 } as const satisfies Record<FamilySlug, { src: string; focalPoint: string }>;
