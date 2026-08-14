@@ -11,15 +11,12 @@ const EXPECTED_DESKTOP_HERO_MEDIA = [
   "/media/editorial/home-hero/client-v5/hero-03-desktop.webp",
   "/media/editorial/home-hero/client-v5/hero-04-desktop.webp"
 ] as const;
-const EXPECTED_DESKTOP_HERO_AVIF = EXPECTED_DESKTOP_HERO_MEDIA.map((src) => src.replace(/\.webp$/, ".avif"));
 const EXPECTED_MOBILE_HERO_MEDIA = [
   "/media/editorial/home-hero/client-v5/hero-01-mobile.webp",
   "/media/editorial/home-hero/client-v5/hero-02-mobile.webp",
   "/media/editorial/home-hero/client-v5/hero-03-mobile.webp",
   "/media/editorial/home-hero/client-v5/hero-04-mobile.webp"
 ] as const;
-const EXPECTED_MOBILE_HERO_AVIF = EXPECTED_MOBILE_HERO_MEDIA.map((src) => src.replace(/\.webp$/, ".avif"));
-
 const EXPECTED_MOBILE_FOCALS = ["50% 46%", "50% 48%", "54% 48%", "50% 48%"] as const;
 const EXPECTED_SPECIALTY_MEDIA = [
   "/media/editorial/home-specialties/plastic-surgery.webp",
@@ -31,19 +28,21 @@ const EXPECTED_SPECIALTY_MEDIA = [
 ] as const;
 
 describe("homepage media and entrance-motion refinement", () => {
-  it("uses complete v5 client banners with WebP fallbacks and AVIF sources", () => {
+  it("uses complete v5 client WebP banners with dedicated phone crops", () => {
     const hero = source("src/features/homepage/sections/home-hero-carousel.tsx");
 
     expect(HOME_HERO_SLIDES.map((slide) => slide.image.desktopSrc)).toEqual(EXPECTED_DESKTOP_HERO_MEDIA);
     expect(HOME_HERO_SLIDES.map((slide) => slide.image.mobileSrc)).toEqual(EXPECTED_MOBILE_HERO_MEDIA);
-    for (const mediaSrc of [...EXPECTED_DESKTOP_HERO_MEDIA, ...EXPECTED_DESKTOP_HERO_AVIF, ...EXPECTED_MOBILE_HERO_MEDIA, ...EXPECTED_MOBILE_HERO_AVIF]) {
+    for (const mediaSrc of [...EXPECTED_DESKTOP_HERO_MEDIA, ...EXPECTED_MOBILE_HERO_MEDIA]) {
       const path = resolve(process.cwd(), `public${mediaSrc}`);
       expect(existsSync(path)).toBe(true);
-      expect(readFileSync(path).length).toBeGreaterThan(5_000);
+      const file = readFileSync(path);
+      expect(file.length).toBeGreaterThan(5_000);
+      expect(file.subarray(0, 4).toString("ascii")).toBe("RIFF");
+      expect(file.subarray(8, 12).toString("ascii")).toBe("WEBP");
     }
-    expect(hero).toContain('type="image/avif"');
-    expect(hero).toContain("desktopAvifSrc");
-    expect(hero).toContain("mobileAvifSrc");
+    expect(hero).toContain('<source media="(max-width: 40rem)"');
+    expect(hero).toContain('type="image/webp"');
     for (const focal of EXPECTED_MOBILE_FOCALS) expect(hero).toContain(focal);
   });
 
