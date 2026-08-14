@@ -1,3 +1,5 @@
 # Hero binary repair note
 
-The semantic hero renderer is correct, but the `client-v4` WebP blobs committed during an interrupted upload are abnormally small and must not be used as production masters. The homepage should use complete direct raster derivatives of the four user-supplied monochrome banner images, with mobile crops, rather than raster-in-SVG wrappers or truncated WebPs.
+The four `client-v4` desktop hero WebPs were repaired in place from the complete user-supplied monochrome surgical-instrument banner masters. Runtime paths remain stable, while each desktop file is now a direct RIFF/WebP raster derivative rather than a wrapper or interrupted binary transfer.
+
+The homepage keeps the dedicated `client-v3` phone crops for narrow viewports. Tests verify that all four desktop files exist, exceed a minimal production-size floor, and carry the expected `RIFF` / `WEBP` signatures.

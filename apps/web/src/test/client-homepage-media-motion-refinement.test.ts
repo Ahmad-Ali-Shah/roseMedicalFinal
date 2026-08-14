@@ -30,12 +30,17 @@ const EXPECTED_SPECIALTY_MEDIA = [
 ] as const;
 
 describe("homepage media and entrance-motion refinement", () => {
-  it("uses direct client banner assets with dedicated phone crops", () => {
+  it("uses complete direct WebP client banners with dedicated phone crops", () => {
     const hero = source("src/features/homepage/sections/home-hero-carousel.tsx");
 
     expect(HOME_HERO_SLIDES.map((slide) => slide.image.desktopSrc)).toEqual(EXPECTED_DESKTOP_HERO_MEDIA);
     for (const desktopSrc of EXPECTED_DESKTOP_HERO_MEDIA) {
-      expect(existsSync(resolve(process.cwd(), `public${desktopSrc}`))).toBe(true);
+      const path = resolve(process.cwd(), `public${desktopSrc}`);
+      expect(existsSync(path)).toBe(true);
+      const file = readFileSync(path);
+      expect(file.length).toBeGreaterThan(5_000);
+      expect(file.subarray(0, 4).toString("ascii")).toBe("RIFF");
+      expect(file.subarray(8, 12).toString("ascii")).toBe("WEBP");
     }
     for (const mobileSrc of EXPECTED_MOBILE_HERO_MEDIA) {
       expect(hero).toContain(mobileSrc);
@@ -91,10 +96,12 @@ describe("homepage media and entrance-motion refinement", () => {
   it("keeps catalogue cover hover obvious while respecting reduced motion", () => {
     const redesign = source("src/styles/home-client-redesign.css");
     const polish = source("src/styles/home-client-redesign-polish.css");
-    const css = `${redesign}\n${polish}`;
+    const interactions = source("src/styles/home-client-interaction-fixes.css");
+    const css = `${redesign}\n${polish}\n${interactions}`;
 
-    expect(css).toContain("scale(1.11)");
-    expect(css).toMatch(/transition(?:-duration)?:[^;]*(?:5[2-9]0|6\d0)ms/);
+    expect(css).toContain("scale(1.12)");
+    expect(interactions).toContain("600ms");
+    expect(interactions).toContain("box-shadow");
     expect(css).toContain("prefers-reduced-motion: reduce");
   });
 });

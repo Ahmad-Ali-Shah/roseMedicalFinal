@@ -52,20 +52,25 @@ describe("client homepage compact redesign", () => {
     expect(homepage).not.toContain("ProcurementSupport");
   });
 
-  it("loads final compact density and polish layers without CSS zoom", () => {
+  it("loads final compact density and interaction layers without CSS zoom", () => {
     const globals = source("src/app/globals.css");
     const redesign = source("src/styles/home-client-redesign.css");
     const polish = source("src/styles/home-client-redesign-polish.css");
-    expect(globals.trim().endsWith('@import "../styles/home-client-redesign-polish.css";')).toBe(true);
+    const interactions = source("src/styles/home-client-interaction-fixes.css");
+    expect(globals.trim().endsWith('@import "../styles/home-client-interaction-fixes.css";')).toBe(true);
     expect(globals.indexOf('../styles/home-client-redesign-polish.css')).toBeGreaterThan(
       globals.indexOf('../styles/home-client-redesign.css')
+    );
+    expect(globals.indexOf('../styles/home-client-interaction-fixes.css')).toBeGreaterThan(
+      globals.indexOf('../styles/home-client-redesign-polish.css')
     );
     expect(redesign).toContain("body:has(.public-page--home) .site-header__bar");
     expect(redesign).toContain("max-height: 800px");
     expect(polish).toContain("flex-direction: column");
     expect(polish).toContain("home-assurance-card__icon svg");
-    expect(`${redesign}\n${polish}`).not.toMatch(/\bzoom\s*:/);
-    expect(`${redesign}\n${polish}`).not.toContain("transform: scale(0.");
+    expect(interactions).toContain("scale(1.12)");
+    expect(`${redesign}\n${polish}\n${interactions}`).not.toMatch(/\bzoom\s*:/);
+    expect(`${redesign}\n${polish}\n${interactions}`).not.toContain("transform: scale(0.");
   });
 
   it("uses proper assurance iconography instead of temporary letter badges", () => {

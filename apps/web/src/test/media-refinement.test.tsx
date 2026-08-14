@@ -17,17 +17,19 @@ describe("owner media refinement", () => {
 
     expect(html).toContain("home-hero-carousel__media");
     expect(html).toContain("home-hero-carousel__overlay");
-    expect(html).toContain("home-hero-01-desktop.webp");
+    expect(html).toContain("hero-01-desktop.webp");
     expect(html).not.toContain("home-hero__visual-surface");
     expect(html).not.toContain("home-hero__visual-tilt");
   });
 
-  it("uses real high-quality product imagery without a fake document layer", async () => {
+  it("uses the compact family gallery and real clinical media without a fake document layer", async () => {
     const html = await renderServerComponent(<Homepage />);
 
-    expect((html.match(/data-catalogue-family-media=/g) ?? [])).toHaveLength(5);
+    expect(html).toContain("data-home-family-gallery");
+    expect((html.match(/data-family-panel/g) ?? [])).toHaveLength(5);
+    expect(html).toContain("punches-family-cover.avif");
+    expect((html.match(/data-home-clinical-media/g) ?? [])).toHaveLength(6);
     expect(html).not.toContain("catalogue-card__document");
-    expect((html.match(/data-media-quality="92"/g) ?? []).length).toBeGreaterThanOrEqual(10);
   });
 
   it("keeps portrait catalogue media separate from family-card crops", () => {

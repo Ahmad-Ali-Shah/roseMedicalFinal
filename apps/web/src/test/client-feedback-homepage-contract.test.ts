@@ -17,6 +17,9 @@ describe("client-feedback responsive homepage contract", () => {
     expect(globals.indexOf('../styles/home-client-redesign.css')).toBeGreaterThan(
       globals.indexOf('../styles/public-imdad-typography.css')
     );
+    expect(globals.indexOf('../styles/home-client-interaction-fixes.css')).toBeGreaterThan(
+      globals.indexOf('../styles/home-client-redesign-polish.css')
+    );
 
     const redesign = source("src/styles/home-client-redesign.css");
     expect(redesign).toContain("home-compact-section-title");
@@ -33,18 +36,19 @@ describe("client-feedback responsive homepage contract", () => {
     expect(HOME_HERO_SLIDES.every((slide) => slide.image.mobileSrc.startsWith("/media/"))).toBe(true);
   });
 
-  it("uses the four current client hero banners directly", () => {
+  it("uses the four current direct client hero banners", () => {
     HOME_HERO_SLIDES.forEach((slide, index) => {
       const number = String(index + 1).padStart(2, "0");
-      const expected = `/media/editorial/home-hero/client-v2/home-hero-client-${number}.svg`;
+      const expected = `/media/editorial/home-hero/client-v4/hero-${number}-desktop.webp`;
       expect(slide.image.desktopSrc).toBe(expected);
-      expect(slide.image.mobileSrc).toBe(expected);
       expect(existsSync(resolve(process.cwd(), `public${expected}`))).toBe(true);
     });
 
     const carouselSource = source("src/features/homepage/sections/home-hero-carousel.tsx");
-    expect(carouselSource.match(/priority=\{activeIndex === 0\}/g) ?? []).toHaveLength(1);
-    expect(carouselSource).toContain("unoptimized");
+    expect(carouselSource).toContain("<picture");
+    expect(carouselSource).toContain("<img");
+    expect(carouselSource).toContain("fetchPriority");
+    expect(carouselSource).not.toContain("home-hero-client-01.svg");
   });
 
   it("keeps Arabic typography localized and tightens homepage line-height separately", () => {
