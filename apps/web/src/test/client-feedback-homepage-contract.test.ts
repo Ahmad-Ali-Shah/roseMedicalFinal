@@ -39,15 +39,19 @@ describe("client-feedback responsive homepage contract", () => {
   it("uses the four current direct client hero banners", () => {
     HOME_HERO_SLIDES.forEach((slide, index) => {
       const number = String(index + 1).padStart(2, "0");
-      const expected = `/media/editorial/home-hero/client-v4/hero-${number}-desktop.webp`;
-      expect(slide.image.desktopSrc).toBe(expected);
-      expect(existsSync(resolve(process.cwd(), `public${expected}`))).toBe(true);
+      const desktop = `/media/editorial/home-hero/client-v5/hero-${number}-desktop.webp`;
+      const mobile = `/media/editorial/home-hero/client-v5/hero-${number}-mobile.webp`;
+      expect(slide.image.desktopSrc).toBe(desktop);
+      expect(slide.image.mobileSrc).toBe(mobile);
+      expect(existsSync(resolve(process.cwd(), `public${desktop}`))).toBe(true);
+      expect(existsSync(resolve(process.cwd(), `public${mobile}`))).toBe(true);
     });
 
     const carouselSource = source("src/features/homepage/sections/home-hero-carousel.tsx");
     expect(carouselSource).toContain("<picture");
     expect(carouselSource).toContain("<img");
     expect(carouselSource).toContain("fetchPriority");
+    expect(carouselSource).toContain('type="image/webp"');
     expect(carouselSource).not.toContain("home-hero-client-01.svg");
   });
 
