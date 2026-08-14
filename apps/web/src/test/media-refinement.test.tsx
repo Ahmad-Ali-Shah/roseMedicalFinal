@@ -17,7 +17,7 @@ describe("owner media refinement", () => {
 
     expect(html).toContain("home-hero-carousel__media");
     expect(html).toContain("home-hero-carousel__overlay");
-    expect(html).toContain("hero-01-desktop.webp");
+    expect(html).toContain("client-v5/hero-01-desktop.webp");
     expect(html).not.toContain("home-hero__visual-surface");
     expect(html).not.toContain("home-hero__visual-tilt");
   });
@@ -28,7 +28,9 @@ describe("owner media refinement", () => {
     expect(html).toContain("data-home-family-gallery");
     expect((html.match(/data-family-panel/g) ?? [])).toHaveLength(5);
     expect(html).toContain("punches-family-cover.avif");
-    expect((html.match(/data-home-clinical-media/g) ?? [])).toHaveLength(6);
+    expect((html.match(/class=\"home-clinical-media/g) ?? [])).toHaveLength(6);
+    expect(html).toContain("home-specialties/plastic-surgery.webp");
+    expect(html).toContain("home-specialties/securing-confidence.webp");
     expect(html).not.toContain("catalogue-card__document");
   });
 
