@@ -17,6 +17,18 @@ const EXPECTED_MOBILE_HERO_MEDIA = [
   "/media/editorial/home-hero/client-v5/hero-03-mobile.webp",
   "/media/editorial/home-hero/client-v5/hero-04-mobile.webp"
 ] as const;
+const EXPECTED_DESKTOP_HERO_DIMENSIONS = [
+  { width: 1738, height: 592 },
+  { width: 1738, height: 592 },
+  { width: 1738, height: 592 },
+  { width: 1440, height: 720 }
+] as const;
+const EXPECTED_MOBILE_HERO_DIMENSIONS = [
+  { width: 474, height: 592 },
+  { width: 474, height: 592 },
+  { width: 474, height: 592 },
+  { width: 576, height: 720 }
+] as const;
 const EXPECTED_MOBILE_FOCALS = ["50% 46%", "50% 48%", "54% 48%", "50% 48%"] as const;
 const EXPECTED_SPECIALTY_MEDIA = [
   "/media/editorial/home-specialties/plastic-surgery.webp",
@@ -28,6 +40,10 @@ const EXPECTED_SPECIALTY_MEDIA = [
 ] as const;
 const PUNCHES_COVER = "/media/families/homepage-covers/punches-family-cover.webp" as const;
 
+function mediaFile(mediaSrc: string): Buffer {
+  return readFileSync(resolve(process.cwd(), `public${mediaSrc}`));
+}
+
 function expectCompleteWebP(mediaSrc: string, minimumBytes = 5_000): void {
   const path = resolve(process.cwd(), `public${mediaSrc}`);
   expect(existsSync(path)).toBe(true);
@@ -38,8 +54,19 @@ function expectCompleteWebP(mediaSrc: string, minimumBytes = 5_000): void {
   expect(file.readUInt32LE(4) + 8).toBe(file.length);
 }
 
+function readLossyWebPDimensions(mediaSrc: string): { width: number; height: number } {
+  const file = mediaFile(mediaSrc);
+  const keyframeSignature = Buffer.from([0x9d, 0x01, 0x2a]);
+  const keyframeOffset = file.indexOf(keyframeSignature, 20);
+  expect(keyframeOffset).toBeGreaterThanOrEqual(0);
+  return {
+    width: file.readUInt16LE(keyframeOffset + 3) & 0x3fff,
+    height: file.readUInt16LE(keyframeOffset + 5) & 0x3fff
+  };
+}
+
 describe("homepage media and entrance-motion refinement", () => {
-  it("uses complete v5 client WebP banners with dedicated phone crops", () => {
+  it("uses complete full-resolution v5 client WebP banners with dedicated phone crops", () => {
     const hero = source("src/features/homepage/sections/home-hero-carousel.tsx");
 
     expect(HOME_HERO_SLIDES.map((slide) => slide.image.desktopSrc)).toEqual(EXPECTED_DESKTOP_HERO_MEDIA);
@@ -47,6 +74,8 @@ describe("homepage media and entrance-motion refinement", () => {
     for (const mediaSrc of [...EXPECTED_DESKTOP_HERO_MEDIA, ...EXPECTED_MOBILE_HERO_MEDIA]) {
       expectCompleteWebP(mediaSrc);
     }
+    expect(EXPECTED_DESKTOP_HERO_MEDIA.map(readLossyWebPDimensions)).toEqual(EXPECTED_DESKTOP_HERO_DIMENSIONS);
+    expect(EXPECTED_MOBILE_HERO_MEDIA.map(readLossyWebPDimensions)).toEqual(EXPECTED_MOBILE_HERO_DIMENSIONS);
     expect(hero).toContain('<source media="(max-width: 40rem)"');
     expect(hero).toContain('type="image/webp"');
     for (const focal of EXPECTED_MOBILE_FOCALS) expect(hero).toContain(focal);
