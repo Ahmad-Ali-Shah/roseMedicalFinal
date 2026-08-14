@@ -165,10 +165,11 @@ describe("public product live cutover models", () => {
     });
   });
 
-  it("uses the same canonical featured cards on Products overview and Homepage models", () => {
+  it("keeps Products overview live while homepage discovery remains family-registry based", () => {
     const productsModel = createProductsPageModel(products, "en");
     const homeModel = createHomePageModel(products, "en");
     const homeAr = createHomePageModel(products, "ar");
+    const homepageFamilyOrder = ["scissors", "cutters", "punches", "chisels", "knives"];
 
     expect(productsModel.products.map((product) => product.id)).toEqual([
       "db-no3",
@@ -177,9 +178,7 @@ describe("public product live cutover models", () => {
       "db-codman",
       "db-liston"
     ]);
-    expect(homeModel.products.map((product) => product.id)).toEqual(
-      productsModel.products.map((product) => product.id)
-    );
-    expect(homeAr.products[0]?.familyName).toBe("المشارط والسكاكين الجراحية");
+    expect(homeModel.families.map((family) => family.slug)).toEqual(homepageFamilyOrder);
+    expect(homeAr.families.map((family) => family.slug)).toEqual(homepageFamilyOrder);
   });
 });
