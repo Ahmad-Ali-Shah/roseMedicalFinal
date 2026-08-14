@@ -26,36 +26,16 @@ import {
 } from "../hero-carousel-state";
 
 const DRAG_THRESHOLD_PX = 48;
-const CLIENT_DESKTOP_HERO_SOURCES = [
-  "/media/editorial/home-hero/client-v4/hero-01-desktop.webp",
-  "/media/editorial/home-hero/client-v4/hero-02-desktop.webp",
-  "/media/editorial/home-hero/client-v4/hero-03-desktop.webp",
-  "/media/editorial/home-hero/client-v4/hero-04-desktop.webp"
-] as const;
-const CLIENT_MOBILE_HERO_SOURCES = [
-  "/media/editorial/home-hero/client-v3/hero-01-mobile.avif",
-  "/media/editorial/home-hero/client-v3/hero-02-mobile.avif",
-  "/media/editorial/home-hero/client-v3/hero-03-mobile.avif",
-  "/media/editorial/home-hero/client-v3/hero-04-mobile.avif"
-] as const;
 const CLIENT_MOBILE_HERO_FOCALS = ["50% 46%", "50% 48%", "54% 48%", "50% 48%"] as const;
-
-function desktopHeroSource(index: number, fallback: string): string {
-  return CLIENT_DESKTOP_HERO_SOURCES[index] ?? fallback;
-}
-
-function mobileHeroSource(index: number, fallback: string): string {
-  return CLIENT_MOBILE_HERO_SOURCES[index] ?? fallback;
-}
 
 function mobileHeroFocal(index: number, fallback: string): string {
   return CLIENT_MOBILE_HERO_FOCALS[index] ?? fallback;
 }
 
-function preferredHeroSource(slide: LocalizedHomeHeroSlide, index: number): string {
+function preferredHeroSource(slide: LocalizedHomeHeroSlide): string {
   return window.matchMedia("(max-width: 40rem)").matches
-    ? mobileHeroSource(index, slide.image.mobileSrc)
-    : desktopHeroSource(index, slide.image.desktopSrc);
+    ? slide.image.mobileSrc
+    : slide.image.desktopSrc;
 }
 
 export function HomeHeroCarousel({
@@ -96,7 +76,8 @@ export function HomeHeroCarousel({
     const nextSlide = slides[nextIndex] ?? slides[0]!;
     const image = new window.Image();
     image.decoding = "async";
-    image.src = preferredHeroSource(nextSlide, nextIndex);
+    image.src = preferredHeroSource(nextSlide);
+    void image.decode?.().catch(() => undefined);
     preloadedImage.current = image;
   }, [activeIndex, slides]);
 
@@ -152,8 +133,8 @@ export function HomeHeroCarousel({
   };
 
   const slide = slides[activeIndex] ?? slides[0]!;
-  const desktopSrc = desktopHeroSource(activeIndex, slide.image.desktopSrc);
-  const mobileSrc = mobileHeroSource(activeIndex, slide.image.mobileSrc);
+  const desktopSrc = slide.image.desktopSrc;
+  const mobileSrc = slide.image.mobileSrc;
   const slideStyle = {
     "--hero-desktop-focal": slide.image.desktopFocalPoint,
     "--hero-mobile-focal": mobileHeroFocal(activeIndex, slide.image.mobileFocalPoint)
@@ -217,7 +198,7 @@ export function HomeHeroCarousel({
             transition={{ duration: reducedMotion ? 0 : 1.12, ease: MOTION_EASING.standard }}
           >
             <picture className="home-hero-carousel__picture">
-              <source media="(max-width: 40rem)" srcSet={mobileSrc} />
+              <source media="(max-width: 40rem)" srcSet={mobileSrc} type="image/webp" />
               <img
                 src={desktopSrc}
                 alt={slide.image.alt}
