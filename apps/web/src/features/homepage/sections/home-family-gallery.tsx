@@ -14,6 +14,7 @@ const HOME_FAMILY_COVER_BY_SLUG = {
   cutters: { src: "/media/families/homepage-covers/cutters-family-cover-full.svg", focalPoint: "50% 50%" }
 } as const satisfies Record<FamilySlug, { src: string; focalPoint: string }>;
 
+const PUNCHES_COVER_WEBP = "/media/families/homepage-covers/punches-family-cover.webp";
 const HOME_FAMILY_ORDER = ["scissors", "cutters", "punches", "chisels", "knives"] as const satisfies readonly FamilySlug[];
 
 function inHomepageOrder(families: readonly FamilyCardModel[]): readonly FamilyCardModel[] {
@@ -44,11 +45,37 @@ export function HomeFamilyGallery({ families, locale = "en" }: { families: reado
       <ul ref={galleryRef} className="home-family-gallery" data-home-family-gallery aria-label={locale === "ar" ? "منتجات روزا" : "ROSA products"}>
         {orderedFamilies.map((family) => {
           const cover = HOME_FAMILY_COVER_BY_SLUG[family.slug];
+          const alt = publicMediaAlt(family.media, locale);
           return (
             <li key={family.slug} className="home-family-gallery__panel" data-family-panel data-family={family.slug}>
               <LocaleLink className="home-family-gallery__link" href={familyHref(family.slug)} aria-label={family.name}>
                 <div className="home-family-gallery__media home-family-gallery__media--catalogue-cover">
-                  <Image className="home-family-gallery__image" src={cover.src} alt={publicMediaAlt(family.media, locale)} width={560} height={786} sizes="(max-width: 40rem) 44vw, (max-width: 64rem) 19vw, 18vw" unoptimized style={{ objectFit: "cover", objectPosition: cover.focalPoint }} />
+                  {family.slug === "punches" ? (
+                    <picture className="home-family-gallery__picture">
+                      <source srcSet={cover.src} type="image/avif" />
+                      <img
+                        className="home-family-gallery__image"
+                        src={PUNCHES_COVER_WEBP}
+                        alt={alt}
+                        width={560}
+                        height={786}
+                        loading="lazy"
+                        decoding="async"
+                        style={{ objectFit: "cover", objectPosition: cover.focalPoint }}
+                      />
+                    </picture>
+                  ) : (
+                    <Image
+                      className="home-family-gallery__image"
+                      src={cover.src}
+                      alt={alt}
+                      width={560}
+                      height={786}
+                      sizes="(max-width: 40rem) 44vw, (max-width: 64rem) 19vw, 18vw"
+                      unoptimized
+                      style={{ objectFit: "cover", objectPosition: cover.focalPoint }}
+                    />
+                  )}
                 </div>
               </LocaleLink>
             </li>
