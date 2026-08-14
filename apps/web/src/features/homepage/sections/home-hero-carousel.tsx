@@ -26,6 +26,12 @@ import {
 } from "../hero-carousel-state";
 
 const DRAG_THRESHOLD_PX = 48;
+const CLIENT_DESKTOP_HERO_SOURCES = [
+  "/media/editorial/home-hero/client-v4/hero-01-desktop.webp",
+  "/media/editorial/home-hero/client-v4/hero-02-desktop.webp",
+  "/media/editorial/home-hero/client-v4/hero-03-desktop.webp",
+  "/media/editorial/home-hero/client-v4/hero-04-desktop.webp"
+] as const;
 const CLIENT_MOBILE_HERO_SOURCES = [
   "/media/editorial/home-hero/client-v3/hero-01-mobile.avif",
   "/media/editorial/home-hero/client-v3/hero-02-mobile.avif",
@@ -33,6 +39,10 @@ const CLIENT_MOBILE_HERO_SOURCES = [
   "/media/editorial/home-hero/client-v3/hero-04-mobile.avif"
 ] as const;
 const CLIENT_MOBILE_HERO_FOCALS = ["50% 46%", "50% 48%", "54% 48%", "50% 48%"] as const;
+
+function desktopHeroSource(index: number, fallback: string): string {
+  return CLIENT_DESKTOP_HERO_SOURCES[index] ?? fallback;
+}
 
 function mobileHeroSource(index: number, fallback: string): string {
   return CLIENT_MOBILE_HERO_SOURCES[index] ?? fallback;
@@ -45,7 +55,7 @@ function mobileHeroFocal(index: number, fallback: string): string {
 function preferredHeroSource(slide: LocalizedHomeHeroSlide, index: number): string {
   return window.matchMedia("(max-width: 40rem)").matches
     ? mobileHeroSource(index, slide.image.mobileSrc)
-    : slide.image.desktopSrc;
+    : desktopHeroSource(index, slide.image.desktopSrc);
 }
 
 export function HomeHeroCarousel({
@@ -91,14 +101,7 @@ export function HomeHeroCarousel({
   }, [activeIndex, slides]);
 
   useEffect(() => {
-    if (!shouldHeroAutoplay({
-      reducedMotion,
-      focused,
-      dragging,
-      hidden
-    })) {
-      return;
-    }
+    if (!shouldHeroAutoplay({ reducedMotion, focused, dragging, hidden })) return;
 
     const timeout = window.setTimeout(() => {
       activateSlide(nextHeroSlideIndex(activeIndex, slides.length));
@@ -149,13 +152,11 @@ export function HomeHeroCarousel({
   };
 
   const slide = slides[activeIndex] ?? slides[0]!;
+  const desktopSrc = desktopHeroSource(activeIndex, slide.image.desktopSrc);
+  const mobileSrc = mobileHeroSource(activeIndex, slide.image.mobileSrc);
   const slideStyle = {
     "--hero-desktop-focal": slide.image.desktopFocalPoint,
     "--hero-mobile-focal": mobileHeroFocal(activeIndex, slide.image.mobileFocalPoint)
-  } as MotionStyle;
-  const mediaStyle = {
-    "--hero-desktop-image": `url("${slide.image.desktopSrc}")`,
-    "--hero-mobile-image": `url("${mobileHeroSource(activeIndex, slide.image.mobileSrc)}")`
   } as MotionStyle;
 
   return (
@@ -204,9 +205,6 @@ export function HomeHeroCarousel({
             className="home-hero-carousel__media"
             data-media-slot="homepage-hero-active"
             data-entry-motion="slide-settle"
-            role="img"
-            aria-label={slide.image.alt}
-            style={mediaStyle}
             initial={reducedMotion ? false : {
               scale: 1.035,
               x: slide.copySide === "right" ? -12 : 12
@@ -217,7 +215,17 @@ export function HomeHeroCarousel({
               x: slide.copySide === "right" ? 8 : -8
             }}
             transition={{ duration: reducedMotion ? 0 : 1.12, ease: MOTION_EASING.standard }}
-          />
+          >
+            <picture className="home-hero-carousel__picture">
+              <source media="(max-width: 40rem)" srcSet={mobileSrc} />
+              <img
+                src={desktopSrc}
+                alt={slide.image.alt}
+                decoding="async"
+                fetchPriority={activeIndex === 0 ? "high" : "auto"}
+              />
+            </picture>
+          </motion.div>
           <span className="home-hero-carousel__overlay" aria-hidden="true" />
           <div className="home-hero-carousel__content">
             <motion.div
