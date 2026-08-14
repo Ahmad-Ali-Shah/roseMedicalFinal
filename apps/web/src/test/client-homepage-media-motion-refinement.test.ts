@@ -48,7 +48,7 @@ describe("homepage media and entrance-motion refinement", () => {
     expect(hero).toContain("slide.image.alt");
     expect(hero).not.toContain("--hero-desktop-image");
     expect(hero).not.toContain("--hero-mobile-image");
-    expect(gallery).toContain('/media/families/homepage-covers/punches-family-cover.webp');
+    expect(gallery).toContain('/media/families/homepage-covers/punches-family-cover.avif');
     expect(gallery).not.toContain('/media/families/homepage-covers/punches-family-cover-full.svg');
     expect(polish).not.toContain('background-image: url("/media/families/homepage-covers/punches-family-cover-full.svg")');
     expect(polish).not.toContain('.home-family-gallery__panel[data-family="punches"] .home-family-gallery__image');
