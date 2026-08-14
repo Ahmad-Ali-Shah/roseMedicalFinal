@@ -35,7 +35,7 @@ function mobileHeroFocal(index: number, fallback: string): string {
 function preferredHeroSource(slide: LocalizedHomeHeroSlide): string {
   return window.matchMedia("(max-width: 40rem)").matches
     ? slide.image.mobileSrc
-    : slide.image.desktopSrc;
+    : slide.image.desktopAvifSrc;
 }
 
 export function HomeHeroCarousel({
@@ -134,6 +134,7 @@ export function HomeHeroCarousel({
 
   const slide = slides[activeIndex] ?? slides[0]!;
   const desktopSrc = slide.image.desktopSrc;
+  const desktopAvifSrc = slide.image.desktopAvifSrc;
   const mobileSrc = slide.image.mobileSrc;
   const slideStyle = {
     "--hero-desktop-focal": slide.image.desktopFocalPoint,
@@ -199,6 +200,7 @@ export function HomeHeroCarousel({
           >
             <picture className="home-hero-carousel__picture">
               <source media="(max-width: 40rem)" srcSet={mobileSrc} type="image/webp" />
+              <source srcSet={desktopAvifSrc} type="image/avif" />
               <img
                 src={desktopSrc}
                 alt={slide.image.alt}
