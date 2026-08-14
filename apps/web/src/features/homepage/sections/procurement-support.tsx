@@ -8,10 +8,18 @@ import {
   TextReveal
 } from "@/features/motion";
 import { SectionHeading } from "@/features/public-catalogue";
-import type { HomeProcurementModel } from "../homepage.data";
-import { ROSA_LOGO_MEDIA } from "@/features/public-media";
-import { publicMediaAlt } from "@/features/public-media";
+import { ROSA_LOGO_MEDIA, publicMediaAlt } from "@/features/public-media";
 import type { PublicLocale } from "@/features/localization";
+
+interface HomeProcurementModel {
+  eyebrow: string;
+  title: string;
+  copy: string;
+  detailEyebrow: string;
+  detailTitle: string;
+  detailCopy: string;
+  steps: readonly string[];
+}
 
 export function ProcurementSupport({
   model,
