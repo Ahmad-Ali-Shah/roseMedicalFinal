@@ -44,34 +44,20 @@ export function HomeFamilyGallery({ families, locale = "en" }: { families: reado
       <ul ref={galleryRef} className="home-family-gallery" data-home-family-gallery aria-label={locale === "ar" ? "منتجات روزا" : "ROSA products"}>
         {orderedFamilies.map((family) => {
           const cover = HOME_FAMILY_COVER_BY_SLUG[family.slug];
-          const alt = publicMediaAlt(family.media, locale);
           return (
             <li key={family.slug} className="home-family-gallery__panel" data-family-panel data-family={family.slug}>
               <LocaleLink className="home-family-gallery__link" href={familyHref(family.slug)} aria-label={family.name}>
                 <div className="home-family-gallery__media home-family-gallery__media--catalogue-cover">
-                  {family.slug === "punches" ? (
-                    <img
-                      className="home-family-gallery__image"
-                      src={cover.src}
-                      alt={alt}
-                      width={560}
-                      height={786}
-                      loading="lazy"
-                      decoding="async"
-                      style={{ objectFit: "cover", objectPosition: cover.focalPoint }}
-                    />
-                  ) : (
-                    <Image
-                      className="home-family-gallery__image"
-                      src={cover.src}
-                      alt={alt}
-                      width={560}
-                      height={786}
-                      sizes="(max-width: 40rem) 44vw, (max-width: 64rem) 19vw, 18vw"
-                      unoptimized
-                      style={{ objectFit: "cover", objectPosition: cover.focalPoint }}
-                    />
-                  )}
+                  <Image
+                    className="home-family-gallery__image"
+                    src={cover.src}
+                    alt={publicMediaAlt(family.media, locale)}
+                    width={560}
+                    height={786}
+                    sizes="(max-width: 40rem) 44vw, (max-width: 64rem) 19vw, 18vw"
+                    unoptimized
+                    style={{ objectFit: "cover", objectPosition: cover.focalPoint }}
+                  />
                 </div>
               </LocaleLink>
             </li>
