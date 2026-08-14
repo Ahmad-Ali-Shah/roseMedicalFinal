@@ -9,12 +9,11 @@ import { familyHref, type FamilyCardModel, type FamilySlug } from "@/features/pu
 const HOME_FAMILY_COVER_BY_SLUG = {
   knives: { src: "/media/families/homepage-covers/knives-family-cover-full.svg", focalPoint: "50% 50%" },
   scissors: { src: "/media/families/homepage-covers/scissors-family-cover-full.svg", focalPoint: "50% 50%" },
-  punches: { src: "/media/families/homepage-covers/punches-family-cover.avif", focalPoint: "50% 50%" },
+  punches: { src: "/media/families/homepage-covers/punches-family-cover.webp", focalPoint: "50% 50%" },
   chisels: { src: "/media/families/homepage-covers/chisels-family-cover-full.svg", focalPoint: "50% 50%" },
   cutters: { src: "/media/families/homepage-covers/cutters-family-cover-full.svg", focalPoint: "50% 50%" }
 } as const satisfies Record<FamilySlug, { src: string; focalPoint: string }>;
 
-const PUNCHES_COVER_WEBP = "/media/families/homepage-covers/punches-family-cover.webp";
 const HOME_FAMILY_ORDER = ["scissors", "cutters", "punches", "chisels", "knives"] as const satisfies readonly FamilySlug[];
 
 function inHomepageOrder(families: readonly FamilyCardModel[]): readonly FamilyCardModel[] {
@@ -51,19 +50,16 @@ export function HomeFamilyGallery({ families, locale = "en" }: { families: reado
               <LocaleLink className="home-family-gallery__link" href={familyHref(family.slug)} aria-label={family.name}>
                 <div className="home-family-gallery__media home-family-gallery__media--catalogue-cover">
                   {family.slug === "punches" ? (
-                    <picture className="home-family-gallery__picture">
-                      <source srcSet={cover.src} type="image/avif" />
-                      <img
-                        className="home-family-gallery__image"
-                        src={PUNCHES_COVER_WEBP}
-                        alt={alt}
-                        width={560}
-                        height={786}
-                        loading="lazy"
-                        decoding="async"
-                        style={{ objectFit: "cover", objectPosition: cover.focalPoint }}
-                      />
-                    </picture>
+                    <img
+                      className="home-family-gallery__image"
+                      src={cover.src}
+                      alt={alt}
+                      width={560}
+                      height={786}
+                      loading="lazy"
+                      decoding="async"
+                      style={{ objectFit: "cover", objectPosition: cover.focalPoint }}
+                    />
                   ) : (
                     <Image
                       className="home-family-gallery__image"
