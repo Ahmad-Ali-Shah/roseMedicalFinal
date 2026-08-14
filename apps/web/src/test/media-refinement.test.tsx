@@ -27,7 +27,8 @@ describe("owner media refinement", () => {
 
     expect(html).toContain("data-home-family-gallery");
     expect((html.match(/data-family-panel/g) ?? [])).toHaveLength(5);
-    expect(html).toContain("punches-family-cover.avif");
+    expect(html).toContain("punches-family-cover.webp");
+    expect(html).not.toContain("punches-family-cover.avif");
     expect((html.match(/class=\"home-clinical-media/g) ?? [])).toHaveLength(6);
     expect(html).toContain("home-specialties/plastic-surgery.webp");
     expect(html).toContain("home-specialties/securing-confidence.webp");
