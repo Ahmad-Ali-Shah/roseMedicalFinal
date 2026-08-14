@@ -44,13 +44,9 @@ describe("scoped public catalogue projections", () => {
       return `load-${loads}`;
     };
 
-    expect(
-      await getCachedCatalogueProjection("warm", loader, { now: () => now })
-    ).toBe("load-1");
+    expect(await getCachedCatalogueProjection("warm", loader, { now: () => now })).toBe("load-1");
     now = 59_000;
-    expect(
-      await getCachedCatalogueProjection("warm", loader, { now: () => now })
-    ).toBe("load-1");
+    expect(await getCachedCatalogueProjection("warm", loader, { now: () => now })).toBe("load-1");
     expect(loads).toBe(1);
   });
 
@@ -62,13 +58,9 @@ describe("scoped public catalogue projections", () => {
       return loads;
     };
 
-    expect(
-      await getCachedCatalogueProjection("ttl", loader, { now: () => now })
-    ).toBe(1);
+    expect(await getCachedCatalogueProjection("ttl", loader, { now: () => now })).toBe(1);
     now = 61_001;
-    expect(
-      await getCachedCatalogueProjection("ttl", loader, { now: () => now })
-    ).toBe(2);
+    expect(await getCachedCatalogueProjection("ttl", loader, { now: () => now })).toBe(2);
   });
 
   it("shares one pending load across concurrent requests", async () => {
@@ -91,15 +83,18 @@ describe("scoped public catalogue projections", () => {
   });
 
   it("keeps whole-catalogue loading out of ordinary public page components", () => {
-    const expectations = [
-      ["src/features/homepage/homepage.tsx", "getFeaturedCatalogueProducts"],
+    const scopedReaders = [
       ["src/features/products/products-overview.tsx", "getFeaturedCatalogueProducts"],
       ["src/features/family-listing/family-listing-page.tsx", "getFamilyCatalogueProducts"],
       ["src/features/product-detail/product-detail-page.tsx", "getProductCatalogueContext"],
       ["src/features/search-preview/search-default-page.tsx", "getSearchCatalogueProducts"]
     ] as const;
 
-    for (const [path, expected] of expectations) {
+    const homepage = source("src/features/homepage/homepage.tsx");
+    expect(homepage).not.toContain("getPublicCatalogueProducts");
+    expect(homepage).not.toContain("getFeaturedCatalogueProducts");
+
+    for (const [path, expected] of scopedReaders) {
       const contents = source(path);
       expect(contents).toContain(expected);
       expect(contents).not.toContain("getPublicCatalogueProducts");
