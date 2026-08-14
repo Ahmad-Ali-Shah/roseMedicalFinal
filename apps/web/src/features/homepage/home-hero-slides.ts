@@ -11,6 +11,7 @@ export interface LocalizedHeroText {
 
 export interface HeroImage {
   desktopSrc: string;
+  desktopAvifSrc: string;
   mobileSrc: string;
   alt: LocalizedHeroText;
   desktopFocalPoint: string;
@@ -54,6 +55,7 @@ export const HOME_HERO_SLIDES = [
     id: "precision-instruments",
     image: {
       desktopSrc: "/media/editorial/home-hero/client-v5/hero-01-desktop.webp",
+      desktopAvifSrc: "/media/editorial/home-hero/client-v5/hero-01-desktop.avif",
       mobileSrc: "/media/editorial/home-hero/client-v5/hero-01-mobile.webp",
       alt: {
         en: "Gloved hand selecting a surgical instrument from an arranged set",
@@ -82,6 +84,7 @@ export const HOME_HERO_SLIDES = [
     id: "clinical-instrument-context",
     image: {
       desktopSrc: "/media/editorial/home-hero/client-v5/hero-02-desktop.webp",
+      desktopAvifSrc: "/media/editorial/home-hero/client-v5/hero-02-desktop.avif",
       mobileSrc: "/media/editorial/home-hero/client-v5/hero-02-mobile.webp",
       alt: {
         en: "Gloved hand holding ring-handled surgical forceps beside other instruments",
@@ -110,6 +113,7 @@ export const HOME_HERO_SLIDES = [
     id: "surgical-instrument-selection",
     image: {
       desktopSrc: "/media/editorial/home-hero/client-v5/hero-03-desktop.webp",
+      desktopAvifSrc: "/media/editorial/home-hero/client-v5/hero-03-desktop.avif",
       mobileSrc: "/media/editorial/home-hero/client-v5/hero-03-mobile.webp",
       alt: {
         en: "Gloved hands examining a surgical scissors instrument",
@@ -138,6 +142,7 @@ export const HOME_HERO_SLIDES = [
     id: "catalogue-to-quotation",
     image: {
       desktopSrc: "/media/editorial/home-hero/client-v5/hero-04-desktop.webp",
+      desktopAvifSrc: "/media/editorial/home-hero/client-v5/hero-04-desktop.avif",
       mobileSrc: "/media/editorial/home-hero/client-v5/hero-04-mobile.webp",
       alt: {
         en: "Dark surgical instruments arranged on a textured sterile surface",
@@ -173,6 +178,7 @@ export function localizeHomeHeroSlide(
     id: slide.id,
     image: {
       desktopSrc: slide.image.desktopSrc,
+      desktopAvifSrc: slide.image.desktopAvifSrc,
       mobileSrc: slide.image.mobileSrc,
       alt: slide.image.alt[key],
       desktopFocalPoint: slide.image.desktopFocalPoint,
