@@ -1,4 +1,5 @@
 import type { ReactElement } from "react";
+import type { Route } from "next";
 import { Container, Section } from "@/components/layout";
 import {
   MediaFrame,
@@ -6,10 +7,22 @@ import {
   Stagger,
   StaggerItem
 } from "@/features/motion";
-import { SectionHeading } from "@/features/public-catalogue";
-import type { HomeCatalogueModel } from "../homepage.data";
+import { SectionHeading, type PublicMediaModel } from "@/features/public-catalogue";
 import { LocaleLink, type PublicLocale } from "@/features/localization";
 import { publicMediaAlt } from "@/features/public-media";
+
+interface HomeCatalogueModel {
+  eyebrow: string;
+  title: string;
+  copy: string;
+  items: readonly {
+    name: string;
+    slug: string;
+    href: Route<string>;
+    number: string;
+    media: PublicMediaModel;
+  }[];
+}
 
 export function CatalogueAccess({
   model,
