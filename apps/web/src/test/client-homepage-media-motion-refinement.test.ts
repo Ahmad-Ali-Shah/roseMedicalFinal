@@ -24,16 +24,22 @@ const EXPECTED_MOBILE_HERO_MEDIA = [
   "/media/editorial/home-hero/client-v5/hero-04-mobile.webp"
 ] as const;
 const EXPECTED_DESKTOP_MASTER_DIMENSIONS = [
-  { width: 2148, height: 732 },
-  { width: 2148, height: 732 },
-  { width: 2148, height: 732 },
+  { width: 1920, height: 654 },
+  { width: 1920, height: 654 },
+  { width: 1920, height: 654 },
   { width: 1774, height: 886 }
 ] as const;
+const EXPECTED_DESKTOP_FALLBACK_DIMENSIONS = [
+  { width: 1200, height: 409 },
+  { width: 1200, height: 409 },
+  { width: 1200, height: 409 },
+  { width: 1200, height: 600 }
+] as const;
 const EXPECTED_MOBILE_HERO_DIMENSIONS = [
-  { width: 960, height: 1200 },
-  { width: 960, height: 1200 },
-  { width: 960, height: 1200 },
-  { width: 960, height: 1200 }
+  { width: 474, height: 592 },
+  { width: 474, height: 592 },
+  { width: 474, height: 592 },
+  { width: 576, height: 720 }
 ] as const;
 const EXPECTED_MOBILE_FOCALS = ["50% 46%", "50% 48%", "54% 48%", "50% 48%"] as const;
 const EXPECTED_SPECIALTY_MEDIA = [
@@ -89,7 +95,7 @@ function readAvifDimensions(mediaSrc: string): { width: number; height: number }
 }
 
 describe("homepage media and entrance-motion refinement", () => {
-  it("uses retina-grade hero masters with complete fallbacks and phone crops", () => {
+  it("uses high-resolution hero masters with complete fallbacks and dedicated phone crops", () => {
     const hero = source("src/features/homepage/sections/home-hero-carousel.tsx");
 
     expect(HOME_HERO_SLIDES.map((slide) => slide.image.desktopSrc)).toEqual(EXPECTED_DESKTOP_HERO_MEDIA);
@@ -99,7 +105,7 @@ describe("homepage media and entrance-motion refinement", () => {
       expectCompleteWebP(mediaSrc);
     }
     expect(EXPECTED_DESKTOP_HERO_AVIF.map(readAvifDimensions)).toEqual(EXPECTED_DESKTOP_MASTER_DIMENSIONS);
-    expect(EXPECTED_DESKTOP_HERO_MEDIA.map(readLossyWebPDimensions)).toEqual(EXPECTED_DESKTOP_MASTER_DIMENSIONS);
+    expect(EXPECTED_DESKTOP_HERO_MEDIA.map(readLossyWebPDimensions)).toEqual(EXPECTED_DESKTOP_FALLBACK_DIMENSIONS);
     expect(EXPECTED_MOBILE_HERO_MEDIA.map(readLossyWebPDimensions)).toEqual(EXPECTED_MOBILE_HERO_DIMENSIONS);
     expect(hero).toContain('<source media="(max-width: 40rem)"');
     expect(hero).toContain('type="image/avif"');
@@ -124,15 +130,15 @@ describe("homepage media and entrance-motion refinement", () => {
     expect(polish).not.toContain('background-image: url("/media/families/homepage-covers/punches-family-cover-full.svg")');
   });
 
-  it("uses local clinical photography and keeps primary specialty imagery retina-grade", () => {
+  it("uses local clinical photography and keeps the three primary specialty images high-resolution", () => {
     const clientSections = source("src/features/homepage/sections/client-home-sections.tsx");
     for (const mediaSrc of EXPECTED_SPECIALTY_MEDIA) {
       expect(existsSync(resolve(process.cwd(), `public${mediaSrc}`))).toBe(true);
       expect(clientSections).toContain(mediaSrc);
     }
     for (const mediaSrc of RETINA_SPECIALTY_MEDIA) {
-      expectCompleteWebP(mediaSrc, 20_000);
-      expect(readLossyWebPDimensions(mediaSrc)).toEqual({ width: 1440, height: 900 });
+      expectCompleteWebP(mediaSrc, 15_000);
+      expect(readLossyWebPDimensions(mediaSrc)).toEqual({ width: 1200, height: 750 });
     }
     expect(clientSections).toContain('from "next/image"');
     expect(clientSections).not.toContain("HomeMediaPlaceholder");
