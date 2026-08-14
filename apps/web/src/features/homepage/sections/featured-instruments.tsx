@@ -6,7 +6,12 @@ import {
   SectionHeading,
   type ProductPreviewModel
 } from "@/features/public-catalogue";
-import type { HomeProductsIntroModel } from "../homepage.data";
+
+interface HomeProductsIntroModel {
+  eyebrow: string;
+  title: string;
+  copy: string;
+}
 
 export function FeaturedInstruments({
   intro,
