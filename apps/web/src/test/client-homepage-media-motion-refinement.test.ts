@@ -26,6 +26,17 @@ const EXPECTED_SPECIALTY_MEDIA = [
   "/media/editorial/home-specialties/spine.webp",
   "/media/editorial/home-specialties/securing-confidence.webp"
 ] as const;
+const PUNCHES_COVER = "/media/families/homepage-covers/punches-family-cover.webp" as const;
+
+function expectCompleteWebP(mediaSrc: string, minimumBytes = 5_000): void {
+  const path = resolve(process.cwd(), `public${mediaSrc}`);
+  expect(existsSync(path)).toBe(true);
+  const file = readFileSync(path);
+  expect(file.length).toBeGreaterThan(minimumBytes);
+  expect(file.subarray(0, 4).toString("ascii")).toBe("RIFF");
+  expect(file.subarray(8, 12).toString("ascii")).toBe("WEBP");
+  expect(file.readUInt32LE(4) + 8).toBe(file.length);
+}
 
 describe("homepage media and entrance-motion refinement", () => {
   it("uses complete v5 client WebP banners with dedicated phone crops", () => {
@@ -34,19 +45,14 @@ describe("homepage media and entrance-motion refinement", () => {
     expect(HOME_HERO_SLIDES.map((slide) => slide.image.desktopSrc)).toEqual(EXPECTED_DESKTOP_HERO_MEDIA);
     expect(HOME_HERO_SLIDES.map((slide) => slide.image.mobileSrc)).toEqual(EXPECTED_MOBILE_HERO_MEDIA);
     for (const mediaSrc of [...EXPECTED_DESKTOP_HERO_MEDIA, ...EXPECTED_MOBILE_HERO_MEDIA]) {
-      const path = resolve(process.cwd(), `public${mediaSrc}`);
-      expect(existsSync(path)).toBe(true);
-      const file = readFileSync(path);
-      expect(file.length).toBeGreaterThan(5_000);
-      expect(file.subarray(0, 4).toString("ascii")).toBe("RIFF");
-      expect(file.subarray(8, 12).toString("ascii")).toBe("WEBP");
+      expectCompleteWebP(mediaSrc);
     }
     expect(hero).toContain('<source media="(max-width: 40rem)"');
     expect(hero).toContain('type="image/webp"');
     for (const focal of EXPECTED_MOBILE_FOCALS) expect(hero).toContain(focal);
   });
 
-  it("renders semantic hero images and a direct Punches catalogue cover with format fallback", () => {
+  it("renders semantic hero images and serves Punches from one direct WebP", () => {
     const hero = source("src/features/homepage/sections/home-hero-carousel.tsx");
     const gallery = source("src/features/homepage/sections/home-family-gallery.tsx");
     const polish = source("src/styles/home-client-redesign-polish.css");
@@ -56,10 +62,10 @@ describe("homepage media and entrance-motion refinement", () => {
     expect(hero).toContain("slide.image.alt");
     expect(hero).not.toContain("--hero-desktop-image");
     expect(hero).not.toContain("--hero-mobile-image");
-    expect(gallery).toContain('/media/families/homepage-covers/punches-family-cover.avif');
-    expect(gallery).toContain('/media/families/homepage-covers/punches-family-cover.webp');
-    expect(gallery).toContain("<picture");
-    expect(gallery).not.toContain('/media/families/homepage-covers/punches-family-cover-full.svg');
+    expect(gallery).toContain(PUNCHES_COVER);
+    expect(gallery).not.toContain("punches-family-cover.avif");
+    expect(gallery).not.toContain("punches-family-cover-full.svg");
+    expectCompleteWebP(PUNCHES_COVER, 3_000);
     expect(polish).not.toContain('background-image: url("/media/families/homepage-covers/punches-family-cover-full.svg")');
   });
 
