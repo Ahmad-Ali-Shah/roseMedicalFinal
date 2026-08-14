@@ -53,8 +53,8 @@ export const HOME_HERO_SLIDES = [
   {
     id: "precision-instruments",
     image: {
-      desktopSrc: "/media/editorial/home-hero/client-v4/hero-01-desktop.webp",
-      mobileSrc: "/media/editorial/home-hero/client-v3/hero-01-mobile.avif",
+      desktopSrc: "/media/editorial/home-hero/client-v5/hero-01-desktop.webp",
+      mobileSrc: "/media/editorial/home-hero/client-v5/hero-01-mobile.webp",
       alt: {
         en: "Gloved hand selecting a surgical instrument from an arranged set",
         ar: "يد مرتدية قفازًا تختار أداة جراحية من مجموعة مرتبة"
@@ -81,8 +81,8 @@ export const HOME_HERO_SLIDES = [
   {
     id: "clinical-instrument-context",
     image: {
-      desktopSrc: "/media/editorial/home-hero/client-v4/hero-02-desktop.webp",
-      mobileSrc: "/media/editorial/home-hero/client-v3/hero-02-mobile.avif",
+      desktopSrc: "/media/editorial/home-hero/client-v5/hero-02-desktop.webp",
+      mobileSrc: "/media/editorial/home-hero/client-v5/hero-02-mobile.webp",
       alt: {
         en: "Gloved hand holding ring-handled surgical forceps beside other instruments",
         ar: "يد مرتدية قفازًا تمسك ملقطًا جراحيًا بحلقات بجوار أدوات أخرى"
@@ -109,8 +109,8 @@ export const HOME_HERO_SLIDES = [
   {
     id: "surgical-instrument-selection",
     image: {
-      desktopSrc: "/media/editorial/home-hero/client-v4/hero-03-desktop.webp",
-      mobileSrc: "/media/editorial/home-hero/client-v3/hero-03-mobile.avif",
+      desktopSrc: "/media/editorial/home-hero/client-v5/hero-03-desktop.webp",
+      mobileSrc: "/media/editorial/home-hero/client-v5/hero-03-mobile.webp",
       alt: {
         en: "Gloved hands examining a surgical scissors instrument",
         ar: "يدان مرتديتان قفازات تفحصان مقصًا جراحيًا"
@@ -137,8 +137,8 @@ export const HOME_HERO_SLIDES = [
   {
     id: "catalogue-to-quotation",
     image: {
-      desktopSrc: "/media/editorial/home-hero/client-v4/hero-04-desktop.webp",
-      mobileSrc: "/media/editorial/home-hero/client-v3/hero-04-mobile.avif",
+      desktopSrc: "/media/editorial/home-hero/client-v5/hero-04-desktop.webp",
+      mobileSrc: "/media/editorial/home-hero/client-v5/hero-04-mobile.webp",
       alt: {
         en: "Dark surgical instruments arranged on a textured sterile surface",
         ar: "أدوات جراحية داكنة مرتبة على سطح طبي منسوج"
