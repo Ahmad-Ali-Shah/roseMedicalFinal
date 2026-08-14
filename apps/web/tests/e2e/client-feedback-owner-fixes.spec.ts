@@ -4,7 +4,7 @@ test("header keeps social links out of the quote action cluster", async ({ page 
   test.skip(testInfo.project.name !== "desktop");
   await page.goto("/");
   await expect(page.locator(".site-header__actions [data-social-links]")).toHaveCount(0);
-  await expect(page.locator(".site-footer [data-social-links] a")).toHaveCount(4);
+  await expect(page.locator(".home-social-strip [data-social-links] a")).toHaveCount(4);
 });
 
 test("hero uses a gradual overlapping crossfade instead of an abrupt swap", async ({ page }, testInfo) => {
@@ -28,22 +28,26 @@ test("hero uses a gradual overlapping crossfade instead of an abrupt swap", asyn
   await expect(slides).toHaveCount(1, { timeout: 2_000 });
 });
 
-test("desktop family gallery keeps the most recently hovered family active", async ({ page }, testInfo) => {
+test("desktop family gallery applies an obvious cover zoom without resizing the layout", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop");
   await page.setViewportSize({ width: 1024, height: 768 });
   await page.goto("/");
   const gallery = page.locator("[data-home-family-gallery]");
   await gallery.scrollIntoViewIfNeeded();
-  const knives = gallery.locator("[data-family='knives']");
   const chisels = gallery.locator("[data-family='chisels']");
-  const knivesInitial = await knives.boundingBox();
-  const scissorsInitial = await gallery.locator("[data-family='scissors']").boundingBox();
-  expect(knivesInitial!.width).toBeGreaterThan(scissorsInitial!.width);
+  const image = chisels.locator(".home-family-gallery__image");
+  const before = await chisels.boundingBox();
+
   await chisels.hover();
-  await page.waitForTimeout(650);
-  await page.locator("[data-section='family-discovery'] .public-section-heading__title").hover();
-  await page.waitForTimeout(650);
-  const chiselsAfterLeave = await chisels.boundingBox();
-  const knivesAfterLeave = await knives.boundingBox();
-  expect(chiselsAfterLeave!.width).toBeGreaterThan(knivesAfterLeave!.width);
+  await page.waitForTimeout(720);
+
+  const after = await chisels.boundingBox();
+  expect(after).not.toBeNull();
+  expect(before).not.toBeNull();
+  expect(Math.abs(after!.width - before!.width)).toBeLessThanOrEqual(1);
+  expect(await image.evaluate((node) => getComputedStyle(node).transform)).not.toBe("none");
+
+  await page.locator("[data-section='family-discovery'] .home-compact-section-title").hover();
+  await page.waitForTimeout(720);
+  expect(await image.evaluate((node) => getComputedStyle(node).transform)).toBe("none");
 });
