@@ -105,7 +105,11 @@ describe("client About compact redesign", () => {
     expect(css).toContain("@keyframes about-client-hero-settle");
     expect(css).toContain("@keyframes about-client-compliance-connector-enter");
     expect(css).toMatch(/\.about-client-compliance__connector[\s\S]*animation:\s*about-client-compliance-connector-enter/);
+    expect(css).toMatch(/\.about-client-story__media img[\s\S]*transition:\s*transform 420ms cubic-bezier\(0\.22,\s*1,\s*0\.36,\s*1\)/);
+    expect(css).toMatch(/\.about-client-story__media:hover img[\s\S]*transform:\s*scale\(1\.14\)/);
     expect(css).toMatch(/prefers-reduced-motion: reduce[\s\S]*\.about-client-compliance__connector[\s\S]*animation:\s*none/);
+    expect(css).toMatch(/prefers-reduced-motion: reduce[\s\S]*\.about-client-story__media img[\s\S]*transition:\s*none/);
+    expect(css).toMatch(/prefers-reduced-motion: reduce[\s\S]*\.about-client-story__media:hover img[\s\S]*transform:\s*none/);
     expect(css).toMatch(/translateY\(-4px\)/);
     expect(css).toContain("scale(1.02)");
     expect(css).toContain("prefers-reduced-motion: reduce");
