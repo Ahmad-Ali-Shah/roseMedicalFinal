@@ -1,4 +1,4 @@
-body.public-shell:has([data-section="about-client-hero"]) .public-contact-strip {
+.page-main:has([data-section="about-client-hero"]) + .public-contact-strip {
   display: none;
 }
 
