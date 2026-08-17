@@ -33,6 +33,15 @@ for (const viewport of viewports) {
   });
 }
 
+test("About owns its contact band without duplicating the global shell contact strip", async ({ page }) => {
+  await page.goto("/about");
+  await expect(page.locator("[data-section='about-client-contact']")).toBeVisible();
+  await expect(page.locator(".public-contact-strip")).toBeHidden();
+
+  await page.goto("/products");
+  await expect(page.locator(".public-contact-strip")).toBeVisible();
+});
+
 test("mobile documents use a contained snap rail", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/about");
