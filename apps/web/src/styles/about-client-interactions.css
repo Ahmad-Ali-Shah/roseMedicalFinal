@@ -12,6 +12,18 @@
   }
 }
 
+@keyframes about-client-compliance-connector-enter {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+
+  to {
+    opacity: 0.45;
+    transform: scaleX(1);
+  }
+}
+
 .about-client-hero__media {
   animation: about-client-hero-settle var(--motion-hero) var(--motion-ease-emphasized) both;
 }
@@ -30,6 +42,7 @@
 }
 
 .about-client-compliance__connector {
+  animation: about-client-compliance-connector-enter var(--motion-section) var(--motion-ease) both;
   transition: opacity var(--motion-section) var(--motion-ease), transform var(--motion-section) var(--motion-ease);
 }
 
@@ -120,7 +133,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .about-client-hero__media {
+  .about-client-hero__media,
+  .about-client-compliance__connector {
     animation: none;
   }
 
