@@ -22,7 +22,7 @@ export function AboutPage({ locale = "en" }: { locale?: PublicLocale }): ReactEl
       ))}
       <AboutContactBand model={model.contact} />
       <AboutCompliance model={model.compliance} />
-      <AboutDocuments documents={model.documents} />
+      <AboutDocuments documents={model.documents} locale={locale} />
       <AboutQuotationCta model={model.quotation} />
       <AboutSocialStrip model={model.social} locale={locale} />
     </>
