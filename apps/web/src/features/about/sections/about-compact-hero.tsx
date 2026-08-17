@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { ReactElement } from "react";
 import { Container, Section } from "@/components/layout";
 import { LocalizedButtonLink } from "@/features/localization";
@@ -18,11 +19,16 @@ export function AboutCompactHero({
       <div
         className="about-client-hero__media"
         data-media-slot={model.mediaSlot}
-        data-media-state="placeholder"
-        role="img"
-        aria-label={model.mediaLabel}
+        data-media-state="ready"
       >
-        <span className="about-client-placeholder__accent" aria-hidden="true" />
+        <Image
+          src="/media/editorial/about-client-hero.webp"
+          alt={model.title}
+          fill
+          priority
+          sizes="100vw"
+          style={{ objectFit: "cover" }}
+        />
       </div>
       <div className="about-client-hero__overlay" aria-hidden="true" />
       <Container className="about-client-hero__inner" size="wide">
