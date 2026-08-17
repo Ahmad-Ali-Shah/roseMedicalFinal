@@ -459,7 +459,7 @@
   }
 }
 
-@media (max-width: 64rem) {
+@media (max-width: 63.99rem) {
   .about-client-compliance__grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
