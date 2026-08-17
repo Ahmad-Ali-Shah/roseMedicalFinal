@@ -19,6 +19,13 @@ async function expectNoHorizontalOverflow(page: Page): Promise<void> {
   expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.innerWidth + 1);
 }
 
+async function gridColumnCount(page: Page, selector: string): Promise<number> {
+  return page.locator(selector).evaluate((element) => {
+    const columns = getComputedStyle(element).gridTemplateColumns.trim();
+    return columns ? columns.split(/\s+/).length : 0;
+  });
+}
+
 for (const viewport of viewports) {
   test(`About client redesign composes at ${viewport.name}`, async ({ page }) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
@@ -32,6 +39,24 @@ for (const viewport of viewports) {
     await expectNoHorizontalOverflow(page);
   });
 }
+
+test("1024px keeps desktop compliance and document geometry", async ({ page }) => {
+  await page.setViewportSize({ width: 1024, height: 768 });
+  await page.goto("/about");
+  expect(await gridColumnCount(page, ".about-client-compliance__grid")).toBe(6);
+  expect(await gridColumnCount(page, ".about-client-documents__grid")).toBe(5);
+  await expect(page.locator(".about-client-compliance__connector")).toBeVisible();
+  await expectNoHorizontalOverflow(page);
+});
+
+test("1023px uses upper-tablet compliance and document geometry", async ({ page }) => {
+  await page.setViewportSize({ width: 1023, height: 768 });
+  await page.goto("/about");
+  expect(await gridColumnCount(page, ".about-client-compliance__grid")).toBe(3);
+  expect(await gridColumnCount(page, ".about-client-documents__grid")).toBe(3);
+  await expect(page.locator(".about-client-compliance__connector")).toBeHidden();
+  await expectNoHorizontalOverflow(page);
+});
 
 test("About owns its contact band without duplicating the global shell contact strip", async ({ page }) => {
   await page.goto("/about");
@@ -72,4 +97,5 @@ test("reduced motion leaves the complete About page visible", async ({ page }) =
   await expect(page.locator("[data-about-story]")).toHaveCount(3);
   await expect(page.locator("[data-about-document]")).toHaveCount(5);
   await expect(page.locator(".about-client-hero__media")).toHaveCSS("animation-name", "none");
+  await expect(page.locator(".about-client-compliance__connector")).toHaveCSS("animation-name", "none");
 });
