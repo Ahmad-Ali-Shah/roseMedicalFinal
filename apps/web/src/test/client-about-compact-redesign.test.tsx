@@ -62,6 +62,9 @@ describe("client About compact redesign", () => {
     expect(html).toContain('data-motion="text-reveal"');
     expect(html).toContain('data-motion="stagger"');
     expect((html.match(/data-motion="reveal"/g) ?? []).length).toBeGreaterThanOrEqual(8);
+
+    const social = html.match(/<aside[^>]*data-section="about-client-social"[\s\S]*?<\/aside>/)?.[0] ?? "";
+    expect(social).toContain('data-motion="reveal"');
   });
 
   it("keeps real routes, contact actions and removes the retired About composition", () => {
@@ -87,7 +90,8 @@ describe("client About compact redesign", () => {
     expect(css).toMatch(/@media \(min-width: 50rem\)/);
     expect(css).toMatch(/grid-template-columns:\s*minmax\(0,\s*2fr\)\s*minmax\(0,\s*3fr\)/);
     expect(css).toMatch(/\.about-client-compliance__grid[\s\S]*repeat\(6,/);
-    expect(css).toMatch(/@media \(max-width: 64rem\)[\s\S]*repeat\(3,/);
+    expect(css).toMatch(/@media \(max-width: 63\.99rem\)[\s\S]*\.about-client-compliance__grid[\s\S]*repeat\(3,/);
+    expect(css).toMatch(/@media \(max-width: 63\.99rem\)[\s\S]*\.about-client-documents__grid[\s\S]*repeat\(3,/);
     expect(css).toMatch(/@media \(max-width: 40rem\)[\s\S]*repeat\(2,/);
     expect(css).toMatch(/@media \(max-width: 40rem\)[\s\S]*scroll-snap-type:\s*inline mandatory/);
     expect(css).toContain('.page-main:has([data-section="about-client-hero"]) + .public-contact-strip');
@@ -99,6 +103,9 @@ describe("client About compact redesign", () => {
   it("uses restrained transform-only polish with reduced-motion fallback", () => {
     const css = source("src/styles/about-client-interactions.css");
     expect(css).toContain("@keyframes about-client-hero-settle");
+    expect(css).toContain("@keyframes about-client-compliance-connector-enter");
+    expect(css).toMatch(/\.about-client-compliance__connector[\s\S]*animation:\s*about-client-compliance-connector-enter/);
+    expect(css).toMatch(/prefers-reduced-motion: reduce[\s\S]*\.about-client-compliance__connector[\s\S]*animation:\s*none/);
     expect(css).toMatch(/translateY\(-4px\)/);
     expect(css).toContain("scale(1.02)");
     expect(css).toContain("prefers-reduced-motion: reduce");
