@@ -391,15 +391,23 @@ The page must be intentionally composed at all of these classes, not merely “n
 
 - three story rows remain side-by-side;
 - section density stays compact;
-- compliance remains 6-across while enough width exists;
+- compliance remains 6-across;
+- documents remain five across while readable;
 - no text collision at short laptop heights.
 
-### Tablet: 641–1023 px
+### Upper tablet: 800–1023 px
 
-- story rows may remain two-column above practical minimums, then switch cleanly to stacked layout;
+- story rows remain two-column with reduced gap and tighter type;
 - compliance becomes 3 × 2;
 - documents become 3 + 2;
 - hero typography and padding tighten.
+
+### Lower tablet: 641–799 px
+
+- story rows stack into one column;
+- compliance remains 3 × 2 where practical;
+- documents remain a 3 + 2 grid;
+- hero remains compact and text-first.
 
 ### Mobile: ≤640 px
 
@@ -426,7 +434,7 @@ Reuse the current motion system:
 - `Stagger`
 - `StaggerItem`
 
-Current shared values already provide ~0.58 s section motion, emphasized easing and ~28 px desktop translation. Keep those defaults unless a hero-specific treatment genuinely needs `MOTION_DURATION.hero`/`MOTION_DISTANCE.hero`.
+Current shared values already provide ~0.58 s section motion, standard easing and ~28 px desktop translation. Keep those defaults unless a hero-specific treatment genuinely needs `MOTION_DURATION.hero`/`MOTION_DISTANCE.hero`.
 
 Rules:
 
