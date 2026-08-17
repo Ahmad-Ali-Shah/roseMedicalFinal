@@ -1,3 +1,7 @@
+body.public-shell:has([data-section="about-client-hero"]) .public-contact-strip {
+  display: none;
+}
+
 @keyframes about-client-hero-settle {
   from {
     transform: scale(1.025) translate3d(10px, 0, 0);
@@ -79,14 +83,40 @@
   transform: scale(1.02);
 }
 
-.about-client-social a {
+.about-client-social .social-links-row {
+  display: grid;
+  width: min(100%, 46rem);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.45rem 0.9rem;
+  margin: 0;
+}
+
+.about-client-social .social-links-row a {
+  justify-content: center;
+  color: var(--color-paper);
   transition: opacity var(--transition-fast), transform var(--motion-component) var(--motion-ease);
 }
 
-.about-client-social a:hover,
-.about-client-social a:focus-visible {
+.about-client-social .social-links-row__icon {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.about-client-social .social-links-row a:hover,
+.about-client-social .social-links-row a:focus-visible {
   opacity: 0.82;
   transform: translateY(-2px);
+}
+
+@media (max-width: 40rem) {
+  .about-client-social .social-links-row {
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .about-client-social .social-links-row a {
+    justify-content: flex-start;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -100,7 +130,7 @@
   .about-client-compliance__icon,
   .about-client-document,
   .about-client-document__preview,
-  .about-client-social a {
+  .about-client-social .social-links-row a {
     transition: none;
   }
 
@@ -112,8 +142,8 @@
   .about-client-document:focus-within,
   .about-client-document:hover .about-client-document__preview,
   .about-client-document:focus-within .about-client-document__preview,
-  .about-client-social a:hover,
-  .about-client-social a:focus-visible {
+  .about-client-social .social-links-row a:hover,
+  .about-client-social .social-links-row a:focus-visible {
     transform: none;
   }
 }
