@@ -28,6 +28,17 @@
   animation: about-client-hero-settle var(--motion-hero) var(--motion-ease-emphasized) both;
 }
 
+.about-client-story__media img {
+  transform: scale(1);
+  transform-origin: center;
+  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.about-client-story__media:hover img,
+.about-client-story__media:focus-within img {
+  transform: scale(1.14);
+}
+
 .about-client-contact-action {
   transition:
     transform var(--motion-component) var(--motion-ease),
@@ -138,6 +149,7 @@
     animation: none;
   }
 
+  .about-client-story__media img,
   .about-client-contact-action,
   .about-client-compliance__connector,
   .about-client-compliance__item,
@@ -148,6 +160,8 @@
     transition: none;
   }
 
+  .about-client-story__media:hover img,
+  .about-client-story__media:focus-within img,
   .about-client-contact-action:hover,
   .about-client-contact-action:focus-visible,
   .about-client-compliance__item:hover,
