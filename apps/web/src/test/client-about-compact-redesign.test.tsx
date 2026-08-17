@@ -78,9 +78,10 @@ describe("client About compact redesign", () => {
     expect(html).not.toMatch(/certificate number|approval number|licensed by|certified by/i);
   });
 
-  it("locks compact responsive About geometry", () => {
+  it("locks compact responsive About geometry and suppresses only the duplicate shell contact strip", () => {
     const css = source("src/styles/about-client-redesign.css");
     const globals = source("src/app/globals.css");
+    const shell = source("src/components/layout/public-shell.tsx");
     expect(globals).toContain('@import "../styles/about-client-redesign.css";');
     expect(css).toContain(".about-client-hero");
     expect(css).toMatch(/@media \(min-width: 50rem\)/);
@@ -89,6 +90,9 @@ describe("client About compact redesign", () => {
     expect(css).toMatch(/@media \(max-width: 64rem\)[\s\S]*repeat\(3,/);
     expect(css).toMatch(/@media \(max-width: 40rem\)[\s\S]*repeat\(2,/);
     expect(css).toMatch(/@media \(max-width: 40rem\)[\s\S]*scroll-snap-type:\s*inline mandatory/);
+    expect(css).toContain('.page-main:has([data-section="about-client-hero"]) + .public-contact-strip');
+    expect(shell.indexOf('<main className="page-main"')).toBeGreaterThanOrEqual(0);
+    expect(shell.indexOf("<PublicContactStrip />")).toBeGreaterThan(shell.indexOf('<main className="page-main"'));
     expect(css).not.toContain("text-align: justify");
   });
 
