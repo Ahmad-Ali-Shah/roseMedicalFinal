@@ -2,28 +2,36 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { expect, it } from "vitest";
 import { AboutPage } from "@/features/about";
 
-it("renders the approved About structure without unsupported claims", () => {
-  const html = renderToStaticMarkup(<AboutPage />);
-  const visibleText = html.replace(/<[^>]+>/g, " ");
+it("renders the client-faithful compact About structure without unsupported claims", () => {
+  const html = renderToStaticMarkup(<AboutPage locale="en" />);
+  const visibleText = html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
 
   expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
-  expect(html).not.toContain('data-editorial-kind="buyer-expectation"');
-  expect(html).not.toContain("data-scissors-evolution-stage");
-  expect((html.match(/data-supported-buyer=/g) ?? [])).toHaveLength(4);
-  expect((html.match(/data-family-index-row=/g) ?? [])).toHaveLength(5);
-  expect(html).toContain("We are Rosa Medical.");
-  expect(html).toContain("A focused partner for clearer instrument sourcing.");
-  expect(html).toContain('data-company-profile="true"');
-  expect(html).toContain("rosa-primary-logo.jpeg");
-  expect((html.match(/data-supported-buyer-media=/g) ?? [])).toHaveLength(4);
-  expect(html).toContain("about-hospitals.webp");
-  expect(html).toContain("about-procurement.webp");
-  expect(html).toContain("about-distributors.webp");
-  expect(html).toContain("about-international-buyers.webp");
-  expect(html).toContain("procurement-support.webp");
-  expect(html).toContain('href="/procurement-support"');
+  expect((html.match(/data-about-story=/g) ?? [])).toHaveLength(3);
+  expect((html.match(/data-about-compliance-item=/g) ?? [])).toHaveLength(6);
+  expect((html.match(/data-about-document=/g) ?? [])).toHaveLength(5);
+  expect((html.match(/data-media-slot="about-client-/g) ?? [])).toHaveLength(9);
+
+  expect(html).toContain("Precision, clarity and dependable medical sourcing.");
+  expect(html).toContain("About Rosa");
+  expect(html).toContain("Our Workflow");
+  expect(html).toContain("Business Growth");
+  expect(html).toContain("Experience Sharing");
+  expect(html).toContain("COMPLIANCE");
+  for (const label of ["ISO", "MDMA", "MDEL", "AR", "WAREHOUSE"]) {
+    expect(html).toContain(`>${label}<`);
+  }
+
   expect(html).toContain('href="/products"');
   expect(html).toContain('href="/request-quotation"');
+  expect(html).toMatch(/https:\/\/wa\.me\//);
+  expect(html).toContain('href="mailto:info@rosamedical.org"');
+
+  expect(html).not.toContain('data-company-profile="true"');
+  expect(html).not.toContain("data-supported-buyer=");
+  expect(html).not.toContain("data-family-index-row=");
+  expect(html).not.toContain('href="/procurement-support"');
+  expect(html).not.toMatch(/youtube/i);
   expect(visibleText).not.toMatch(/\b(18|19|20)\d{2}\b/);
-  expect(visibleText).not.toMatch(/founded|since|factory|manufacturer|certified|years of experience/i);
+  expect(visibleText).not.toMatch(/founded|since \d{4}|factory|manufacturer|certified|years of experience/i);
 });
