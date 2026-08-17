@@ -16,28 +16,32 @@ import { ProcurementSupportPage } from "@/features/procurement-support";
 const source = (path: string) => readFileSync(join(process.cwd(), path), "utf8");
 
 describe("F7 public story and utility polish", () => {
-  it("frames the owner-approved About profile without inventing company history", () => {
+  it("frames the client-redesigned About story without inventing company history", () => {
     const html = renderToStaticMarkup(<AboutPage />);
-    const styles = source("src/styles/f7-story-polish.css");
-    const refinementStyles = source("src/styles/f8-owner-refinement.css");
+    const styles = source("src/styles/about-client-redesign.css");
+    const interactionStyles = source("src/styles/about-client-interactions.css");
 
     expect((html.match(/<h1/g) ?? [])).toHaveLength(1);
-    expect(html).not.toContain("Useful structure at every step.");
-    expect(html).not.toContain("How surgical scissors became more specialised.");
-    expect(html).toContain("We are Rosa Medical.");
-    expect(html).toContain("Built around professional buying needs.");
-    expect(html).toContain('href="/procurement-support"');
+    expect(html).toContain("Precision, clarity and dependable medical sourcing.");
+    expect(html).toContain("Our Workflow");
+    expect(html).toContain("Business Growth");
+    expect(html).toContain("Experience Sharing");
     expect(html).toContain('href="/request-quotation"');
-    expect(html).toContain('data-media-slot="about-hero"');
-    expect(html).toContain('data-media-slot="about-procurement"');
-    expect(html).toContain('data-media-state="ready"');
+    expect(html).toContain('data-media-slot="about-client-hero"');
+    expect(html).toContain('data-media-slot="about-client-workflow"');
+    expect(html).toContain('data-media-slot="about-client-growth"');
+    expect(html).toContain('data-media-slot="about-client-experience"');
+    expect(html).toContain('data-media-state="placeholder"');
     expect(html).toContain('data-motion="text-reveal"');
     expect(html).toContain('data-motion="stagger"');
-    expect((html.match(/data-supported-buyer=/g) ?? []).length).toBe(4);
-    expect(styles).toContain("scale(1.01)");
-    expect(styles).not.toMatch(/story-media-frame:hover[^}]*rotate\(/s);
-    expect(refinementStyles).toMatch(/\.company-profile__principles\s*>\s*li\s*\{/);
-    expect(refinementStyles).not.toMatch(/\.company-profile__principles\s*>\s*div\s*\{/);
+    expect((html.match(/data-motion="reveal"/g) ?? []).length).toBeGreaterThanOrEqual(8);
+    expect((html.match(/data-about-story=/g) ?? []).length).toBe(3);
+    expect((html.match(/data-about-document=/g) ?? []).length).toBe(5);
+    expect(styles).toMatch(/\.about-client-documents__grid[\s\S]*repeat\(5,/);
+    expect(interactionStyles).toContain("translateY(-4px)");
+    expect(interactionStyles).not.toMatch(/rotate\(/);
+    expect(html).not.toContain("Built around professional buying needs.");
+    expect(html).not.toContain('href="/procurement-support"');
     expect(html).not.toMatch(/founded|since \d{4}|factory|manufacturer|certified|years of experience/i);
   });
 
